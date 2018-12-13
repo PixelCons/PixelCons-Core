@@ -37,14 +37,17 @@ var _transactionLookupUrl = 'https://etherscan.io/tx/<txHash>';
 var _accountLookupUrl = 'https://etherscan.io/address/<address>';
 ```
 
-#### 3_data_load.js (\migrations)
-The beginning of this migration script has a declared variable that allows you to disabled loading test data on truffle migration as well as 
-setting up different accounts you wish to be loaded with Eth on truffle migration
+#### 2_contract_migration.js (\migrations)
+The beginning of this migration script has declared variables that allow you to set different accounts you wish to be loaded with Eth on truffle migration
 ```
-var enabled = false;
-
 var primaryAddress = '0xfE643f001caC62a5f513Af517765146d331261C8';
 var secondaryAddress = '0x9f2fedFfF291314E5a86661e5ED5E6f12e36dd37';
+```
+
+#### 3_data_load.js (\migrations)
+The beginning of this migration script has a declared variable that allows you to disabled loading test data on truffle migration
+```
+var enabled = false;
 ```
 
 #### coreContract.service.js and marketContract.service.js (\src\app\services)
