@@ -1,0 +1,200 @@
+/* General */
+div.pixelconAccountPage {
+	width: 100%;
+}
+div.pixelconAccountPage div.topSpacer {
+	width: 100%;
+	height: 20px;
+}
+div.pixelconAccountPage.sm div.topSpacer {
+	height: 10px;
+}
+div.pixelconAccountPage div.bottomSpacer {
+	width: 100%;
+	height: 30px;
+}
+div.pixelconAccountPage.sm div.bottomSpacer {
+	height: 20px;
+}
+div.pixelconAccountPage .accountPageTransition,
+div.pixelconAccountPage .accountPageTransition .ng-hide-add,
+div.pixelconAccountPage .accountPageTransition .ng-hide-remove {
+  transition: background-color cubic-bezier(.35,0,.25,1) 0.05s;
+}
+
+/* Account Card Container */
+div.pixelconAccountPage div.accountCard {
+	width: calc(100% - 60px);
+	max-width: 1420px;
+	border-radius: 15px;
+	margin: 0 auto;
+}
+div.pixelconAccountPage.sm div.accountCard {
+	width: calc(100% - 16px);
+}
+div.pixelconAccountPage div.accountPaging {
+	text-align: right;
+	padding: 10px;
+}
+
+/* Account Card Container: Header */
+div.pixelconAccountPage div.accountHeaderTop {
+	text-align: right;
+	padding: 10px 10px 0px 10px;
+}
+div.pixelconAccountPage.sm div.accountHeaderTop {
+	padding: 7px 7px 0px 7px;
+}
+div.pixelconAccountPage div.accountHeaderTop accounticon {
+	display: inline-block;
+	float: left;
+}
+div.pixelconAccountPage div.toggleButtons {
+	display: inline-block;
+	border-radius: 3px;
+	font-size: 0px;
+	margin: 5px 0px 7px 0px;
+}
+div.pixelconAccountPage div.toggleButtons button {
+	margin: 0px;
+}
+div.pixelconAccountPage.sm div.toggleButtons button {
+	min-width: 70px;
+	font-size: 13px;
+}
+div.pixelconAccountPage div.accountHeaderDivider {
+	width: calc(100% - 10px);
+	height: 1px;
+	margin: 5px 5px 5px 5px;
+}
+div.pixelconAccountPage.sm div.accountHeaderDivider {
+	margin: 3px 5px 3px 5px;
+}
+div.pixelconAccountPage div.accountHeaderBottom {
+	padding: 0px 10px 5px 10px;
+	width: 100%;
+}
+div.pixelconAccountPage.sm div.accountHeaderBottom {
+	padding: 0px 7px 3px 7px;
+}
+div.pixelconAccountPage div.accountHeaderBottom button {
+	display: inline-block;
+	margin: 0px 0px 0px 8px;
+}
+div.pixelconAccountPage div.accountHeaderBottom button.createButton {
+	margin: 0px;
+}
+div.pixelconAccountPage.sm div.accountHeaderBottom button.createButton {
+    min-width: 10px;
+}
+div.pixelconAccountPage.sm div.accountHeaderBottom button {
+	max-height: 32px;
+    min-height: 32px;
+	line-height: 32px;
+}
+div.pixelconAccountPage div.accountHeaderBottom md-select {
+	display: inline-block;
+	margin: 0px;
+}
+div.pixelconAccountPage div.accountHeaderBottom md-checkbox {
+	display: inline-block;
+	margin: 7px 15px 0px 0px;
+}
+div.pixelconAccountPage.sm div.accountHeaderBottom md-checkbox {
+	margin: 5px 10px 0px 0px;
+}
+div.pixelconAccountPage .sortDesc {
+	background-image: url("/img/icon_down.svg");
+}
+div.pixelconAccountPage .sortAsc {
+	background-image: url("/img/icon_up.svg");
+}
+div.pixelconAccountPage div.headerPlainText {
+	display: inline-block;
+	vertical-align: middle;
+	padding: 5px;
+}
+div.pixelconAccountPage div.groupIcon {
+	background-image: url("/img/icon_group.svg");
+	background-size: contain;
+	display: inline-block;
+	height: 24px;
+	max-width: 24px;
+	min-width: 24px;
+	vertical-align: middle;
+}
+div.pixelconAccountPage.sm .sortBy .md-select-icon {
+    width: 5px;
+}
+
+/* Account Card Container: Pixelcon Window */
+div.pixelconAccountPage div.displayWindow {
+	position: relative;
+	width: 100%;
+	border-radius: 15px;
+	min-height: 200px;
+}
+div.pixelconAccountPage div.error {
+    position: absolute;
+	text-align: center;
+    left: 50%;
+    top: 50%;
+    margin: -50px -153px;
+    width: 276px;
+    height: 42px;
+    padding: 15px;
+    border-radius: 15px;
+}
+div.pixelconAccountPage div.loading {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -45px -45px;
+	width: 80px;
+	height: 80px;
+	padding: 10px;
+	border-radius: 15px;
+}
+div.pixelconAccountPage div.displayTable {
+	box-sizing: border-box;
+	width: 100%;
+	text-align: center;
+	padding: 20px;
+}
+div.pixelconAccountPage.md div.displayTable {
+	padding: 15px;
+}
+div.pixelconAccountPage.sm div.displayTable {
+	padding: 5px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+div.pixelconAccountPage div.pixelconCard {
+	display: inline-block;
+	position: relative;
+	margin: 12px;
+	margin-bottom: 20px;
+}
+div.pixelconAccountPage.md div.pixelconCard {
+	margin: 9px;
+	margin-bottom: 18px;
+}
+div.pixelconAccountPage.sm div.pixelconCard {
+	margin: 6px;
+	margin-bottom: 16px;
+}
+div.pixelconAccountPage div.pixelconCardCheck {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 20px;
+	height: 20px;
+	padding: 6px;
+}
+div.pixelconAccountPage div.pixelconCardCheckCover {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+}

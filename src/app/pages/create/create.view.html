@@ -1,0 +1,38 @@
+<div class="pixelconCreatePage" ng-class="ctrl.screenSize">
+	<div class="topSpacer"></div>
+	
+	<div class="createCard colorLight">
+	
+		<!-- Creator window -->
+		<div class="createWindow colorDark">
+			<div class="newTag colorDarkOverlay textMedium textBold">NEW</div>
+			<div class="pixelconCanvas">
+				<div class="canvasPixel" ng-mousedown="ctrl.setPixel($index)"  ng-mouseenter="ctrl.setPixel($index, $event)"
+					ng-style="{'background-color':ctrl.colorPalette[pixel]}" ng-repeat="pixel in ctrl.canvasPixels track by $index"></div>
+			</div>
+			<div class="pixelconPalette">
+				<div class="palettePixel" ng-class="{'selected': ctrl.selectedColor==$index}" ng-click="ctrl.setColor($index)"
+					ng-style="{'background-color':color}" ng-repeat="color in ctrl.colorPalette track by $index"></div>
+			</div>
+		</div>
+		
+		<!-- Actions -->
+		<div>
+		</div>
+		<div class="actions textMedium textLight">
+			<div class="idText textSelectable">{{ctrl.pixelconId}}</div>
+			<div class="info textDark" ng-hide="ctrl.showButtons">
+				<b ng-if="!ctrl.showStartButton">Note:</b> {{ctrl.infoText}} <br/>
+				<md-button ng-if="ctrl.showStartButton" class="startButton md-raised md-primary" ng-click="ctrl.goPath('/start')">Start</md-button>
+			</div>
+			<div layout="row" layout-align="space-between center" ng-show="ctrl.showButtons"> 
+				<md-button class="actionButton" ng-click="ctrl.clear($event)">Clear</md-button>
+				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.create($event)"
+					ng-disabled="ctrl.pixelconId=='0x0000000000000000000000000000000000000000000000000000000000000000'">Create</md-button>
+			</div>
+		</div>
+	</div>
+	
+	<div class="bottomSpacer"></div>
+	<div class="footerSpacer"></div>
+</div>

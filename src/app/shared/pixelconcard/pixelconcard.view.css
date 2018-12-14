@@ -1,0 +1,386 @@
+/* General */
+pixelconcard {
+	display: block;
+}
+pixelconcard .pixelconCardDirectiveContainer {
+	position: relative;
+	background-color: #000000;
+}
+pixelconcard .pixelconCardDirectiveDisabledShade {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+    width: 100%;
+    height: 100%;
+	opacity: 0.75;
+	filter: alpha(opacity=75);
+}
+pixelconcard .pixelconCardDirectiveTransition,
+pixelconcard .pixelconCardDirectiveTransition .ng-hide-add,
+pixelconcard .pixelconCardDirectiveTransition .ng-hide-remove {
+	transition: opacity cubic-bezier(.35,0,.25,1) 0.05s, background-color cubic-bezier(.35,0,.25,1) 0.05s;
+}
+pixelconcard .ng-hide {
+	opacity: 0;
+}
+pixelconcard .pixelconCardDirectiveNotification {
+	position: absolute;
+	font-size: 0px;
+	pointer-events: none;
+}
+pixelconcard .pixelconCardDirectiveNotification.account {
+	padding: 1px;
+}
+
+/* Main Appearance */
+pixelconcard .pixelconCardDirectiveImage {
+	position: relative;
+}
+pixelconcard .pixelconCardDirectiveInfo {
+	position: relative;
+	width: 100%;
+	text-align: center;
+}
+pixelconcard .pixelconCardDirectiveGroupNotification {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 32px;
+	height: 12px;
+	background-image: url("/img/icon_group.svg");
+	background-repeat: no-repeat;
+	background-size: 18px;
+	background-position: 0px -2px;
+}
+
+/* Hover Details */
+pixelconcard .pixelconCardDirectiveImageCover {
+	position: absolute;
+	top: 0px;
+	background-color: rgba(51, 51, 51, 0.7);
+	width: 100%;
+	height: 100%;
+}
+pixelconcard .pixelconCardDirectiveGotoIcon {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	background-image: url("/img/icon_goto_w.svg");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	opacity: 0.8;
+	filter: alpha(opacity=80);
+}
+pixelconcard .pixelconCardDirectiveDetailContainer {
+	position: absolute;
+}
+pixelconcard .pixelconCardDirectiveDetailContainer.clickable:hover {
+	background-color: rgba(242, 242, 242, 0.9);
+}
+pixelconcard .pixelconCardDirectivePriceContainer {
+	top: 0px;
+	right: 0px;
+}
+pixelconcard .pixelconCardDirectivePriceContainerIcon {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 18px;
+	height: 18px;
+	background-image: url("/img/icon_tag_c.svg");
+	background-size: contain;
+}
+pixelconcard .pixelconCardDirectiveGroupContainer {
+	bottom: 0px;
+	left: 0px;
+	font-size: 0px;
+	text-align: left;
+}
+pixelconcard .pixelconCardDirectiveGroupContainer.onlyThree {
+	border-top-right-radius: 55%;
+}
+pixelconcard .pixelconCardDirectiveGroupElement {
+	display: inline-block;
+	background-color: #000000;
+}
+pixelconcard .pixelconCardDirectiveGroupElementSpacer {
+	width: 5px;
+}
+
+
+
+/* Size: xs */
+pixelconcard .pixelconCardDirectiveContainer.xs {
+	width: 72px; 
+	height: 93px; 
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveFont {
+	font-size: 11px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveImage {
+	width: 72px; 
+	height: 72px; 
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveInfo {
+	height: 21px;
+	line-height: 22px;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectivePriceContainer {
+	line-height: 18px;
+	padding: 1px 22px 1px 4px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectivePriceContainerIcon {
+	margin: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveGroupContainer {
+	max-width: 32px;
+	padding: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveGroupElement {
+	width: 14px;
+	height: 14px;
+	margin: 1px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveGotoIcon {
+	width: 36px;
+	height: 36px;
+	margin-left: -18px;
+	margin-top: -18px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveNotification.account {
+	bottom: 16px;
+	right: -4px;
+	width: 12px;
+	height: 12px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveNotification.priceTag {
+	top: -7px;
+	right: -7px;
+	width: 20px;
+	height: 20px;
+}
+
+/* Size: sm */
+pixelconcard .pixelconCardDirectiveContainer.sm {
+	width: 88px; 
+	height: 112px; 
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveFont {
+	font-size: 13px;
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveImage {
+	width: 88px; 
+	height: 88px; 
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveInfo {
+	height: 24px;
+	line-height: 25px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectivePriceContainer {
+	line-height: 18px;
+	padding: 2px 22px 2px 4px;
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectivePriceContainerIcon {
+	margin: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveGroupContainer {
+	max-width: 36px;
+	padding: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveGroupElement {
+	width: 16px;
+	height: 16px;
+	margin: 1px;
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveGotoIcon {
+	width: 36px;
+	height: 36px;
+	margin-left: -18px;
+	margin-top: -18px;
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveNotification.account {
+	bottom: 18px; 
+	right: -6px;
+	width: 16px;
+	height: 16px;
+}
+pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveNotification.priceTag {
+	top: -8px; 
+	right: -8px;
+	width: 24px;
+	height: 24px;
+}
+
+/* Size: md */
+pixelconcard .pixelconCardDirectiveContainer.md {
+	width: 96px; 
+	height: 121px; 
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveFont {
+	font-size: 14px;
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveImage {
+	width: 96px; 
+	height: 96px; 
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveInfo {
+	height: 25px;
+	line-height: 26px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectivePriceContainer {
+	line-height: 18px;
+	padding: 2px 22px 2px 4px;
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectivePriceContainerIcon {
+	margin: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveGroupContainer {
+	max-width: 36px;
+	padding: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveGroupElement {
+	width: 16px;
+	height: 16px;
+	margin: 1px;
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveGotoIcon {
+	width: 36px;
+	height: 36px;
+	margin-left: -18px;
+	margin-top: -18px;
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveNotification.account {
+	bottom: 19px; 
+	right: -6px;
+	width: 16px;
+	height: 16px;
+}
+pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveNotification.priceTag {
+	top: -8px; 
+	right: -8px;
+	width: 26px;
+	height: 26px;
+}
+
+/* Size: lg */
+pixelconcard .pixelconCardDirectiveContainer.lg {
+	width: 104px; 
+	height: 129px; 
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveFont {
+	font-size: 15px;
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveImage {
+	width: 104px; 
+	height: 104px; 
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveInfo {
+	height: 25px;
+	line-height: 25px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectivePriceContainer {
+	line-height: 18px;
+	padding: 2px 23px 2px 5px;
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectivePriceContainerIcon {
+	margin: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveGroupContainer {
+	max-width: 36px;
+	padding: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveGroupElement {
+	width: 16px;
+	height: 16px;
+	margin: 1px;
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveGotoIcon {
+	width: 36px;
+	height: 36px;
+	margin-left: -18px;
+	margin-top: -18px;
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveNotification.account {
+	bottom: 20px;
+	right: -6px;
+	width: 18px;
+	height: 18px;
+}
+pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveNotification.priceTag {
+	top: -9px;
+	right: -9px;
+	width: 28px;
+	height: 28px;
+}
+
+/* Size: xl */
+pixelconcard .pixelconCardDirectiveContainer.xl {
+	width: 120px; 
+	height: 148px; 
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveFont {
+	font-size: 18px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveImage {
+	width: 120px; 
+	height: 120px; 
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveInfo {
+	height: 27px;
+	line-height: 28px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectivePriceContainer {
+	line-height: 18px;
+	padding: 4px 24px 4px 6px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectivePriceContainerIcon {
+	margin: 4px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveGroupContainer {
+	max-width: 48px;
+	padding: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveGroupElement {
+	width: 20px;
+	height: 20px;
+	margin: 2px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveGotoIcon {
+	width: 36px;
+	height: 36px;
+	margin-left: -18px;
+	margin-top: -18px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveNotification.account {
+	bottom: 22px;
+	right: -6px;
+	width: 20px;
+	height: 20px;
+}
+pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveNotification.priceTag {
+	top: -9px;
+	right: -9px;
+	width: 30px;
+	height: 30px;
+}

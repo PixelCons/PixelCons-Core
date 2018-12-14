@@ -1,0 +1,73 @@
+<md-dialog class="sellPixelconDialogCtrl colorLight" ng-class="ctrl.screenSize" aria-label="Submit PixelCon Transaction">
+	
+	<!-- Sell View -->
+	<div class="view" layout="row">
+		<div class="dialogTitle">
+			<div class="titleIconContainer colorYellow"><div class="titleStoreIcon"></div></div>
+			Sell PixelCon
+		</div>
+		<div class="pixelconContainer md-whiteframe-1dp"><pixelcon id="ctrl.pixelconId"/></div>
+		
+		<!-- Main Form -->
+		<div class="page animate-show-hide" ng-hide="ctrl.currView=='confirm'">
+			<form name="ctrl.form">
+			
+				<!-- Sell Form -->
+				<div class="pageContainer">
+					<md-input-container class="md-block">
+						<label>Start Price (Ether)</label>
+						<input ng-model="ctrl.sell.startPrice" required type="number" step="any" ng-pattern="/^[0-9]*\.?[0-9]*$/">
+						<div class="hint">The starting price your PixelCon will be listed at. The price will gradually fall from this number until the end of the listing.</div>
+					</md-input-container>
+					<br/>
+					<md-input-container class="md-block">
+						<label>End Price (Ether)</label>
+						<input ng-model="ctrl.sell.endPrice" required type="number" step="any" ng-pattern="/^[0-9]*\.?[0-9]*$/"/>
+						<div class="hint">The lowest price offered before your listing ends.</div>
+					</md-input-container>
+					<md-input-container class="md-block">
+						<label>Duration (Days)</label>
+						<input ng-model="ctrl.sell.duration" required type="number" step="1" ng-pattern="/^[0-9]*$/"/>
+						<div class="hint">The max number of days your PixelCon will listed for sale.</div>
+					</md-input-container>
+					<div class="hint errorText">{{ctrl.errorText1}}<br/>{{ctrl.errorText2}}</div>
+					<div class="pageFooter" layout="row">
+						<md-button class="" ng-click="ctrl.checkValidation()" ng-disabled="!ctrl.detailsKnown">List</md-button>
+					</div>
+				</div>
+				
+			</form>
+		</div>
+		<div class="page" ng-if="ctrl.currView=='confirm'">
+		
+			<!-- Sell Confirm -->
+			<div class="pageContainer confirm">
+				<br/><br/>
+				<div class="lineItemTitle"><b>Please Confirm</b></div>
+				<div layout="row">
+					<div class="lineItemLabel">Start Price</div>
+					<div class="lineItemValue">{{ctrl.sell.startPrice | ethprice}}</div>
+				</div>
+				<div layout="row">
+					<div class="lineItemLabel">End Price</div>
+					<div class="lineItemValue">{{ctrl.sell.endPrice | ethprice}}</div>
+				</div>
+				<div layout="row">
+					<div class="lineItemLabel">Duration</div>
+					<div class="lineItemValue">{{ctrl.sell.duration}} {{ctrl.sell.duration==1?'Day':'Days'}}</div>
+				</div>
+				<br/>
+				<div class="note">
+					Your PixelCon will be owned by the market until it is sold, or you remove the listing. You will need to pay gas fees in order to remove your listing from the market.
+					By listing this PixelCon, you agree to the <a class="link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a>
+				</div>
+				<md-button class="md-raised" ng-click="ctrl.confirmSale()">Confirm</md-button>
+				
+				<div class="costNote textLight">Gas: {{ctrl.cost | ethprice}}</div>
+			</div>
+			
+		</div>
+	</div>
+	
+	<div class="dialogCloseButton" ng-click="ctrl.closeDialog()"></div>
+</md-dialog>

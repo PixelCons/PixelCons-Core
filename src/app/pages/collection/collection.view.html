@@ -1,0 +1,69 @@
+<div class="pixelconCollectionPage" ng-class="ctrl.screenSize">
+	<div class="topSpacer"></div>
+	
+	<div class="maxWidth">
+		<div class="accountCard colorLight">
+			
+			<!-- Viewer window -->
+			<div class="displayWindow colorDark">
+				<div class="groupIcon">
+					<div class="groupIconElement colorDarkOverlay"></div><div class="groupIconElement colorDarkOverlay"></div><div class="groupIconElement colorDarkOverlay"></div>
+				</div>
+			
+				<!-- Error -->
+				<div class="error colorLight" ng-show="ctrl.error">
+					<b>Ethereum Network Error:</b><br/>{{ctrl.error}}
+				</div>
+			
+				<!-- Cleared -->
+				<div class="error colorLight" ng-show="ctrl.cleared">
+					<b>This collection has been cleared</b>
+				</div>
+			
+				<!-- Loading -->
+				<div class="loading colorLight" ng-show="ctrl.loading">
+					<img class="crispImage" src="img/loading.gif" alt="Loading.." height="100%" width="100%"/>
+				</div>
+			
+				<!-- PixelCon -->
+				<div class="displayTable">
+					<pixelconcard class="pixelconCard" pixelcon="pixelcon" size="{{(ctrl.screenSize.sm)?'sm':(ctrl.screenSize.md?'md':'lg')}}" no-collection="true" ng-repeat="pixelcon in ctrl.collection.pixelcons track by $index"></pixelconcard>
+				</div>
+			</div>
+
+			<!-- Details -->
+			<div class="detailsSection textSelectable">
+				<div class="detailsInnerSection" ng-show="ctrl.error || ctrl.loading">
+					<div class="detailsSectionMenuBarTextSmall textLarge textLight"> Collection {{ctrl.index}}</div>
+				</div>
+				<div class="detailsInnerSection" ng-hide="ctrl.error || ctrl.loading">
+					<div class="detailsSectionMenuBar">
+						<div ng-show="ctrl.collection.name!==''" class="detailsSectionMenuBarText textDark textExxLarge textBold">{{ctrl.collection.name}}</div>
+						<div class="detailsSectionMenuBarTextSmall textLarge textLight" ng-class="{'textExxLarge':ctrl.collection.name===''}"> Collection {{ctrl.collection.index}}</div>
+						<div class="detailsSectionMoreButton" ng-hide="!ctrl.isCreator">
+							<md-menu md-position-mode="target-right target">
+								<md-button class="iconButton moreMenu" ng-click="$mdOpenMenu()" aria-label="More"></md-button>
+								<md-menu-content>
+									<md-menu-item>
+										<md-button ng-click="ctrl.rename($event)">Change Name</md-button>
+									</md-menu-item>
+									<md-menu-item>
+										<md-button ng-click="ctrl.clear($event)">Clear Collection</md-button>
+									</md-menu-item>
+								</md-menu-content>
+							</md-menu>
+						</div>
+					</div>
+					<accounticon class="textLight" address="ctrl.collection.creator" text="Creator" max-chars="16" size="{{ctrl.screenSize.sm?'sm':'md'}}" clickable="{{ctrl.cleared?'false':'true'}}"></accounticon>
+					<div class="detailsSectionFooter textLight" ng-class="{'textLarge':ctrl.screenSize.md||ctrl.screenSize.lg, 'textMedium':ctrl.screenSize.sm}">
+						<div class="detailsSectionMenuBarText textBold">{{ctrl.collection.pixelcons.length}}</div> 
+						{{ctrl.collection.pixelcons.length==1?'PixelCon':'PixelCons'}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="bottomSpacer"></div>
+	<div class="footerSpacer"></div>
+</div>

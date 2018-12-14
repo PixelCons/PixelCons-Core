@@ -1,0 +1,129 @@
+/* General */
+.marketListingDialog {
+	position: relative;
+	height: 320px;
+	width: 300px;
+	min-width: 300px;
+	margin-bottom: 200px;
+}
+.marketListingDialog.sm {
+	margin-bottom: 75px;
+}
+.marketListingDialog div.dialogCloseButton {
+	cursor: pointer;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 24px;
+	height: 24px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("/img/icon_close.svg");
+	background-size: contain;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+}
+.marketListingDialog div.dialogCloseButton:hover {
+	opacity: 1.0;
+    filter: alpha(opacity=100);
+}
+.marketListingDialog div.costNote  {
+	position: absolute;
+	left: 15px;
+	bottom: 10px;
+	font-size: 14px;
+}
+.marketListingDialog div.view {
+	position: relative;
+	height: 100%;
+	width: 100%;
+	min-width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+}
+.marketListingDialog div.view div.dialogTitle {
+    position: absolute;
+    width: 275px;
+    text-align: center;
+    font-size: 22px;
+    margin-top: 8px;
+}
+.marketListingDialog div.view div.titleIconContainer {
+	display: inline-block;
+	vertical-align: middle;
+    width: 36px;
+    height: 36px;
+}
+.marketListingDialog div.view div.titleStoreIcon {
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+	background-image: url("/img/icon_store.svg");
+	background-size: contain;
+	opacity: 0.7;
+    filter: alpha(opacity=70);
+}
+.marketListingDialog div.view div.pixelconContainer {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 48px;
+	height: 48px;
+}
+.marketListingDialog form {
+	width: 100%;
+	height: 100%;
+}
+
+/* Confirm */
+.marketListingDialog div.confirm {
+	text-align: center;
+	box-sizing: border-box;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	padding-top: 60px;
+}
+.marketListingDialog div.confirm div.lineItemTitle {
+	line-height: 32px;
+	font-size: 19px;
+}
+.marketListingDialog div.confirm div.lineItemLabel {
+	text-align: right;
+	width: 100%;
+    line-height: 21px;
+    color: grey; 
+	padding-right: 10px;
+}
+.marketListingDialog div.confirm div.lineItemValue {
+	text-align: left;
+	width: 100%;
+    line-height: 21px;
+    color: grey; 
+	padding-left: 10px;
+}
+.marketListingDialog div.confirm div.lineItemDivider {
+	background-color: gray;
+	height: 1px;
+	width: 60%;
+	margin-left: 20%;
+	margin-right: 20%;
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+.marketListingDialog div.confirm div.note {
+	font-size: 12px;
+	line-height: 14px;
+	color: grey; 
+	padding: 10px 10px 4px 10px;
+}
+.marketListingDialog div.confirm div.noteNarrow {
+	padding: 10px 21px 4px 21px;
+}
+
+/* Error */
+.marketListingDialog div.errorText {
+    padding: 0px 20px;
+}

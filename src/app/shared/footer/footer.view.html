@@ -1,0 +1,24 @@
+<div class="footer" ng-class="ctrl.screenSize">
+
+	<!-- Links -->
+	<div layout="row" class="mainContainer">
+		<div layout="column" class="linkContainer leftPadding">
+			<a class="link textDark" href="/search">Browse</a>
+			<a class="link textDark" href="/create">Create</a>
+			<a class="link textDark" ng-class="{disabled:ctrl.noWeb3}" ng-href="{{ctrl.noWeb3?'':'/account'}}">Account</a>
+		</div>
+		<div layout="column" class="linkContainer">
+			<a class="link textDark" href="/">About</a>
+			<a class="link textDark" href="/start">Get Started</a>
+			<a class="link textDark" href="/terms">Terms of Use</a>
+		</div>
+		<div layout="column" class="socialContainer rightPadding">
+			<a class="socialLink github" href="https://github.com/PixelCons"></a>
+			<a class="socialLink twitter" href="https://twitter.com/PixelConsToken"></a>
+			<a class="socialLink medium" href="https://medium.com/@pixelcons"></a>
+			<md-button class="tipButton md-raised md-primary" ng-click="ctrl.tip($event)">Tip</md-button>
+		</div>
+		<div class="copyright textSmall textLight">© 2018 PixelCons</div>
+	</div>
+	
+</div>

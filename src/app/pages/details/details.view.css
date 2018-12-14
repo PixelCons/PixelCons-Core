@@ -1,0 +1,299 @@
+/* General */
+div.pixelconDetailsPage {
+	width: 100%;
+}
+div.pixelconDetailsPage div.topSpacer {
+	width: 100%;
+	height: 20px;
+}
+div.pixelconDetailsPage.sm div.topSpacer {
+	height: 10px;
+}
+div.pixelconDetailsPage div.bottomSpacer {
+	width: 100%;
+	height: 20px;
+}
+div.pixelconDetailsPage.sm div.bottomSpacer {
+	height: 10px;
+}
+div.pixelconDetailsPage .detailsPageTransition,
+div.pixelconDetailsPage .detailsPageTransition .ng-hide-add,
+div.pixelconDetailsPage .detailsPageTransition .ng-hide-remove {
+  transition: background-color cubic-bezier(.35,0,.25,1) 0.05s;
+}
+div.pixelconDetailsPage .ng-hide {
+  opacity: 0;
+}
+
+/* Details Card Container */
+div.pixelconDetailsPage div.detailsCard {
+	width: 430px;
+    border-radius: 15px;
+	min-height: 540px;
+	margin: 0 auto;
+}
+div.pixelconDetailsPage.sm div.detailsCard {
+	width: 350px;
+	min-height: 450px;
+}
+
+/* Card Image */
+div.pixelconDetailsPage div.viewWindow {
+	position: relative;
+	width: 100%;
+	height: 375px;
+    border-radius: 15px;
+}
+div.pixelconDetailsPage.sm div.viewWindow {
+	height: 280px;
+}
+div.pixelconDetailsPage div.viewWindowPriceContainer {
+	position: absolute;
+    top: 10px;
+    right: 10px;
+	font-size: 0px;
+}
+div.pixelconDetailsPage div.viewWindowPriceContainer.clickable:hover div.viewWindowPrice,
+div.pixelconDetailsPage div.viewWindowPriceContainer.clickable:hover div.viewWindowPriceTag {
+	background-color: rgba(242, 242, 242, 0.9);
+}
+div.pixelconDetailsPage div.viewWindowPrice {
+	display: inline-block;
+	box-sizing: border-box;
+	vertical-align: top;
+	padding: 5px 0px 5px 6px;
+	height: 28px;
+}
+div.pixelconDetailsPage.sm div.viewWindowPrice {
+	padding: 3px 0px 3px 6px;
+	height: 24px;
+}
+div.pixelconDetailsPage div.viewWindowPriceTag {
+	display: inline-block;
+	position: relative;
+	width: 28px;
+	height: 28px;
+	box-sizing: border-box;
+	font-size: 15px;
+}
+div.pixelconDetailsPage.sm div.viewWindowPriceTag {
+	height: 24px;
+}
+div.pixelconDetailsPage div.viewWindowPriceTagIcon {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("/img/icon_tag_c.svg");
+	background-size: 24px;
+}
+div.pixelconDetailsPage div.viewWindowGroupContainer {
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	font-size: 0px;
+	cursor: pointer;
+}
+div.pixelconDetailsPage div.viewWindowGroupContainer:hover div.viewWindowGroup,
+div.pixelconDetailsPage div.viewWindowGroupContainer:hover div.viewWindowGroupName {
+	background-color: rgba(242, 242, 242, 0.8);
+}
+div.pixelconDetailsPage div.viewWindowGroupContainer:hover div.viewWindowGroupCover {
+	opacity: 1.0;
+}
+div.pixelconDetailsPage div.viewWindowGroup {
+	display: inline-block;
+	position: relative;
+	max-width: 56px;
+	padding: 2px;
+}
+div.pixelconDetailsPage div.viewWindowGroup.onlyThree {
+	border-top-right-radius: 55%;
+}
+div.pixelconDetailsPage.sm div.viewWindowGroup {
+	max-width: 48px;
+}
+div.pixelconDetailsPage div.viewWindowGroupCover {
+	position: absolute;
+	width: calc(100% - 8px);
+	height: calc(100% - 8px);
+	top: 4px;
+	left: 4px;
+	background-color: rgba(51, 51, 51, 0.4);
+	transition: opacity cubic-bezier(.35,0,.25,1) 0.05s;
+	opacity: 0.0;
+}
+div.pixelconDetailsPage div.viewWindowGroup.onlyThree div.viewWindowGroupCover {
+	border-top-right-radius: 55%;
+}
+div.pixelconDetailsPage div.viewWindowGroupCoverIcon {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("/img/icon_goto_w.svg");
+	background-size: 24px;
+	opacity: 0.8;
+}
+div.pixelconDetailsPage div.viewWindowGroupElement {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	margin: 2px;
+}
+div.pixelconDetailsPage.sm div.viewWindowGroupElement {
+	width: 20px;
+	height: 20px;
+}
+div.pixelconDetailsPage div.viewWindowGroupElementSpacer {
+	display: inline-block;
+	width: 15px;
+}
+div.pixelconDetailsPage div.viewWindowGroupName {
+	display: inline-block;
+	vertical-align: bottom;
+	padding: 3px 3px 3px 0px;
+}
+div.pixelconDetailsPage.sm div.viewWindowGroupName {
+	padding: 2px 2px 2px 0px;
+}
+div.pixelconDetailsPage div.pixelconInvalid {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 256px;
+	height: 256px;
+	line-height: 256px;
+	margin-left: -128px;
+	margin-top: -128px;
+	background-color: #000000;
+	text-align: center;
+}
+div.pixelconDetailsPage.sm div.pixelconInvalid {
+	width: 192px;
+	height: 192px;
+	line-height: 192px;
+	margin-left: -96px;
+	margin-top: -96px;
+}
+div.pixelconDetailsPage div.pixelconImage {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 256px;
+	height: 256px;
+	margin-left: -128px;
+	margin-top: -128px;
+}
+div.pixelconDetailsPage.sm div.pixelconImage {
+	width: 192px;
+	height: 192px;
+	margin-left: -96px;
+	margin-top: -96px;
+}
+
+/* Card Details */
+div.pixelconDetailsPage div.detailsSection {
+	padding: 5px;
+}
+div.pixelconDetailsPage div.detailsInnerSection {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+div.pixelconDetailsPage div.detailsSectionId {
+	font-size: 11px;
+}
+div.pixelconDetailsPage.sm div.detailsSectionId {
+	font-size: 9px;
+}
+div.pixelconDetailsPage div.detailsSectionMenuBar {
+	position: relative;
+	width: 100%;
+	height: 48px;
+	line-height: 45px;
+}
+div.pixelconDetailsPage div.detailsSectionMoreButton {
+	position: absolute;
+	right: -5px;
+	bottom: 0px;
+}
+div.pixelconDetailsPage div.detailsSectionMoreButton .moreMenu {
+	background-image: url("/img/icon_more.svg");
+}
+div.pixelconDetailsPage div.detailsSectionMarketButton {
+	position: absolute;
+	right: -9px;
+	bottom: -50px;
+}
+div.pixelconDetailsPage.sm div.detailsSectionMarketButton {
+	bottom: -44px;
+}
+div.pixelconDetailsPage div.detailsSectionMarketButton.listed {
+	bottom: 0px;
+}
+div.pixelconDetailsPage div.detailsSectionMarketButton button {
+    padding-right: 0px;
+}
+div.pixelconDetailsPage div.marketButtonIconContainer {
+	display: inline-block;
+	vertical-align: middle;
+}
+div.pixelconDetailsPage div.detailsSectionLineItems {
+	padding-top: 2px;
+	line-height: 28px;
+}
+div.pixelconDetailsPage.sm div.detailsSectionLineItems {
+	line-height: 26px;
+}
+div.pixelconDetailsPage div.detailsSectionFooter {
+	width: 100%;
+    text-align: right;
+}
+
+/*Market Button*/
+div.pixelconDetailsPage div.marketButtonIcon {
+	width: 24px;
+	height: 24px;
+	margin-bottom: 2px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	background-image: url("/img/icon_store.svg");
+}
+div.pixelconDetailsPage div.marketButtonIcon.buy {
+	background-image: url("/img/icon_tag.svg");
+}
+div.pixelconDetailsPage div.marketButtonIcon.sell {
+	width: 36px;
+	height: 36px;
+}
+div.pixelconDetailsPage.sm div.marketButtonIcon.sell {
+	width: 24px;
+	height: 24px;
+}
+
+/* Error/Loading/Unclaimed */
+div.pixelconDetailsPage div.error {
+	text-align: center;
+	line-height: 24px;
+	margin-top: 30px;
+}    
+div.pixelconDetailsPage div.loading {
+	margin: 0 auto;
+	width: 80px;
+	height: 80px;
+	padding-bottom: 100px;
+	padding-top: 46px;
+}
+div.pixelconDetailsPage.sm div.loading {
+    padding-bottom: 88px;
+    padding-top: 35px;
+}
+div.pixelconDetailsPage div.unclaimed {
+	text-align: center;
+	margin-top: 20px;
+}

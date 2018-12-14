@@ -1,0 +1,157 @@
+/* General */
+div.pixelconCollectionPage {
+	width: 100%;
+	text-align: center;
+}
+div.pixelconCollectionPage div.topSpacer {
+	width: 100%;
+	height: 20px;
+}
+div.pixelconCollectionPage.sm div.topSpacer {
+	height: 10px;
+}
+div.pixelconCollectionPage div.bottomSpacer {
+	width: 100%;
+	height: 30px;
+}
+div.pixelconCollectionPage.sm div.bottomSpacer {
+	height: 20px;
+}
+div.pixelconCollectionPage div.maxWidth {
+	width: calc(100% - 60px);
+	max-width: 900px;
+	display: inline-block;
+}
+div.pixelconCollectionPage.md div.maxWidth {
+	max-width: 800px;
+}
+div.pixelconCollectionPage.sm div.maxWidth {
+	width: calc(100% - 16px);
+}
+div.pixelconCollectionPage div.accountCard {
+	display: inline-block;
+	max-width: 100%;
+	min-width: 500px;
+	border-radius: 15px;
+}
+div.pixelconCollectionPage.sm div.accountCard {
+	min-width: 340px;
+}
+
+/* Collection Card Container: Pixelcon Window */
+div.pixelconCollectionPage div.displayWindow {
+	position: relative;
+	box-sizing: border-box;
+	padding: 25px 60px 15px 60px;
+	border-radius: 15px;
+	min-height: 200px;
+}
+div.pixelconCollectionPage.md div.displayWindow {
+	padding: 25px 50px 15px 50px;
+}
+div.pixelconCollectionPage.sm div.displayWindow {
+	padding: 50px 10px 15px 10px;
+}
+div.pixelconCollectionPage div.groupIcon {
+	position: absolute;
+	display: inline-block;
+	font-size: 0px;
+	top: 15px;
+	left: 15px;
+}
+div.pixelconCollectionPage.sm div.groupIcon {
+	top: 20px;
+	left: 15px;
+}
+div.pixelconCollectionPage div.groupIconElement {
+	display: inline-block;
+	width: 8px;
+	height: 10px;
+	margin-right: 8px;
+}
+div.pixelconCollectionPage.md div.groupIconElement {
+    width: 7px;
+    height: 9px;
+    margin-right: 7px;
+}
+div.pixelconCollectionPage.sm div.groupIconElement {
+    width: 7px;
+    height: 9px;
+    margin-right: 7px;
+}
+div.pixelconCollectionPage div.displayTable {
+	box-sizing: border-box;
+	width: 100%;
+	text-align: center;
+}
+div.pixelconCollectionPage .pixelconCard {
+	display: inline-block;
+	margin: 12px;
+	margin-bottom: 20px;
+}
+div.pixelconCollectionPage.md .pixelconCard {
+	margin: 9px;
+	margin-bottom: 18px;
+}
+div.pixelconCollectionPage.sm .pixelconCard {
+	margin: 6px;
+	margin-bottom: 16px;
+}
+div.pixelconCollectionPage div.error {
+    position: absolute;
+	text-align: center;
+    left: 50%;
+    top: 50%;
+    margin: -38px -153px;
+    width: 276px;
+    height: 42px;
+    padding: 15px;
+    border-radius: 15px;
+}
+div.pixelconCollectionPage div.loading {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -45px -45px;
+	width: 80px;
+	height: 80px;
+	padding: 10px;
+	border-radius: 15px;
+}
+
+/* Card Details */
+div.pixelconCollectionPage div.detailsSection {
+	padding: 5px;
+	text-align: left;
+	min-height: 35px;
+}
+div.pixelconCollectionPage div.detailsInnerSection {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+div.pixelconCollectionPage div.detailsSectionMenuBar {
+	position: relative;
+	width: calc(100% - 50px);
+	padding-right: 50px;
+}
+div.pixelconCollectionPage div.detailsSectionMenuBarText {
+	display: inline-block;
+	vertical-align: bottom;
+}
+div.pixelconCollectionPage div.detailsSectionMenuBarTextSmall {
+	display: inline-block;
+	vertical-align: bottom;
+	padding-bottom: 3px;
+}
+div.pixelconCollectionPage div.detailsSectionMoreButton {
+	position: absolute;
+	right: -10px;
+	top: -5px;
+}
+div.pixelconCollectionPage div.detailsSectionMoreButton .moreMenu {
+	background-image: url("/img/icon_more.svg");
+}
+div.pixelconCollectionPage div.detailsSectionFooter {
+	width: 100%;
+    text-align: right;
+}

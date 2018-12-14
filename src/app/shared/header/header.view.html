@@ -1,0 +1,78 @@
+<div class="header md-whiteframe-1dp" ng-class="ctrl.screenSize">
+
+	<!-- Bad Network -->
+	<div ng-if="ctrl.badNetwork" class="badNetwork md-whiteframe-3dp">
+		<b>You are currently connected to the wrong Ethereum Network!</b><br/>Please make sure your account is connected to the {{ctrl.net}} Network
+	</div>
+	
+	<!-- Buttons -->
+	<div layout="row" class="menuButtons">
+		<md-button class="nav" ng-class="{'highlight':ctrl.page=='browse'}" ng-click="ctrl.goPath('/search')">
+			<div class="buttonIcon search"></div>
+			{{ctrl.screenSize.sm?'BRW':'Browse'}}
+		</md-button>
+		<md-button class="nav" ng-class="{'highlight':ctrl.page=='create'}" ng-click="ctrl.goPath('/create')">
+			<div class="buttonIcon create"></div>
+			{{ctrl.screenSize.sm?'CR8':'Create'}}
+		</md-button>
+		<md-button class="nav" ng-class="{'highlight':ctrl.page=='account'}" ng-show="ctrl.loggedIn" ng-click="ctrl.goPath('/account')">
+			<div class="buttonIcon account"></div>
+			{{ctrl.screenSize.sm?'ACCT':'Account'}}
+		</md-button>
+		
+		<md-button class="start md-raised md-primary" ng-show="ctrl.noWeb3" ng-click="ctrl.goPath('/start')">Start</md-button>
+	</div>
+	
+	<!-- Title/Icon -->	
+	<div class="pixelconTitle">
+		<div class="pixelconLogo crispImage clickable" ng-click="ctrl.goPath('/')">
+			<div class="pixelconLogoText textBold textDark textCenter">PixelCons</div>
+		</div>
+		<div ng-if="ctrl.net!='Main'" class="network textCenter" ng-class="{'ropsten':ctrl.net=='Ropsten', 'kovan':ctrl.net=='Kovan', 'rinkeby':ctrl.net=='Rinkeby'}">{{ctrl.net}}</div>	
+	</div>
+	
+	<!-- User Account -->
+	<div class="errorIcon" ng-show="ctrl.web3error">
+		<img class="iconFill" ng-src="img/icon_error.svg"/>
+		<md-tooltip md-direction="bottom">Error Connecting to Ethereum</md-tooltip>
+	</div>
+	<md-menu ng-show="ctrl.loggedIn" md-position-mode="target-right target">
+		<div class="accountIcon crispImage md-whiteframe-1dp" ng-click="ctrl.showActivityMenu($mdOpenMenu)">
+			<div class="iconFill" ng-mouseenter="ctrl.showActivityMenu($mdOpenMenu)" ng-mouseleave="ctrl.cancelActivityMenu()">
+				<img class="iconFill" ng-src="{{ctrl.userIcon}}"/>
+				<img ng-show="ctrl.waitingTransactions.length>0" class="iconFillOverlay crispImage" src="img/loading.gif"/>
+			</div>
+			<div class="tooltip" ng-class="{'hidden':ctrl.waitingTransactions.length==0}">Processing...</div>
+		</div>
+		<md-menu-content class="headerDropdown textMedium textNotSelectable" width="3" ng-mouseleave="ctrl.hideActivityMenu()">
+			<div class="textCenter">
+				<div class="headerDropdownText textLight" ng-if="ctrl.accounts.length==0">Please log into {{ctrl.web3ProviderName}}</div>
+			</div>
+			<div ng-if="ctrl.accounts.length>0">
+				<div class="textCenter clickable" ng-click="ctrl.goDetails()">
+					<img class="headerAccountActivityIcon md-whiteframe-1dp" ng-src="{{ctrl.userIcon}}"/>
+					<div class="headerDropdownText textLarge textDark textBold">Account Activity</div>
+					<div class="headerDropdownButtonLink"></div>
+				</div>
+				<md-divider></md-divider>
+				<div class="textCenter">
+					<div class="headerDropdownText textLight" ng-show="ctrl.waitingTransactions.length==0">No Pending Transactions</div>
+				</div>
+				<div ng-repeat="transaction in ctrl.waitingTransactions track by $index">
+					<div ng-if="transaction.params.pixelconId" class="headerDropdownIcon"><pixelcon class="md-whiteframe-1dp" id="transaction.params.pixelconId"></pixelcon></div>
+					<div ng-if="transaction.params.pixelconIds" class="headerDropdownIconCollection">
+						<pixelcon ng-if="transaction.params.pixelconIds[0]" class="md-whiteframe-1dp" id="transaction.params.pixelconIds[0]"></pixelcon>
+						<pixelcon ng-if="transaction.params.pixelconIds[1]" class="md-whiteframe-1dp" id="transaction.params.pixelconIds[1]"></pixelcon>
+						<pixelcon ng-if="transaction.params.pixelconIds[2]" class="md-whiteframe-1dp" id="transaction.params.pixelconIds[2]"></pixelcon>
+						<pixelcon ng-if="transaction.params.pixelconIds[3]" class="md-whiteframe-1dp" id="transaction.params.pixelconIds[3]"></pixelcon>
+					</div>
+					<div class="headerDropdownTextItem textLight">{{transaction.description}}</div>
+					<md-button class="headerDropdownButton md-primary" ng-click="ctrl.goDetails(transaction.txHash)">View</md-button>
+				</div>
+				<div class="textCenter">
+					<a class="textSmall textDark textBold" href="/start" ng-click="ctrl.hideActivityMenu()">Get Started</a>
+				</div>
+			</div>
+		</md-menu-content>
+	</md-menu>
+</div>

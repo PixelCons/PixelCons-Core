@@ -1,0 +1,125 @@
+/* General */
+div.pixelconCreatorPage {
+	width: 100%;
+	text-align: center;
+}
+div.pixelconCreatorPage div.topSpacer {
+	width: 100%;
+	height: 20px;
+}
+div.pixelconCreatorPage.sm div.topSpacer {
+	height: 10px;
+}
+div.pixelconCreatorPage div.bottomSpacer {
+	width: 100%;
+	height: 30px;
+}
+div.pixelconCreatorPage.sm div.bottomSpacer {
+	height: 20px;
+}
+div.pixelconCreatorPage div.maxWidth {
+	width: calc(100% - 60px);
+	max-width: 900px;
+	display: inline-block;
+}
+div.pixelconCreatorPage.md div.maxWidth {
+	max-width: 800px;
+}
+div.pixelconCreatorPage.sm div.maxWidth {
+	width: calc(100% - 16px);
+}
+div.pixelconCreatorPage div.accountCard {
+	display: inline-block;
+	max-width: 100%;
+	min-width: 500px;
+	border-radius: 15px;
+}
+div.pixelconCreatorPage.sm div.accountCard {
+	min-width: 340px;
+}
+
+/* Collection Card Container: Pixelcon Window */
+div.pixelconCreatorPage div.displayWindow {
+	position: relative;
+	box-sizing: border-box;
+	padding: 25px 60px 15px 60px;
+	border-radius: 15px;
+	min-height: 200px;
+}
+div.pixelconCreatorPage.sm div.displayWindow {
+	padding: 50px 10px 15px 10px;
+}
+div.pixelconCreatorPage div.accountIcon {
+	position: absolute;
+	display: inline-block;
+	font-size: 0px;
+	top: 15px;
+	left: 15px;
+}
+div.pixelconCreatorPage.sm div.accountIcon {
+	top: 10px;
+	left: 10px;
+}
+div.pixelconCreatorPage div.displayTable {
+	box-sizing: border-box;
+	width: 100%;
+	text-align: center;
+}
+div.pixelconCreatorPage .pixelconCard {
+	display: inline-block;
+	margin: 12px;
+	margin-bottom: 20px;
+}
+div.pixelconCreatorPage.md .pixelconCard {
+	margin: 9px;
+	margin-bottom: 18px;
+}
+div.pixelconCreatorPage.sm .pixelconCard {
+	margin: 6px;
+	margin-bottom: 16px;
+}
+div.pixelconCreatorPage div.error {
+    position: absolute;
+	text-align: center;
+    left: 50%;
+    top: 50%;
+    margin: -38px -153px;
+    width: 276px;
+    height: 42px;
+    padding: 15px;
+    border-radius: 15px;
+}
+div.pixelconCreatorPage div.loading {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -45px -45px;
+	width: 80px;
+	height: 80px;
+	padding: 10px;
+	border-radius: 15px;
+}
+
+/* Card Details */
+div.pixelconCreatorPage div.detailsSection {
+	padding: 5px;
+	text-align: left;
+	min-height: 55px;
+}
+div.pixelconCreatorPage div.detailsInnerSection {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+div.pixelconCreatorPage div.detailsSectionMenuBar {
+	position: relative;
+	width: calc(100% - 50px);
+	padding-right: 50px;
+}
+div.pixelconCreatorPage div.detailsSectionMenuBarText {
+	display: inline-block;
+	vertical-align: bottom;
+}
+div.pixelconCreatorPage div.detailsSectionFooter {
+	width: 100%;
+    text-align: right;
+}

@@ -1,0 +1,308 @@
+div.header {
+	position: relative;
+	width: 100%;
+	height: 80px;
+	background-color: #fafafa;
+	z-index: 5;
+}
+div.header.sm {
+	height: 60px;
+}
+
+/* Bad network error */
+div.header .badNetwork {
+	position: absolute;
+	top: 10px;
+	left: calc(50% - 140px);
+	background-color: #ffa44b;
+	width: 280px;
+	height: 72px;
+	z-index: 100;
+	text-align: center;
+	border-radius: 4px;
+	padding: 4px;
+}
+
+/* Title/Icon */
+div.header .pixelconTitle {
+	position: absolute;
+    top: 7px;
+    left: 10px;
+    height: 65px;
+}
+div.header.sm .pixelconTitle {
+	height: 50px;
+	left: 5px;
+    top: 5px;
+}
+div.header .pixelconTitle .pixelconLogo {
+	display: inline-block;
+	height: 65px;
+	width: 65px;
+	min-width: 65px;
+	line-height: 65px;
+	margin: 0px 15px 0px 15px;
+	background-image: url('/img/logo_header.png');
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+div.header.sm .pixelconTitle .pixelconLogo {
+    height: 50px;
+    width: 50px;
+    min-width: 50px;
+	line-height: 50px;
+	margin: 0px 0px 0px 12px;
+}
+div.header .pixelconTitle .pixelconLogoText {
+	font-size: 19px;
+	margin-left: -13px;
+}
+div.header.sm .pixelconTitle .pixelconLogoText {
+	font-size: 15px;
+	margin-left: -11px;
+}
+div.header .pixelconTitle .network {
+	background-color: #6f6f6f;
+	color: #fafafa;
+	border-radius: 10px;
+    padding: 0px 8px;
+	display: inline-block;
+	vertical-align: top;
+}
+div.header.sm .pixelconTitle .network {
+    padding: 0px 5px;
+    font-size: 12px;
+    height: 15px;
+}
+div.header .pixelconTitle .network.ropsten {
+	background-color: #FF4A8D;
+}
+div.header .pixelconTitle .network.kovan {
+	background-color: #7057FF;
+}
+div.header .pixelconTitle .network.rinkeby {
+	background-color: #F6C343;
+}
+div.header .pixelconTitle .pixelconPageText {
+	line-height: 20px;
+	height: 20px;
+	margin-right: auto;
+	text-transform: uppercase;
+	font-family: Roboto, "Helvetica Neue", sans-serif;
+	font-size: 14px;
+	border-bottom: 2px solid #2196f3;
+}
+div.header.sm .pixelconTitle .pixelconPageText {
+    margin-right: 10px;
+}
+div.header .pixelconTitle .pixelconPageText.noShow {
+	max-width: 0px;
+	overflow: hidden;
+}
+
+/* Menu Buttons */
+div.header .menuButtons {
+	position: absolute;
+	right: 80px;
+	top: 16px;
+}
+div.header.md .menuButtons {
+	right: 75px;
+}
+div.header.sm .menuButtons {
+	top: 12px;
+	right: 60px;
+}
+div.header .menuButtons button.start {
+	margin-right: -50px;
+}
+div.header.sm .menuButtons button.start {
+	margin-top: 0px;
+	height: 0px;
+}
+div.header .menuButtons button.nav.highlight {
+	margin-bottom: 3px;
+	border-bottom: 3px solid #2196f3;
+	border-radius: 0px;
+}
+div.header.md .menuButtons button.nav {
+	margin-left: 1px;
+	margin-right: 1px;
+}
+div.header.sm .menuButtons button.nav {
+	margin-left: 2px;
+	margin-right: 1px;
+	min-width: 0px;
+	font-size: 12px;
+	font-weight: 600;
+	height: 0px;
+	padding-left: 2px;
+	min-height: 33px;
+}
+div.header.sm .menuButtons button.nav .buttonIcon {
+	margin-top: 4px;
+}
+div.header .menuButtons button.menuButton {
+    margin-right: -5px;
+}
+div.header .menuButtons md-menu {
+	display: none;
+}
+div.header.sm .menuButtons md-menu {
+	display: inline;
+}
+
+/* User Icon */
+div.header .accountIcon {
+	cursor: pointer;
+	position: absolute;
+	padding: 4px;
+	border-radius: 6px;
+	background-color: #ffffff;
+	right: 10px;
+	top: 10px;
+	width: 48px;
+	height: 48px;
+}
+div.header.sm .accountIcon {
+	width: 38px;
+	height: 38px;
+	top: 6px;
+}
+div.header .errorIcon {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    width: 48px;
+}
+div.header.sm .errorIcon {
+    right: 11px;
+    top: 10px;
+    width: 40px;
+}
+div.header .iconFill {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+div.header .iconFillOverlay {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	background-color: rgba(216, 216, 216, 0.52);
+}
+
+/* Menu Dropdown and Tooltip */
+md-menu-content.headerDropdown {
+	display: inline-block;
+	min-width: 290px;
+	max-height: 500px;
+}
+md-menu-content.headerDropdown md-divider {
+    margin: 5px;
+}
+div.headerDropdownText {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 10px;
+}
+div.headerDropdownTextItem {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 10px 0px;
+}
+button.headerDropdownButton {
+	display: inline-block;
+	vertical-align: middle;
+	float: right;
+	margin: 0px 10px 0px 0px;
+	min-width: 0px;
+	padding: 0px 15px;
+}
+div.headerDropdownButtonLink {
+	display: inline-block;
+	vertical-align: middle;
+	background-image: url('/img/icon_goto.svg');
+	background-size: contain;
+	background-repeat: no-repeat;
+    background-size: 15px;
+    background-position: center;
+	padding: 0px;
+    margin: 0px 0px 11px -10px;
+    min-width: 0px;
+    min-height: 0px;
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+	filter: alpha(opacity=70);
+}
+img.headerAccountActivityIcon {
+	display: inline-block;
+	vertical-align: middle;
+	width: 32px;
+	height: 32px;
+	margin-right: -5px;
+	padding: 3px;
+	border-radius: 4px;
+	background-color: #ffffff;
+}
+div.headerDropdownIcon {
+	display: inline-block;
+	vertical-align: middle;
+	width: 27px;
+	height: 27px;
+	margin-left: 10px;
+	margin-right: 3px;
+	font-size: 0px;
+}
+div.headerDropdownIconCollection {
+	display: inline-block;
+	vertical-align: middle;
+	width: 32px;
+	height: 32px;
+	margin-left: 8px;
+	font-size: 0px;
+}
+div.headerDropdownIconCollection pixelcon {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin: 1px;
+}
+div.header .tooltip {
+	position: absolute;
+	right: -7px;
+    bottom: -30px;
+	
+	border-radius: 4px;
+	font-size: 14px;
+	height: 26px;
+	line-height: 26px;
+	padding-right: 16px;
+	padding-left: 16px;
+
+	color: rgba(255,255,255,0.87);
+	background-color: rgb(97,97,97);
+
+	transform-origin: center right;
+	-webkit-transition: all .3s cubic-bezier(.25,.8,.25,1);
+	transition: all .3s cubic-bezier(.25,.8,.25,1);
+	-webkit-transform: scale(1);
+	transform: scale(1);
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+}
+div.header .tooltip.hidden {
+	transform: scale(0);
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+div.header.sm .tooltip {
+    bottom: -26px;
+	font-size: 12px;
+	height: 22px;
+	line-height: 22px;
+	padding-right: 10px;
+	padding-left: 10px;
+}

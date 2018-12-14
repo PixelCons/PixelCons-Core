@@ -1,0 +1,16 @@
+{
+  "name": "PixelCons",
+  "version": "1.0.0",
+  "description": "Official site for creating and trading PixelCons!",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "dependencies": {
+    "ethereum-blockies": "^0.1.1",
+    "express": "^4.14.0",
+    "solc": "^0.4.25",
+    "truffle-contract": "^3.0.6"
+  }
+}

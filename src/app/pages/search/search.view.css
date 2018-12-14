@@ -1,0 +1,233 @@
+/* General */
+div.pixelconSearchPage {
+	width: 100%;
+}
+div.pixelconSearchPage div.topSpacer {
+	width: 100%;
+	height: 20px;
+}
+div.pixelconSearchPage.sm div.topSpacer {
+	height: 10px;
+}
+div.pixelconSearchPage div.bottomSpacer {
+	width: 100%;
+	height: 30px;
+}
+div.pixelconSearchPage.sm div.bottomSpacer {
+	height: 20px;
+}
+
+/* Search Card Container */
+div.pixelconSearchPage div.accountCard {
+	width: calc(100% - 60px);
+	max-width: 1280px;
+	border-radius: 15px;
+	margin: 0 auto;
+}
+div.pixelconSearchPage.sm div.accountCard {
+	width: calc(100% - 16px);
+}
+div.pixelconSearchPage div.searchFilter {
+	position: relative;
+	height: 95px;
+	width: 100%;
+}
+div.pixelconSearchPage.sm div.searchFilter {
+	height: 85px;
+}
+
+/* Search Card Container: Search Bar Header */
+div.pixelconSearchPage div.searchFilter div.searchBar {
+	position: absolute;
+	top: 15px;
+	left: 10px;
+	width: calc(100% - 20px);
+}
+div.pixelconSearchPage.sm div.searchFilter div.searchBar {
+	top: 10px;
+	left: 5px;
+	width: calc(100% - 10px);
+}
+div.pixelconSearchPage div.searchFilter div.searchBar md-input-container {
+	margin: 0px;
+	height: 32px;
+}
+div.pixelconSearchPage div.searchFilter div.searchBar input {
+	padding-left: 30px;
+	padding-bottom: 10px;
+	padding-right: 150px;
+}
+div.pixelconSearchPage.sm div.searchFilter div.searchBar input {
+	padding-right: 65px;
+}
+div.pixelconSearchPage div.searchFilter div.searchBar input:focus {
+	padding-bottom: 9px;
+}
+div.pixelconSearchPage div.searchFilter div.searchBar div.searchIcon {
+	position: absolute;
+	top: 1px;
+	width: 24px;
+	height: 24px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	background-image: url("/img/icon_search.svg");
+}
+div.pixelconSearchPage div.searchFilter div.searchBar div.searchCount {
+	position: absolute;
+	right: 4px;
+	top: 4px;
+}
+
+/* Search Card Container: Options */
+div.pixelconSearchPage div.searchFilter div.options {
+	position: absolute;
+	display: inline-block;
+	bottom: 7px;
+	left: 10px;
+	line-height: 33px;
+}
+div.pixelconSearchPage.sm div.searchFilter div.options {
+	bottom: 6px;
+	left: 10px;
+}
+div.pixelconSearchPage div.searchFilter div.options  md-checkbox {
+	margin-bottom: 0px;
+}
+
+/* Search Card Container: Sorting */
+div.pixelconSearchPage div.searchFilter div.sorting {
+	position: absolute;
+	display: inline-block;
+	bottom: 0px;
+	right: 5px;
+	text-align: right;
+}
+div.pixelconSearchPage.sm div.searchFilter div.sorting {
+	right: 0px;
+	bottom: -2px;
+}
+div.pixelconSearchPage div.searchFilter div.sorting .sortBy {
+	display: inline-block;
+	margin: 0px;
+}
+div.pixelconSearchPage.sm div.searchFilter div.sorting .sortBy .md-select-icon {
+	width: 5px;
+}
+div.pixelconSearchPage .sortDesc {
+	background-image: url("/img/icon_down.svg");
+}
+div.pixelconSearchPage .sortAsc {
+	background-image: url("/img/icon_up.svg");
+}
+
+/* Search Card Container: Pixelcon Window */
+div.pixelconSearchPage div.displayWindow {
+	position: relative;
+	width: 100%;
+	border-radius: 15px;
+	min-height: 200px;
+}
+div.pixelconSearchPage div.error {
+    position: absolute;
+	text-align: center;
+    left: 50%;
+    top: 50%;
+    margin: -50px -153px;
+    width: 276px;
+    height: 42px;
+    padding: 15px;
+    border-radius: 15px;
+}
+div.pixelconSearchPage div.loading {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -45px -45px;
+	width: 80px;
+	height: 80px;
+	padding: 10px;
+	border-radius: 15px;
+}
+div.pixelconSearchPage div.loading div.loadingText {
+	position: absolute;
+	text-align: center;
+	width: 100%;
+	left: 0px;
+	bottom: 10px;
+}
+div.pixelconSearchPage div.displayTable {
+	box-sizing: border-box;
+	width: 100%;
+	text-align: center;
+	padding: 20px;
+}
+div.pixelconSearchPage.md div.displayTable {
+	padding: 15px;
+}
+div.pixelconSearchPage.sm div.displayTable {
+	padding: 5px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+div.pixelconSearchPage .pixelconCard {
+	display: inline-block;
+	margin: 12px;
+	margin-bottom: 20px;
+}
+div.pixelconSearchPage.md .pixelconCard {
+	margin: 9px;
+	margin-bottom: 18px;
+}
+div.pixelconSearchPage.sm .pixelconCard {
+	margin: 6px;
+	margin-bottom: 16px;
+}
+
+/* Search Card Container: Paging */
+div.pixelconSearchPage div.searchPaging {
+	position: relative;
+	height: 50px;
+	width: 100%;
+}
+div.pixelconSearchPage div.searchPaging div.pagingText {
+	position: absolute;
+	text-align: center;
+	top: 15px;
+	right: 10px;
+}
+div.pixelconSearchPage div.searchPaging button.pageButton {
+	min-width: 36px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+div.pixelconSearchPage.sm div.searchPaging button.pageButton {
+	min-width: 32px;
+	max-height: 32px;
+	min-height: 32px;
+	line-height: 32px;
+	margin-left: 3px;
+	margin-right: 3px;
+}
+div.pixelconSearchPage div.searchPaging button.pageButton.previous {
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("/img/icon_back.svg");
+	background-size: 24px;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+}
+div.pixelconSearchPage div.searchPaging button.pageButton.next {
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("/img/icon_forward.svg");
+	background-size: 24px;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+}
+div.pixelconSearchPage div.searchPaging button.pageButton[disabled] {
+	opacity: 0.3;
+    filter: alpha(opacity=30);
+}
