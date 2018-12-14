@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+	<title>PixelCons</title>
+	<base href="/">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" href="img/icon.png">
+
+	<!-- Angular Material style sheet -->
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+	<!-- App style sheet -->
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="app/pages/details/details.view.css">
+	<link rel="stylesheet" href="app/pages/create/create.view.css">
+	<link rel="stylesheet" href="app/pages/account/account.view.css">
+	<link rel="stylesheet" href="app/pages/collection/collection.view.css">
+	<link rel="stylesheet" href="app/pages/creator/creator.view.css">
+	<link rel="stylesheet" href="app/pages/search/search.view.css">
+	<link rel="stylesheet" href="app/pages/home/home.view.css">
+	<link rel="stylesheet" href="app/pages/start/start.view.css">
+	<link rel="stylesheet" href="app/pages/terms/terms.view.css">
+	<link rel="stylesheet" href="app/shared/header/header.view.css">
+	<link rel="stylesheet" href="app/shared/footer/footer.view.css">
+	<link rel="stylesheet" href="app/shared/accounticon/accounticon.view.css">
+	<link rel="stylesheet" href="app/shared/pixelcon/pixelcon.view.css">
+	<link rel="stylesheet" href="app/shared/pixelconcard/pixelconcard.view.css">
+	<link rel="stylesheet" href="app/shared/dialogs/pixelcon/pixelcon.view.css">
+	<link rel="stylesheet" href="app/shared/dialogs/collection/collection.view.css">
+	<link rel="stylesheet" href="app/shared/dialogs/sell/sell.view.css">
+	<link rel="stylesheet" href="app/shared/dialogs/listing/listing.view.css">
+	<link rel="stylesheet" href="app/shared/dialogs/send/send.view.css">
+  
+</head>
+<body ng-app="App" ng-cloak>
+	
+	<!-- Start of main HTML -->
+	<div ng-controller="AppCtrl" layout="column" class="appContainer textNotSelectable" ng-cloak>
+		<app-header></app-header>
+		<div id="scrollTarget" class="pageContent">
+			<div class="pageContentBackground crispImage">
+				<ng-view id="view" class="filteredImage"></ng-view>
+			</div>
+			<app-footer></app-footer>
+		</div>
+	</div>
+	<!-- End of main HTML -->
+
+	<!-- Angular.js and Angular Material scripts -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+	<script src="https://code.jquery.com/jquery-latest.js"></script>
+	
+	<!-- Lib scripts -->
+    <script src="lib/blockies.min.js"></script>
+    <script src="lib/web3.min.js"></script>
+    <script src="lib/truffle-contract.min.js"></script>
+    <script src="lib/aes.min.js"></script>
+
+	<!-- App services -->
+	<script src="app/app.modules.js"></script>
+	<script src="app/services/ethprice.filter.js"></script>
+	<script src="app/services/web3.service.js"></script>
+	<script src="app/services/marketContract.service.js"></script>
+	<script src="app/services/coreContract.service.js"></script>
+
+	<!-- App components -->
+	<script src="app/pages/details/details.controller.js"></script>
+	<script src="app/pages/create/create.controller.js"></script>
+	<script src="app/pages/account/account.controller.js"></script>
+	<script src="app/pages/collection/collection.controller.js"></script>
+	<script src="app/pages/creator/creator.controller.js"></script>
+	<script src="app/pages/search/search.controller.js"></script>
+	<script src="app/pages/home/home.controller.js"></script>
+	<script src="app/pages/start/start.controller.js"></script>
+	<script src="app/pages/terms/terms.controller.js"></script>
+	<script src="app/shared/header/header.directive.js"></script>
+	<script src="app/shared/footer/footer.directive.js"></script>
+	<script src="app/shared/accounticon/accounticon.directive.js"></script>
+	<script src="app/shared/pixelcon/pixelcon.directive.js"></script>
+	<script src="app/shared/pixelconcard/pixelconcard.directive.js"></script>
+	<script src="app/shared/dialogs/pixelcon/pixelcon.controller.js"></script>
+	<script src="app/shared/dialogs/collection/collection.controller.js"></script>
+	<script src="app/shared/dialogs/sell/sell.controller.js"></script>
+	<script src="app/shared/dialogs/listing/listing.controller.js"></script>
+	<script src="app/shared/dialogs/send/send.controller.js"></script>
+
+</body>
+</html>
