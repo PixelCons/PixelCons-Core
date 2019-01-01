@@ -42,7 +42,7 @@
 }
 .sendDialog div.dialogCloseButton:hover {
 	opacity: 1.0;
-    filter: alpha(opacity=100);
+	filter: alpha(opacity=100);
 }
 .sendDialog div.dialogTitle {
 	position: absolute;
@@ -120,9 +120,9 @@
 }
 .sendDialog .amountInput {
 	width: 120px;
-    margin-left: 73px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+	margin-left: 73px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 .sendDialog .amountInput input {
 	text-align: center;
