@@ -4,7 +4,7 @@ accounticon {
 }
 accounticon .accountIconDirectiveContainer {
 	display: inline-block;
-    vertical-align: top;
+	vertical-align: top;
 }
 accounticon .accountIconDirectiveFull {
 	position: absolute;
@@ -25,7 +25,7 @@ accounticon .ng-hide {
 /* Main Appearance */
 accounticon .accountIconDirectiveInline {
 	display: inline-block;
-    vertical-align: top;
+	vertical-align: top;
 }
 accounticon .accountIconDirectiveIconContainer {
 	position: relative;
