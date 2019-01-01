@@ -9,6 +9,20 @@
 				<div class="accountIcon colorDarkOverlay">
 					<accounticon address="ctrl.creator" size="{{ctrl.screenSize.sm?'sm':'md'}}"></accounticon>
 				</div>
+				<md-menu md-position-mode="target-right target">
+					<div class="shareLink clickable" ng-click="$mdOpenMenu()" aria-label="Share"></div>
+					<md-menu-content class="shareLinksContextMenu">
+						<md-menu-item>
+							<md-button ng-click="ctrl.copyLink()"><div class="shareLinkIcon url"></div>Copy URL</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button ng-click="ctrl.shareOnFacebook()"><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
+						</md-menu-item>
+						<md-menu-item>
+							<md-button ng-click="ctrl.shareOnTwitter()"><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
+						</md-menu-item>
+					</md-menu-content>
+				</md-menu>
 			
 				<!-- Error -->
 				<div class="error colorLight" ng-show="ctrl.error">

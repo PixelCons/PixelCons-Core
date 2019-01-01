@@ -110,7 +110,7 @@ div.pixelconStartPage div.checkBadge {
 	width: 24px;
 	height: 24px;
 	background-size: 24px;
-	background-image: url("/img/icon_ex.svg");
+	background-image: url("/img/icon_ex_c.svg");
 	opacity: 0.8;
 	filter: alpha(opacity=80);
 }

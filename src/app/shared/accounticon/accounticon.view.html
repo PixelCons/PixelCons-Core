@@ -7,14 +7,10 @@
 	<div class="accountIconDirectiveInline accountIconDirectiveRight" ng-if="ctrl.mode=='signature'">
 		<div class="accountIconDirectiveInline accountIconDirectiveNormalText accountIconDirectiveBottom textBold"
 				ng-class="{'textMedium':ctrl.size=='sm'||ctrl.size=='md', 'textLarge':ctrl.size=='lg'}">{{ctrl.text}}</div>
-		<div class="accountIconDirectiveInline accountIconDirectiveIcon" 
-				ng-class="{'colorYellow':ctrl.address==ctrl.marketAddress, 'colorWhite':ctrl.address!=ctrl.marketAddress&&!ctrl.isReserveAddress, 'colorDark':ctrl.isReserveAddress}">
+		<div class="accountIconDirectiveInline accountIconDirectiveIcon signature" ng-class="{'colorWhite':!ctrl.isReserveAddress, 'colorDark':ctrl.isReserveAddress}">
 			<div class="accountIconDirectiveIconContainer">
-				<img class="crispImage" style="width:100%; height:100%" ng-src="{{ctrl.addressIcon}}" ng-if="ctrl.address!=ctrl.marketAddress"/>
+				<img class="crispImage" style="width:100%; height:100%" ng-src="{{ctrl.addressIcon}}"/>
 				<img class="crispImage" style="width:100%; height:100%; margin-top:-100%" src="/img/logo_s.png" ng-if="ctrl.isReserveAddress"/>
-				<div class="accountIconDirectiveIconCover accountIconDirectiveFull" ng-show="ctrl.address==ctrl.marketAddress">
-					<div class="accountIconDirectiveIconCoverIcon accountIconDirectiveIconMarketIcon accountIconDirectiveFull"></div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -30,7 +26,7 @@
 	</div>
 		
 	<!-- Icon Mode -->
-	<div class="accountIconDirectiveInline accountIconDirectiveIcon" ng-class="{'colorWhite':ctrl.text}" ng-if="ctrl.mode=='icon'">
+	<div class="accountIconDirectiveInline accountIconDirectiveIcon icon" ng-class="{'colorWhite':ctrl.text}" ng-if="ctrl.mode=='icon'">
 		<div class="accountIconDirectiveIconContainer">
 			<img class="crispImage" style="width:100%; height:100%" ng-src="{{ctrl.addressIcon}}"/>
 			<div class="accountIconDirectiveIconGotoCover accountIconDirectiveFull" ng-class="{'accountIconDirectiveTransition': ctrl.loaded}" ng-show="dirHover && ctrl.clickable">

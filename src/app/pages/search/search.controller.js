@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('SearchPageCtrl', SearchPageCtrl);
 
-	SearchPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$location', 'web3Service', 'coreContract', 'marketContract'];
-	function SearchPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $location, web3Service, coreContract, marketContract) {
+	SearchPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$location', 'web3Service', 'coreContract', 'openSea'];
+	function SearchPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $location, web3Service, coreContract, openSea) {
 		var _this = this;
 		var maxInPage = 50;
 		var minGrade = 8;
@@ -20,7 +20,7 @@
 		_this.checkUpdateData = checkUpdateData;
 		_this.updatePage = updatePage;
 		_this.goPath = goPath;
-		_this.marketEnabled = marketContract.isEnabled();
+		_this.marketEnabled = openSea.isEnabled();
 		
 		var loadedFilter = {};
 		
@@ -47,11 +47,13 @@
 			_this.loading = true;
 			_this.currPage = 0;
 			_this.pixelcons = [];
+			_this.showMarketLink = !openSea.canGetForSaleList();
+			_this.marketLink = openSea.getMarketLink();
 			
 			coreContract.getTotalPixelcons().then(function(total) {
 				pixelconCount = total;
-			
-				return marketContract.getAllSelling()
+				
+				return openSea.getItemsForSale();
 			}).then(function(indexes) {
 				pixelconListings = indexes;
 				

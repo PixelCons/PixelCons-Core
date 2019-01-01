@@ -2,17 +2,18 @@
 	angular.module('App')
 		.controller('DetailsPageCtrl', DetailsPageCtrl);
 
-	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$location', 'web3Service', 'coreContract', 'marketContract'];
-	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $location, web3Service, coreContract, marketContract) {
+	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$location', 'web3Service', 'coreContract'];
+	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $location, web3Service, coreContract) {
 		var _this = this;
 		var pixelconDetails;
 		_this.rename = rename;
 		_this.create = create;
 		_this.send = send;
 		_this.goPath = goPath;
-		_this.clickMarketButton = clickMarketButton;
-		_this.generateSigText = generateSigText;
-		_this.canMakeListings = marketContract.canMakeListings();
+		_this.generateTimeText = generateTimeText;
+		_this.copyLink = copyLink;
+		_this.shareOnTwitter = shareOnTwitter;
+		_this.shareOnFacebook = shareOnFacebook;
 		
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -27,6 +28,7 @@
 		// Get details for the pixelcon id
 		loadPixelconDetails();
 		function loadPixelconDetails(pixelcon) {
+			_this.marketData = null;
 			_this.details = null;
 			_this.unclaimed = false;
 			
@@ -51,11 +53,8 @@
 		
 		// Update from transaction
 		function updateFromTransaction(transactionData) {
-			if(transactionData && transactionData.success) {
-				var pixelcon = null;
-				if(transactionData.pixelcons) pixelcon = findInList(transactionData.pixelcons);
-				else if(transactionData.listings) pixelcon = filterWithList(transactionData.listings);
-				
+			if(transactionData && transactionData.success && transactionData.pixelcons) {
+				var pixelcon = findInList(transactionData.pixelcons);
 				if(pixelcon) {
 					pixelcon = angular.extend({}, pixelconDetails, pixelcon);
 					loadPixelconDetails(pixelcon);
@@ -66,6 +65,7 @@
 		// Sets page details to the given pixelcon data
 		function setPixelconDetails(pixelcon) {
 			pixelconDetails = pixelcon;
+			_this.marketData = pixelcon.openSea;
 			_this.details = {
 				index: pixelcon.index,
 				owner: pixelcon.owner,
@@ -73,8 +73,7 @@
 				name: pixelcon.name,
 				number: 'Number ' + pixelcon.index,
 				date: 'Created ' + (new Date(pixelcon.date)).toLocaleDateString(),
-				collection: pixelcon.collection,
-				listing: pixelcon.listing
+				collection: pixelcon.collection
 			}
 			checkPermissions();
 		}
@@ -82,10 +81,11 @@
 		// Checks permissions for the action buttons
 		function checkPermissions() {
 			var account = web3Service.getActiveAccount();
+			_this.isOwner = false;
+			_this.isCreator = false;
 			if(_this.details && account) {
 				_this.isOwner = account == _this.details.owner;
 				_this.isCreator = account == _this.details.creator;
-				_this.isSeller = _this.details.listing && account == _this.details.listing.seller;
 			}
 		}
 
@@ -99,7 +99,7 @@
 			$mdDialog.show({
 				controller: 'PixelconDialogCtrl',
 				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/pixelcon/pixelcon.view.html',
+				templateUrl: HTMLTemplates['dialog.pixelcon'],
 				parent: angular.element(document.body),
 				locals:{pixelconId: _this.pixelconId, editMode: true},
 				bindToController: true,
@@ -112,7 +112,7 @@
 			$mdDialog.show({
 				controller: 'PixelconDialogCtrl',
 				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/pixelcon/pixelcon.view.html',
+				templateUrl: HTMLTemplates['dialog.pixelcon'],
 				parent: angular.element(document.body),
 				locals:{pixelconId: _this.pixelconId},
 				bindToController: true,
@@ -125,72 +125,12 @@
 			$mdDialog.show({
 				controller: 'SendDialogCtrl',
 				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/send/send.view.html',
+				templateUrl: HTMLTemplates['dialog.send'],
 				parent: angular.element(document.body),
 				locals:{pixelconId: _this.pixelconId},
 				bindToController: true,
 				clickOutsideToClose: true
 			});
-		}
-		
-		// Buy the pixelcon
-		function buyPixelcon(ev) {
-			if(_this.details.listing.timeLeft) {
-				$mdDialog.show({
-					controller: 'MarketListingDialogCtrl',
-					controllerAs: 'ctrl',
-					templateUrl: 'app/shared/dialogs/listing/listing.view.html',
-					parent: angular.element(document.body),
-					locals:{pixelconId: _this.pixelconId, pixelconIdx: _this.details.index, price:_this.details.listing.price, buyMode: true},
-					bindToController: true,
-					clickOutsideToClose: true
-				});
-			}
-		}
-		
-		// Sell the pixelcon
-		function sellPixelcon(ev) {
-			$mdDialog.show({
-				controller: 'SellPixelconDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/sell/sell.view.html',
-				parent: angular.element(document.body),
-				locals:{pixelconId: _this.pixelconId, pixelconIdx: _this.details.index},
-				bindToController: true,
-				clickOutsideToClose: true
-			});
-		}
-		
-		// Removes pixelcon sale listing
-		function removeListing(ev) {
-			$mdDialog.show({
-				controller: 'MarketListingDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/listing/listing.view.html',
-				parent: angular.element(document.body),
-				locals:{pixelconId: _this.pixelconId, pixelconIdx: _this.details.index, removeMode: true},
-				bindToController: true,
-				clickOutsideToClose: true
-			});
-		}
-		
-		// Market button clicked
-		function clickMarketButton(ev) {
-			if(_this.isOwner) sellPixelcon(ev);
-			else if(_this.isSeller) removeListing(ev);
-			else buyPixelcon(ev);
-		}
-		
-		// Generates signature text
-		function generateSigText() {
-			if(_this.details && _this.details.listing) {
-				var hoursLeft = Math.floor(_this.details.listing.timeLeft/(60*60));
-				if(hoursLeft>24) return Math.round(hoursLeft/24)+'d Left';
-				if(hoursLeft==0) return "Market";
-				return hoursLeft+'h Left';
-			} else {
-				return 'Owned By';
-			}
 		}
 		
 		// Gets page relevant pixelcon from list
@@ -207,20 +147,40 @@
 			return pixelcon;
 		}
 		
-		// Gets the relevant pixelcon with listing data removed
-		function filterWithList(list) {
-			var pixelcon = null;
-			if(list) {
-				for(var i=0; i<list.length; i++) {
-					if(list[i].pixelconIndex == pixelconDetails.index) {
-						pixelconDetails.owner = list[i].pixelconOwner;
-						pixelconDetails.listing = list[i].listing;
-						pixelcon = pixelconDetails;
-						break;
-					}
-				}
-			}
-			return pixelcon;
+		// Generates a time text from the given seconds
+		function generateTimeText(seconds) {
+			if(!seconds) return '???';
+			
+			var minutes = Math.floor(seconds/60);
+			var hours = Math.floor(minutes/60);
+			var days = Math.floor(hours/24);
+			if(days > 0) return (days+1) + ' day' + (days>1?'s':'');
+			else if(hours > 0) return (hours+1) + ' hour' + (hours>1?'s':'');
+			else if(minutes > 0) return (minutes+1) + ' minute' + (minutes>1?'s':'');
+			else return (seconds+1) + ' second' + (seconds>1?'s':'');
+		}
+		
+		// Copies share link to the clipboard
+		function copyLink() {
+			var copyText = document.getElementById("copyToClipboard");
+			copyText.value = document.URL;
+			copyText.select();
+			document.execCommand("copy");
+		}
+		
+		// Share this page on twitter
+		function shareOnTwitter() {
+			var url = "https://twitter.com/intent/tweet?url=";
+			url += encodeURI(document.URL);
+			url += '&text=' + encodeURI("Check out this PixelCon!");
+			window.open(url,'_blank');
+		}
+		
+		// Share this page on facebook
+		function shareOnFacebook() {
+			var url = "https://www.facebook.com/sharer/sharer.php?u="
+			url += encodeURI(document.URL);
+			window.open(url,'_blank');
 		}
 		
 		// Set flag the directive as loaded

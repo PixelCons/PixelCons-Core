@@ -1,0 +1,115 @@
+/* General */
+.collectionDialog {
+	position: relative;
+	height: 250px;
+	width: 270px;
+	min-width: 270px;
+	margin-bottom: 200px;
+}
+.collectionDialog.sm {
+	margin-bottom: 100px;
+}
+.collectionDialog div.view {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+.collectionDialog div.infoText {
+	text-align: center;
+	margin: 10px;
+}
+.collectionDialog div.actionButtons {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	text-align: right;
+}
+
+/* Header */
+.collectionDialog div.dialogCloseButton {
+	cursor: pointer;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 24px;
+	height: 24px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("/img/icon_close.svg");
+	background-size: contain;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+}
+.collectionDialog div.dialogCloseButton:hover {
+	opacity: 1.0;
+    filter: alpha(opacity=100);
+}
+.collectionDialog div.dialogTitle {
+	position: absolute;
+	width: 180px;
+	text-align: center;
+	margin-top: 8px;
+	margin-left: 28px;
+	font-size: 22px;
+}
+.collectionDialog div.pixelconContainer {
+	position: absolute;
+	display: inline-block;
+	top: 5px;
+	right: 5px;
+	width: 54px;
+	font-size: 0px;
+	text-align: right;
+}
+.collectionDialog div.pixelconContainer pixelcon {
+	display: inline-block;
+	width: 23px;
+	height: 23px;
+	margin: 2px;
+}
+.collectionDialog .md-errors-spacer {
+	max-height: 0px;
+	min-height: 0px;
+}
+.collectionDialog div.termsNote {
+	display: inline-block;
+	text-align: center;
+	padding: 0px 40px 0px 40px;
+}
+
+/* Error View */
+.collectionDialog div.errorTitle {
+	margin-top: 100px;
+}
+
+/* Loading View */
+.collectionDialog div.loadingIcon {
+	margin: 0 auto;
+	width: 80px;
+	padding-top: 80px;
+}
+
+/* Create View */
+.collectionDialog div.createTitle {
+	margin-top: 80px;
+}
+.collectionDialog .nameInput {
+	width: 150px;
+	margin-left: 58px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.collectionDialog .nameInput input {
+	text-align: center;
+}
+.collectionDialog div.note {
+	position: absolute;
+	left: 15px;
+	bottom: 10px;
+	font-size: 14px;
+}
+
+/* Duplicate View */
+.collectionDialog div.duplicateTitle {
+	margin-top: 125px;
+}

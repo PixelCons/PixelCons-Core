@@ -3,8 +3,8 @@
 		.directive('accounticon', accounticon)
 		.controller('AccountIconCtrl', AccountIconCtrl);
 
-	AccountIconCtrl.$inject = ['$scope', '$location', '$timeout', 'web3Service', 'marketContract'];
-	function AccountIconCtrl($scope, $location, $timeout, web3Service, marketContract) {
+	AccountIconCtrl.$inject = ['$scope', '$location', '$timeout', 'web3Service'];
+	function AccountIconCtrl($scope, $location, $timeout, web3Service) {
 		var _this = this;
 		_this.account = web3Service.getActiveAccount();
 		_this.iconClicked = iconClicked;
@@ -37,15 +37,6 @@
 		$scope.$watch('ctrl.clickable', function() {
 			_this.clickable = (_this.clickable===true || _this.clickable=='true');
 		});
-		
-		
-		// Get the market contract address
-		_this.marketAddress = 'NA';
-		if(marketContract.isEnabled()) {
-			marketContract.getMarketDetails().then(function(data) {
-				_this.marketAddress = data.address.toLowerCase();
-			});
-		}
 		
 		// Watch for address changes
 		$scope.$watch('ctrl.address', function() {
@@ -108,7 +99,7 @@
 			bindToController: true,
 			controller: 'AccountIconCtrl',
 			controllerAs: 'ctrl',
-			templateUrl: 'app/shared/accounticon/accounticon.view.html'
+			templateUrl: HTMLTemplates['shared.accounticon']
 		};
 	}
 }());

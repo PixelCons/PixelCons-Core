@@ -34,18 +34,14 @@ accounticon .accountIconDirectiveIconContainer {
 	margin: 4px;
 	font-size: 0px;
 }
+accounticon .accountIconDirectiveIcon.icon {
+	margin-right: 5px;
+}
+accounticon .accountIconDirectiveIcon.signature {
+	margin-left: 5px;
+}
 accounticon .accountIconDirectiveIconCover {
 	background-color: rgba(254, 254, 254, 0.4);
-}
-accounticon .accountIconDirectiveIconCoverIcon {
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: contain;
-	opacity: 0.8;
-	filter: alpha(opacity=80);
-}
-accounticon .accountIconDirectiveIconMarketIcon {
-	background-image: url("/img/icon_store.svg");
 }
 accounticon .accountIconDirectiveIconGotoCover {
 	background-color: rgba(51, 51, 51, 0.4);

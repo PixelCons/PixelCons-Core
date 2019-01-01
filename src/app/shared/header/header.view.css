@@ -54,10 +54,12 @@ div.header.sm .pixelconTitle .pixelconLogo {
 	margin: 0px 0px 0px 12px;
 }
 div.header .pixelconTitle .pixelconLogoText {
+	text-shadow: 0px 0px 30px #989898;
 	font-size: 19px;
 	margin-left: -13px;
 }
 div.header.sm .pixelconTitle .pixelconLogoText {
+	text-shadow: 0px 0px 15px #a7a7a7;
 	font-size: 15px;
 	margin-left: -11px;
 }
@@ -154,7 +156,6 @@ div.header.sm .menuButtons md-menu {
 
 /* User Icon */
 div.header .accountIcon {
-	cursor: pointer;
 	position: absolute;
 	padding: 4px;
 	border-radius: 6px;
@@ -169,16 +170,21 @@ div.header.sm .accountIcon {
 	height: 38px;
 	top: 6px;
 }
-div.header .errorIcon {
-    position: absolute;
-    right: 15px;
-    top: 15px;
-    width: 48px;
+div.header .connectButton { 
+	background: #a2a2a2;
 }
-div.header.sm .errorIcon {
-    right: 11px;
-    top: 10px;
-    width: 40px;
+div.header .connectButton:hover { 
+	background: #777777;
+}
+div.header .connectButton img {
+	position: absolute; 
+	top: 0px; 
+	right: 0px;
+}
+div.header .connectButton div {
+	position: absolute; 
+	top: 12px; 
+	left: 4px;
 }
 div.header .iconFill {
 	position: relative;

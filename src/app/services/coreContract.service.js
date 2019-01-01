@@ -2,16 +2,17 @@
 	angular.module('App')
 		.service('coreContract', coreContract);
 		
-	coreContract.$inject = ['web3Service', 'marketContract', '$q'];
-	function coreContract(web3Service, marketContract, $q) {
+	coreContract.$inject = ['web3Service', 'openSea', '$q'];
+	function coreContract(web3Service, openSea, $q) {
 		var _contractABI = 'contracts/PixelCons.json';
 		var _gasPadding = 1.3;
-		var _gasPricePadding = 1.4;
-		var _transferGasEstimate = 290000;
+		var _makeGasPriceSuggestion = false;
+		var _gasPricePadding = 1.2;
 		var _maxNameFetch = 10000;
 		var _cacheNameFetch = true;
 		
 		var _noAccountError = 'No Ethereum Account';
+		var _accountPrivateError = 'Ethereum Account Not Connected';
 		var _notEnabledError = 'No Ethereum Connection';
 		var _notConnectedError = 'Ethereum Provider Not Connected';
 		var _unknownError = 'Unknown Error';
@@ -36,11 +37,9 @@
 		this.verifyPixelconCollectionEdit = verifyPixelconCollectionEdit;
 		this.verifyPixelconCollectionClear = verifyPixelconCollectionClear;
 		this.verifyTransferPixelcon = verifyTransferPixelcon;
-		this.verifyTransferPixelconToMarket = verifyTransferPixelconToMarket;
 		this.createPixelcon = createPixelcon;
 		this.updatePixelcon = updatePixelcon;
 		this.transferPixelcon = transferPixelcon;
-		this.transferPixelconToMarket = transferPixelconToMarket;
 		this.createPixelconCollection = createPixelconCollection;
 		this.updatePixelconCollection = updatePixelconCollection;
 		this.clearPixelconCollection = clearPixelconCollection;
@@ -50,7 +49,6 @@
 		var _createTypeDescription = ["Create PixelCon", "Creating PixelCon..."];
 		var _updateTypeDescription = ["Rename PixelCon", "Updating PixelCon..."];
 		var _transferTypeDescription = ["Transfer PixelCon", "Sending PixelCon..."];
-		var _transferToMarketTypeDescription = ["Transfer PixelCon to Market", "Listing PixelCon..."];
 		var _createCollectionTypeDescription = ["Create PixelCon Collection", "Creating Collection..."];
 		var _updateCollectionTypeDescription = ["Rename PixelCon Collection", "Updating Collection..."];
 		var _clearCollectionTypeDescription = ["Clear PixelCon Collection", "Clearing Collection..."];
@@ -302,7 +300,6 @@
 					web3Service.getContract(_contractABI).then(function(contract) {
 						var created = null;
 						var owned = null;
-						var selling = null;
 						var alreadyFailed = false;
 						function endAccountFetch(result) {
 							if(result!==true && !alreadyFailed) {
@@ -310,13 +307,12 @@
 								errorCallback(result);
 								alreadyFailed = true;
 							}
-							else if(created && owned && selling) {
+							else if(created && owned) {
 								
 								//combine owned and created
 								var combinedIndexes = [];
 								for(var i=0; i<owned.length; i++) if(combinedIndexes.indexOf(owned[i]) == -1) combinedIndexes.push(owned[i]);
 								for(var i=0; i<created.length; i++) if(combinedIndexes.indexOf(created[i]) == -1) combinedIndexes.push(created[i]);
-								for(var i=0; i<selling.length; i++) if(combinedIndexes.indexOf(selling[i]) == -1) combinedIndexes.push(selling[i]);
 								combinedIndexes.sort(function(a,b){ return a-b; });
 								
 								//get basic details
@@ -331,7 +327,6 @@
 												owner: basicDetails[2][i].toString(),
 												created: created.indexOf(combinedIndexes[i]) > -1,
 												owned: owned.indexOf(combinedIndexes[i]) > -1,
-												selling: selling.indexOf(combinedIndexes[i]) > -1,
 												collection: basicDetails[3][i].toNumber()?basicDetails[3][i].toNumber():null
 											});
 										}
@@ -350,7 +345,6 @@
 												for(var j=0; j<pixelcons[i].collection.pixelcons.length; j++) {
 													pixelcons[i].collection.pixelcons[j].created = created.indexOf(pixelcons[i].collection.pixelcons[j].index) > -1;
 													pixelcons[i].collection.pixelcons[j].owned = owned.indexOf(pixelcons[i].collection.pixelcons[j].index) > -1;
-													pixelcons[i].collection.pixelcons[j].selling = selling.indexOf(pixelcons[i].collection.pixelcons[j].index) > -1;
 												}
 											}
 										}
@@ -363,7 +357,7 @@
 							}
 						}
 						
-						//query for tokens created by, owned by, or selling by account
+						//query for tokens created by or owned by account
 						contract.getForCreator.call(address).then(function(indexes) {
 							created = [];
 							for(var i=0; i<indexes.length; i++) created.push(indexes[i].toNumber());
@@ -372,10 +366,6 @@
 						contract.getForOwner.call(address).then(function(indexes) {
 							owned = [];
 							for(var i=0; i<indexes.length; i++) owned.push(indexes[i].toNumber());
-							endAccountFetch(true);
-						}, endAccountFetch);
-						marketContract.fetchPixelconIndexesBySeller(address).then(function(indexes) {
-							selling = indexes;
 							endAccountFetch(true);
 						}, endAccountFetch);
 					}, reject);
@@ -481,6 +471,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(id == null) reject(_invalidIdError);
 				else if(isDuplicate(_createTypeDescription[0], [id])) reject(_duplicateTransactionError);
 				else {
@@ -519,6 +510,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(id == null) reject(_invalidIdError);
 				else if(isDuplicate(_updateTypeDescription[0], [id])) reject(_duplicateTransactionError);
 				else {
@@ -551,6 +543,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(id == null) reject(_invalidIdError);
 				else if(isDuplicate(_transferTypeDescription[0], [id])) reject(_duplicateTransactionError);
 				else {
@@ -567,30 +560,6 @@
 			});
 		}
 		
-		// Verifies the pixelcon transfer
-		function verifyTransferPixelconToMarket(id, startPrice, endPrice, duration) {
-			id = formatPixelconId(id);
-			return $q(function(resolve, reject) {
-				var state = web3Service.getState();
-				if(state == "not_enabled") reject(_notEnabledError);
-				else if(state == "not_connected") reject(_notConnectedError);
-				else if(state != "ready") reject(_unknownError);
-				else if(web3Service.isReadOnly()) reject(_noAccountError);
-				else if(!marketContract.canMakeListings()) reject(_functionDisabledError);
-				else if(id == null) reject(_invalidIdError);
-				else if(isDuplicate(_transferToMarketTypeDescription[0], [id])) reject(_duplicateTransactionError);
-				else {
-					web3Service.getContract(_contractABI).then(function(contract) {
-						var estimate = Math.floor(_transferGasEstimate*_gasPadding);
-						var estCost = web3Service.getGasPrice(estimate);
-						resolve({
-							estCost: estCost
-						});
-					}, reject);	
-				}
-			});
-		}
-		
 		// Verifies the pixelcon collection
 		function verifyPixelconCollection(indexes, pixelconIds) {
 			return $q(function(resolve, reject) {
@@ -599,6 +568,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(isDuplicate(_createCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
 				else {
 					web3Service.getContract(_contractABI).then(function(contract) {
@@ -622,6 +592,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(index == 0) reject(_invalidIndexError);
 				else if(isDuplicate(_updateCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
 				else {
@@ -648,6 +619,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(index == 0) reject(_invalidIndexError);
 				else if(isDuplicate(_clearCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
 				else {
@@ -681,6 +653,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(id == null) reject(_invalidIdError);
 				else {
 					web3Service.getContract(_contractABI).then(function(contract) {
@@ -689,7 +662,8 @@
 							var gasPrice = web3Service.getGasPrice();
 							var to = web3Service.getActiveAccount();
 							
-							var params = {from:to, gas:estimate, gasPrice:Math.floor(gasPrice*_gasPricePadding)};
+							var params = {from:to, gas:estimate};
+							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'create', to, id, name, params).then(function(data) {
 								
 								//add pixelcon data for return
@@ -717,6 +691,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(id == null) reject(_invalidIdError);
 				else {
 					web3Service.getContract(_contractABI).then(function(contract) {
@@ -725,7 +700,8 @@
 							var gasPrice = web3Service.getGasPrice();
 							var acct = web3Service.getActiveAccount();
 							
-							var params = {from:acct, gas:estimate, gasPrice:Math.floor(gasPrice*_gasPricePadding)};
+							var params = {from:acct, gas:estimate};
+							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'rename', id, name, params).then(function(data) {
 								
 								//add pixelcon data for return
@@ -750,6 +726,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(!web3Service.isAddress(address)) reject(_invalidAddressError);
 				else if(id == null) reject(_invalidIdError);
 				else {
@@ -759,7 +736,8 @@
 							estimate = Math.floor(estimate*_gasPadding);
 							var gasPrice = web3Service.getGasPrice();
 							
-							var params = {from:owner, gas:estimate, gasPrice:Math.floor(gasPrice*_gasPricePadding)};
+							var params = {from:owner, gas:estimate};
+							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'safeTransferFrom', owner, address, id, "", params).then(function(data) {
 								
 								//add pixelcon data for return
@@ -775,45 +753,6 @@
 			});
 		}
 		
-		// Transfers pixelcon to the market (which creates a listing)
-		function transferPixelconToMarket(id, startPrice, endPrice, duration) {
-			id = formatPixelconId(id);
-			return $q(function(resolve, reject) {
-				var state = web3Service.getState();
-				if(state == "not_enabled") reject(_notEnabledError);
-				else if(state == "not_connected") reject(_notConnectedError);
-				else if(state != "ready") reject(_unknownError);
-				else if(web3Service.isReadOnly()) reject(_noAccountError);
-				else if(!marketContract.canMakeListings()) reject(_functionDisabledError);
-				else if(id == null) reject(_invalidIdError);
-				else {
-					var marketDetails;
-					marketContract.getMarketDetails().then(function(details) {
-						marketDetails = details;
-						return web3Service.getContract(_contractABI);
-					}).then(function(contract) {
-						var owner = web3Service.getActiveAccount();
-						var bytes = marketContract.generateTransferBytesData(startPrice, endPrice, duration);
-						contract.safeTransferFrom.estimateGas(owner, marketDetails.address, id, bytes).then(function(estimate) {
-							estimate = Math.floor(estimate*_gasPadding);
-							var gasPrice = web3Service.getGasPrice();
-							
-							var params = {from:owner, gas:estimate, gasPrice:Math.floor(gasPrice*_gasPricePadding)};
-							return web3Service.transactionWrapper(contract, 'safeTransferFrom', owner, marketDetails.address, id, bytes, params).then(function(data) {
-								
-								//add pixelcon data for return
-								var transactionParams = {pixelconId:id, seller:owner, startPrice:startPrice, endPrice:endPrice, duration:duration};
-								var transaction = data.transactionPromise.then(function(data){ return addPixelconDataForTransferToMarket(transactionParams, data) });
-								
-								web3Service.addWaitingTransaction(transaction, data.txHash, transactionParams, _transferToMarketTypeDescription[0], _transferToMarketTypeDescription[1]);
-								return transaction;
-							});
-						}).then(resolve, generateErrorCallback(reject, 'Something went wrong while listing PixelCon on the market'));
-					}, reject);
-				}
-			});
-		}
-		
 		// Creates a new pixelcon collection
 		function createPixelconCollection(indexes, name) {
 			name = web3Service.fromUtf8(name);
@@ -823,6 +762,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else {
 					web3Service.getContract(_contractABI).then(function(contract) {
 						var pixelconIds = [];
@@ -834,7 +774,8 @@
 							var gasPrice = web3Service.getGasPrice();
 							var acct = web3Service.getActiveAccount();
 							
-							var params = {from:acct, gas:estimate, gasPrice:Math.floor(gasPrice*_gasPricePadding)};
+							var params = {from:acct, gas:estimate};
+							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'createCollection', indexes, name, params).then(function(data) {
 								
 								//add pixelcon data for return
@@ -859,6 +800,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(index == 0) reject(_invalidIndexError);
 				else {
 					web3Service.getContract(_contractABI).then(function(contract) {
@@ -871,7 +813,8 @@
 							var gasPrice = web3Service.getGasPrice();
 							var acct = web3Service.getActiveAccount();
 							
-							var params = {from:acct, gas:estimate, gasPrice:Math.floor(gasPrice*_gasPricePadding)};
+							var params = {from:acct, gas:estimate};
+							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'renameCollection', index, name, params).then(function(data) {
 								
 								//add pixelcon data for return
@@ -895,6 +838,7 @@
 				else if(state == "not_connected") reject(_notConnectedError);
 				else if(state != "ready") reject(_unknownError);
 				else if(web3Service.isReadOnly()) reject(_noAccountError);
+				else if(web3Service.isPrivacyMode()) reject(_accountPrivateError);
 				else if(index == 0) reject(_invalidIndexError);
 				else {
 					web3Service.getContract(_contractABI).then(function(contract) {
@@ -911,7 +855,8 @@
 							var gasPrice = web3Service.getGasPrice();
 							var acct = web3Service.getActiveAccount();
 							
-							var params = {from:acct, gas:estimate, gasPrice:Math.floor(gasPrice*_gasPricePadding)};
+							var params = {from:acct, gas:estimate};
+							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'clearCollection', index, params).then(function(data) {
 								
 								//add pixelcon data for return
@@ -1003,30 +948,38 @@
 		
 		// Fills in market listing data for the given pixelcons
 		function fillMarketListingData(pixelcons) {
-			return $q(function(resolve, reject) {
-				if(pixelcons.length !== undefined) {
-					//array
-					var indexes = [];
-					for(var i=0; i<pixelcons.length; i++) indexes.push(pixelcons[i].index);
-					marketContract.fetchMarketListingsByPixelconIndexes(indexes).then(function(listings) {
-						for(var i=0; i<pixelcons.length; i++) {
-							for(var l=0; l<listings.length; l++) {
-								if(listings[l].pixelconIndex == pixelcons[i].index) {
-									pixelcons[i].listing = listings[l];
-									break;
-								}
-							}
+			var singlePixelcon = false;
+			if(!Array.isArray(pixelcons)) {
+				pixelcons = [pixelcons];
+				singlePixelcon = true;
+			}
+			
+			var ids = [];
+			for(var i=0; i<pixelcons.length; i++) ids.push(pixelcons[i].id);
+			return openSea.getAssetData(ids).then(function(assets) {
+				for(var i=0; i<pixelcons.length; i++) {
+					for(var a=0; a<assets.length; a++) {
+						if(pixelcons[i].id == assets[a].id) {
+							pixelcons[i].openSea = filterMarketData(assets[a], pixelcons[i].owner);
+							break;
 						}
-						resolve(pixelcons);
-					}, reject);
-				} else {
-					//single
-					marketContract.fetchMarketListing(pixelcons.index).then(function(listing) {
-						pixelcons.listing = listing;
-						resolve(pixelcons);
-					}, reject);
+					}
 				}
+				if(singlePixelcon) return pixelcons[0];
+				return pixelcons;
 			});
+		}
+		
+		// Filters out data from market if the seller does not match the owner
+		function filterMarketData(data, pixelconOwner) {
+				var filteredData = angular.copy(data, {});
+				if(filteredData.seller != pixelconOwner) {
+					filteredData.price = undefined;
+					filteredData.priceDenomination = undefined;
+					filteredData.priceEnd = undefined;
+					filteredData.timeLeft = undefined;
+				}
+				return filteredData;
 		}
 		
 		// Gets the pixelcon index of a Create event from the given receipt
@@ -1159,35 +1112,6 @@
 			});
 		}
 
-		// Adds data to return for transfer transaction
-		function addPixelconDataForTransferToMarket(params, data) {
-			//params.pixelconId
-			//params.seller
-			//params.startPrice
-			//params.endPrice
-			//params.duration
-
-			var marketDetails;
-			return marketContract.getMarketDetails().then(function(details) {
-				marketDetails = details;
-				return fetchPixelcon(params.pixelconId);
-			}).then(function(pixelcon) {
-				pixelcon.owner = marketDetails.address;
-				pixelcon.listing = {
-					pixelconIndex: pixelcon.index,
-					seller: params.seller,
-					startPrice: params.startPrice,
-					endPrice: params.endPrice,
-					price: params.startPrice,
-					startDate: (new Date()).getTime(),
-					duration: params.duration,
-					timeLeft: params.duration
-				}
-				data.pixelcons = [pixelcon];
-				return data;
-			});
-		}
-
 		// Adds data to return for create collection transaction
 		function addPixelconDataForCreateCollection(params, data) {
 			//params.pixelconIds
@@ -1240,7 +1164,7 @@
 						name: collection.pixelcons[i].name,
 						owner: collection.pixelcons[i].owner,
 						collection: collection,
-						listing: collection.pixelcons[i].listing
+						openSea: collection.pixelcons[i].openSea
 					});
 				}
 				data.pixelcons = pixelcons;
@@ -1263,7 +1187,7 @@
 						name: collectionPixelcons[i].name,
 						owner: collectionPixelcons[i].owner,
 						collection: null,
-						listing: collectionPixelcons[i].listing
+						openSea: collectionPixelcons[i].openSea
 					});
 				}
 				data.pixelcons = pixelcons;

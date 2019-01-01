@@ -2,15 +2,14 @@
 	angular.module('App')
 		.controller('AccountPageCtrl', AccountPageCtrl);
 
-	AccountPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$location', 'web3Service', 'coreContract', 'marketContract'];
-	function AccountPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $location, web3Service, coreContract, marketContract) {
+	AccountPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$location', 'web3Service', 'coreContract', 'openSea'];
+	function AccountPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $location, web3Service, coreContract, openSea) {
 		var _this = this;
 		_this.pixelcons = [];
 		_this.pixelconsCount = 0;
 		_this.accountAddress;
 		_this.filter = {
 			viewMode: ($routeParams.view=='created')?'created':'owned',
-			showSelling: $routeParams.selling!='false',
 			sortBy: ($routeParams.sortBy=='name')?'name':'dateCreated',
 			sortDesc: $routeParams.asc!='true'
 		}
@@ -23,7 +22,8 @@
 		_this.createCollection = createCollection;
 		_this.goPath = goPath;
 		_this.pixelconSelect = pixelconSelect;
-		_this.marketEnabled = marketContract.isEnabled();
+		_this.marketEnabled = openSea.isEnabled();
+		_this.marketAccountLink = openSea.getAccountLink();
 		
 		var loadedFilter = {};
 		var pixelconData = [];
@@ -40,9 +40,6 @@
 			//update url parameters
 			if(($routeParams.view === undefined && _this.filter.viewMode=='created') || ($routeParams.view !== undefined && _this.filter.viewMode != $routeParams.view)) {
 				$location.search('view', (_this.filter.viewMode=='created')?'created':undefined).replace();
-			}
-			if(($routeParams.selling === undefined && !_this.filter.showSelling) || ($routeParams.selling !== undefined && _this.filter.showSelling != ($routeParams.selling=='true'))) {
-				$location.search('selling', _this.filter.showSelling?undefined:'false').replace();
 			}
 			if(($routeParams.sortBy === undefined && _this.filter.sortBy=='name') || ($routeParams.sortBy !== undefined && _this.filter.sortBy != $routeParams.sortBy)) {
 				$location.search('sortBy', (_this.filter.sortBy=='name')?'name':undefined).replace();
@@ -94,7 +91,7 @@
 			pixelconData = [];
 			
 			//get new data
-			if(!web3Service.isReadOnly()) {
+			if(_this.accountAddress) {
 				_this.loading = true;
 				_this.error = null;
 				coreContract.fetchPixelconsByAccount(_this.accountAddress).then(function(data) {
@@ -105,55 +102,38 @@
 					_this.loading = false;
 					_this.error = reason;
 				});
-			} else {
+			} else if(web3Service.isPrivacyMode()) {
+				_this.error = 'Ethereum Account Not Connected';
+			} else if(web3Service.isReadOnly()) {
 				_this.error = 'No Ethereum Account';
 			}
 		}
 		
 		// Updates data from transactions
 		function updateFromTransaction(transactionData) {
-			if(transactionData && transactionData.success ) {
-				if(transactionData.pixelcons) {
-					for(var i=0; i<transactionData.pixelcons.length; i++) {
-						var pixelcon = transactionData.pixelcons[i];
-						
-						var found = false;
-						for(var j=0; j<pixelconData.length; j++) {
-							if(pixelconData[j].id == pixelcon.id) {
-								//update
-								pixelconData[j] = angular.extend({}, pixelconData[j], pixelcon);
-								pixelconData[j].owned = (pixelconData[j].owner == _this.accountAddress);
-								pixelconData[j].selling = (pixelconData[j].listing && pixelconData[j].listing.seller == _this.accountAddress);
-								found = true;
-								break;
-							}
-						}
-						
-						if(!found && (pixelcon.owner == _this.accountAddress || pixelcon.creator == _this.accountAddress)) {
-							//insert
-							pixelcon.created = (pixelcon.creator == _this.accountAddress);
-							pixelcon.owned = (pixelcon.owner == _this.accountAddress);
-							pixelcon.selling = (pixelcon.listing && pixelcon.listing.seller == _this.accountAddress);
-							pixelconData.push(pixelcon);
+			if(transactionData && transactionData.success && transactionData.pixelcons) {
+				for(var i=0; i<transactionData.pixelcons.length; i++) {
+					var pixelcon = transactionData.pixelcons[i];
+					
+					var found = false;
+					for(var j=0; j<pixelconData.length; j++) {
+						if(pixelconData[j].id == pixelcon.id) {
+							//update
+							pixelconData[j] = angular.extend({}, pixelconData[j], pixelcon);
+							pixelconData[j].owned = (pixelconData[j].owner == _this.accountAddress);
+							found = true;
+							break;
 						}
 					}
-					for(var i=0; i<pixelconData.length; i++) updatePixelconCollection(pixelconData[i].collection, transactionData.pixelcons);
-				} else if(transactionData.listings) {
-					for(var i=0; i<transactionData.listings.length; i++) {
-						var listing = transactionData.listings[i];
-						for(var j=0; j<pixelconData.length; j++) {
-							if(listing.pixelconIndex == pixelconData[j].index) {
-								//update listing
-								pixelconData[j].owner = listing.pixelconOwner;
-								pixelconData[j].owned = (listing.pixelconOwner == _this.accountAddress);
-								pixelconData[j].selling = (listing.listing && listing.listing.seller == _this.accountAddress);
-								pixelconData[j].listing = listing.listing;
-								break;
-							}
-						}
+					
+					if(!found && (pixelcon.owner == _this.accountAddress || pixelcon.creator == _this.accountAddress)) {
+						//insert
+						pixelcon.created = (pixelcon.creator == _this.accountAddress);
+						pixelcon.owned = (pixelcon.owner == _this.accountAddress);
+						pixelconData.push(pixelcon);
 					}
-					for(var i=0; i<pixelconData.length; i++) updatePixelconCollectionWithListings(pixelconData[i].collection, transactionData.listings);
 				}
+				for(var i=0; i<pixelconData.length; i++) updatePixelconCollection(pixelconData[i].collection, transactionData.pixelcons);
 				sortData();
 			}
 		}
@@ -169,24 +149,6 @@
 						}
 					}
 					collection.pixelcons[i].owned = (collection.pixelcons[i].owner == _this.accountAddress);
-					collection.pixelcons[i].selling = (collection.pixelcons[i].listing && collection.pixelcons[i].listing.seller == _this.accountAddress);
-				}
-			}
-		}
-		
-		// Updates a pixelcons collection with the given listing changes
-		function updatePixelconCollectionWithListings(collection, listings) {
-			if(collection && collection.index) {
-				for(var i=0; i<collection.pixelcons.length; i++) {
-					for(var j=0; j<listings.length; j++) {
-						if(collection.pixelcons[i].index == listings[j].pixelconIndex) {
-							collection.pixelcons[i].owner = listings[j].pixelconOwner;
-							collection.pixelcons[i].listing = listings[j].listing;
-							break;
-						}
-					}
-					collection.pixelcons[i].owned = (collection.pixelcons[i].owner == _this.accountAddress);
-					collection.pixelcons[i].selling = (collection.pixelcons[i].listing && collection.pixelcons[i].listing.seller == _this.accountAddress);
 				}
 			}
 		}
@@ -200,8 +162,6 @@
 			for(var i in pixelconData) {
 				if(loadedFilter.viewMode == 'owned') {
 					if(pixelconData[i].owned) _this.pixelcons.push(pixelconData[i]);
-					else if(loadedFilter.showSelling && pixelconData[i].selling) _this.pixelcons.push(pixelconData[i]);
-					
 				} else if(loadedFilter.viewMode == 'created') {
 					if(pixelconData[i].created) _this.pixelcons.push(pixelconData[i]);
 					
@@ -273,7 +233,7 @@
 			$mdDialog.show({
 				controller: 'CollectionDialogCtrl',
 				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/collection/collection.view.html',
+				templateUrl: HTMLTemplates['dialog.collection'],
 				parent: angular.element(document.body),
 				locals:{pixelcons: pixelcons},
 				bindToController: true,

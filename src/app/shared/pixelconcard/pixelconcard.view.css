@@ -81,6 +81,9 @@ pixelconcard .pixelconCardDirectiveDetailContainer.clickable:hover {
 pixelconcard .pixelconCardDirectivePriceContainer {
 	top: 0px;
 	right: 0px;
+	text-decoration: none;
+	opacity: 1.0;
+	filter: alpha(opacity=100);
 }
 pixelconcard .pixelconCardDirectivePriceContainerIcon {
 	position: absolute;

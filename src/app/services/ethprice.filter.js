@@ -4,7 +4,7 @@
 		
 	ethprice.$inject = [];
 	function ethprice() {
-		return function(number) {
+		return function(number, symbol) {
 			number = parseFloat(number);		
 			if(isNaN(number) || number < 0) return '---';
 			
@@ -27,8 +27,21 @@
 				}
 			}
 			
+			//determine symbol
+			var sign = 'Ξ';
+			if(symbol !== undefined) {
+				sign = '';
+				if(symbol == 'ETH') sign = 'Ξ';
+				else if(symbol == 'DAI' || symbol == 'USDC') {
+					//dollar format
+					var dollarAmount = number.toFixed(2)
+					if(dollarAmount.substr(dollarAmount.length-2, 2) == '00') dollarAmount = ''+parseInt(dollarAmount);
+					return '$' + dollarAmount;
+				}
+			}
+			
 			//construct the number
-			return 'Ξ' + upperDigits + (lowerDigits?('.'+(''+lowerDigits).split('.')[1]):'');
+			return sign + upperDigits + (lowerDigits?('.'+(''+lowerDigits).split('.')[1]):'');
 		}
 	}
 }());

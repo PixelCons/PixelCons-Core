@@ -80,6 +80,44 @@ div.pixelconSearchPage div.searchFilter div.searchBar div.searchCount {
 	right: 4px;
 	top: 4px;
 }
+div.pixelconSearchPage div.searchFilter .marketButton {
+	display: inline-block;
+	vertical-align: middle;
+	padding: 5px 10px;
+	line-height: 15px;
+	font-size: 15px;
+	background-color: #3291E9;
+	margin: -1px 0px 0px 0px;
+	text-transform: uppercase;
+	border-radius: 5px;
+	text-decoration: none;
+    opacity: 1.0;
+    filter: alpha(opacity=100);
+}
+div.pixelconSearchPage.sm div.searchFilter .marketButton {
+	padding: 5px 5px;
+	font-size: 13px;
+	margin: -1px 1px;
+}
+div.pixelconSearchPage div.searchFilter .marketButton:hover {
+	background-color: #2983b5;
+}
+div.pixelconSearchPage div.searchFilter .marketIcon {
+	display: inline-block;
+	vertical-align: sub;
+	width: 20px;
+	height: 20px;
+	margin-left: 5px;
+	background-image: url(/img/icon_opensea_w.svg);
+	background-size: contain;
+    opacity: 0.95;
+    filter: alpha(opacity=95);
+}
+div.pixelconSearchPage.sm div.searchFilter .marketIcon {
+	width: 15px;
+	height: 15px;
+	margin-left: 4px;
+}
 
 /* Search Card Container: Options */
 div.pixelconSearchPage div.searchFilter div.options {

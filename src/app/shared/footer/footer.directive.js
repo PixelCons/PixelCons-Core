@@ -26,7 +26,7 @@
 			$mdDialog.show({
 				controller: 'SendDialogCtrl',
 				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/send/send.view.html',
+				templateUrl: HTMLTemplates['dialog.send'],
 				parent: angular.element(document.body),
 				locals:{ethMode: true},
 				bindToController: true,
@@ -51,7 +51,7 @@
 			bindToController: true,
 			controller: 'FooterCtrl',
 			controllerAs: 'ctrl',
-			templateUrl: 'app/shared/footer/footer.view.html'
+			templateUrl: HTMLTemplates['shared.footer']
 		};
 	}
 }());

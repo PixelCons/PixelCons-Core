@@ -18,6 +18,7 @@
 		_this.showActivityMenu = showActivityMenu;
 		_this.cancelActivityMenu = cancelActivityMenu;
 		_this.hideActivityMenu = hideActivityMenu;
+		_this.connect = connect;
 		var showMenuPromise = null;
 		
 		// Watch for screen size changes
@@ -43,6 +44,7 @@
 			_this.loggedIn = (web3state=="ready" && !web3Service.isReadOnly());
 			_this.web3error = (web3state!="not_enabled" && web3state!="ready");
 			_this.web3ProviderName = web3Service.getProviderName();
+			_this.privacyMode = web3Service.isPrivacyMode();
 			
 			_this.net = web3Service.getExpectedNetwork();
 			_this.badNetwork = web3Service.isWrongNetwork();
@@ -72,7 +74,7 @@
 					scale: 6
 				}).toDataURL();
 			} else {
-				_this.userIcon = '/img/icon_account.svg';
+				_this.userIcon = '';
 			}
 		};
 		
@@ -147,6 +149,11 @@
 			$timeout.cancel(showMenuPromise);
 		}
 		
+		// Connect account
+		function connect() {
+			web3Service.requestAccess();
+		}
+		
 		// Listen for account data changes and waiting transactions
 		web3Service.onAccountDataChange(updateUserAccountIcon, $scope);	
 		web3Service.onWaitingTransactionsChange(updateTransactionIndicator, $scope);	
@@ -159,7 +166,7 @@
 			bindToController: true,
 			controller: 'HeaderCtrl',
 			controllerAs: 'ctrl',
-			templateUrl: 'app/shared/header/header.view.html'
+			templateUrl: HTMLTemplates['shared.header']
 		};
 	}
 }());

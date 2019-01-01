@@ -32,12 +32,20 @@
 	</div>
 	
 	<!-- User Account -->
-	<div class="errorIcon" ng-show="ctrl.web3error">
+	<div ng-if="ctrl.privacyMode" class="accountIcon connectButton clickable textBold textSmall textWhite md-whiteframe-1dp" ng-click="ctrl.connect()">
+		<img class="iconFill" ng-src="img/icon_account.svg"/>
+		<div>Connect Account</div>
+	</div>
+	<div class="accountIcon md-whiteframe-1dp" ng-if="ctrl.web3error">
 		<img class="iconFill" ng-src="img/icon_error.svg"/>
 		<md-tooltip md-direction="bottom">Error Connecting to Ethereum</md-tooltip>
 	</div>
-	<md-menu ng-show="ctrl.loggedIn" md-position-mode="target-right target">
-		<div class="accountIcon crispImage md-whiteframe-1dp" ng-click="ctrl.showActivityMenu($mdOpenMenu)">
+	<div class="accountIcon md-whiteframe-1dp" ng-if="ctrl.loggedIn && ctrl.accounts.length==0 && !ctrl.privacyMode">
+		<img class="iconFill" ng-src="img/icon_account.svg"/>
+		<md-tooltip md-direction="bottom">Please log into {{ctrl.web3ProviderName}}</md-tooltip>
+	</div>
+	<md-menu ng-if="ctrl.loggedIn && ctrl.accounts.length>0" md-position-mode="target-right target">
+		<div class="accountIcon clickable crispImage md-whiteframe-1dp" ng-click="ctrl.showActivityMenu($mdOpenMenu)">
 			<div class="iconFill" ng-mouseenter="ctrl.showActivityMenu($mdOpenMenu)" ng-mouseleave="ctrl.cancelActivityMenu()">
 				<img class="iconFill" ng-src="{{ctrl.userIcon}}"/>
 				<img ng-show="ctrl.waitingTransactions.length>0" class="iconFillOverlay crispImage" src="img/loading.gif"/>
@@ -45,9 +53,6 @@
 			<div class="tooltip" ng-class="{'hidden':ctrl.waitingTransactions.length==0}">Processing...</div>
 		</div>
 		<md-menu-content class="headerDropdown textMedium textNotSelectable" width="3" ng-mouseleave="ctrl.hideActivityMenu()">
-			<div class="textCenter">
-				<div class="headerDropdownText textLight" ng-if="ctrl.accounts.length==0">Please log into {{ctrl.web3ProviderName}}</div>
-			</div>
 			<div ng-if="ctrl.accounts.length>0">
 				<div class="textCenter clickable" ng-click="ctrl.goDetails()">
 					<img class="headerAccountActivityIcon md-whiteframe-1dp" ng-src="{{ctrl.userIcon}}"/>

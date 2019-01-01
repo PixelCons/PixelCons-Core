@@ -9,49 +9,49 @@
 	}]);
 	app.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 		$routeProvider.when("/", {
-			templateUrl: 'app/pages/home/home.view.html',
+			templateUrl: HTMLTemplates['page.home'],
 			controller: 'HomePageCtrl',
 			controllerAs: 'ctrl'
 		})
 		.when("/details/:id", {
-			templateUrl: 'app/pages/details/details.view.html',
+			templateUrl: HTMLTemplates['page.details'],
 			controller: 'DetailsPageCtrl',
 			controllerAs: 'ctrl'
 		})
 		.when("/collection/:index", {
-			templateUrl: 'app/pages/collection/collection.view.html',
+			templateUrl: HTMLTemplates['page.collection'],
 			controller: 'CollectionPageCtrl',
 			controllerAs: 'ctrl'
 		})
 		.when("/creator/:address", {
-			templateUrl: 'app/pages/creator/creator.view.html',
+			templateUrl: HTMLTemplates['page.creator'],
 			controller: 'CreatorPageCtrl',
 			controllerAs: 'ctrl'
 		})
 		.when("/search", {
-			templateUrl: 'app/pages/search/search.view.html',
+			templateUrl: HTMLTemplates['page.search'],
 			controller: 'SearchPageCtrl',
 			controllerAs: 'ctrl',
 			reloadOnSearch: false
 		})
 		.when("/account", {
-			templateUrl: 'app/pages/account/account.view.html',
+			templateUrl: HTMLTemplates['page.account'],
 			controller: 'AccountPageCtrl',
 			controllerAs: 'ctrl',
 			reloadOnSearch: false
 		})
 		.when("/create", {
-			templateUrl: 'app/pages/create/create.view.html',
+			templateUrl: HTMLTemplates['page.create'],
 			controller: 'CreatePageCtrl',
 			controllerAs: 'ctrl'
 		})
 		.when("/start", {
-			templateUrl: 'app/pages/start/start.view.html',
+			templateUrl: HTMLTemplates['page.start'],
 			controller: 'StartPageCtrl',
 			controllerAs: 'ctrl'
 		})
 		.when("/terms", {
-			templateUrl: 'app/pages/terms/terms.view.html',
+			templateUrl: HTMLTemplates['page.terms'],
 			controller: 'TermsPageCtrl',
 			controllerAs: 'ctrl'
 		})
@@ -62,7 +62,8 @@
 		// use the HTML5 History API
         $locationProvider.html5Mode(true);
 	}]);
-	app.run(['$rootScope', '$location', '$timeout', function($rootScope, $location, $timeout){
+	app.run(['$rootScope', '$location', '$timeout', '$templateCache', '$http',
+			function($rootScope, $location, $timeout, $templateCache, $http){
 		var lastPage = $location.path();
 		
 		// always scroll to top on page load
@@ -74,6 +75,11 @@
 			}
 			lastPage = currPage;
 		});
+		
+		// pre-load dialogs
+        $http.get(HTMLTemplates['dialog.collection'], {cache: $templateCache});
+        $http.get(HTMLTemplates['dialog.pixelcon'], {cache: $templateCache});
+        $http.get(HTMLTemplates['dialog.send'], {cache: $templateCache});
 	}]);
 	
 	

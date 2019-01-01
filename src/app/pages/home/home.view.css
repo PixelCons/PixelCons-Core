@@ -58,6 +58,9 @@ div.pixelconHomePage div.homeContainer {
 div.pixelconHomePage div.fullCard {
 	padding: 15px;
 }
+div.pixelconHomePage.sm div.fullCard {
+	padding: 15px 0px 15px 0px;
+}
 
 /* Content */
 div.pixelconHomePage div.homeHeader {

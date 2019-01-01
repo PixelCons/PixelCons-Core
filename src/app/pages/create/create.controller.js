@@ -53,6 +53,8 @@
 					if(web3Service.isReadOnly()) {
 						_this.infoText = 'You need an Ethereum Account to create PixelCons';
 						_this.showStartButton = true;
+					} else if(web3Service.isPrivacyMode()) {
+						_this.infoText = 'Please connect your Ethereum Account';
 					} else {
 						_this.infoText = 'Please log into ' + web3Service.getProviderName();
 					}
@@ -85,7 +87,7 @@
 			$mdDialog.show({
 				controller: 'PixelconDialogCtrl',
 				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/pixelcon/pixelcon.view.html',
+				templateUrl: HTMLTemplates['dialog.pixelcon'],
 				parent: angular.element(document.body),
 				locals:{pixelconId: _this.pixelconId},
 				bindToController: true,

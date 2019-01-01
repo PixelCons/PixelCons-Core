@@ -8,6 +8,9 @@
 		_this.index = $routeParams.index;
 		_this.rename = rename;
 		_this.clear = clear;
+		_this.copyLink = copyLink;
+		_this.shareOnTwitter = shareOnTwitter;
+		_this.shareOnFacebook = shareOnFacebook;
 		
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -90,7 +93,7 @@
 			$mdDialog.show({
 				controller: 'CollectionDialogCtrl',
 				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/collection/collection.view.html',
+				templateUrl: HTMLTemplates['dialog.collection'],
 				parent: angular.element(document.body),
 				locals:{pixelcons: _this.collection.pixelcons, index: _this.index, editMode: true},
 				bindToController: true,
@@ -103,12 +106,35 @@
 			$mdDialog.show({
 				controller: 'CollectionDialogCtrl',
 				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/collection/collection.view.html',
+				templateUrl: HTMLTemplates['dialog.collection'],
 				parent: angular.element(document.body),
 				locals:{pixelcons: _this.collection.pixelcons, index: _this.index, clearMode: true},
 				bindToController: true,
 				clickOutsideToClose: true
 			});
+		}
+		
+		// Copies share link to the clipboard
+		function copyLink() {
+			var copyText = document.getElementById("copyToClipboard");
+			copyText.value = document.URL;
+			copyText.select();
+			document.execCommand("copy");
+		}
+		
+		// Share this page on twitter
+		function shareOnTwitter() {
+			var url = "https://twitter.com/intent/tweet?url=";
+			url += encodeURI(document.URL);
+			url += '&text=' + encodeURI("Check out this PixelCon collection!");
+			window.open(url,'_blank');
+		}
+		
+		// Share this page on facebook
+		function shareOnFacebook() {
+			var url = "https://www.facebook.com/sharer/sharer.php?u="
+			url += encodeURI(document.URL);
+			window.open(url,'_blank');
 		}
 		
 		// Listen for account data changes

@@ -2,8 +2,8 @@
 	angular.module('App')
 		.service('web3Service', web3Service);
 		
-	web3Service.$inject = ['$interval', '$q'];
-	function web3Service($interval, $q) {
+	web3Service.$inject = ['$interval', '$timeout', '$q'];
+	function web3Service($interval, $timeout, $q) {
 		var _expectedNetwork = null; //Options: Main, Morden, Ropsten, Rinkeby, Kovan (set to 'null' if you wish to support all of them)
 		var _backupWeb3Provider = 'https://mainnet.infura.io/v3/07d72fe8b8b74534a05d2091e108e26e';
 		var _transactionLookupUrl = 'https://etherscan.io/tx/<txHash>';
@@ -12,6 +12,7 @@
 		var _state = "not_enabled";
 		var _currNetwork = null;
 		var _isReadOnly = false;
+		var _isPrivacyEnabled = false;
 		var _accounts = [];
 		var _contracts = {};
 		var _waitingTransactions = [];
@@ -29,14 +30,27 @@
 		var localStorage = window.localStorage;
 		
 		var web3Provider = null;
-		if (typeof web3 !== 'undefined') {
-			web3Provider = web3.currentProvider;
+		if (window.ethereum) {
+			web3Provider = window.ethereum;
+			web3 = new Web3(web3Provider);
+			_isPrivacyEnabled = true;
+			_state = queryState();
+			_accounts = queryAccounts();
+			_currNetwork = queryNetwork();
+			
+			$timeout(function() {
+				if(web3.eth.accounts.length==0) requestAccess();
+			}, 1000);
+		}
+		else if (window.web3) {
+			//legacy web3
+			web3Provider = window.web3.currentProvider;
 			web3 = new Web3(web3Provider);
 			_state = queryState();
 			_accounts = queryAccounts();
 			_currNetwork = queryNetwork();
-		} else {
-			
+		}
+		else {
 			//read-only mode
 			var web3js = require('web3');
 			web3Provider = new web3js.providers.HttpProvider(_backupWeb3Provider);
@@ -52,7 +66,7 @@
 		var onAccountChangeFunctions = [];
 		var onStateChangeFunctions = [];
 		var onWaitingTransactionsChangeFunctions = [];
-		$interval(function() {
+		function pollForWeb3Changes() {
 			queryGasPrice();
 			
 			var newState = queryState();
@@ -70,16 +84,19 @@
 				executeCallbackFunctions(onAccountChangeFunctions, _accounts);
 				checkWaitingTransactionsForAccount();
 			}
-		}, 1000);
+		}
+		$interval(pollForWeb3Changes, 1000);
 		
 		// Setup functions
 		this.getState = getState;
 		this.isReadOnly = isReadOnly;
+		this.isPrivacyMode = isPrivacyMode;
 		this.getExpectedNetwork = getExpectedNetwork;
 		this.getCurrentNetwork = getCurrentNetwork;
 		this.isWrongNetwork = isWrongNetwork;
 		this.getTransactionLookupUrl = getTransactionLookupUrl;
 		this.getProviderName = getProviderName;
+		this.requestAccess = requestAccess;
 		this.onStateChange = onStateChange;
 		this.getAllAccounts = getAllAccounts;
 		this.getActiveAccount = getActiveAccount;
@@ -97,6 +114,7 @@
 		this.fromUtf8 = fromUtf8;
 		this.toUtf8 = toUtf8;
 		this.toWei = toWei;
+		this.hexToInt = hexToInt;
 		this.getGasPrice = getGasPrice;
 		this.transactionWrapper = transactionWrapper;
 		
@@ -114,6 +132,11 @@
 		// Gets if web3 is read only
 		function isReadOnly() {
 			return _isReadOnly;
+		}
+		
+		// Gets if web3 has privacy mode enable
+		function isPrivacyMode() {
+			return _isPrivacyEnabled && _accounts.length==0;
 		}
 		
 		// Gets the desired network
@@ -152,6 +175,15 @@
 			
 			if(web3 && web3.currentProvider.isMetaMask) return 'MetaMask';
 			return 'your Ethereum Account';
+		}
+		
+		// Requests for access to the web3 accounts
+		function requestAccess() {
+			if(_isPrivacyEnabled) {
+				window.ethereum.enable().then(pollForWeb3Changes, function() {
+					console.log("User denied access to Ethereum account");
+				});
+			}
 		}
 		
 		
@@ -406,11 +438,21 @@
 			return web3.toUtf8(hex);
 		}
 		
-		// converts the given Ether amount into Wei
+		// Converts the given Ether amount into Wei
 		function toWei(ether) {
 			if(_state != "ready") return null;
 			
 			return web3.toBigNumber(web3.toWei(ether));
+		}
+		
+		// Convert a hex string into an integer string
+		function hexToInt(hex) {
+			if(_state != "ready") return null;
+			
+			var num = web3.toBigNumber(hex);
+			var digits = [];
+			for(var i=0; i<num.c.length; i++) digits.push((""+num.c[i]).padStart(14, '0'));
+			return digits.join('').replace(/^0+/, '');
 		}
 		
 		// Gets the current gas price (or the ether price is gas amount is provided)

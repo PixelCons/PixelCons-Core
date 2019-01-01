@@ -99,6 +99,21 @@ div.pixelconCreatorPage div.loading {
 	padding: 10px;
 	border-radius: 15px;
 }
+div.pixelconCreatorPage .shareLink {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background-image: url(/img/icon_share_w.svg);
+    background-size: contain;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+div.pixelconCreatorPage .shareLink:hover {
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
 
 /* Card Details */
 div.pixelconCreatorPage div.detailsSection {

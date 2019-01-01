@@ -6,16 +6,20 @@
 		<!-- Image window -->
 		<div class="viewWindow colorDark">
 			<div ng-hide="ctrl.pixelconId" class="pixelconInvalid textWhite textExxLarge">Invalid ID</div>
-			
-			<div class="viewWindowPriceContainer" ng-class="{'clickable':ctrl.details.listing.timeLeft || ctrl.isSeller}" ng-show="ctrl.details.listing" ng-click="ctrl.clickMarketButton($event)">
-				<div class="viewWindowPrice colorDarkOverlay textBold textMedium" ng-class="{'detailsPageTransition': ctrl.loaded}">
-					{{ctrl.details.listing.timeLeft?(ctrl.details.listing.price | ethprice):'Expired'}}
-				</div>
-				<div class="viewWindowPriceTag colorDarkOverlay" ng-class="{'detailsPageTransition': ctrl.loaded}">
-					<div class="viewWindowPriceTagIcon"></div>
-				</div>
-			</div>
-			
+			<md-menu md-position-mode="target-right target">
+				<div class="shareLink clickable" ng-click="$mdOpenMenu()" aria-label="Share"></div>
+				<md-menu-content class="shareLinksContextMenu">
+					<md-menu-item>
+						<md-button ng-click="ctrl.copyLink()"><div class="shareLinkIcon url"></div>Copy URL</md-button>
+					</md-menu-item>
+					<md-menu-item>
+						<md-button ng-click="ctrl.shareOnFacebook()"><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
+					</md-menu-item>
+					<md-menu-item>
+						<md-button ng-click="ctrl.shareOnTwitter()"><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
+					</md-menu-item>
+				</md-menu-content>
+			</md-menu>
 			<div class="viewWindowGroupContainer" ng-show="ctrl.details.collection" ng-click="ctrl.goPath('/collection/'+ctrl.details.collection.index)">
 				<div class="viewWindowGroup colorDarkOverlay" ng-class="{'detailsPageTransition': ctrl.loaded, 'onlyThree':!ctrl.details.collection.pixelcons[3].id && ctrl.details.collection.pixelcons[2].id}">
 					<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[0].id"><pixelcon id="ctrl.details.collection.pixelcons[0].id"></pixelcon></div>
@@ -41,7 +45,7 @@
 				<div class="detailsSectionMenuBar" ng-cloak>
 					<div ng-show="ctrl.details.name!==''" class="textDark textExxLarge textBold">{{ctrl.details.name}}</div>
 					<div ng-show="ctrl.details.name===''" class="textLight textExxLarge">PixelCon {{ctrl.details.index}}</div>
-					<div class="detailsSectionMoreButton" ng-show="ctrl.isOwner || (ctrl.isCreator && !ctrl.details.listing)">
+					<div class="detailsSectionMoreButton" ng-show="ctrl.isOwner || ctrl.isCreator">
 						<md-menu md-position-mode="target-right target">
 							<md-button class="iconButton moreMenu" ng-click="$mdOpenMenu()" aria-label="More"></md-button>
 							<md-menu-content>
@@ -54,15 +58,6 @@
 							</md-menu-content>
 						</md-menu>
 					</div>
-					<div class="detailsSectionMarketButton" ng-class="{'listed':!ctrl.isOwner}" 
-							ng-show="ctrl.details.listing.timeLeft || ctrl.isSeller || (ctrl.isOwner && ctrl.canMakeListings)">
-						<md-button class="textBold" ng-click="ctrl.clickMarketButton($event)">
-							{{ctrl.isOwner?'Sell':(ctrl.isSeller?'Remove':'Buy')}}
-							<div class="marketButtonIconContainer" ng-class="{'colorYellow':ctrl.isOwner}">
-								<div class="marketButtonIcon" ng-class="{'sell':ctrl.isOwner, 'buy':!ctrl.isOwner&&!ctrl.isSeller}"></div>
-							</div>
-						</md-button>
-					</div>
 				</div>
 				<accounticon class="textLight" address="ctrl.details.creator" text="Creator" max-chars="16" size="{{ctrl.screenSize.sm?'sm':'md'}}" clickable="true"></accounticon>
 				<div class="detailsSectionLineItems textMedium textLight">
@@ -70,8 +65,35 @@
 					{{ctrl.details.number}}<br/>
 				</div>
 				<div class="detailsSectionFooter">
-					<accounticon class="textLight" address="ctrl.details.owner" mode="signature" size="{{ctrl.screenSize.sm?'md':'lg'}}" text="{{ctrl.generateSigText()}}"></accounticon>
+					<accounticon class="textLight" address="ctrl.details.owner" mode="signature" size="{{ctrl.screenSize.sm?'md':'lg'}}" text="Owned By"></accounticon>
 				</div>
+				
+				<!-- Market Details -->
+				<div class="marketDetailsContainer textNotSelectable" ng-if="ctrl.marketData">
+					<div class="textRight">
+						<div class="price textBold textDark textSelectable" ng-class="{'textLarge':!ctrl.screenSize.sm, 'textMedium':ctrl.screenSize.sm}">
+							{{ctrl.marketData.price?(ctrl.marketData.price | ethprice:ctrl.marketData.priceDenomination):''}}
+						</div>
+						<a class="actionButton clickable textBold textWhite" ng-href="{{ctrl.marketData.link}}" target="_blank">
+							{{ctrl.marketData.price?(ctrl.isOwner?'Edit':'Buy'):(ctrl.isOwner?'Sell':'Make Offer')}}<div class="marketIcon"></div>
+						</a>
+					</div>
+					<div class="noteContainer textRight">
+						<div ng-if="ctrl.marketData.priceEnd">
+							<div class="noteIcon clock"></div>
+							<div class="note textLight textSmall textSelectable">Ends at {{(ctrl.marketData.priceEnd | ethprice:ctrl.marketData.priceDenomination)}}</div>
+							<div class="note textLight textSmall textSelectable">in {{ctrl.generateTimeText(ctrl.marketData.timeLeft)}}</div>
+						</div>
+						<div ng-if="!ctrl.marketData.priceEnd && ctrl.marketData.lastSold">
+							<div class="note textLight textSmall textSelectable">Last sold</div>
+							<div class="note textLight textSmall textSelectable">for {{(ctrl.marketData.lastSold | ethprice:ctrl.marketData.lastSoldDenomination)}}</div>
+						</div>
+						<div ng-if="!ctrl.marketData.priceEnd && !ctrl.marketData.lastSold">
+							<div class="note textLight textSmall textSelectable">(No Sale History)</div>
+						</div>
+					</div>
+				</div>
+				
 			</div>
 		</div>
 		

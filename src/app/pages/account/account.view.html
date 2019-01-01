@@ -19,8 +19,9 @@
 			<!-- Actions -->
 			<div class="fontMedium" layout="row">
 				<div ng-show="!ctrl.accountAddress" class="headerPlainText textLight">No Account</div>
-				<div ng-show="ctrl.filter.viewMode=='owned' && ctrl.accountAddress">
-					<md-checkbox ng-if="ctrl.marketEnabled" ng-disabled="ctrl.loading" ng-model="ctrl.filter.showSelling" ng-change="ctrl.checkUpdateData()">Include Selling</md-checkbox>
+				<div ng-show="ctrl.accountAddress && ctrl.filter.viewMode=='owned' && !ctrl.marketEnabled" class="headerPlainText textLight">Your Account</div>
+				<div ng-show="ctrl.accountAddress && ctrl.filter.viewMode=='owned' && ctrl.marketEnabled">
+					<a class="marketButton clickable textBold textWhite" ng-href="{{ctrl.marketAccountLink}}" target="_blank">Market Account<div class="marketIcon"></div></a>
 				</div>
 				<div ng-show="ctrl.filter.viewMode=='created' && ctrl.accountAddress">
 					<md-button class="createButton md-raised" ng-show="!ctrl.groupMode" ng-disabled="ctrl.pixelconsCount<2" ng-click="ctrl.setGroupMode(true)">

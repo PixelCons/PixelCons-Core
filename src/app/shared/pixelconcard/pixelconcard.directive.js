@@ -3,17 +3,18 @@
 		.directive('pixelconcard', pixelconcard)
 		.controller('PixelConCardCtrl', PixelConCardCtrl);
 
-	PixelConCardCtrl.$inject = ['$scope', '$mdDialog', '$location', '$timeout', 'web3Service', 'coreContract', 'marketContract'];
-	function PixelConCardCtrl($scope, $mdDialog, $location, $timeout, web3Service, coreContract, marketContract) {
+	PixelConCardCtrl.$inject = ['$scope', '$mdDialog', '$location', '$timeout', 'web3Service', 'coreContract', 'openSea'];
+	function PixelConCardCtrl($scope, $mdDialog, $location, $timeout, web3Service, coreContract, openSea) {
 		var _this = this;
 		_this.coverAlwaysOn = false;
-		_this.marketInfoClick = marketInfoClick;
 		_this.groupInfoClick = groupInfoClick;
 		_this.pixelconClick = pixelconClick;
-		_this.canMakeListings = marketContract.canMakeListings();
+		_this.marketEnabled = openSea.isEnabled();
 		
 		// Watch for changes to the pixelcon data
 		$scope.$watch('ctrl.pixelcon', function() {
+			_this.marketData = _this.pixelcon.openSea;
+			
 			if(_this.loaded) {
 				_this.reloading = true;
 				$timeout(function () {
@@ -83,14 +84,9 @@
 		
 		// Update from transaction
 		function updateFromTransaction(transactionData) {
-			if(transactionData && transactionData.success) {
-				if(transactionData.pixelcons) {
-					var pixelcon = findInList(transactionData.pixelcons);
-					if(pixelcon) refreshPixelconData(pixelcon);
-				} else if(transactionData.listings) {
-					var pixelcon = filterWithList(transactionData.listings);
-					if(pixelcon) refreshPixelconData(pixelcon);
-				}
+			if(transactionData && transactionData.success && transactionData.pixelcons) {
+				var pixelcon = findInList(transactionData.pixelcons);
+				if(pixelcon) refreshPixelconData(pixelcon);
 			}
 		}
 		
@@ -110,71 +106,6 @@
 			ev.stopPropagation();
 		}
 		
-		// Market info clicked
-		function marketInfoClick(ev) {
-			if(_this.noClick) return;
-			
-			if(_this.pixelcon.listing) {
-				if(_this.pixelcon.listing.seller == _this.account) removeListing(ev);
-				else if(_this.pixelcon.listing.timeLeft) buyPixelcon(ev);
-				else pixelconClick(ev);
-			} else {
-				sellPixelcon(ev);
-			}
-			ev.stopPropagation();
-		}
-		
-		// Buy the pixelcon
-		function buyPixelcon(ev) {
-			_this.coverAlwaysOn = true;
-			$mdDialog.show({
-				controller: 'MarketListingDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/listing/listing.view.html',
-				parent: angular.element(document.body),
-				locals:{pixelconId: _this.pixelcon.id, pixelconIdx: _this.pixelcon.index, price:_this.pixelcon.listing.price, buyMode: true},
-				bindToController: true,
-				clickOutsideToClose: true,
-				onRemoving: function(){
-					_this.coverAlwaysOn = false;
-				}
-			});
-		}
-		
-		// Sell the pixelcon
-		function sellPixelcon(ev) {
-			_this.coverAlwaysOn = true;
-			$mdDialog.show({
-				controller: 'SellPixelconDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/sell/sell.view.html',
-				parent: angular.element(document.body),
-				locals:{pixelconId: _this.pixelcon.id, pixelconIdx: _this.pixelcon.index},
-				bindToController: true,
-				clickOutsideToClose: true,
-				onRemoving: function(){
-					_this.coverAlwaysOn = false;
-				}
-			});
-		}
-		
-		// Removes pixelcon sale listing
-		function removeListing(ev) {
-			_this.coverAlwaysOn = true;
-			$mdDialog.show({
-				controller: 'MarketListingDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: 'app/shared/dialogs/listing/listing.view.html',
-				parent: angular.element(document.body),
-				locals:{pixelconId: _this.pixelcon.id, pixelconIdx: _this.pixelcon.index, removeMode: true},
-				bindToController: true,
-				clickOutsideToClose: true,
-				onRemoving: function(){
-					_this.coverAlwaysOn = false;
-				}
-			});
-		}
-		
 		// Gets page relevant pixelcon from list
 		function findInList(list) {
 			var pixelcon = null;
@@ -182,22 +113,6 @@
 				for(var i=0; i<list.length; i++) {
 					if(list[i].id == _this.pixelcon.id) {
 						pixelcon = list[i];
-						break;
-					}
-				}
-			}
-			return pixelcon;
-		}
-		
-		// Gets the relevant pixelcon with listing data removed
-		function filterWithList(list) {
-			var pixelcon = null;
-			if(list) {
-				for(var i=0; i<list.length; i++) {
-					if(list[i].pixelconIndex == _this.pixelcon.index) {
-						_this.pixelcon.owner = list[i].pixelconOwner;
-						_this.pixelcon.listing = list[i].listing;
-						pixelcon = _this.pixelcon;
 						break;
 					}
 				}
@@ -228,7 +143,7 @@
 			bindToController: true,
 			controller: 'PixelConCardCtrl',
 			controllerAs: 'ctrl',
-			templateUrl: 'app/shared/pixelconcard/pixelconcard.view.html'
+			templateUrl: HTMLTemplates['shared.pixelconcard']
 		};
 	}
 }());

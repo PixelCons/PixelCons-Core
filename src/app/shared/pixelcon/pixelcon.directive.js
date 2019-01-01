@@ -77,7 +77,7 @@
 			bindToController: true,
 			controller: 'PixelConCtrl',
 			controllerAs: 'ctrl',
-			templateUrl: 'app/shared/pixelcon/pixelcon.view.html'
+			templateUrl: HTMLTemplates['shared.pixelcon']
 		};
 	}
 }());
