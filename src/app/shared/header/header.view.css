@@ -26,14 +26,14 @@ div.header .badNetwork {
 /* Title/Icon */
 div.header .pixelconTitle {
 	position: absolute;
-    top: 7px;
-    left: 10px;
-    height: 65px;
+	top: 7px;
+	left: 10px;
+	height: 65px;
 }
 div.header.sm .pixelconTitle {
 	height: 50px;
 	left: 5px;
-    top: 5px;
+	top: 5px;
 }
 div.header .pixelconTitle .pixelconLogo {
 	display: inline-block;
@@ -47,9 +47,9 @@ div.header .pixelconTitle .pixelconLogo {
 	background-repeat: no-repeat;
 }
 div.header.sm .pixelconTitle .pixelconLogo {
-    height: 50px;
-    width: 50px;
-    min-width: 50px;
+	height: 50px;
+	width: 50px;
+	min-width: 50px;
 	line-height: 50px;
 	margin: 0px 0px 0px 12px;
 }
@@ -67,14 +67,15 @@ div.header .pixelconTitle .network {
 	background-color: #6f6f6f;
 	color: #fafafa;
 	border-radius: 10px;
-    padding: 0px 8px;
+	padding: 0px 8px;
 	display: inline-block;
 	vertical-align: top;
+	box-shadow: 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);
 }
 div.header.sm .pixelconTitle .network {
-    padding: 0px 5px;
-    font-size: 12px;
-    height: 15px;
+	padding: 0px 5px;
+	font-size: 12px;
+	height: 15px;
 }
 div.header .pixelconTitle .network.ropsten {
 	background-color: #FF4A8D;
@@ -95,7 +96,7 @@ div.header .pixelconTitle .pixelconPageText {
 	border-bottom: 2px solid #2196f3;
 }
 div.header.sm .pixelconTitle .pixelconPageText {
-    margin-right: 10px;
+	margin-right: 10px;
 }
 div.header .pixelconTitle .pixelconPageText.noShow {
 	max-width: 0px;
@@ -145,7 +146,7 @@ div.header.sm .menuButtons button.nav .buttonIcon {
 	margin-top: 4px;
 }
 div.header .menuButtons button.menuButton {
-    margin-right: -5px;
+	margin-right: -5px;
 }
 div.header .menuButtons md-menu {
 	display: none;
@@ -206,7 +207,7 @@ md-menu-content.headerDropdown {
 	max-height: 500px;
 }
 md-menu-content.headerDropdown md-divider {
-    margin: 5px;
+	margin: 5px;
 }
 div.headerDropdownText {
 	display: inline-block;
@@ -232,15 +233,15 @@ div.headerDropdownButtonLink {
 	background-image: url('/img/icon_goto.svg');
 	background-size: contain;
 	background-repeat: no-repeat;
-    background-size: 15px;
-    background-position: center;
+	background-size: 15px;
+	background-position: center;
 	padding: 0px;
-    margin: 0px 0px 11px -10px;
-    min-width: 0px;
-    min-height: 0px;
-    width: 20px;
-    height: 20px;
-    opacity: 0.7;
+	margin: 0px 0px 11px -10px;
+	min-width: 0px;
+	min-height: 0px;
+	width: 20px;
+	height: 20px;
+	opacity: 0.7;
 	filter: alpha(opacity=70);
 }
 img.headerAccountActivityIcon {
@@ -279,8 +280,8 @@ div.headerDropdownIconCollection pixelcon {
 div.header .tooltip {
 	position: absolute;
 	right: -7px;
-    bottom: -30px;
-	
+	bottom: -30px;
+
 	border-radius: 4px;
 	font-size: 14px;
 	height: 26px;
@@ -305,7 +306,7 @@ div.header .tooltip.hidden {
 	filter: alpha(opacity=0);
 }
 div.header.sm .tooltip {
-    bottom: -26px;
+	bottom: -26px;
 	font-size: 12px;
 	height: 22px;
 	line-height: 22px;
