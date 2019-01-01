@@ -8,7 +8,6 @@
 
 	<!-- Angular Material style sheet -->
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 	<!-- App style sheet -->
 	<link rel="stylesheet" href="css/style.css">
@@ -26,11 +25,9 @@
 	<link rel="stylesheet" href="app/shared/accounticon/accounticon.view.css">
 	<link rel="stylesheet" href="app/shared/pixelcon/pixelcon.view.css">
 	<link rel="stylesheet" href="app/shared/pixelconcard/pixelconcard.view.css">
-	<link rel="stylesheet" href="app/shared/dialogs/pixelcon/pixelcon.view.css">
-	<link rel="stylesheet" href="app/shared/dialogs/collection/collection.view.css">
-	<link rel="stylesheet" href="app/shared/dialogs/sell/sell.view.css">
-	<link rel="stylesheet" href="app/shared/dialogs/listing/listing.view.css">
-	<link rel="stylesheet" href="app/shared/dialogs/send/send.view.css">
+	<link rel="stylesheet" href="app/dialogs/pixelcon/pixelcon.view.css">
+	<link rel="stylesheet" href="app/dialogs/collection/collection.view.css">
+	<link rel="stylesheet" href="app/dialogs/send/send.view.css">
   
 </head>
 <body ng-app="App" ng-cloak>
@@ -45,7 +42,31 @@
 			<app-footer></app-footer>
 		</div>
 	</div>
+	<input style="position:absolute; top:-100px;" type="text" value="" id="copyToClipboard">
 	<!-- End of main HTML -->
+	
+	<!-- HTML templates -->
+	<script>
+		HTMLTemplates = {
+			'page.home': 'app/pages/home/home.view.html',
+			'page.details': 'app/pages/details/details.view.html',
+			'page.collection': 'app/pages/collection/collection.view.html',
+			'page.creator': 'app/pages/creator/creator.view.html',
+			'page.search': 'app/pages/search/search.view.html',
+			'page.account': 'app/pages/account/account.view.html',
+			'page.create': 'app/pages/create/create.view.html',
+			'page.start': 'app/pages/start/start.view.html',
+			'page.terms': 'app/pages/terms/terms.view.html',
+			'shared.footer': 'app/shared/footer/footer.view.html',
+			'shared.header': 'app/shared/header/header.view.html',
+			'shared.pixelcon': 'app/shared/pixelcon/pixelcon.view.html',
+			'shared.pixelconcard': 'app/shared/pixelconcard/pixelconcard.view.html',
+			'shared.accounticon': 'app/shared/accounticon/accounticon.view.html',
+			'dialog.collection': 'app/dialogs/collection/collection.view.html',
+			'dialog.pixelcon': 'app/dialogs/pixelcon/pixelcon.view.html',
+			'dialog.send': 'app/dialogs/send/send.view.html'
+		}
+	</script>
 
 	<!-- Angular.js and Angular Material scripts -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
@@ -66,7 +87,7 @@
 	<script src="app/app.modules.js"></script>
 	<script src="app/services/ethprice.filter.js"></script>
 	<script src="app/services/web3.service.js"></script>
-	<script src="app/services/marketContract.service.js"></script>
+	<script src="app/services/openSea.service.js"></script>
 	<script src="app/services/coreContract.service.js"></script>
 
 	<!-- App components -->
@@ -84,11 +105,9 @@
 	<script src="app/shared/accounticon/accounticon.directive.js"></script>
 	<script src="app/shared/pixelcon/pixelcon.directive.js"></script>
 	<script src="app/shared/pixelconcard/pixelconcard.directive.js"></script>
-	<script src="app/shared/dialogs/pixelcon/pixelcon.controller.js"></script>
-	<script src="app/shared/dialogs/collection/collection.controller.js"></script>
-	<script src="app/shared/dialogs/sell/sell.controller.js"></script>
-	<script src="app/shared/dialogs/listing/listing.controller.js"></script>
-	<script src="app/shared/dialogs/send/send.controller.js"></script>
+	<script src="app/dialogs/pixelcon/pixelcon.controller.js"></script>
+	<script src="app/dialogs/collection/collection.controller.js"></script>
+	<script src="app/dialogs/send/send.controller.js"></script>
 
 </body>
 </html>
