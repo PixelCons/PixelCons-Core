@@ -19,7 +19,7 @@ div.pixelconAccountPage.sm div.bottomSpacer {
 div.pixelconAccountPage .accountPageTransition,
 div.pixelconAccountPage .accountPageTransition .ng-hide-add,
 div.pixelconAccountPage .accountPageTransition .ng-hide-remove {
-  transition: background-color cubic-bezier(.35,0,.25,1) 0.05s;
+	transition: background-color cubic-bezier(.35,0,.25,1) 0.05s;
 }
 
 /* Account Card Container */
@@ -85,11 +85,11 @@ div.pixelconAccountPage div.accountHeaderBottom button.createButton {
 	margin: 0px;
 }
 div.pixelconAccountPage.sm div.accountHeaderBottom button.createButton {
-    min-width: 10px;
+	min-width: 10px;
 }
 div.pixelconAccountPage.sm div.accountHeaderBottom button {
 	max-height: 32px;
-    min-height: 32px;
+	min-height: 32px;
 	line-height: 32px;
 }
 div.pixelconAccountPage div.accountHeaderBottom md-select {
@@ -107,8 +107,8 @@ div.pixelconAccountPage div.accountHeaderBottom .marketButton {
 	text-transform: uppercase;
 	border-radius: 5px;
 	text-decoration: none;
-    opacity: 1.0;
-    filter: alpha(opacity=100);
+	opacity: 1.0;
+	filter: alpha(opacity=100);
 }
 div.pixelconAccountPage.sm div.accountHeaderBottom .marketButton {
 	padding: 5px 5px;
@@ -126,8 +126,8 @@ div.pixelconAccountPage div.accountHeaderBottom .marketIcon {
 	margin-left: 5px;
 	background-image: url(/img/icon_opensea_w.svg);
 	background-size: contain;
-    opacity: 0.95;
-    filter: alpha(opacity=95);
+	opacity: 0.95;
+	filter: alpha(opacity=95);
 }
 div.pixelconAccountPage.sm div.accountHeaderBottom .marketIcon {
 	width: 15px;
@@ -155,7 +155,7 @@ div.pixelconAccountPage div.groupIcon {
 	vertical-align: middle;
 }
 div.pixelconAccountPage.sm .sortBy .md-select-icon {
-    width: 5px;
+	width: 5px;
 }
 
 /* Account Card Container: Pixelcon Window */
@@ -166,15 +166,15 @@ div.pixelconAccountPage div.displayWindow {
 	min-height: 200px;
 }
 div.pixelconAccountPage div.error {
-    position: absolute;
+	position: absolute;
 	text-align: center;
-    left: 50%;
-    top: 50%;
-    margin: -50px -153px;
-    width: 276px;
-    height: 42px;
-    padding: 15px;
-    border-radius: 15px;
+	left: 50%;
+	top: 50%;
+	margin: -50px -153px;
+	width: 276px;
+	height: 42px;
+	padding: 15px;
+	border-radius: 15px;
 }
 div.pixelconAccountPage div.loading {
 	position: absolute;
