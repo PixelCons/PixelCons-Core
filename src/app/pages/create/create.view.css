@@ -20,7 +20,7 @@ div.pixelconCreatePage.sm div.bottomSpacer {
 /* Details Card Container */
 div.pixelconCreatePage div.createCard {
 	width: 560px;
-    border-radius: 15px;
+	border-radius: 15px;
 	min-height: 590px;
 	margin: 0 auto;
 }
@@ -38,7 +38,7 @@ div.pixelconCreatePage div.createWindow {
 	position: relative;
 	width: 100%;
 	height: 520px;
-    border-radius: 15px;
+	border-radius: 15px;
 }
 div.pixelconCreatePage.sm div.createWindow {
 	height: 410px;
@@ -100,10 +100,10 @@ div.pixelconCreatePage.sm div.pixelconPalette {
 	height: 64px;
 }
 div.pixelconCreatePage.lg div.pixelconPalette {
-    left: 550px;
-    top: 40px;
-    width: 288px;
-    height: 72px;
+	left: 550px;
+	top: 40px;
+	width: 288px;
+	height: 72px;
 }
 div.pixelconCreatePage div.canvasPixel {
 	cursor: pointer;
