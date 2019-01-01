@@ -34,12 +34,6 @@ accounticon .accountIconDirectiveIconContainer {
 	margin: 4px;
 	font-size: 0px;
 }
-accounticon .accountIconDirectiveIcon.icon {
-	margin-right: 5px;
-}
-accounticon .accountIconDirectiveIcon.signature {
-	margin-left: 5px;
-}
 accounticon .accountIconDirectiveIconCover {
 	background-color: rgba(254, 254, 254, 0.4);
 }
