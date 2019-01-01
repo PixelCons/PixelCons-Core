@@ -42,7 +42,7 @@
 }
 .collectionDialog div.dialogCloseButton:hover {
 	opacity: 1.0;
-    filter: alpha(opacity=100);
+	filter: alpha(opacity=100);
 }
 .collectionDialog div.dialogTitle {
 	position: absolute;
