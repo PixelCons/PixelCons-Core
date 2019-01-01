@@ -153,8 +153,7 @@
 	display: inline-block !important;
 	width: 24px;
 	height: 24px;
-	margin-top: 6px;
-	margin-bottom: -6px;
+	margin: 6px 4px -6px 4px;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
