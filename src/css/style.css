@@ -133,6 +133,12 @@
 .textWhite {
 	color: #f2f2f2;
 }
+.textSpaceBefore {
+	margin-left: 5px;
+}
+.textSpaceAfter {
+	margin-right: 5px;
+}
 
 /* Icon Button */
 .iconButton {
