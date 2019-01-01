@@ -70,14 +70,14 @@ div.pixelconCollectionPage div.groupIconElement {
 	margin-right: 8px;
 }
 div.pixelconCollectionPage.md div.groupIconElement {
-    width: 7px;
-    height: 9px;
-    margin-right: 7px;
+	width: 7px;
+	height: 9px;
+	margin-right: 7px;
 }
 div.pixelconCollectionPage.sm div.groupIconElement {
-    width: 7px;
-    height: 9px;
-    margin-right: 7px;
+	width: 7px;
+	height: 9px;
+	margin-right: 7px;
 }
 div.pixelconCollectionPage div.displayTable {
 	box-sizing: border-box;
@@ -98,15 +98,15 @@ div.pixelconCollectionPage.sm .pixelconCard {
 	margin-bottom: 16px;
 }
 div.pixelconCollectionPage div.error {
-    position: absolute;
+	position: absolute;
 	text-align: center;
-    left: 50%;
-    top: 50%;
-    margin: -38px -153px;
-    width: 276px;
-    height: 42px;
-    padding: 15px;
-    border-radius: 15px;
+	left: 50%;
+	top: 50%;
+	margin: -38px -153px;
+	width: 276px;
+	height: 42px;
+	padding: 15px;
+	border-radius: 15px;
 }
 div.pixelconCollectionPage div.loading {
 	position: absolute;
@@ -119,19 +119,19 @@ div.pixelconCollectionPage div.loading {
 	border-radius: 15px;
 }
 div.pixelconCollectionPage .shareLink {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 30px;
-    height: 30px;
-    background-image: url(/img/icon_share_w.svg);
-    background-size: contain;
-    opacity: 0.5;
-    filter: alpha(opacity=50);
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 30px;
+	height: 30px;
+	background-image: url(/img/icon_share_w.svg);
+	background-size: contain;
+	opacity: 0.5;
+	filter: alpha(opacity=50);
 }
 div.pixelconCollectionPage .shareLink:hover {
-    opacity: 0.8;
-    filter: alpha(opacity=80);
+	opacity: 0.8;
+	filter: alpha(opacity=80);
 }
 
 /* Card Details */
@@ -168,5 +168,5 @@ div.pixelconCollectionPage div.detailsSectionMoreButton .moreMenu {
 }
 div.pixelconCollectionPage div.detailsSectionFooter {
 	width: 100%;
-    text-align: right;
+	text-align: right;
 }
