@@ -1,7 +1,7 @@
 var PixelCons = artifacts.require("./PixelCons.sol");
 
 // Settings
-var enabled = false;
+var enabled = true;
 var primaryAddress = '0xFcc7fFEFA71E54926b87DC0624394A4DaA4c860E';
 var secondaryAddress = '0x181D54fDBBB7Cf5C3e3959967328B5fAE4402805';
 
