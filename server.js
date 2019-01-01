@@ -223,7 +223,7 @@ function minifyHTML() {
 						}
 					}
 					
-					var uglified = uglifyhtml.minify(results[r].data, {collapseWhitespace:true, removeComments:true});
+					var uglified = uglifyhtml.minify(results[r].data, {collapseWhitespace:true, preserveLineBreaks:true, removeComments:true});
 					fileWritePromises.push(writeFilePromise(copyFile, uglified));
 				}
 				Promise.all(fileWritePromises).then(function(results) {
