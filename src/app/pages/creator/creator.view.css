@@ -79,15 +79,15 @@ div.pixelconCreatorPage.sm .pixelconCard {
 	margin-bottom: 16px;
 }
 div.pixelconCreatorPage div.error {
-    position: absolute;
+	position: absolute;
 	text-align: center;
-    left: 50%;
-    top: 50%;
-    margin: -38px -153px;
-    width: 276px;
-    height: 42px;
-    padding: 15px;
-    border-radius: 15px;
+	left: 50%;
+	top: 50%;
+	margin: -38px -153px;
+	width: 276px;
+	height: 42px;
+	padding: 15px;
+	border-radius: 15px;
 }
 div.pixelconCreatorPage div.loading {
 	position: absolute;
@@ -100,19 +100,19 @@ div.pixelconCreatorPage div.loading {
 	border-radius: 15px;
 }
 div.pixelconCreatorPage .shareLink {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 30px;
-    height: 30px;
-    background-image: url(/img/icon_share_w.svg);
-    background-size: contain;
-    opacity: 0.5;
-    filter: alpha(opacity=50);
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 30px;
+	height: 30px;
+	background-image: url(/img/icon_share_w.svg);
+	background-size: contain;
+	opacity: 0.5;
+	filter: alpha(opacity=50);
 }
 div.pixelconCreatorPage .shareLink:hover {
-    opacity: 0.8;
-    filter: alpha(opacity=80);
+	opacity: 0.8;
+	filter: alpha(opacity=80);
 }
 
 /* Card Details */
@@ -136,5 +136,5 @@ div.pixelconCreatorPage div.detailsSectionMenuBarText {
 }
 div.pixelconCreatorPage div.detailsSectionFooter {
 	width: 100%;
-    text-align: right;
+	text-align: right;
 }
