@@ -47,7 +47,7 @@
 			_this.loading = true;
 			_this.currPage = 0;
 			_this.pixelcons = [];
-			_this.showMarketLink = !openSea.canGetForSaleList();
+			_this.showMarketLink = openSea.isEnabled() && !openSea.canGetForSaleList();
 			_this.marketLink = openSea.getMarketLink();
 			
 			coreContract.getTotalPixelcons().then(function(total) {
