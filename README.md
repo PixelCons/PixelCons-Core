@@ -37,38 +37,37 @@ var _transactionLookupUrl = 'https://etherscan.io/tx/<txHash>';
 var _accountLookupUrl = 'https://etherscan.io/address/<address>';
 ```
 
-#### 2_contract_migration.js (\migrations)
-The beginning of this migration script has declared variables that allow you to set different accounts you wish to be loaded with Eth on truffle migration
+#### 3_data_load.js (\migrations)
+The beginning of this migration script has some declared variables that allows you to disabled loading test data on truffle migration as well as specify the addresses you wish to use for testing
 ```
+var enabled = false;
 var primaryAddress = '0xfE643f001caC62a5f513Af517765146d331261C8';
 var secondaryAddress = '0x9f2fedFfF291314E5a86661e5ED5E6f12e36dd37';
 ```
 
-#### 3_data_load.js (\migrations)
-The beginning of this migration script has a declared variable that allows you to disabled loading test data on truffle migration
-```
-var enabled = false;
-```
-
-#### coreContract.service.js and marketContract.service.js (\src\app\services)
-There are a few additional options to configure at the beginning of these two files pertaining to the two deployed contracts on the Ethereum blockchain
+#### coreContract.service.js and openSea.service.js (\src\app\services)
+There are a few additional options to configure at the beginning of these two files pertaining to interactions with the deployed contract on the Ethereum blockchain and third party market integration with OpenSea
 
 ## Run the Application
 PixelCons is a single page app for web browsers. To run the app, you simply need to host the website data (located at \src) 
 and the contract json files (located at \build\contracts). This project includes a node.js script to host these files for you at 
-http://localhost:8080 which can be run by following these steps...
+http://localhost:8080. This script can also create a minified version of all the website assets for a more light weight deployment. Run the script by following these steps...
 
 #### 1. Start Local Ethereum Blockchain (optional)
-If you want to run the app with a local Ethereum blockchain instead of relying on a public test net or the main net, please start up Ganache and run 
-the following command to publish the contracts to it
+If you want to run the app with a local Ethereum blockchain instead of relying on a public test net or the main net, please start up Ganache and run the following command to publish the contracts to it
 ```
 truffle migrate --reset
 ```
 
 #### 2. Run the Server Script
-Run the following command to start hosting the app at http://localhost:8080
+Run the following command to minify the web assets and start hosting the app at http://localhost:8080. All the minified assets are dumped in the build folder (\build)
 ```
 node server.js
+```
+Optionally, if you don't want the web assets to be minified (for easier debugging) add the argument '-debug'
+
+```
+node server.js -debug
 ```
 
 #### 3. Make Sure You Are Connected to the Desired Network
@@ -79,13 +78,10 @@ The PixelCons core project contains test scripts for verifying application integ
 the public Ethereum test nets and especially not the Ethereum main net. Please follow these steps if you wish to run the tests yourself...
 
 #### 1. Start Local Ethereum Blockchain
-If you want to run the app with a local Ethereum blockchain instead of relying on a public test net or the main net, please start up Ganache and run 
-the following command to publish the contracts to it
+First, make sure Ganache is set up to 'automine', otherwise some of the test transactions may run over each other. Also, make sure to disable the migration data load (see **Configuration** for 3_data_load.js), then start up Ganache and run the following command to publish the contracts to it
 ```
 truffle migrate --reset
 ```
-Note: please make sure Ganache is set up to 'automine', otherwise some of the test transactions may run over each other. Also, make sure to disable
-the migration data load (see **Configuration** for 3_data_load.js)
 
 #### 2. Run the Test Script
 Run the following command to start running the tests
