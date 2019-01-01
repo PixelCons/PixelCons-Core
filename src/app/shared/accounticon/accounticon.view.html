@@ -5,7 +5,7 @@
 	
 	<!-- Signature Mode -->
 	<div class="accountIconDirectiveInline accountIconDirectiveRight" ng-if="ctrl.mode=='signature'">
-		<div class="accountIconDirectiveInline accountIconDirectiveNormalText accountIconDirectiveBottom textBold"
+		<div class="accountIconDirectiveInline accountIconDirectiveNormalText accountIconDirectiveBottom textBold textSpaceAfter"
 				ng-class="{'textMedium':ctrl.size=='sm'||ctrl.size=='md', 'textLarge':ctrl.size=='lg'}">{{ctrl.text}}</div>
 		<div class="accountIconDirectiveInline accountIconDirectiveIcon" ng-class="{'colorWhite':!ctrl.isReserveAddress, 'colorDark':ctrl.isReserveAddress}">
 			<div class="accountIconDirectiveIconContainer">
@@ -35,8 +35,8 @@
 		</div>
 	</div>
 	<div class="accountIconDirectiveInline" ng-if="ctrl.mode=='icon' && ctrl.text">
-		<div class="accountIconDirectiveInline accountIconDirectiveText accountIconDirectiveLeft textBold" 
+		<div class="accountIconDirectiveInline accountIconDirectiveText accountIconDirectiveLeft textBold textSpaceBefore" 
 				ng-class="{'textMedium':ctrl.size=='sm', 'textLarge':ctrl.size=='lg'||ctrl.size=='md'}">{{ctrl.text}}</div>
-		<div class="accountIconDirectiveInline accountIconDirectiveText accountIconDirectiveLeft textSelectable textSmall textLight">{{ctrl.getCompressedAddressString(ctrl.address)}}</div>
+		<div class="accountIconDirectiveInline accountIconDirectiveText accountIconDirectiveLeft textSelectable textSmall textLight textSpaceBefore">{{ctrl.getCompressedAddressString(ctrl.address)}}</div>
 	</div>
 </div>
