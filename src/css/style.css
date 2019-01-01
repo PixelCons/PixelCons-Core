@@ -133,12 +133,6 @@
 .textWhite {
 	color: #f2f2f2;
 }
-.textSpaceBefore {
-	margin-left: 5px;
-}
-.textSpaceAfter {
-	margin-right: 5px;
-}
 
 /* Icon Button */
 .iconButton {
@@ -159,7 +153,7 @@
 	display: inline-block !important;
 	width: 24px;
 	height: 24px;
-	margin: 6px 4px -6px 4px;
+	margin: 6px 0px -6px 0px;
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: contain;
