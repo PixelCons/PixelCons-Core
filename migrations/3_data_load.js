@@ -1,16 +1,14 @@
 var PixelCons = artifacts.require("./PixelCons.sol");
-var PixelConMarket = artifacts.require("./PixelConMarket.sol");
 
 // Settings
 var enabled = false;
-	
-	
+var primaryAddress = '0xFcc7fFEFA71E54926b87DC0624394A4DaA4c860E';
+var secondaryAddress = '0x181D54fDBBB7Cf5C3e3959967328B5fAE4402805';
+
+
 module.exports = function(deployer) {
-	var pixelconsContract;
-	var marketContract;
 	var migratorAddress = web3.eth.accounts[0];
-	var primaryAddress = '0xfE643f001caC62a5f513Af517765146d331261C8';
-	var secondaryAddress = '0x9f2fedFfF291314E5a86661e5ED5E6f12e36dd37';
+	var pixelconsContract;
 	
 	// Example Pixelcons
 	var pixelconSet1 = [
@@ -116,64 +114,50 @@ module.exports = function(deployer) {
 		{id:'0x7e7d644447e7644444707e44447777441dd11000400000044110000421d10002', name:'Rabbit'}
 	];
 		
-	// Load pixelcon example data
+	
+	// Distributes funds for testing
+	function distributeFunds() {
+		if(web3.fromWei(web3.eth.getBalance(primaryAddress)) < 9)
+			web3.eth.sendTransaction({from: migratorAddress, to:primaryAddress, value:web3.toWei(10, 'ether'), gasLimit:21000, gasPrice:20000000000});
+		if(web3.fromWei(web3.eth.getBalance(secondaryAddress)) < 9)
+			web3.eth.sendTransaction({from: migratorAddress, to:secondaryAddress, value:web3.toWei(10, 'ether'), gasLimit:21000, gasPrice:20000000000});
+	}
+	
+	// Loads pixelcon example data
 	function loadPixelconData(callback) {
 		var count = pixelconSet1.length;
 		for(var i=0; i<pixelconSet1.length; i++) {
-			var toOwn = migratorAddress;			
+			var toOwn = migratorAddress;
+			if(i<10) toOwn = primaryAddress;
 			pixelconsContract.create(toOwn, pixelconSet1[i].id, web3.fromUtf8(pixelconSet1[i].name), {from: migratorAddress, gas: 3000000}).then(function() {
 				if(--count == 0 && callback) callback();
 			});
 		}		
 	}
 	
-	// Load pixelcon collection example data
+	// Loads pixelcon collection example data
 	function loadPixelconCollectionData(callback) {
-		//pixelconsContract.createCollection(web3.fromUtf8('Grp1'), [0,1,2,3], {from: migratorAddress, gas: 3000000});
-		//pixelconsContract.createCollection(web3.fromUtf8('Grp2'), [8,9], {from: migratorAddress, gas: 3000000});
-		var count = 3;
-		pixelconsContract.createCollection([0,1,2,3,4,5,6,7,8,9,10,11,12], web3.fromUtf8('Grp1'), {from: migratorAddress, gas: 3000000}).then(function() {
+		var count = 2;
+		pixelconsContract.createCollection([14,15,16,17,18,19], web3.fromUtf8('Grp1'), {from: migratorAddress, gas: 3000000}).then(function() {
 			if(--count == 0 && callback) callback();
 		});
-		pixelconsContract.createCollection([24,25,26,27,28,29], web3.fromUtf8('Grp2'), {from: migratorAddress, gas: 3000000}).then(function() {
-			if(--count == 0 && callback) callback();
-		});
-		pixelconsContract.createCollection([30,31,32,33,34,35,36,37,38,39], web3.fromUtf8('Grp3'), {from: migratorAddress, gas: 3000000}).then(function() {
+		pixelconsContract.createCollection([30,31,32,33,34,35,36,37,38,39], web3.fromUtf8('Grp2'), {from: migratorAddress, gas: 3000000}).then(function() {
 			if(--count == 0 && callback) callback();
 		});
 	}
 	
-	// Load pixelcon listings data
-	function loadPixelconMarketData() {
-		console.log('Start Market Listings');
-		marketContract.adminChange(primaryAddress, {from: migratorAddress, gas: 3000000});
-		for(var i=0; i<10; i++) {
-			var days = 10*24*60*60;
-			var price = web3.toHex(web3.toWei(1.0 + (i/10) + (i/200)));
-			var bytes = '0x' + hexToBytes(price) + hexToBytes(price) + hexToBytes(web3.toHex(days));
-			if(i==1 || i==2 || i==6 || i==7 || i==9) {
-				pixelconsContract.contract.safeTransferFrom['address,address,uint256,bytes'](migratorAddress, marketContract.address, pixelconSet1[i].id, bytes, {from: migratorAddress, gas: 3000000});
-			}
-		}
-	}
-	
-	// Get contracts and load data
+	// Load data
 	if(enabled) {
+		distributeFunds();
+		
 		PixelCons.deployed().then(function(contract) {
 			pixelconsContract = contract;
-			PixelConMarket.deployed().then(function(contract) {
-				marketContract = contract;
 			
-				//pixelcons
-				loadPixelconData(function(){
-					
-					//groups
-					loadPixelconCollectionData(function(){
-						
-						//listings
-						loadPixelconMarketData();
-					});
-				});
+			//create pixelcons
+			loadPixelconData(function(){
+				
+				//create groups
+				loadPixelconCollectionData();
 			});
 		});
 	}
