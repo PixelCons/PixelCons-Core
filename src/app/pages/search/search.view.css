@@ -91,8 +91,8 @@ div.pixelconSearchPage div.searchFilter .marketButton {
 	text-transform: uppercase;
 	border-radius: 5px;
 	text-decoration: none;
-    opacity: 1.0;
-    filter: alpha(opacity=100);
+	opacity: 1.0;
+	filter: alpha(opacity=100);
 }
 div.pixelconSearchPage.sm div.searchFilter .marketButton {
 	padding: 5px 5px;
@@ -110,8 +110,8 @@ div.pixelconSearchPage div.searchFilter .marketIcon {
 	margin-left: 5px;
 	background-image: url(/img/icon_opensea_w.svg);
 	background-size: contain;
-    opacity: 0.95;
-    filter: alpha(opacity=95);
+	opacity: 0.95;
+	filter: alpha(opacity=95);
 }
 div.pixelconSearchPage.sm div.searchFilter .marketIcon {
 	width: 15px;
@@ -169,15 +169,15 @@ div.pixelconSearchPage div.displayWindow {
 	min-height: 200px;
 }
 div.pixelconSearchPage div.error {
-    position: absolute;
+	position: absolute;
 	text-align: center;
-    left: 50%;
-    top: 50%;
-    margin: -50px -153px;
-    width: 276px;
-    height: 42px;
-    padding: 15px;
-    border-radius: 15px;
+	left: 50%;
+	top: 50%;
+	margin: -50px -153px;
+	width: 276px;
+	height: 42px;
+	padding: 15px;
+	border-radius: 15px;
 }
 div.pixelconSearchPage div.loading {
 	position: absolute;
@@ -267,5 +267,5 @@ div.pixelconSearchPage div.searchPaging button.pageButton.next {
 }
 div.pixelconSearchPage div.searchPaging button.pageButton[disabled] {
 	opacity: 0.3;
-    filter: alpha(opacity=30);
+	filter: alpha(opacity=30);
 }
