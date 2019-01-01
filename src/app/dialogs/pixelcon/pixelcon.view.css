@@ -42,7 +42,7 @@
 }
 .pixelconDialog div.dialogCloseButton:hover {
 	opacity: 1.0;
-    filter: alpha(opacity=100);
+	filter: alpha(opacity=100);
 }
 .pixelconDialog div.dialogTitle {
 	position: absolute;
