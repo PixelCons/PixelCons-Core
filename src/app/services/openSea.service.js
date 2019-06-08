@@ -7,7 +7,8 @@
 		var _enabled = false;
 		var _forSaleListEnabled = false;
 		var _cacheResults = true;
-		var _maxConcurrentCalls = 2;
+		var _maxConcurrentCalls = 1;
+		var _nextCallCooldown = 500;
 		var _apiKey = '<my_api_key>';
 		var _contractAddress = '0x5536b6aadd29eaf0db112bb28046a5fad3761bd4';
 		var _accountLink = 'https://opensea.io/account';
@@ -43,7 +44,7 @@
 					var indexes = [];
 					if(data && data.assets) {
 						for(var i=0; i<data.assets.length; i++) {
-							if(data.assets[i].description && data.assets[i].sell_orders.length) {
+							if(data.assets[i].description && data.assets[i].sell_orders && data.assets[i].sell_orders.length) {
 								var strIdx = data.assets[i].description.indexOf("Number");
 								if(strIdx > -1) {
 									var num = parseInt(data.assets[i].description.substring(strIdx+7, data.assets[i].description.length));
@@ -202,14 +203,18 @@
 						xhr.setRequestHeader('X-API-KEY', _apiKey);
 					},
 					success: function(data){
-						numCallsPending--;
-						checkWaitingCalls();
-						resolve(data);
+						setTimeout(function(){ 
+							numCallsPending--; 
+							checkWaitingCalls();
+							resolve(data);
+						}, _nextCallCooldown);
 					},
 					error: function(xhr, textStatus, errorThrown) {
-						numCallsPending--;
-						checkWaitingCalls();
-						reject(textStatus);
+						setTimeout(function(){ 
+							numCallsPending--; 
+							checkWaitingCalls();
+							reject(textStatus);
+						}, _nextCallCooldown);
 					}
 				});
 			}
