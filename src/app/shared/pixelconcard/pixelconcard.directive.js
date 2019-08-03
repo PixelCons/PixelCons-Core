@@ -3,18 +3,16 @@
 		.directive('pixelconcard', pixelconcard)
 		.controller('PixelConCardCtrl', PixelConCardCtrl);
 
-	PixelConCardCtrl.$inject = ['$scope', '$mdDialog', '$location', '$timeout', 'web3Service', 'coreContract', 'openSea'];
-	function PixelConCardCtrl($scope, $mdDialog, $location, $timeout, web3Service, coreContract, openSea) {
+	PixelConCardCtrl.$inject = ['$scope', '$mdDialog', '$location', '$timeout', 'web3Service', 'coreContract', 'market'];
+	function PixelConCardCtrl($scope, $mdDialog, $location, $timeout, web3Service, coreContract, market) {
 		var _this = this;
 		_this.coverAlwaysOn = false;
 		_this.groupInfoClick = groupInfoClick;
 		_this.pixelconClick = pixelconClick;
-		_this.marketEnabled = openSea.isEnabled();
+		_this.marketEnabled = market.isEnabled();
 		
 		// Watch for changes to the pixelcon data
 		$scope.$watch('ctrl.pixelcon', function() {
-			_this.marketData = _this.pixelcon.openSea;
-			
 			if(_this.loaded) {
 				_this.reloading = true;
 				$timeout(function () {

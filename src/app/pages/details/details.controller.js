@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('DetailsPageCtrl', DetailsPageCtrl);
 
-	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$location', 'web3Service', 'coreContract'];
-	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $location, web3Service, coreContract) {
+	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$location', 'web3Service', 'coreContract', 'market'];
+	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $location, web3Service, coreContract, market) {
 		var _this = this;
 		var pixelconDetails;
 		_this.rename = rename;
@@ -14,6 +14,8 @@
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
 		_this.shareOnFacebook = shareOnFacebook;
+		_this.marketEnabled = market.isEnabled();
+		_this.marketLink = market.getItemLink();
 		
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -65,7 +67,7 @@
 		// Sets page details to the given pixelcon data
 		function setPixelconDetails(pixelcon) {
 			pixelconDetails = pixelcon;
-			_this.marketData = pixelcon.openSea;
+			_this.marketLink = market.getItemLink(pixelcon.id);
 			_this.details = {
 				index: pixelcon.index,
 				owner: pixelcon.owner,

@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('AccountPageCtrl', AccountPageCtrl);
 
-	AccountPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$location', 'web3Service', 'coreContract', 'openSea'];
-	function AccountPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $location, web3Service, coreContract, openSea) {
+	AccountPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$location', 'web3Service', 'coreContract', 'market'];
+	function AccountPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $location, web3Service, coreContract, market) {
 		var _this = this;
 		_this.pixelcons = [];
 		_this.pixelconsCount = 0;
@@ -22,8 +22,8 @@
 		_this.createCollection = createCollection;
 		_this.goPath = goPath;
 		_this.pixelconSelect = pixelconSelect;
-		_this.marketEnabled = openSea.isEnabled();
-		_this.marketAccountLink = openSea.getAccountLink();
+		_this.marketEnabled = market.isEnabled();
+		_this.marketAccountLink = market.getAccountLink();
 		
 		var loadedFilter = {};
 		var pixelconData = [];
@@ -56,7 +56,8 @@
 			
 			//loaded address changed?
 			var account = web3Service.getAllAccounts()[0];
-			if(_this.accountAddress != account) {
+			if(_this.accountAddress.toLowerCase() != account.toLowerCase()) {
+				_this.marketAccountLink = market.getAccountLink(account);
 				_this.accountAddress = account;
 				_this.accountIcon = undefined;
 				if(account) {

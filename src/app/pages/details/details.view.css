@@ -213,9 +213,7 @@ div.pixelconDetailsPage div.marketDetailsContainer {
 	position: absolute;
 	top: 45px;
 	right: 5px;
-	border: solid 2px #3291E9;
-	border-radius: 10px;
-	padding: 3px;
+	text-align: right;
 }
 div.pixelconDetailsPage.sm div.marketDetailsContainer {
 	max-width: 135px;
@@ -253,7 +251,7 @@ div.pixelconDetailsPage div.marketDetailsContainer .marketIcon {
 	width: 20px;
 	height: 20px;
 	margin-left: 5px;
-	background-image: url(/img/icon_opensea_w.svg);
+	background-image: url(/img/icon_tag_w.svg);
 	background-size: contain;
 	opacity: 0.95;
 	filter: alpha(opacity=95);
@@ -262,25 +260,6 @@ div.pixelconDetailsPage.sm div.marketDetailsContainer .marketIcon {
 	width: 15px;
 	height: 15px;
 	margin-left: 4px;
-}
-div.pixelconDetailsPage div.marketDetailsContainer div.noteContainer {
-	margin: 0px 5px 3px 3px;
-}
-div.pixelconDetailsPage div.marketDetailsContainer div.noteIcon {
-	display: inline-block;
-	vertical-align: middle;
-	background-size: contain;
-	width: 15px;
-	height: 15px;
-	opacity: 0.6;
-	filter: alpha(opacity=60);
-}
-div.pixelconDetailsPage div.marketDetailsContainer div.noteIcon.clock {
-	background-image: url(/img/icon_clock.svg);
-}
-div.pixelconDetailsPage div.marketDetailsContainer div.note {
-	display: inline-block;
-	vertical-align: middle;
 }
 
 /* Share links */

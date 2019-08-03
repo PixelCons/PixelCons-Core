@@ -18,7 +18,7 @@ var appScripts = [
 	"src/app/services/ethprice.filter.js",
 	"src/app/services/web3.service.js",
 	"src/app/services/coreContract.service.js",
-	"src/app/services/openSea.service.js",
+	"src/app/services/market.service.js",
 	"src/app/pages/details/details.controller.js",
 	"src/app/pages/create/create.controller.js",
 	"src/app/pages/account/account.controller.js",

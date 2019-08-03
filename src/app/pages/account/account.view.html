@@ -21,7 +21,7 @@
 				<div ng-show="!ctrl.accountAddress" class="headerPlainText textLight">No Account</div>
 				<div ng-show="ctrl.accountAddress && ctrl.filter.viewMode=='owned' && !ctrl.marketEnabled" class="headerPlainText textLight">Your Account</div>
 				<div ng-show="ctrl.accountAddress && ctrl.filter.viewMode=='owned' && ctrl.marketEnabled">
-					<a class="marketButton clickable textBold textWhite" ng-href="{{ctrl.marketAccountLink}}" target="_blank">Market Account<div class="marketIcon"></div></a>
+					<a class="marketButton clickable textBold textWhite" ng-href="{{ctrl.marketAccountLink}}" target="_blank">Buy / Sell<div class="marketIcon"></div></a>
 				</div>
 				<div ng-show="ctrl.filter.viewMode=='created' && ctrl.accountAddress">
 					<md-button class="createButton md-raised" ng-show="!ctrl.groupMode" ng-disabled="ctrl.pixelconsCount<2" ng-click="ctrl.setGroupMode(true)">

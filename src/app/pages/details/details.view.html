@@ -69,29 +69,10 @@
 				</div>
 				
 				<!-- Market Details -->
-				<div class="marketDetailsContainer textNotSelectable" ng-if="ctrl.marketData">
-					<div class="textRight">
-						<div class="price textBold textDark textSelectable" ng-class="{'textLarge':!ctrl.screenSize.sm, 'textMedium':ctrl.screenSize.sm}">
-							{{ctrl.marketData.price?(ctrl.marketData.price | ethprice:ctrl.marketData.priceDenomination):''}}
-						</div>
-						<a class="actionButton clickable textBold textWhite" ng-href="{{ctrl.marketData.link}}" target="_blank">
-							{{ctrl.marketData.price?(ctrl.isOwner?'Edit':'Buy'):(ctrl.isOwner?'Sell':'Make Offer')}}<div class="marketIcon"></div>
-						</a>
-					</div>
-					<div class="noteContainer textRight">
-						<div ng-if="ctrl.marketData.priceEnd">
-							<div class="noteIcon clock"></div>
-							<div class="note textLight textSmall textSelectable">Ends at {{(ctrl.marketData.priceEnd | ethprice:ctrl.marketData.priceDenomination)}}</div>
-							<div class="note textLight textSmall textSelectable">in {{ctrl.generateTimeText(ctrl.marketData.timeLeft)}}</div>
-						</div>
-						<div ng-if="!ctrl.marketData.priceEnd && ctrl.marketData.lastSold">
-							<div class="note textLight textSmall textSelectable">Last sold</div>
-							<div class="note textLight textSmall textSelectable">for {{(ctrl.marketData.lastSold | ethprice:ctrl.marketData.lastSoldDenomination)}}</div>
-						</div>
-						<div ng-if="!ctrl.marketData.priceEnd && !ctrl.marketData.lastSold">
-							<div class="note textLight textSmall textSelectable">(No Sale History)</div>
-						</div>
-					</div>
+				<div class="marketDetailsContainer textNotSelectable" ng-if="ctrl.marketEnabled">
+					<a class="actionButton clickable textBold textWhite" ng-href="{{ctrl.marketLink}}" target="_blank">
+						{{ctrl.isOwner?'Sell':'Buy'}}<div class="marketIcon"></div>
+					</a>
 				</div>
 				
 			</div>

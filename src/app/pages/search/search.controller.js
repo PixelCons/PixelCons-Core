@@ -2,15 +2,14 @@
 	angular.module('App')
 		.controller('SearchPageCtrl', SearchPageCtrl);
 
-	SearchPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$location', 'web3Service', 'coreContract', 'openSea'];
-	function SearchPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $location, web3Service, coreContract, openSea) {
+	SearchPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$location', 'web3Service', 'coreContract', 'market'];
+	function SearchPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $location, web3Service, coreContract, market) {
 		var _this = this;
 		var maxInPage = 50;
 		var minGrade = 8;
 		_this.pixelcons = [];
 		_this.filter = {
 			searchText: $routeParams.search?$routeParams.search:'',
-			forSaleOnly: $routeParams.forSaleOnly=='true',
 			sortBy: 'dateCreated',
 			sortDesc: $routeParams.asc!='true'
 		}
@@ -20,7 +19,6 @@
 		_this.checkUpdateData = checkUpdateData;
 		_this.updatePage = updatePage;
 		_this.goPath = goPath;
-		_this.marketEnabled = openSea.isEnabled();
 		
 		var loadedFilter = {};
 		
@@ -31,7 +29,6 @@
 		var pixelconFilterGrades;
 		var pixelconFilterGradeMax;
 		var pixelconFilterCount;
-		var pixelconListings;
 		
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -47,15 +44,11 @@
 			_this.loading = true;
 			_this.currPage = 0;
 			_this.pixelcons = [];
-			_this.showMarketLink = openSea.isEnabled() && !openSea.canGetForSaleList();
-			_this.marketLink = openSea.getMarketLink();
+			_this.showMarketLink = market.isEnabled();
+			_this.marketLink = market.getMarketLink();
 			
 			coreContract.getTotalPixelcons().then(function(total) {
 				pixelconCount = total;
-				
-				return openSea.getItemsForSale();
-			}).then(function(indexes) {
-				pixelconListings = indexes;
 				
 				_this.grabbingData = false;
 				var page = $routeParams.page?parseInt($routeParams.page):null;
@@ -79,15 +72,12 @@
 			if(($routeParams.search === undefined && _this.filter.searchText) || ($routeParams.search !== undefined && _this.filter.searchText != $routeParams.search)) {
 				$location.search('search', _this.filter.searchText?_this.filter.searchText:undefined).replace();
 			}
-			if(($routeParams.forSaleOnly === undefined && _this.filter.forSaleOnly) || ($routeParams.forSaleOnly !== undefined && _this.filter.forSaleOnly != ($routeParams.forSaleOnly=='true'))) {
-				$location.search('forSaleOnly', _this.filter.forSaleOnly?'true':undefined).replace();
-			}
 			if(($routeParams.asc === undefined && !_this.filter.sortDesc) || ($routeParams.asc !== undefined && _this.filter.sortDesc == ($routeParams.asc=='true'))) {
 				$location.search('asc', (!_this.filter.sortDesc)?'true':undefined).replace();
 			}
 			
 			//name grading related filter changes?
-			if(forceUpdate || _this.filter.searchText != loadedFilter.searchText || _this.filter.forSaleOnly != loadedFilter.forSaleOnly) {
+			if(forceUpdate || _this.filter.searchText != loadedFilter.searchText) {
 				loadedFilter = JSON.parse(JSON.stringify(_this.filter));
 				
 				// get list of names or just grade?
@@ -138,22 +128,12 @@
 			pixelconFilterGradeMax = 0;
 			pixelconFilterGrades = new Uint8Array(pixelconCount);
 			
-			if(loadedFilter.forSaleOnly) {
-				//selling
-				for(var i=0; i<pixelconListings.length; i++) {
-					var grade = loadedFilter.searchText.length?gradeNameWithText(pixelconNames[pixelconListings[i]], loadedFilter.searchText):200;
-					if(grade > minGrade) pixelconFilterCount++;
-					if(grade > pixelconFilterGradeMax) pixelconFilterGradeMax = grade;
-					pixelconFilterGrades[pixelconListings[i]] = grade;
-				}
-			} else {
-				//all
-				for(var i=0; i<pixelconCount; i++) {
-					var grade = loadedFilter.searchText.length?gradeNameWithText(pixelconNames[i], loadedFilter.searchText):200;
-					if(grade > minGrade) pixelconFilterCount++;
-					if(grade > pixelconFilterGradeMax) pixelconFilterGradeMax = grade;
-					pixelconFilterGrades[i] = grade;
-				}
+			//all
+			for(var i=0; i<pixelconCount; i++) {
+				var grade = loadedFilter.searchText.length?gradeNameWithText(pixelconNames[i], loadedFilter.searchText):200;
+				if(grade > minGrade) pixelconFilterCount++;
+				if(grade > pixelconFilterGradeMax) pixelconFilterGradeMax = grade;
+				pixelconFilterGrades[i] = grade;
 			}
 			
 			_this.totalFound = pixelconFilterCount;
@@ -178,47 +158,23 @@
 			//loop from high score to low score, until page slots are filled
 			var indexes = [];
 			var startIndex = (page-1)*maxInPage;
-			if(loadedFilter.forSaleOnly) {
-				if(loadedFilter.sortDesc) {
-					//selling desc
-					for(var grade=pixelconFilterGradeMax; grade>minGrade && indexes.length<maxInPage; grade--) {
-						for(var i=pixelconListings.length-1; i>=0 && indexes.length<maxInPage; i--) {
-							if(pixelconFilterGrades[pixelconListings[i]] == grade) {
-								if(startIndex > 0) startIndex--;
-								else indexes.push(pixelconListings[i]);
-							}
-						}
-					}
-				} else {
-					//selling asc
-					for(var grade=pixelconFilterGradeMax; grade>minGrade && indexes.length<maxInPage; grade--) {
-						for(var i=0; i<pixelconListings.length && indexes.length<maxInPage; i++) {
-							if(pixelconFilterGrades[pixelconListings[i]] == grade) {
-								if(startIndex > 0) startIndex--;
-								else indexes.push(pixelconListings[i]);
-							}
+			if(loadedFilter.sortDesc) {
+				//all desc
+				for(var grade=pixelconFilterGradeMax; grade>minGrade && indexes.length<maxInPage; grade--) {
+					for(var i=pixelconFilterGrades.length-1; i>=0 && indexes.length<maxInPage; i--) {
+						if(pixelconFilterGrades[i] == grade) {
+							if(startIndex > 0) startIndex--;
+							else indexes.push(i);
 						}
 					}
 				}
 			} else {
-				if(loadedFilter.sortDesc) {
-					//all desc
-					for(var grade=pixelconFilterGradeMax; grade>minGrade && indexes.length<maxInPage; grade--) {
-						for(var i=pixelconFilterGrades.length-1; i>=0 && indexes.length<maxInPage; i--) {
-							if(pixelconFilterGrades[i] == grade) {
-								if(startIndex > 0) startIndex--;
-								else indexes.push(i);
-							}
-						}
-					}
-				} else {
-					//all asc
-					for(var grade=pixelconFilterGradeMax; grade>minGrade && indexes.length<maxInPage; grade--) {
-						for(var i=0; i<pixelconFilterGrades.length && indexes.length<maxInPage; i++) {
-							if(pixelconFilterGrades[i] == grade) {
-								if(startIndex > 0) startIndex--;
-								else indexes.push(i);
-							}
+				//all asc
+				for(var grade=pixelconFilterGradeMax; grade>minGrade && indexes.length<maxInPage; grade--) {
+					for(var i=0; i<pixelconFilterGrades.length && indexes.length<maxInPage; i++) {
+						if(pixelconFilterGrades[i] == grade) {
+							if(startIndex > 0) startIndex--;
+							else indexes.push(i);
 						}
 					}
 				}

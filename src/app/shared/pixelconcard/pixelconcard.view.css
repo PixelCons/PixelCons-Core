@@ -78,22 +78,6 @@ pixelconcard .pixelconCardDirectiveDetailContainer {
 pixelconcard .pixelconCardDirectiveDetailContainer.clickable:hover {
 	background-color: rgba(242, 242, 242, 0.9);
 }
-pixelconcard .pixelconCardDirectivePriceContainer {
-	top: 0px;
-	right: 0px;
-	text-decoration: none;
-	opacity: 1.0;
-	filter: alpha(opacity=100);
-}
-pixelconcard .pixelconCardDirectivePriceContainerIcon {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	width: 18px;
-	height: 18px;
-	background-image: url("/img/icon_tag_c.svg");
-	background-size: contain;
-}
 pixelconcard .pixelconCardDirectiveGroupContainer {
 	bottom: 0px;
 	left: 0px;
@@ -133,13 +117,6 @@ pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
-pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectivePriceContainer {
-	line-height: 18px;
-	padding: 1px 22px 1px 4px;
-}
-pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectivePriceContainerIcon {
-	margin: 2px;
-}
 pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveGroupContainer {
 	max-width: 32px;
 	padding: 2px;
@@ -160,12 +137,6 @@ pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveNotificati
 	right: -4px;
 	width: 12px;
 	height: 12px;
-}
-pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveNotification.priceTag {
-	top: -7px;
-	right: -7px;
-	width: 20px;
-	height: 20px;
 }
 
 /* Size: sm */
@@ -188,13 +159,6 @@ pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
-pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectivePriceContainer {
-	line-height: 18px;
-	padding: 2px 22px 2px 4px;
-}
-pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectivePriceContainerIcon {
-	margin: 2px;
-}
 pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveGroupContainer {
 	max-width: 36px;
 	padding: 2px;
@@ -215,12 +179,6 @@ pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveNotificati
 	right: -6px;
 	width: 16px;
 	height: 16px;
-}
-pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveNotification.priceTag {
-	top: -8px; 
-	right: -8px;
-	width: 24px;
-	height: 24px;
 }
 
 /* Size: md */
@@ -243,13 +201,6 @@ pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
-pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectivePriceContainer {
-	line-height: 18px;
-	padding: 2px 22px 2px 4px;
-}
-pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectivePriceContainerIcon {
-	margin: 2px;
-}
 pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveGroupContainer {
 	max-width: 36px;
 	padding: 2px;
@@ -270,12 +221,6 @@ pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveNotificati
 	right: -6px;
 	width: 16px;
 	height: 16px;
-}
-pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveNotification.priceTag {
-	top: -8px; 
-	right: -8px;
-	width: 26px;
-	height: 26px;
 }
 
 /* Size: lg */
@@ -298,13 +243,6 @@ pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
-pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectivePriceContainer {
-	line-height: 18px;
-	padding: 2px 23px 2px 5px;
-}
-pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectivePriceContainerIcon {
-	margin: 2px;
-}
 pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveGroupContainer {
 	max-width: 36px;
 	padding: 2px;
@@ -325,12 +263,6 @@ pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveNotificati
 	right: -6px;
 	width: 18px;
 	height: 18px;
-}
-pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveNotification.priceTag {
-	top: -9px;
-	right: -9px;
-	width: 28px;
-	height: 28px;
 }
 
 /* Size: xl */
@@ -353,13 +285,6 @@ pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
 }
-pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectivePriceContainer {
-	line-height: 18px;
-	padding: 4px 24px 4px 6px;
-}
-pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectivePriceContainerIcon {
-	margin: 4px;
-}
 pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveGroupContainer {
 	max-width: 48px;
 	padding: 2px;
@@ -380,10 +305,4 @@ pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveNotificati
 	right: -6px;
 	width: 20px;
 	height: 20px;
-}
-pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveNotification.priceTag {
-	top: -9px;
-	right: -9px;
-	width: 30px;
-	height: 30px;
 }

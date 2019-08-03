@@ -15,9 +15,8 @@
 				</form>
 			</div>
 			<div class="options" layout="row">
-				<md-checkbox ng-if="ctrl.marketEnabled && !ctrl.showMarketLink" ng-disabled="ctrl.error || ctrl.grabbingData" ng-model="ctrl.filter.forSaleOnly" ng-change="ctrl.checkUpdateData()">For Sale Only</md-checkbox>
 				<a ng-if="ctrl.showMarketLink" class="marketButton clickable textBold textWhite" ng-href="{{ctrl.marketLink}}" target="_blank">For Sale<div class="marketIcon"></div></a>
-				<div class="textLight" ng-if="!ctrl.marketEnabled">Browse</div>
+				<div class="textLight" ng-if="!ctrl.showMarketLink">Browse</div>
 			</div>
 			<div class="sorting">
 				<md-select class="sortBy md-no-underline" ng-disabled="ctrl.error || ctrl.grabbingData" ng-model="ctrl.filter.sortBy" ng-change="ctrl.checkUpdateData()" placeholder="Sort By">

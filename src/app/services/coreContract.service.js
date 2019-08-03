@@ -2,8 +2,8 @@
 	angular.module('App')
 		.service('coreContract', coreContract);
 		
-	coreContract.$inject = ['web3Service', 'openSea', '$q'];
-	function coreContract(web3Service, openSea, $q) {
+	coreContract.$inject = ['web3Service', '$q'];
+	function coreContract(web3Service, $q) {
 		var _contractABI = 'contracts/PixelCons.json';
 		var _gasPadding = 1.3;
 		var _makeGasPriceSuggestion = false;
@@ -205,10 +205,6 @@
 									
 									//add collection details
 									return fillCollectionData(pixelcon);
-								}).then(function(pixelcon) {
-									
-									//add market listing details
-									return fillMarketListingData(pixelcon);
 								}).then(resolve, generateErrorCallback(reject, 'Something went wrong while fetching details'));	
 							}
 						}, generateErrorCallback(reject, 'Something went wrong while fetching details'));
@@ -218,7 +214,7 @@
 		}
 		
 		// Gets the details for the given pixelcon collection index
-		function fetchCollection(index, skipCreator, skipMarketListings) {
+		function fetchCollection(index, skipCreator) {
 			return $q(function(resolve, reject) {
 				var state = web3Service.getState();
 				if(state == "not_enabled") reject(_notEnabledError);
@@ -255,11 +251,6 @@
 											});
 										}
 									}
-									
-									//add market listing details
-									if(skipMarketListings) return pixelcons;
-									return fillMarketListingData(pixelcons);
-								}).then(function(pixelcons) {
 									collectionPixelcons = pixelcons;
 									
 									// get creator
@@ -335,10 +326,6 @@
 										return fillCollectionData(pixelcons);
 									}).then(function(pixelcons) {
 										
-										//add market listing details
-										return fillMarketListingData(pixelcons);
-									}).then(function(pixelcons) {
-										
 										//add additional flags to pixelcon objects in the collection objects
 										for(var i=0; i<pixelcons.length; i++) {
 											if(pixelcons[i].collection) {
@@ -408,10 +395,6 @@
 							
 							//add collection details
 							return fillCollectionData(pixelcons);
-						}).then(function(pixelcons) {
-							
-							//add market listing details
-							return fillMarketListingData(pixelcons);
 						}).then(resolve, generateErrorCallback(reject, 'Something went wrong while fetching creator details'));
 					}, reject);
 				}
@@ -446,10 +429,6 @@
 							
 							//add collection details
 							return fillCollectionData(pixelcons);
-						}).then(function(pixelcons) {
-							
-							//add market listing details
-							return fillMarketListingData(pixelcons);
 						}).then(resolve, generateErrorCallback(reject, 'Something went wrong while fetching pixelcons details'));	
 					}, reject);
 				}
@@ -946,42 +925,6 @@
 			});
 		}
 		
-		// Fills in market listing data for the given pixelcons
-		function fillMarketListingData(pixelcons) {
-			var singlePixelcon = false;
-			if(!Array.isArray(pixelcons)) {
-				pixelcons = [pixelcons];
-				singlePixelcon = true;
-			}
-			
-			var ids = [];
-			for(var i=0; i<pixelcons.length; i++) ids.push(pixelcons[i].id);
-			return openSea.getAssetData(ids).then(function(assets) {
-				for(var i=0; i<pixelcons.length; i++) {
-					for(var a=0; a<assets.length; a++) {
-						if(pixelcons[i].id == assets[a].id) {
-							pixelcons[i].openSea = filterMarketData(assets[a], pixelcons[i].owner);
-							break;
-						}
-					}
-				}
-				if(singlePixelcon) return pixelcons[0];
-				return pixelcons;
-			});
-		}
-		
-		// Filters out data from market if the seller does not match the owner
-		function filterMarketData(data, pixelconOwner) {
-				var filteredData = angular.copy(data, {});
-				if(filteredData.seller != pixelconOwner) {
-					filteredData.price = undefined;
-					filteredData.priceDenomination = undefined;
-					filteredData.priceEnd = undefined;
-					filteredData.timeLeft = undefined;
-				}
-				return filteredData;
-		}
-		
 		// Gets the pixelcon index of a Create event from the given receipt
 		function getPixelconIndexFromCreateEvent(contract, receipt) {
 			if(!receipt.logs) return null;
@@ -1163,8 +1106,7 @@
 						index: collection.pixelcons[i].index,
 						name: collection.pixelcons[i].name,
 						owner: collection.pixelcons[i].owner,
-						collection: collection,
-						openSea: collection.pixelcons[i].openSea
+						collection: collection
 					});
 				}
 				data.pixelcons = pixelcons;
@@ -1186,8 +1128,7 @@
 						index: collectionPixelcons[i].index,
 						name: collectionPixelcons[i].name,
 						owner: collectionPixelcons[i].owner,
-						collection: null,
-						openSea: collectionPixelcons[i].openSea
+						collection: null
 					});
 				}
 				data.pixelcons = pixelcons;
@@ -1200,7 +1141,6 @@
 			if(details.type == _createTypeDescription[0]) return addPixelconDataForCreate(details.params, data);
 			if(details.type == _updateTypeDescription[0]) return addPixelconDataForUpdate(details.params, data);
 			if(details.type == _transferTypeDescription[0]) return addPixelconDataForTransfer(details.params, data);
-			if(details.type == _transferToMarketTypeDescription[0]) return addPixelconDataForTransferToMarket(details.params, data);
 			if(details.type == _createCollectionTypeDescription[0]) return addPixelconDataForCreateCollection(details.params, data);
 			if(details.type == _updateCollectionTypeDescription[0]) return addPixelconDataForUpdateCollection(details.params, data);
 			if(details.type == _clearCollectionTypeDescription[0]) return addPixelconDataForClearCollection(details.params, data);

@@ -6,14 +6,6 @@
 		<div class="pixelconCardDirectiveDisabledShade colorDark" ng-if="ctrl.disabled" ng-hide="dirHover || ctrl.coverAlwaysOn"></div>
 		<div class="pixelconCardDirectiveImageCover" ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-hide="!dirHover && !ctrl.coverAlwaysOn" ng-cloak>
 			<div class="pixelconCardDirectiveGotoIcon"></div>
-			<a class="pixelconCardDirectiveDetailContainer pixelconCardDirectivePriceContainer pixelconCardDirectiveFont textBold textDark colorDarkOverlay clickable" 
-					ng-if="!ctrl.noSelling && (ctrl.marketData.price || (ctrl.pixelcon.owner==ctrl.account && ctrl.marketEnabled))"
-					ng-class="{'pixelconCardDirectiveTransition':ctrl.loaded}" ng-click="$event.stopPropagation()" ng-href="{{ctrl.marketData.link}}" target="_blank">
-				<div ng-if="ctrl.marketData.price && ctrl.marketData.seller!=ctrl.account">{{ctrl.marketData.price | ethprice:ctrl.marketData.priceDenomination}}</div>
-				<div ng-if="ctrl.marketData.price && ctrl.marketData.seller==ctrl.account">Edit</div>
-				<div ng-if="!ctrl.marketData.price && ctrl.pixelcon.owner==ctrl.account">Sell</div>
-				<div class="pixelconCardDirectivePriceContainerIcon"></div>
-			</a>
 			<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveGroupContainer colorDarkOverlay clickable" 
 					ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded, 'onlyThree': !ctrl.pixelcon.collection.pixelcons[3].id && ctrl.pixelcon.collection.pixelcons[2].id}"
 					ng-if="!ctrl.noCollection && ctrl.pixelcon.collection" ng-click="ctrl.groupInfoClick($event)">
@@ -34,8 +26,5 @@
 	
 	<div class="pixelconCardDirectiveNotification account colorDarkOverlay pixelconCardDirectiveTransition" ng-hide="dirHover || ctrl.coverAlwaysOn" ng-if="!ctrl.reloading && !ctrl.disabled && !ctrl.noAccount && ctrl.pixelcon.owner==ctrl.account">
 		<img class="crispImage" style="width:100%; height:100%" ng-src="{{ctrl.accountIcon}}"/>
-	</div>
-	<div class="pixelconCardDirectiveNotification priceTag pixelconCardDirectiveTransition" ng-hide="dirHover || ctrl.coverAlwaysOn" ng-if="!ctrl.reloading && !ctrl.disabled && !ctrl.noSelling && ctrl.marketData.price">
-		<img class="crispImage" style="width:100%; height:100%" ng-src="img/icon_tag_c.svg"/>
 	</div>
 </div>
