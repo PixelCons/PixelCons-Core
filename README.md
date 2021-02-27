@@ -38,14 +38,14 @@ var _accountLookupUrl = 'https://etherscan.io/address/<address>';
 ```
 
 #### 3_data_load.js (\migrations)
-The beginning of this migration script has some declared variables that allows you to disabled loading test data on truffle migration as well as specify the addresses you wish to use for testing
+The beginning of this migration script has some declared variables that allows you to disable loading test data on truffle migration as well as specify the addresses you wish to use for testing
 ```
 var enabled = false;
 var primaryAddress = '0xfE643f001caC62a5f513Af517765146d331261C8';
 var secondaryAddress = '0x9f2fedFfF291314E5a86661e5ED5E6f12e36dd37';
 ```
 
-#### coreContract.service.js and openSea.service.js (\src\app\services)
+#### coreContract.service.js and market.service.js (\src\app\services)
 There are a few additional options to configure at the beginning of these two files pertaining to interactions with the deployed contract on the Ethereum blockchain and third party market integration with OpenSea
 
 ## Run the Application

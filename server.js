@@ -88,33 +88,34 @@ var appLibrariesPath = "src/lib/";
 // Start/Build Sequence
 var args = process.argv.slice(2);
 var debugMode = args.indexOf('-debug') > -1;
-if(debugMode) {
-	
+var buildOnly = args.indexOf('-build') > -1;
+if (debugMode) {
 	//start server
 	startServer();
-	
+
 } else {
-	
 	//build then start server
-	prepBuild().then(function() {
+	prepBuild().then(function () {
 		return minifyScripts();
-	}).then(function() {
+	}).then(function () {
 		return minifyStyleSheets();
-	}).then(function() {
+	}).then(function () {
 		return minifyHTML();
-	}).then(function() {
+	}).then(function () {
 		return copyImages();
-	}).then(function() {
+	}).then(function () {
 		return copyLibraries();
-	}).then(function() {
+	}).then(function () {
 		console.log('Build Complete!');
 		console.log('');
-		startServer();
-	}, function(err) {
+		if (!buildOnly) {
+			startServer();
+		}
+	}, function (err) {
 		console.log('Failed to build and start server...');
 		console.log(err);
 	});
-	
+
 }
 
 
@@ -122,11 +123,11 @@ if(debugMode) {
 // Server Startup
 function startServer() {
 	console.log('Starting server...');
-	
+
 	// Serve all app files
 	var app = express();
-	if(debugMode) app.use(express.static(__dirname + '\\src')); 
-	app.use(express.static(__dirname + '\\build')); 
+	if (debugMode) app.use(express.static(__dirname + '\\src'));
+	app.use(express.static(__dirname + '\\build'));
 	app.use(function (err, req, res, next) {
 		if (req.xhr) {
 			res.status(500).send('Oops, Something went wrong!');
@@ -134,8 +135,8 @@ function startServer() {
 			next(err);
 		}
 	});
-	app.get('*', function(req, res) {
-		if(debugMode) res.sendFile(__dirname + '\\src\\index.html');
+	app.get('*', function (req, res) {
+		if (debugMode) res.sendFile(__dirname + '\\src\\index.html');
 		else res.sendFile(__dirname + '\\build\\index.min.html');
 	})
 
@@ -148,106 +149,106 @@ function startServer() {
 
 // Build Steps
 function prepBuild() {
-	return new Promise(function(resolve, reject) {
-		if(!fs.existsSync(appBuildPath)) fs.mkdirSync(appBuildPath);
-		if(!fs.existsSync(appHTMLBuildPath)) fs.mkdirSync(appHTMLBuildPath);
+	return new Promise(function (resolve, reject) {
+		if (!fs.existsSync(appBuildPath)) fs.mkdirSync(appBuildPath);
+		if (!fs.existsSync(appHTMLBuildPath)) fs.mkdirSync(appHTMLBuildPath);
 		copyFileSync(appMinifiedIndex, appBuildPath);
-		
+
 		resolve({});
 	});
 }
 function minifyScripts() {
 	console.log("Minifying scripts...");
-	return new Promise(function(resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		var filePromises = [];
-		for(var i=0; i<appScripts.length; i++) filePromises.push(readFilePromise(appScripts[i]));
-		Promise.all(filePromises).then(function(results) {
+		for (var i = 0; i < appScripts.length; i++) filePromises.push(readFilePromise(appScripts[i]));
+		Promise.all(filePromises).then(function (results) {
 			var code = {};
-			for(var i=0; i<results.length; i++) code[results[i].file] = results[i].data;
-			
+			for (var i = 0; i < results.length; i++) code[results[i].file] = results[i].data;
+
 			var uglified = uglifyjs.minify(code);
-			fs.writeFile(appScriptBuildPath, uglified.code, function(err) {
-				if(err) {
+			fs.writeFile(appScriptBuildPath, uglified.code, function (err) {
+				if (err) {
 					console.log("Failed to minify scripts!");
 					reject(err);
 				} else {
 					resolve({});
-				}      
+				}
 			});
-			
+
 		});
 	});
 }
 function minifyStyleSheets() {
 	console.log("Minifying style sheets...");
-	return new Promise(function(resolve, reject) {
-		
+	return new Promise(function (resolve, reject) {
+
 		var uglified = uglifycss.processFiles(appStyleSheets);
-		fs.writeFile(appStyleSheetsBuildPath, uglified, function(err) {
-			if(err) {
+		fs.writeFile(appStyleSheetsBuildPath, uglified, function (err) {
+			if (err) {
 				console.log("Failed to minify style sheets!");
 				reject(err);
 			} else {
 				resolve({});
-			}      
+			}
 		});
 	});
 }
 function minifyHTML() {
 	console.log("Minifying html templates...");
-	return new Promise(function(resolve, reject) {
-			
+	return new Promise(function (resolve, reject) {
+
 		var filePromises = [];
-		for(var i=0; i<appHTML.length; i++) filePromises.push(readFilePromise(appHTML[i]));
-		Promise.all(filePromises).then(function(results) {
+		for (var i = 0; i < appHTML.length; i++) filePromises.push(readFilePromise(appHTML[i]));
+		Promise.all(filePromises).then(function (results) {
 			try {
 				var fileWritePromises = [];
-				for(var r=0; r<results.length; r++) {
+				for (var r = 0; r < results.length; r++) {
 					var filePath = results[r].file.split('/');
 					var firstPathPart = true;
 					var copyFile = appHTMLBuildPath;
-					for(var i=0; i<filePath.length; i++) {
-						if(i == filePath.length-2) {
-							var fileName = filePath[filePath.length-1];
-							if(fileName.indexOf(filePath[i]) != 0) { 
-								if(!firstPathPart) copyFile += "_";
+					for (var i = 0; i < filePath.length; i++) {
+						if (i == filePath.length - 2) {
+							var fileName = filePath[filePath.length - 1];
+							if (fileName.indexOf(filePath[i]) != 0) {
+								if (!firstPathPart) copyFile += "_";
 								copyFile += filePath[i];
 								firstPathPart = false;
 							}
 						} else {
-							if(filePath[i] != 'src' && filePath[i] != 'app') { 
-								if(!firstPathPart) copyFile += "_";
+							if (filePath[i] != 'src' && filePath[i] != 'app') {
+								if (!firstPathPart) copyFile += "_";
 								copyFile += filePath[i];
 								firstPathPart = false;
 							}
 						}
 					}
-					
-					var uglified = uglifyhtml.minify(results[r].data, {collapseWhitespace:true, preserveLineBreaks:true, removeComments:true});
+
+					var uglified = uglifyhtml.minify(results[r].data, { collapseWhitespace: true, preserveLineBreaks: true, removeComments: true });
 					fileWritePromises.push(writeFilePromise(copyFile, uglified));
 				}
-				Promise.all(fileWritePromises).then(function(results) {
+				Promise.all(fileWritePromises).then(function (results) {
 					resolve({});
-				}, function() {
+				}, function () {
 					console.log("Failed to minify style sheets!");
 					reject(err);
 				});
-			} catch(err) {
+			} catch (err) {
 				console.log("Failed to minifying html templates!");
 				reject(err);
 			}
-		
+
 		});
-			
+
 	});
 }
 function copyImages() {
 	console.log("Copying images...");
-	return new Promise(function(resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		try {
 			copyFolderRecursiveSync(appImagesPath, appImagesBuildPath);
 			resolve({});
-		} catch(err) {
+		} catch (err) {
 			console.log("Failed to copy images!");
 			reject(err);
 		}
@@ -255,11 +256,11 @@ function copyImages() {
 }
 function copyLibraries() {
 	console.log("Copying libraries...");
-	return new Promise(function(resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		try {
 			copyFolderRecursiveSync(appLibrariesPath, appLibrariesBuildPath);
 			resolve({});
-		} catch(err) {
+		} catch (err) {
 			console.log("Failed to copy libraries!");
 			reject(err);
 		}
@@ -270,18 +271,18 @@ function copyLibraries() {
 
 // Utils
 function readFilePromise(file) {
-	return new Promise(function(resolve, reject) {
-		fs.readFile(file, "utf8", function(err, data) {
-			if(err) reject(err);
-			else resolve({file:file, data:data});
+	return new Promise(function (resolve, reject) {
+		fs.readFile(file, "utf8", function (err, data) {
+			if (err) reject(err);
+			else resolve({ file: file, data: data });
 		});
 	});
 }
 function writeFilePromise(file, data) {
-	return new Promise(function(resolve, reject) {
-		fs.writeFile(file, data, function(err) {
-			if(err) reject(err);
-			else resolve({file:file});
+	return new Promise(function (resolve, reject) {
+		fs.writeFile(file, data, function (err) {
+			if (err) reject(err);
+			else resolve({ file: file });
 		});
 	});
 }
@@ -289,8 +290,8 @@ function copyFileSync(source, target) {
 	var targetFile = target;
 
 	//if target is a directory a new file with the same name will be created
-	if(fs.existsSync(target)) {
-		if(fs.lstatSync(target).isDirectory()) {
+	if (fs.existsSync(target)) {
+		if (fs.lstatSync(target).isDirectory()) {
 			targetFile = path.join(target, path.basename(source));
 		}
 	}
@@ -302,16 +303,16 @@ function copyFolderRecursiveSync(source, target) {
 
 	//check if folder needs to be created or integrated
 	var targetFolder = path.join(target, path.basename(source));
-	if(!fs.existsSync(targetFolder)) {
+	if (!fs.existsSync(targetFolder)) {
 		fs.mkdirSync(targetFolder);
 	}
 
 	//copy
-	if(fs.lstatSync(source).isDirectory()) {
+	if (fs.lstatSync(source).isDirectory()) {
 		files = fs.readdirSync(source);
-		files.forEach(function(file) {
+		files.forEach(function (file) {
 			var curSource = path.join(source, file);
-			if(fs.lstatSync(curSource).isDirectory()) {
+			if (fs.lstatSync(curSource).isDirectory()) {
 				copyFolderRecursiveSync(curSource, targetFolder);
 			} else {
 				copyFileSync(curSource, targetFolder);
