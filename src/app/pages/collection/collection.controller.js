@@ -11,13 +11,13 @@
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
 		_this.shareOnFacebook = shareOnFacebook;
-		
+
 		// Watch for screen size changes
 		_this.screenSize = {};
 		$scope.$watch(function() { return $mdMedia('gt-md'); }, function(lg) { _this.screenSize['lg'] = lg; });
 		$scope.$watch(function() { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function(md) { _this.screenSize['md'] = md; });
 		$scope.$watch(function() { return $mdMedia('xs'); }, function(sm) { _this.screenSize['sm'] = sm; });
-		
+
 		// Get details for the pixelcon id
 		loadCollectionDetails();
 		function loadCollectionDetails() {
@@ -34,7 +34,7 @@
 				_this.error = reason;
 			});
 		}
-		
+
 		// Update from transaction
 		function updateFromTransaction(transactionData) {
 			if(transactionData && transactionData.success && transactionData.pixelcons && transactionData.pixelcons[0]) {
@@ -57,13 +57,13 @@
 				}
 			}
 		}
-		
+
 		// Updates the collection page
 		function updateCollectionDetails(collection) {
 			_this.cleared = false;
 			_this.collection = collection;
 		}
-		
+
 		// Clears the collection page
 		function clearCollectionDetails() {
 			_this.cleared = true;
@@ -72,7 +72,7 @@
 			_this.collection.name = '';
 			_this.collection.pixelcons = [];
 		}
-			
+
 		// Checks permissions for the action buttons
 		function checkPermissions() {
 			var account = web3Service.getActiveAccount();
@@ -87,7 +87,7 @@
 				}
 			}
 		}
-			
+
 		// Rename the pixelcon collection
 		function rename(ev) {
 			$mdDialog.show({
@@ -100,7 +100,7 @@
 				clickOutsideToClose: true
 			});
 		}
-			
+
 		// Clear the pixelcon collection
 		function clear(ev) {
 			$mdDialog.show({
@@ -113,7 +113,7 @@
 				clickOutsideToClose: true
 			});
 		}
-		
+
 		// Copies share link to the clipboard
 		function copyLink() {
 			var copyText = document.getElementById("copyToClipboard");
@@ -121,7 +121,7 @@
 			copyText.select();
 			document.execCommand("copy");
 		}
-		
+
 		// Share this page on twitter
 		function shareOnTwitter() {
 			var url = "https://twitter.com/intent/tweet?url=";
@@ -129,20 +129,20 @@
 			url += '&text=' + encodeURI("Check out this PixelCon collection!");
 			window.open(url,'_blank');
 		}
-		
+
 		// Share this page on facebook
 		function shareOnFacebook() {
 			var url = "https://www.facebook.com/sharer/sharer.php?u="
 			url += encodeURI(document.URL);
 			window.open(url,'_blank');
 		}
-		
+
 		// Listen for account data changes
 		web3Service.onAccountDataChange(function(){
 			checkPermissions();
-		}, $scope);	
-		
+		}, $scope);
+
 		// Listen for transactions
-		web3Service.onWaitingTransactionsChange(updateFromTransaction, $scope);	
+		web3Service.onWaitingTransactionsChange(updateFromTransaction, $scope);
 	}
 }());

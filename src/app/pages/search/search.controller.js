@@ -19,9 +19,9 @@
 		_this.checkUpdateData = checkUpdateData;
 		_this.updatePage = updatePage;
 		_this.goPath = goPath;
-		
+
 		var loadedFilter = {};
-		
+
 		// Database data
 		var dirtyDatabaseData = false;
 		var pixelconCount;
@@ -29,13 +29,13 @@
 		var pixelconFilterGrades;
 		var pixelconFilterGradeMax;
 		var pixelconFilterCount;
-		
+
 		// Watch for screen size changes
 		_this.screenSize = {};
 		$scope.$watch(function() { return $mdMedia('gt-md'); }, function(lg) { _this.screenSize['lg'] = lg; });
 		$scope.$watch(function() { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function(md) { _this.screenSize['md'] = md; });
 		$scope.$watch(function() { return $mdMedia('xs'); }, function(sm) { _this.screenSize['sm'] = sm; });
-		
+
 		// Fetch database to search through
 		fetchDatabaseData();
 		function fetchDatabaseData() {
@@ -46,10 +46,10 @@
 			_this.pixelcons = [];
 			_this.showMarketLink = market.isEnabled();
 			_this.marketLink = market.getMarketLink();
-			
+
 			coreContract.getTotalPixelcons().then(function(total) {
 				pixelconCount = total;
-				
+
 				_this.grabbingData = false;
 				var page = $routeParams.page?parseInt($routeParams.page):null;
 				checkUpdateData(true, page);
@@ -59,7 +59,7 @@
 				_this.error = reason;
 			});
 		}
-		
+
 		// Check if data parameters have changed
 		function checkUpdateData(forceUpdate, gotoPage) {
 			if(_this.error) return;
@@ -67,7 +67,7 @@
 				fetchDatabaseData();
 				return;
 			}
-			
+
 			//update url parameters
 			if(($routeParams.search === undefined && _this.filter.searchText) || ($routeParams.search !== undefined && _this.filter.searchText != $routeParams.search)) {
 				$location.search('search', _this.filter.searchText?_this.filter.searchText:undefined).replace();
@@ -75,17 +75,17 @@
 			if(($routeParams.asc === undefined && !_this.filter.sortDesc) || ($routeParams.asc !== undefined && _this.filter.sortDesc == ($routeParams.asc=='true'))) {
 				$location.search('asc', (!_this.filter.sortDesc)?'true':undefined).replace();
 			}
-			
+
 			//name grading related filter changes?
 			if(forceUpdate || _this.filter.searchText != loadedFilter.searchText) {
 				loadedFilter = JSON.parse(JSON.stringify(_this.filter));
-				
+
 				// get list of names or just grade?
 				if(loadedFilter.searchText) fetchNames(gotoPage);
 				else gradeNames(gotoPage);
 				return;
 			}
-			
+
 			//other filter parameters changed?
 			var needToUpdate = false;
 			for(var i in _this.filter) {
@@ -99,7 +99,7 @@
 				updatePage(1);
 			}
 		}
-		
+
 		// Grades the database names based on filter data
 		function fetchNames(gotoPage) {
 			if(!pixelconNames) {
@@ -107,7 +107,7 @@
 				_this.loading = true;
 				_this.currPage = 0;
 				_this.pixelcons = [];
-				
+
 				coreContract.getAllNames().then(function(names) {
 					_this.grabbingData = false;
 					pixelconNames = names;
@@ -118,16 +118,16 @@
 				gradeNames(gotoPage);
 			}
 		}
-		
+
 		// Grades the database names based on filter data
 		function gradeNames(gotoPage) {
 			_this.loading = true;
 			_this.currPage = 0;
-			
+
 			pixelconFilterCount = 0;
 			pixelconFilterGradeMax = 0;
 			pixelconFilterGrades = new Uint8Array(pixelconCount);
-			
+
 			//all
 			for(var i=0; i<pixelconCount; i++) {
 				var grade = loadedFilter.searchText.length?gradeNameWithText(pixelconNames[i], loadedFilter.searchText):200;
@@ -135,11 +135,11 @@
 				if(grade > pixelconFilterGradeMax) pixelconFilterGradeMax = grade;
 				pixelconFilterGrades[i] = grade;
 			}
-			
+
 			_this.totalFound = pixelconFilterCount;
 			updatePage(gotoPage?gotoPage:1);
 		}
-		
+
 		// Updates data to be displayed based on paging details
 		function updatePage(page) {
 			var scrollTarget = $('#scrollTarget');
@@ -150,11 +150,11 @@
 				_this.displayHeight = '';
 			}
 			$location.search('page', (page>1)?page:undefined).replace();
-			
+
 			_this.loading = true;
 			_this.currPage = 0;
 			_this.pixelcons = [];
-			
+
 			//loop from high score to low score, until page slots are filled
 			var indexes = [];
 			var startIndex = (page-1)*maxInPage;
@@ -179,7 +179,7 @@
 					}
 				}
 			}
-			
+
 			//get the details for the pixelcon indexes
 			_this.error = null;
 			_this.currPage = page;
@@ -195,34 +195,34 @@
 				_this.displayHeight = '';
 			});
 		}
-		
+
 		// Set the sort order
 		function setSortOrder(desc) {
 			_this.filter.sortDesc = desc;
 			checkUpdateData();
 		}
-		
+
 		// Go to the specified path
 		function goPath(path) {
 			$location.url(path);
 		}
-		
+
 		// Listen for account data changes
-		web3Service.onAccountDataChange(checkUpdateData, $scope);	
-		
+		web3Service.onAccountDataChange(checkUpdateData, $scope);
+
 		// Listen for transactions
 		web3Service.onWaitingTransactionsChange(function(transactionData) {
 			dirtyDatabaseData = transactionData && transactionData.success;
-		}, $scope);	
-		
-		
+		}, $scope);
+
+
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		function gradeNameWithText(name, text) {
 			var lName = name.toLowerCase();
 			var lText = text.toLowerCase();
-			
+
 			var highestGrade = 0;
 			var foundCharacterIndexesInText = new Array(name.length);
 			function searchForMatchingIndexes(nameIndex) {
@@ -231,13 +231,13 @@
 					var grade = 0;
 					for(var i=0; i<name.length; i++) {
 						var matchingIndex = foundCharacterIndexesInText[i];
-						
+
 						//1 point if not null
 						if(matchingIndex === null) {
 							continue;
 						}
 						grade += 1;
-					
+
 						//1 point if index is unique
 						var repeated = false;
 						for(var j=0; j<name.length; j++) {
@@ -247,31 +247,31 @@
 							}
 						}
 						if(!repeated) grade += 1;
-					
+
 						//1 point if case matches
 						if(name[i] == text[matchingIndex]) grade += 1;
-						
+
 						//Note: the next few rules depend on the previous index being valid
 						if(i == 0 || foundCharacterIndexesInText[i-1] === null) {
 							continue;
 						}
 						var lastIndex = foundCharacterIndexesInText[i-1];
-						
+
 						//1 point if this index is greater than the last
 						if(matchingIndex <= lastIndex) continue;
 						grade += 1;
-					
+
 						//1 point if this index is 5 steps of the last
 						if(matchingIndex - lastIndex <= 5) grade += 1;
-					
+
 						//1 point if this index is 2 steps of the last
 						if(matchingIndex - lastIndex <= 2) grade += 1;
-					
+
 					}
-					
+
 					//update highest grade
 					if(grade > highestGrade) highestGrade = grade;
-					
+
 				} else {
 					//search through 'text' to find all matching characters to 'name[nameIndex]'
 					var foundIndexInText = false;
@@ -290,7 +290,7 @@
 				}
 			}
 			searchForMatchingIndexes(0);
-			
+
 			return highestGrade;
 		}
 	}

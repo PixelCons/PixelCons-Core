@@ -24,10 +24,10 @@
 			'e': '#FF77A8',
 			'f': '#FFCCAA'
 		}
-		
+
 		// Watch for id changes to keep pixel data up to date
 		$scope.$watch('ctrl.id', idToPixels);
-		
+
 		// Function to convert id string into pixels
 		function idToPixels(id) {
 			var canvas = document.createElement('canvas');
@@ -36,12 +36,12 @@
 			var ctx = canvas.getContext("2d");
 			ctx.fillStyle = "#000000";
 			ctx.fillRect(0,0,24,24);
-			
+
 			var idIsValid = false;
 			if(id && (typeof id === 'string' || id instanceof String)) {
 				id = id.toLowerCase();
 				if(id.indexOf('0x') == 0) id = id.substr(2,id.length);
-				
+
 				if(id.length == 64) {
 					idIsValid = true;
 					for(var i=0; i<64; i++) {
@@ -49,11 +49,11 @@
 						if(!(v >= 48 && v <= 57) && !(v >= 97 && v <= 102)) {
 							idIsValid = false;
 							break;
-						} 
+						}
 					}
 				}
 			}
-			
+
 			if(idIsValid) {
 				for(var y=0; y<8; y++) {
 					for(var x=0; x<8; x++) {
@@ -63,7 +63,7 @@
 					}
 				}
 			}
-			
+
 			_this.pixelconImage = canvas.toDataURL('image/png');
 		}
 	}

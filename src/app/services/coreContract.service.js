@@ -1,7 +1,7 @@
 (function () {
 	angular.module('App')
 		.service('coreContract', coreContract);
-		
+
 	coreContract.$inject = ['web3Service', '$q'];
 	function coreContract(web3Service, $q) {
 		var _contractABI = 'contracts/PixelCons.json';
@@ -10,7 +10,7 @@
 		var _gasPricePadding = 1.2;
 		var _maxNameFetch = 10000;
 		var _cacheNameFetch = true;
-		
+
 		var _noAccountError = 'No Ethereum Account';
 		var _accountPrivateError = 'Ethereum Account Not Connected';
 		var _notEnabledError = 'No Ethereum Connection';
@@ -21,7 +21,7 @@
 		var _invalidIndexError = 'Invalid Index';
 		var _invalidAddressError = 'Invalid Address';
 		var _duplicateTransactionError = 'Already Processing';
-		
+
 		// Setup functions
 		this.getTotalPixelcons = getTotalPixelcons;
 		this.getAllNames = getAllNames;
@@ -44,7 +44,7 @@
 		this.updatePixelconCollection = updatePixelconCollection;
 		this.clearPixelconCollection = clearPixelconCollection;
 		this.formatPixelconId = formatPixelconId;
-		
+
 		// Transaction type/description
 		var _createTypeDescription = ["Create PixelCon", "Creating PixelCon..."];
 		var _updateTypeDescription = ["Rename PixelCon", "Updating PixelCon..."];
@@ -52,16 +52,16 @@
 		var _createCollectionTypeDescription = ["Create PixelCon Collection", "Creating Collection..."];
 		var _updateCollectionTypeDescription = ["Rename PixelCon Collection", "Updating Collection..."];
 		var _clearCollectionTypeDescription = ["Clear PixelCon Collection", "Clearing Collection..."];
-		
+
 		// Init
 		web3Service.addRecoveryTransactionDataInjector(addPixelconDataForTransaction);
-		
-		
+
+
 		///////////
 		// Query //
 		///////////
-		
-		
+
+
 		// Gets the names of all pixelcons in existence
 		function getTotalPixelcons() {
 			return $q(function(resolve, reject) {
@@ -78,7 +78,7 @@
 				}
 			});
 		}
-		
+
 		// Gets the names of all pixelcons in existence
 		var pixelconNames = [];
 		function getAllNames() {
@@ -94,7 +94,7 @@
 							if(total == 0) resolve([]);
 							else if(_cacheNameFetch && pixelconNames.length == total) resolve(pixelconNames);
 							else if(!_maxNameFetch || total <= _maxNameFetch) {
-								
+
 								//get all at once
 								contract.getAllNames.call().then(function(names) {
 									pixelconNames = new Array(total);
@@ -102,7 +102,7 @@
 									resolve(pixelconNames);
 								}, generateErrorCallback(reject, 'Something went wrong while fetching names'));
 							} else {
-								
+
 								//get in pages
 								var index = 0;
 								var pixelconNamesIndex = 0;
@@ -124,7 +124,7 @@
 				}
 			});
 		}
-		
+
 		// Gets the names of all pixelcons in existence
 		var collectionNames = [];
 		function getAllCollectionNames() {
@@ -140,7 +140,7 @@
 							if(total == 0) resolve([]);
 							else if(_cacheNameFetch && collectionNames.length == total) resolve(collectionNames);
 							else if(!_maxNameFetch || total <= _maxNameFetch) {
-								
+
 								//get all at once
 								contract.getAllCollectionNames.call().then(function(names) {
 									collectionNames = new Array(total);
@@ -148,7 +148,7 @@
 									resolve(collectionNames);
 								}, generateErrorCallback(reject, 'Something went wrong while fetching collection names'));
 							} else {
-								
+
 								//get in pages
 								var index = 0;
 								var collectionNamesIndex = 0;
@@ -170,7 +170,7 @@
 				}
 			});
 		}
-		
+
 		// Gets the details for the given pixelcon id
 		function fetchPixelcon(id) {
 			id = formatPixelconId(id);
@@ -187,7 +187,7 @@
 								//not found
 								resolve(null);
 							} else {
-								
+
 								//get details
 								contract.getTokenData.call(id).then(function(pixelconDetails) {
 									//uint256 _tknId, uint64 _tknIdx, uint64 _collection, address _owner, address _creator, bytes8 _name, uint32 _dateCreated
@@ -202,17 +202,17 @@
 									};
 									return pixelcon;
 								}).then(function(pixelcon) {
-									
+
 									//add collection details
 									return fillCollectionData(pixelcon);
-								}).then(resolve, generateErrorCallback(reject, 'Something went wrong while fetching details'));	
+								}).then(resolve, generateErrorCallback(reject, 'Something went wrong while fetching details'));
 							}
 						}, generateErrorCallback(reject, 'Something went wrong while fetching details'));
 					}, reject);
 				}
 			});
 		}
-		
+
 		// Gets the details for the given pixelcon collection index
 		function fetchCollection(index, skipCreator) {
 			return $q(function(resolve, reject) {
@@ -229,12 +229,12 @@
 								var collectionName;
 								var collectionPixelconIndexes;
 								var collectionPixelcons;
-								
+
 								//get collection data
 								contract.getCollectionData.call(index).then(function(collectionData) {
 									collectionName = web3Service.toUtf8(collectionData[0]);
 									collectionPixelconIndexes = collectionData[1];
-									
+
 									// get details for pixelcons
 									if(!collectionPixelconIndexes.length) return null;
 									else return contract.getBasicData.call(collectionPixelconIndexes);
@@ -252,12 +252,12 @@
 										}
 									}
 									collectionPixelcons = pixelcons;
-									
+
 									// get creator
 									if(skipCreator || !collectionPixelcons[0]) return null;
 									return contract.creatorOf.call(collectionPixelcons[0].id);
 								}).then(function(creator) {
-										
+
 									// return collection object
 									return {
 										index: index,
@@ -278,7 +278,7 @@
 		function fetchCollectionSimple(index) {
 			return fetchCollection(index, undefined, undefined);
 		}
-		
+
 		// Gets all pixelcons either created or owned by the given address
 		function fetchPixelconsByAccount(address) {
 			return $q(function(resolve, reject) {
@@ -299,13 +299,13 @@
 								alreadyFailed = true;
 							}
 							else if(created && owned) {
-								
+
 								//combine owned and created
 								var combinedIndexes = [];
 								for(var i=0; i<owned.length; i++) if(combinedIndexes.indexOf(owned[i]) == -1) combinedIndexes.push(owned[i]);
 								for(var i=0; i<created.length; i++) if(combinedIndexes.indexOf(created[i]) == -1) combinedIndexes.push(created[i]);
 								combinedIndexes.sort(function(a,b){ return a-b; });
-								
+
 								//get basic details
 								if(combinedIndexes.length > 0) {
 									contract.getBasicData.call(combinedIndexes).then(function(basicDetails) {
@@ -321,11 +321,11 @@
 												collection: basicDetails[3][i].toNumber()?basicDetails[3][i].toNumber():null
 											});
 										}
-										
+
 										//add collection details
 										return fillCollectionData(pixelcons);
 									}).then(function(pixelcons) {
-										
+
 										//add additional flags to pixelcon objects in the collection objects
 										for(var i=0; i<pixelcons.length; i++) {
 											if(pixelcons[i].collection) {
@@ -343,7 +343,7 @@
 								}
 							}
 						}
-						
+
 						//query for tokens created by or owned by account
 						contract.getForCreator.call(address).then(function(indexes) {
 							created = [];
@@ -359,7 +359,7 @@
 				}
 			});
 		}
-		
+
 		// Gets all pixelcons created by the given address
 		function fetchPixelconsByCreator(address) {
 			return $q(function(resolve, reject) {
@@ -371,11 +371,11 @@
 				else {
 					web3Service.getContract(_contractABI).then(function(contract) {
 						var creatorPixelconIndexes;
-						
+
 						//get all tokens for creator
 						contract.getForCreator.call(address).then(function(indexes) {
 							creatorPixelconIndexes = indexes;
-						
+
 							//get details for pixelcons
 							if(!creatorPixelconIndexes.length) return null;
 							else return contract.getBasicData.call(indexes);
@@ -392,7 +392,7 @@
 									});
 								}
 							}
-							
+
 							//add collection details
 							return fillCollectionData(pixelcons);
 						}).then(resolve, generateErrorCallback(reject, 'Something went wrong while fetching creator details'));
@@ -400,7 +400,7 @@
 				}
 			});
 		}
-		
+
 		// Gets all pixelcons with the given indexes
 		function fetchPixelconsByIndexes(indexes) {
 			return $q(function(resolve, reject) {
@@ -411,7 +411,7 @@
 				else if(!indexes || indexes.length==0) resolve([]);
 				else {
 					web3Service.getContract(_contractABI).then(function(contract) {
-						
+
 						//get details
 						contract.getBasicData.call(indexes).then(function(basicDetails) {
 							var pixelcons = [];
@@ -426,21 +426,21 @@
 							}
 							return pixelcons;
 						}).then(function(pixelcons) {
-							
+
 							//add collection details
 							return fillCollectionData(pixelcons);
-						}).then(resolve, generateErrorCallback(reject, 'Something went wrong while fetching pixelcons details'));	
+						}).then(resolve, generateErrorCallback(reject, 'Something went wrong while fetching pixelcons details'));
 					}, reject);
 				}
 			});
 		}
-		
-		
+
+
 		//////////////////
 		// Verification //
 		//////////////////
-		
-		
+
+
 		// Verifies the status of a given pixelcon id
 		function verifyPixelcon(id) {
 			id = formatPixelconId(id);
@@ -478,7 +478,7 @@
 				}
 			});
 		}
-		
+
 		// Verifies the status for edit of a given pixelcon
 		function verifyPixelconEdit(id) {
 			var address = web3Service.getActiveAccount();
@@ -512,7 +512,7 @@
 				}
 			});
 		}
-		
+
 		// Verifies the pixelcon transfer
 		function verifyTransferPixelcon(id) {
 			id = formatPixelconId(id);
@@ -534,11 +534,11 @@
 								estCost: estCost
 							});
 						}, generateErrorCallback(reject, 'Something went wrong while verifying'));
-					}, reject);	
+					}, reject);
 				}
 			});
 		}
-		
+
 		// Verifies the pixelcon collection
 		function verifyPixelconCollection(indexes, pixelconIds) {
 			return $q(function(resolve, reject) {
@@ -561,7 +561,7 @@
 				}
 			});
 		}
-		
+
 		// Verifies the pixelcon collection for edit
 		function verifyPixelconCollectionEdit(index, pixelconIds) {
 			var address = web3Service.getActiveAccount();
@@ -588,7 +588,7 @@
 				}
 			});
 		}
-		
+
 		// Verifies the pixelcon collection for clearing
 		function verifyPixelconCollectionClear(index, pixelconIds) {
 			var address = web3Service.getActiveAccount();
@@ -615,13 +615,13 @@
 				}
 			});
 		}
-		
-		
+
+
 		//////////////////////////
 		// Create/Update/Delete //
 		//////////////////////////
-		
-		
+
+
 		// Creates a new pixelcon
 		function createPixelcon(id, name) {
 			id = formatPixelconId(id);
@@ -640,16 +640,16 @@
 							estimate = Math.floor(estimate*_gasPadding);
 							var gasPrice = web3Service.getGasPrice();
 							var to = web3Service.getActiveAccount();
-							
+
 							var params = {from:to, gas:estimate};
 							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'create', to, id, name, params).then(function(data) {
-								
+
 								//add pixelcon data for return
 								var transactionParams = {pixelconId:id, name:name, creator:to};
 								var transaction = data.transactionPromise.then(function(data){ return addPixelconDataForCreate(transactionParams, data) });
 
-								
+
 								web3Service.addWaitingTransaction(transaction, data.txHash, transactionParams, _createTypeDescription[0], _createTypeDescription[1]);
 								return transaction;
 							});
@@ -658,8 +658,8 @@
 				}
 			});
 		}
-		
-		
+
+
 		// Updates pixelcon name
 		function updatePixelcon(id, name) {
 			id = formatPixelconId(id);
@@ -678,15 +678,15 @@
 							estimate = Math.floor(estimate*_gasPadding);
 							var gasPrice = web3Service.getGasPrice();
 							var acct = web3Service.getActiveAccount();
-							
+
 							var params = {from:acct, gas:estimate};
 							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'rename', id, name, params).then(function(data) {
-								
+
 								//add pixelcon data for return
 								var transactionParams = {pixelconId:id, name:name};
 								var transaction = data.transactionPromise.then(function(data){ return addPixelconDataForUpdate(transactionParams, data) });
-								
+
 								web3Service.addWaitingTransaction(transaction, data.txHash, transactionParams, _updateTypeDescription[0], _updateTypeDescription[1]);
 								return transaction;
 							});
@@ -695,8 +695,8 @@
 				}
 			});
 		}
-		
-		// Transfers pixelcon 
+
+		// Transfers pixelcon
 		function transferPixelcon(id, address) {
 			id = formatPixelconId(id);
 			return $q(function(resolve, reject) {
@@ -714,15 +714,15 @@
 						contract.safeTransferFrom.estimateGas(owner, address, id, "").then(function(estimate) {
 							estimate = Math.floor(estimate*_gasPadding);
 							var gasPrice = web3Service.getGasPrice();
-							
+
 							var params = {from:owner, gas:estimate};
 							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'safeTransferFrom', owner, address, id, "", params).then(function(data) {
-								
+
 								//add pixelcon data for return
 								var transactionParams = {pixelconId:id, address:address};
 								var transaction = data.transactionPromise.then(function(data){ return addPixelconDataForTransfer(transactionParams, data) });
-								
+
 								web3Service.addWaitingTransaction(transaction, data.txHash, transactionParams, _transferTypeDescription[0], _transferTypeDescription[1]);
 								return transaction;
 							});
@@ -731,7 +731,7 @@
 				}
 			});
 		}
-		
+
 		// Creates a new pixelcon collection
 		function createPixelconCollection(indexes, name) {
 			name = web3Service.fromUtf8(name);
@@ -752,15 +752,15 @@
 							estimate = Math.floor(estimate*_gasPadding);
 							var gasPrice = web3Service.getGasPrice();
 							var acct = web3Service.getActiveAccount();
-							
+
 							var params = {from:acct, gas:estimate};
 							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'createCollection', indexes, name, params).then(function(data) {
-								
+
 								//add pixelcon data for return
 								var transactionParams = {pixelconIds:pixelconIds, pixelconIndexes:indexes, name:name, creator:acct};
 								var transaction = data.transactionPromise.then(function(data){ return addPixelconDataForCreateCollection(transactionParams, data) });
-								
+
 								web3Service.addWaitingTransaction(transaction, data.txHash, transactionParams, _createCollectionTypeDescription[0], _createCollectionTypeDescription[1]);
 								return transaction;
 							});
@@ -769,7 +769,7 @@
 				}
 			});
 		}
-		
+
 		// Update the pixelcon collection name
 		function updatePixelconCollection(index, name) {
 			name = web3Service.fromUtf8(name);
@@ -791,15 +791,15 @@
 							estimate = Math.floor(estimate*_gasPadding);
 							var gasPrice = web3Service.getGasPrice();
 							var acct = web3Service.getActiveAccount();
-							
+
 							var params = {from:acct, gas:estimate};
 							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'renameCollection', index, name, params).then(function(data) {
-								
+
 								//add pixelcon data for return
 								var transactionParams = {pixelconIds:pixelconIds, collectionIndex:index, name:name};
 								var transaction = data.transactionPromise.then(function(data){ return addPixelconDataForUpdateCollection(transactionParams, data) });
-								
+
 								web3Service.addWaitingTransaction(transaction, data.txHash, transactionParams, _updateCollectionTypeDescription[0], _updateCollectionTypeDescription[1]);
 								return transaction;
 							});
@@ -808,7 +808,7 @@
 				}
 			});
 		}
-		
+
 		// Clears the pixelcon collection
 		function clearPixelconCollection(index) {
 			return $q(function(resolve, reject) {
@@ -824,7 +824,7 @@
 						var pixelconIds = [];
 						var pixelconIndexes = [];
 						fetchCollection(index, true, true).then(function(collection) {
-							for(var i=0; i<collection.pixelcons.length; i++) { 
+							for(var i=0; i<collection.pixelcons.length; i++) {
 								pixelconIds.push(collection.pixelcons[i].id);
 								pixelconIndexes.push(collection.pixelcons[i].index);
 							}
@@ -833,15 +833,15 @@
 							estimate = Math.floor(estimate*_gasPadding);
 							var gasPrice = web3Service.getGasPrice();
 							var acct = web3Service.getActiveAccount();
-							
+
 							var params = {from:acct, gas:estimate};
 							if(_makeGasPriceSuggestion) params.gasPrice = Math.floor(gasPrice*_gasPricePadding);
 							return web3Service.transactionWrapper(contract, 'clearCollection', index, params).then(function(data) {
-								
+
 								//add pixelcon data for return
 								var transactionParams = {pixelconIds:pixelconIds, collectionIndex:index, pixelconIndexes:pixelconIndexes};
 								var transaction = data.transactionPromise.then(function(data){ return addPixelconDataForClearCollection(transactionParams, data) });
-								
+
 								web3Service.addWaitingTransaction(transaction, data.txHash, transactionParams, _clearCollectionTypeDescription[0], _clearCollectionTypeDescription[1]);
 								return transaction;
 							});
@@ -850,13 +850,13 @@
 				}
 			});
 		}
-		
-		
+
+
 		///////////
 		// Utils //
 		///////////
-		
-		
+
+
 		// Converts to standard format of a given pixelcon id (or null if invalid)
 		function formatPixelconId(id) {
 			if(!id) return null;
@@ -870,29 +870,29 @@
 					if(!(v >= 48 && v <= 57) && !(v >= 97 && v <= 102)) {
 						id = null;
 						break;
-					} 
+					}
 				}
 			}
-			
+
 			if(id == '0x0000000000000000000000000000000000000000000000000000000000000000') return null;
 			return id;
 		}
-		
+
 		// Error reject wrapper
 		function generateErrorCallback(reject, text) {
-			return function(err) { 
+			return function(err) {
 				console.log(err);
-				reject(text); 
+				reject(text);
 			}
 		}
-		
+
 		// Fills in collection data for the given pixelcons
 		function fillCollectionData(pixelcons) {
 			var isArray = true;
 			if(pixelcons.length === undefined && pixelcons.id) {
 				isArray = false;
 				pixelcons = [pixelcons];
-			} 
+			}
 			return $q(function(resolve, reject) {
 				var cachedGroups = {};
 				var fillData = function(index) {
@@ -912,7 +912,7 @@
 									}
 								}
 							}
-							
+
 							//set collection and query for the next one
 							if(pixelcons[index].creator) collection.creator = pixelcons[index].creator;
 							cachedGroups[pixelcons[index].collection] = collection;
@@ -924,11 +924,11 @@
 				fillData(0);
 			});
 		}
-		
+
 		// Gets the pixelcon index of a Create event from the given receipt
 		function getPixelconIndexFromCreateEvent(contract, receipt) {
 			if(!receipt.logs) return null;
-			
+
 			var eventHash = contract.contract.Create().options.topics[0];
 			for(var i=0; i<receipt.logs.length; i++) {
 				if(receipt.logs[i].topics && receipt.logs[i].topics[0] == eventHash) {
@@ -937,11 +937,11 @@
 			}
 			return null;
 		}
-		
+
 		// Gets the collection index of a CreateCollection event from the given receipt
 		function getCollectionIndexFromCreateEvent(contract, receipt) {
 			if(!receipt.logs) return null;
-			
+
 			var eventHash = contract.contract.CreateCollection().options.topics[0];
 			for(var i=0; i<receipt.logs.length; i++) {
 				if(receipt.logs[i].topics && receipt.logs[i].topics[0] == eventHash) {
@@ -950,7 +950,7 @@
 			}
 			return null;
 		}
-		
+
 		// Checks ownership of the given pixelcons
 		function verifyOwnership(contract, address, pixelconIds) {
 			return $q(function(resolve, reject) {
@@ -971,7 +971,7 @@
 				contract.ownerOf.call(pixelconIds[i]).then(checkNext, function() { reject('Something went wrong while verifying'); });
 			});
 		}
-		
+
 		// Checks if the given data looks like a currently processing transaction
 		function isDuplicate(transactionType, pixelconIds) {
 			var transactions = web3Service.getWaitingTransactions();
@@ -1000,16 +1000,16 @@
 					}
 				}
 			}
-			
+
 			return false;
 		}
-		
-		
+
+
 		//////////////////////////////////
 		// Utils (return data wrappers) //
 		//////////////////////////////////
-		
-		
+
+
 		// Adds data to return for create transaction
 		function addPixelconDataForCreate(params, data) {
 			//params.pixelconId
@@ -1083,7 +1083,7 @@
 					name: web3Service.toUtf8("" + params.name),
 					pixelcons: collectionPixelcons
 				}
-				
+
 				for(var i=0; i<pixelcons.length; i++) pixelcons[i].collection = collection;
 				data.pixelcons = pixelcons;
 				return data;
@@ -1095,7 +1095,7 @@
 			//params.pixelconIds
 			//params.collectionIndex
 			//params.name
-			
+
 			return fetchCollection(params.collectionIndex).then(function(collection) {
 				collection.name = web3Service.toUtf8("" + params.name);
 				if(_cacheNameFetch && collectionNames.length > collection.index) collectionNames[collection.index] = collection.name; //update the name cache
@@ -1119,7 +1119,7 @@
 			//params.pixelconIds
 			//params.collectionIndex
 			//params.pixelconIndexes
-			
+
 			return fetchPixelconsByIndexes(params.pixelconIndexes).then(function(collectionPixelcons) {
 				var pixelcons = [];
 				for(var i=0; i<collectionPixelcons.length; i++) {
@@ -1135,7 +1135,7 @@
 				return data;
 			});
 		}
-		
+
 		// Adds data to return for the given transaction
 		function addPixelconDataForTransaction(details, data) {
 			if(details.type == _createTypeDescription[0]) return addPixelconDataForCreate(details.params, data);
@@ -1144,9 +1144,9 @@
 			if(details.type == _createCollectionTypeDescription[0]) return addPixelconDataForCreateCollection(details.params, data);
 			if(details.type == _updateCollectionTypeDescription[0]) return addPixelconDataForUpdateCollection(details.params, data);
 			if(details.type == _clearCollectionTypeDescription[0]) return addPixelconDataForClearCollection(details.params, data);
-				
+
 			return data;
 		}
-		
+
 	}
 }());

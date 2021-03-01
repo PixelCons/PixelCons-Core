@@ -1,6 +1,6 @@
 (function () {
 	var app = angular.module('App', ['ngMaterial', 'ngRoute']);
-	
+
 	// Configuration
 	app.config(['$mdThemingProvider', function($mdThemingProvider) {
 		$mdThemingProvider.theme('default')
@@ -58,38 +58,38 @@
 		.otherwise({
 			redirectTo: '/'
 		});
-		
+
 		// use the HTML5 History API
         $locationProvider.html5Mode(true);
 	}]);
 	app.run(['$rootScope', '$location', '$timeout', '$templateCache', '$http',
 			function($rootScope, $location, $timeout, $templateCache, $http){
 		var lastPage = $location.path();
-		
+
 		// always scroll to top on page load
 		$rootScope.$on("$locationChangeSuccess", function(data){
 			var currPage = $location.path();
-			if(lastPage != currPage) { 
+			if(lastPage != currPage) {
 				$('#view')[0].style.display = 'none'
 				$timeout(function() { $('#scrollTarget').scrollTop(0); });
 			}
 			lastPage = currPage;
 		});
-		
+
 		// pre-load dialogs
         $http.get(HTMLTemplates['dialog.collection'], {cache: $templateCache});
         $http.get(HTMLTemplates['dialog.pixelcon'], {cache: $templateCache});
         $http.get(HTMLTemplates['dialog.send'], {cache: $templateCache});
 	}]);
-	
-	
+
+
 	// Main controller
 	app.controller('AppCtrl', AppCtrl);
-	
+
 	AppCtrl.$inject = ['$scope'];
 	function AppCtrl($scope) {
-		
+
 		//nothing...
-		
+
 	}
 }());
