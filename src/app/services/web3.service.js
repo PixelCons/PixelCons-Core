@@ -4,8 +4,8 @@
 
 	web3Service.$inject = ['$interval', '$timeout', '$q'];
 	function web3Service($interval, $timeout, $q) {
-		var _expectedNetwork = 'Main'; //Options: Main, Morden, Ropsten, Rinkeby, Kovan (set to 'null' if you wish to support all of them)
-		var _backupWeb3Provider = 'https://mainnet.infura.io/v3/07d72fe8b8b74534a05d2091e108e26e';
+		var _expectedNetwork = null; //Options: Main, Morden, Ropsten, Rinkeby, Kovan (set to 'null' if you wish to support all of them)
+		var _backupWeb3Provider = 'https://mainnet.infura.io/v3/[token_id]';
 		var _transactionLookupUrl = 'https://etherscan.io/tx/<txHash>';
 		var _accountLookupUrl = 'https://etherscan.io/address/<address>';
 
@@ -61,7 +61,6 @@
 			_state = queryState();
 			_currNetwork = queryNetwork();
 		}
-
 		// Poll for state changes
 		var onAccountChangeFunctions = [];
 		var onStateChangeFunctions = [];
@@ -75,10 +74,10 @@
 			var accountsChanged = (_accounts.toString() != newAccounts.toString());
 			_accounts = newAccounts;
 
-			if (stateChanged) {
+			if(stateChanged) {
 				executeCallbackFunctions(onStateChangeFunctions, _state);
 			}
-			if (accountsChanged) {
+			if(accountsChanged) {
 				executeCallbackFunctions(onAccountChangeFunctions, _accounts);
 				checkWaitingTransactionsForAccount();
 			}
@@ -88,7 +87,6 @@
 			$interval(pollForWeb3Changes, 1000);
 			$interval(queryGasPrice, 6000);
 		}
-
 		// Setup functions
 		this.getState = getState;
 		this.isReadOnly = isReadOnly;
@@ -138,51 +136,51 @@
 
 		// Gets if web3 has privacy mode enable
 		function isPrivacyMode() {
-			return _isPrivacyEnabled && _accounts.length == 0;
+			return _isPrivacyEnabled && _accounts.length==0;
 		}
 
 		// Gets the desired network
 		function getExpectedNetwork() {
-			if (_expectedNetwork) return _expectedNetwork;
+			if(_expectedNetwork) return _expectedNetwork;
 			return getCurrentNetwork();
 		}
 
 		// Gets the current connected network
 		function getCurrentNetwork() {
-			if (_state != "ready") return null;
+			if(_state != "ready") return null;
 			return _currNetwork;
 		}
 
 		// Gets if connected to the wrong network
 		function isWrongNetwork() {
-			if (_state != "ready" || !_expectedNetwork) return false;
+			if(_state != "ready" || !_expectedNetwork) return false;
 			return _expectedNetwork != _currNetwork;
 		}
 
 		// Gets url for displaying more details about a transaction
 		function getTransactionLookupUrl(txHash) {
-			if (txHash) return _transactionLookupUrl.replace('<txHash>', txHash);
+			if(txHash) return _transactionLookupUrl.replace('<txHash>', txHash);
 			return _accountLookupUrl.replace('<address>', getActiveAccount());
 		}
 
 		// Register callback for account data change
 		function onStateChange(callback, scope) {
-			if (scope) scope.$on('$destroy', cleanSubscriptions);
-			onStateChangeFunctions.push({ func: callback, scope: scope });
+			if(scope) scope.$on('$destroy', cleanSubscriptions);
+			onStateChangeFunctions.push({func:callback, scope:scope});
 		}
 
 		// Gets the provider name
 		function getProviderName() {
-			if (_state != "ready") return null;
+			if(_state != "ready") return null;
 
-			if (web3 && web3.currentProvider.isMetaMask) return 'MetaMask';
+			if(web3 && web3.currentProvider.isMetaMask) return 'MetaMask';
 			return 'your Ethereum Account';
 		}
 
 		// Requests for access to the web3 accounts
 		function requestAccess() {
-			if (_isPrivacyEnabled) {
-				window.ethereum.enable().then(pollForWeb3Changes, function () {
+			if(_isPrivacyEnabled) {
+				window.ethereum.enable().then(pollForWeb3Changes, function() {
 					console.log("User denied access to Ethereum account");
 				});
 			}
@@ -206,8 +204,8 @@
 
 		// Register callback for account data change
 		function onAccountDataChange(callback, scope) {
-			if (scope) scope.$on('$destroy', cleanSubscriptions);
-			onAccountChangeFunctions.push({ func: callback, scope: scope });
+			if(scope) scope.$on('$destroy', cleanSubscriptions);
+			onAccountChangeFunctions.push({func:callback, scope:scope});
 		}
 
 
@@ -235,30 +233,30 @@
 			executeCallbackFunctions(onWaitingTransactionsChangeFunctions, null);
 
 			//transaction finished callback
-			if (_waitingTransactionsWithCallbacks.indexOf(txHash) == -1) {
+			if(_waitingTransactionsWithCallbacks.indexOf(txHash) == -1) {
 				_waitingTransactionsWithCallbacks.push(txHash);
-				var transactionFinished = function (data) { removeWaitingTransaction(txHash, data); }
+				var transactionFinished = function(data) { removeWaitingTransaction(txHash, data); }
 				transaction.then(transactionFinished, transactionFinished);
 			}
 		}
 
 		// Removes a transaction from the wait list
 		function removeWaitingTransaction(txHash, data) {
-			for (var i = 0; i < _waitingTransactionsWithCallbacks.length; i++) {
-				if (_waitingTransactionsWithCallbacks[i] === txHash) {
+			for(var i=0; i<_waitingTransactionsWithCallbacks.length; i++) {
+				if(_waitingTransactionsWithCallbacks[i] === txHash) {
 					_waitingTransactionsWithCallbacks.splice(i, 1);
 					break;
 				}
 			}
 			var transactionObject = null;
-			for (var i = 0; i < _waitingTransactions.length; i++) {
-				if (_waitingTransactions[i].txHash === txHash) {
-					transactionObject = _waitingTransactions.splice(i, 1)[0];
+			for(var i=0; i<_waitingTransactions.length; i++) {
+				if(_waitingTransactions[i].txHash === txHash) {
+					transactionObject = _waitingTransactions.splice(i,1)[0];
 					storeWaitingTransactions();
 					break;
 				}
 			}
-			if (transactionObject != null) {
+			if(transactionObject != null) {
 				data.success = (data.receipt !== undefined && parseInt(data.receipt.status) > 0);
 				data.txHash = transactionObject.txHash;
 				data.type = transactionObject.type;
@@ -274,8 +272,8 @@
 
 		// Register callback for waiting transactions change
 		function onWaitingTransactionsChange(callback, scope) {
-			if (scope) scope.$on('$destroy', cleanSubscriptions);
-			onWaitingTransactionsChangeFunctions.push({ func: callback, scope: scope });
+			if(scope) scope.$on('$destroy', cleanSubscriptions);
+			onWaitingTransactionsChangeFunctions.push({func:callback, scope:scope});
 		}
 
 
@@ -286,18 +284,18 @@
 
 		// Gets contract object based on given ABI to load
 		function getContract(contractABI) {
-			return $q(function (resolve, reject) {
+			return $q(function(resolve, reject) {
 
 				//make sure web3 is ready
-				if (_state == "not_enabled") reject(_notEnabledError);
-				else if (_state == "not_connected") reject(_notConnectedError);
-				else if (_state != "ready") reject(_unknownError);
+				if(_state == "not_enabled") reject(_notEnabledError);
+				else if(_state == "not_connected") reject(_notConnectedError);
+				else if(_state != "ready") reject(_unknownError);
 				else {
 					//check if contract is already being fetched
-					if (_contracts[contractABI]) {
-						if (Array.isArray(_contracts[contractABI])) {
+					if(_contracts[contractABI]) {
+						if(Array.isArray(_contracts[contractABI])) {
 							//add resolve/reject to array for when fetch returns
-							_contracts[contractABI].push({ resolve: resolve, reject: reject });
+							_contracts[contractABI].push({resolve:resolve, reject:reject});
 
 						} else {
 							//contract already fetched
@@ -306,38 +304,38 @@
 						}
 					} else {
 						//add resolve/reject to array for when fetch returns
-						_contracts[contractABI] = [{ resolve: resolve, reject: reject }];
+						_contracts[contractABI] = [{resolve:resolve, reject:reject}];
 
 						//fetch
-						$.getJSON(contractABI).then(function (artifact) {
+						$.getJSON(contractABI).then(function(artifact) {
 							var contract = TruffleContract(artifact);
 							contract.setProvider(web3Provider);
-							contract.deployed().then(function (contractInstance) {
+							contract.deployed().then(function(contractInstance) {
 								var waiting = _contracts[contractABI];
 								_contracts[contractABI] = contractInstance;
 
 								//finish promises for anything that was waiting
-								if (waiting) {
-									for (var i = 0; i < waiting.length; i++) waiting[i].resolve(contractInstance);
+								if(waiting) {
+									for(var i=0; i<waiting.length; i++) waiting[i].resolve(contractInstance);
 								}
 
-							}, function (reason) {
+							}, function(reason) {
 								var waiting = _contracts[contractABI];
 								_contracts[contractABI] = undefined;
 
 								//finish promises for anything that was waiting
-								if (waiting) {
-									for (var i = 0; i < waiting.length; i++) waiting[i].reject('Failed to get deployed contract');
+								if(waiting) {
+									for(var i=0; i<waiting.length; i++) waiting[i].reject('Failed to get deployed contract');
 								}
 
 							});
-						}, function (reason) {
+						}, function(reason) {
 							var waiting = _contracts[contractABI];
 							_contracts[contractABI] = undefined;
 
 							//finish promises for anything that was waiting
-							if (waiting) {
-								for (var i = 0; i < waiting.length; i++) waiting[i].reject('Failed to load contract ABI');
+							if(waiting) {
+								for(var i=0; i<waiting.length; i++) waiting[i].reject('Failed to load contract ABI');
 							}
 						});
 					}
@@ -353,17 +351,17 @@
 
 		// Get estimated send gas price
 		function verifySendEth(address, amount) {
-			if (address === undefined || address === null) address = _dummyAddress;
-			if (amount === undefined || amount === null) amount = 0.00001;
-			return $q(function (resolve, reject) {
-				if (_state == "not_enabled") reject(_notEnabledError);
-				else if (_state == "not_connected") reject(_notConnectedError);
-				else if (_state != "ready") reject(_unknownError);
-				else if (isReadOnly()) reject(_noAccountError);
-				else if (!isAddress(address)) reject(_invalidAddressError);
+			if(address === undefined || address === null) address = _dummyAddress;
+			if(amount === undefined || amount === null) amount = 0.00001;
+			return $q(function(resolve, reject) {
+				if(_state == "not_enabled") reject(_notEnabledError);
+				else if(_state == "not_connected") reject(_notConnectedError);
+				else if(_state != "ready") reject(_unknownError);
+				else if(isReadOnly()) reject(_noAccountError);
+				else if(!isAddress(address)) reject(_invalidAddressError);
 				else {
-					web3.eth.estimateGas({ from: _accounts[0], to: address, value: web3.toWei(amount, 'ether') }, function (data, price) {
-						if (!price) reject('Something went wrong while verifying send');
+					web3.eth.estimateGas({from: _accounts[0], to:address, value:web3.toWei(amount, 'ether')}, function(data, price) {
+						if(!price) reject('Something went wrong while verifying send');
 						else {
 							var estCost = getGasPrice(price);
 							resolve({
@@ -377,18 +375,18 @@
 
 		// Send amount of eth to the given address
 		function sendEth(address, amount) {
-			return $q(function (resolve, reject) {
-				if (_state == "not_enabled") reject(_notEnabledError);
-				else if (_state == "not_connected") reject(_notConnectedError);
-				else if (_state != "ready") reject(_unknownError);
-				else if (isReadOnly()) reject(_noAccountError);
-				else if (!isAddress(address)) reject(_invalidAddressError);
+			return $q(function(resolve, reject) {
+				if(_state == "not_enabled") reject(_notEnabledError);
+				else if(_state == "not_connected") reject(_notConnectedError);
+				else if(_state != "ready") reject(_unknownError);
+				else if(isReadOnly()) reject(_noAccountError);
+				else if(!isAddress(address)) reject(_invalidAddressError);
 				else {
-					web3.eth.estimateGas({ from: _accounts[0], to: address, value: web3.toWei(amount, 'ether') }, function (data, price) {
-						if (!price) reject('Something went wrong while sending eth');
+					web3.eth.estimateGas({from: _accounts[0], to:address, value:web3.toWei(amount, 'ether')}, function(data, price) {
+						if(!price) reject('Something went wrong while sending eth');
 						else {
-							var transaction = web3.eth.sendTransaction({ from: _accounts[0], to: address, value: web3.toWei(amount, 'ether'), gasLimit: price, gasPrice: _gasPrice }, function (err, hash) {
-								if (!hash) resolve(hash);
+							var transaction = web3.eth.sendTransaction({from: _accounts[0], to:address, value:web3.toWei(amount, 'ether'), gasLimit:price, gasPrice:_gasPrice}, function(err, hash) {
+								if(!hash) resolve(hash);
 								else reject('Something went wrong while sending eth');
 							});
 						}
@@ -410,61 +408,57 @@
 
 		// Verifies if the given address is valid
 		function isAddress(address) {
-			if (_state != "ready") return null;
+			if(_state != "ready") return null;
 
 			return web3.isAddress(address);
 		}
 
 		// Converts given number into 256 bit hex code
 		function to256Hex(number) {
-			if (_state != "ready") return null;
+			if(_state != "ready") return null;
 
 			var hex = web3.toHex(number);
-			while (hex.length < 66) hex = hex.slice(0, 2) + '0' + hex.slice(2);
+			while(hex.length < 66) hex = hex.slice(0, 2) + '0' + hex.slice(2);
 			return hex;
 		}
 
 		// Converts given utf8 text into hex code
 		function fromUtf8(text) {
-			if (_state != "ready") return null;
+			if(_state != "ready") return null;
 			var val = web3.fromUtf8(text);
-			if (val == '0x') val = 0;
+			if(val == '0x') val = 0;
 
 			return val;
 		}
 
 		// Converts hex code into a full string
 		function toUtf8(hex) {
-			if (_state != "ready") return null;
+			if(_state != "ready") return null;
 
-			//some characters don't seem to be recognized
-			try {
-				return web3.toUtf8(hex);
-			} catch (e) { }
-			return "";
+			return web3.toUtf8(hex);
 		}
 
 		// Converts the given Ether amount into Wei
 		function toWei(ether) {
-			if (_state != "ready") return null;
+			if(_state != "ready") return null;
 
 			return web3.toBigNumber(web3.toWei(ether));
 		}
 
 		// Convert a hex string into an integer string
 		function hexToInt(hex) {
-			if (_state != "ready") return null;
+			if(_state != "ready") return null;
 
 			var num = web3.toBigNumber(hex);
 			var digits = [];
-			for (var i = 0; i < num.c.length; i++) digits.push(("" + num.c[i]).padStart(14, '0'));
+			for(var i=0; i<num.c.length; i++) digits.push((""+num.c[i]).padStart(14, '0'));
 			return digits.join('').replace(/^0+/, '');
 		}
 
 		// Gets the current gas price (or the ether price is gas amount is provided)
 		function getGasPrice(gas) {
-			if (_state != "ready") return null;
-			if (!gas) return _gasPrice;
+			if(_state != "ready") return null;
+			if(!gas) return _gasPrice;
 
 			return web3.fromWei((gas * _gasPrice), 'ether');
 		}
@@ -472,10 +466,10 @@
 		// Wraps contract transactions to intercept the transaction hash
 		function transactionWrapper() {
 			var args = Array.prototype.slice.call(arguments);
-			var contract = args.splice(0, 1)[0];
-			var fn = args.splice(0, 1)[0];
-			return $q(function (resolve, reject) {
-				var callback = function (error, tx) {
+			var contract = args.splice(0,1)[0];
+			var fn = args.splice(0,1)[0];
+			return $q(function(resolve, reject) {
+				var callback = function(error, tx) {
 					if (error != null) return reject(error);
 					resolve({
 						txHash: tx,
@@ -495,22 +489,22 @@
 
 		// Helper function to get the current web3 state
 		function queryState() {
-			if (web3Provider == null) return "not_enabled";
-			if (!web3.isConnected()) return "not_connected";
+			if(web3Provider == null) return "not_enabled";
+			if(!web3.isConnected()) return "not_connected";
 
 			return "ready";
 		}
 
 		// Helper function to get the current list of web3 accounts
 		function queryAccounts() {
-			if (_state == "ready") {
+			if(_state == "ready") {
 				var activeAccount = web3.eth.defaultAccount;
 				var web3Accounts = web3.eth.accounts || [];
 
 				var allAccounts = [];
-				if (activeAccount) allAccounts.push(activeAccount);
-				for (var i in web3Accounts) {
-					if (web3Accounts[i] != activeAccount) allAccounts.push(web3Accounts[i]);
+				if(activeAccount) allAccounts.push(activeAccount);
+				for(var i in web3Accounts) {
+					if(web3Accounts[i] != activeAccount) allAccounts.push(web3Accounts[i]);
 				}
 				return allAccounts;
 			}
@@ -519,9 +513,9 @@
 
 		// Helper function to query for the current gas price
 		function queryGasPrice() {
-			if (_state == "ready") {
-				web3.eth.getGasPrice(function (error, result) {
-					if (!error && result) {
+			if(_state == "ready") {
+				web3.eth.getGasPrice(function(error, result) {
+					if(!error && result) {
 						_gasPrice = result;
 					}
 				});
@@ -530,12 +524,12 @@
 
 		// Helper function to query for the current network
 		function queryNetwork() {
-			if (_state == "ready") {
-				if (web3.version.network == "1") return "Main";
-				if (web3.version.network == "2") return "Morden";
-				if (web3.version.network == "3") return "Ropsten";
-				if (web3.version.network == "4") return "Rinkeby";
-				if (web3.version.network == "42") return "Kovan";
+			if(_state == "ready") {
+				if(web3.version.network == "1") return "Main";
+				if(web3.version.network == "2") return "Morden";
+				if(web3.version.network == "3") return "Ropsten";
+				if(web3.version.network == "4") return "Rinkeby";
+				if(web3.version.network == "42") return "Kovan";
 				return "Unknown";
 			}
 			return null;
@@ -543,28 +537,28 @@
 
 		// Helper function to clean up any subscriptions during destroy events
 		function cleanSubscriptions(ev) {
-			for (var i = 0; i < onStateChangeFunctions.length;) {
-				if (onStateChangeFunctions[i].scope.$id === ev.currentScope.$id) onStateChangeFunctions.splice(i, 1);
+			for(var i=0; i<onStateChangeFunctions.length;) {
+				if(onStateChangeFunctions[i].scope.$id === ev.currentScope.$id) onStateChangeFunctions.splice(i,1);
 				else i++;
 			}
-			for (var i = 0; i < onAccountChangeFunctions.length;) {
-				if (onAccountChangeFunctions[i].scope.$id === ev.currentScope.$id) onAccountChangeFunctions.splice(i, 1);
+			for(var i=0; i<onAccountChangeFunctions.length;) {
+				if(onAccountChangeFunctions[i].scope.$id === ev.currentScope.$id) onAccountChangeFunctions.splice(i,1);
 				else i++;
 			}
-			for (var i = 0; i < onWaitingTransactionsChangeFunctions.length;) {
-				if (onWaitingTransactionsChangeFunctions[i].scope.$id === ev.currentScope.$id) onWaitingTransactionsChangeFunctions.splice(i, 1);
+			for(var i=0; i<onWaitingTransactionsChangeFunctions.length;) {
+				if(onWaitingTransactionsChangeFunctions[i].scope.$id === ev.currentScope.$id) onWaitingTransactionsChangeFunctions.splice(i,1);
 				else i++;
 			}
 		}
 
 		// Helper function to execute the given list of functions with the given data
 		function executeCallbackFunctions(functions, data) {
-			for (var i in functions) {
+			for(var i in functions) {
 				var func = functions[i].func;
 				var scope = functions[i].scope;
 
 				func(data);
-				if (scope && scope.$root.$$phase != '$apply' && scope.$root.$$phase != '$digest') {
+				if(scope && scope.$root.$$phase != '$apply' && scope.$root.$$phase != '$digest') {
 					scope.$apply();
 				}
 			}
@@ -578,9 +572,9 @@
 
 		// Helper function to get transaction status
 		function getTransactionStatus(txHash, callback) {
-			if (_state != "ready") callback(new Error("no web3"), null);
+			if(_state != "ready") callback(new Error("no web3"), null);
 			else {
-				web3.eth.getTransactionReceipt(txHash, function (err, receipt) {
+				web3.eth.getTransactionReceipt(txHash, function(err, receipt) {
 					if (err && !err.toString().includes("unknown transaction")) {
 						return callback(err, null);
 					}
@@ -602,15 +596,15 @@
 
 		// Helper function to watch for transaction completion
 		function onTransactionComplete(txHash) {
-			var timeout = 30 * 60 * 1000;
-			var interval = 1 * 1000;
+			var timeout = 30*60*1000;
+			var interval = 1*1000;
 
-			return $q(function (resolve, reject) {
+			return $q(function(resolve, reject) {
 				var start = (new Date).getTime();
-				var make_attempt = function () {
-					getTransactionStatus(txHash, function (err, data) {
-						if (err != null) return reject(err);
-						if (data != null) return resolve(data);
+				var make_attempt = function() {
+					getTransactionStatus(txHash, function(err, data) {
+						if(err != null) return reject(err);
+						if(data != null) return resolve(data);
 						if (timeout > 0 && (new Date).getTime() - start > timeout) {
 							return reject(new Error("Transaction " + txHash + " wasn't processed in " + timeout / 1000 + " seconds!"));
 						}
@@ -624,7 +618,7 @@
 		// Helper function to check if waiting transactions should be reloaded for account
 		function checkWaitingTransactionsForAccount() {
 			var acct = getActiveAccount();
-			if (_waitingTransactionsAccount != acct) {
+			if(_waitingTransactionsAccount != acct) {
 				_waitingTransactionsAccount = acct;
 				recoverWaitingTransactions();
 			}
@@ -636,26 +630,26 @@
 
 			var numChecked = 0;
 			var transactionsToAdd = [];
-			var checkTransaction = function (transaction) {
-				getTransactionStatus(transaction.txHash, function (err, data) {
-					if (err == null && data == null) transactionsToAdd.push(transaction);
-					if ((++numChecked) >= oldTransactions.length) {
+			var checkTransaction = function(transaction) {
+				getTransactionStatus(transaction.txHash, function(err, data) {
+					if(err == null && data == null) transactionsToAdd.push(transaction);
+					if((++numChecked) >= oldTransactions.length) {
 						_waitingTransactionsBeingChecked = [];
 						addRecoveredWaitingTransactions(transactionsToAdd);
 					}
 				});
 			}
-			for (var i = 0; i < oldTransactions.length; i++) checkTransaction(oldTransactions[i]);
+			for(var i=0; i<oldTransactions.length; i++) checkTransaction(oldTransactions[i]);
 		}
 
 		// Helper function to wait for a transaction to complete
 		function waitForTransactionFinish(oldTransaction) {
-			var transactionFinished = function (data) {
+			var transactionFinished = function(data) {
 				var dataInjectors = [];
-				for (var j = 0; j < _recoveryTransactionDataInjectors.length; j++) {
+				for(var j=0; j<_recoveryTransactionDataInjectors.length; j++) {
 					dataInjectors.push(_recoveryTransactionDataInjectors[j](oldTransaction, data));
 				}
-				Promise.all(dataInjectors).then(function () {
+				Promise.all(dataInjectors).then(function() {
 					removeWaitingTransaction(oldTransaction.txHash, data);
 				});
 			}
@@ -665,17 +659,17 @@
 
 		// Helper function to add multiple existing transactions to the waiting list
 		function addRecoveredWaitingTransactions(oldTransactions) {
-			for (var i = 0; i < oldTransactions.length; i++) {
+			for(var i=0; i<oldTransactions.length; i++) {
 				_waitingTransactions.push(oldTransactions[i]);
 				var txHash = oldTransactions[i].txHash;
-				if (_waitingTransactionsWithCallbacks.indexOf(txHash) == -1) {
+				if(_waitingTransactionsWithCallbacks.indexOf(txHash) == -1) {
 					_waitingTransactionsWithCallbacks.push(txHash);
 
 					//transaction finished callback
 					waitForTransactionFinish(oldTransactions[i]);
 				}
 			}
-			if (oldTransactions.length > 0) {
+			if(oldTransactions.length > 0) {
 				storeWaitingTransactions();
 				executeCallbackFunctions(onWaitingTransactionsChangeFunctions, null);
 			}
@@ -683,22 +677,22 @@
 
 		// Helper function to recover unfinished transactions
 		function recoverWaitingTransactions() {
-			var assumedNotFinished = 15 * 1000;
-			var assumedDead = 24 * 60 * 60 * 1000;
+			var assumedNotFinished = 15*1000;
+			var assumedDead = 24*60*60*1000;
 
 			var acct = getActiveAccount();
-			if (acct && _state == "ready") {
+			if(acct && _state == "ready") {
 				var oldWaitingTransactionCount = _waitingTransactions.length;
 				_waitingTransactions = [];
-				if (localStorage && acct && _state == "ready") {
+				if(localStorage && acct && _state == "ready") {
 					var accountHash = web3.sha3(acct);
 					var storageLocation = web3.sha3(accountHash);
 					var oldWaitingTransactions = localStorage['pixelcons' + queryNetwork() + '_' + storageLocation];
-					if (oldWaitingTransactions) {
+					if(oldWaitingTransactions) {
 						try {
 							oldWaitingTransactions = CryptoJS.AES.decrypt(oldWaitingTransactions, accountHash).toString(CryptoJS.enc.Utf8);
 							oldWaitingTransactions = JSON.parse(oldWaitingTransactions);
-						} catch (err) {
+						} catch(err) {
 							console.log("Something went wrong trying to recover transaction history...");
 						}
 
@@ -706,15 +700,15 @@
 						var transactionsToCheck = [];
 						var transactionsToAdd = [];
 						var now = (new Date()).getTime();
-						for (var i = 0; i < oldWaitingTransactions.length; i++) {
-							if (now < oldWaitingTransactions[i].timestamp + assumedNotFinished) transactionsToAdd.push(oldWaitingTransactions[i]);
-							else if (now < oldWaitingTransactions[i].timestamp + assumedDead) transactionsToCheck.push(oldWaitingTransactions[i]);
+						for(var i=0; i<oldWaitingTransactions.length; i++) {
+							if(now < oldWaitingTransactions[i].timestamp + assumedNotFinished) transactionsToAdd.push(oldWaitingTransactions[i]);
+							else if(now < oldWaitingTransactions[i].timestamp + assumedDead) transactionsToCheck.push(oldWaitingTransactions[i]);
 						}
 						checkUpOnTransactions(transactionsToCheck);
 						addRecoveredWaitingTransactions(transactionsToAdd);
 					}
 				}
-				if (oldWaitingTransactionCount > 0 && _waitingTransactions.length == 0) {
+				if(oldWaitingTransactionCount > 0 && _waitingTransactions.length == 0) {
 					storeWaitingTransactions();
 					executeCallbackFunctions(onWaitingTransactionsChangeFunctions, null);
 				}
@@ -724,18 +718,18 @@
 		// Helper function to store currently waiting transactions for later recovery
 		function storeWaitingTransactions() {
 			var acct = getActiveAccount();
-			if (localStorage && acct && _state == "ready") {
+			if(localStorage && acct && _state == "ready") {
 				var accountHash = web3.sha3(acct);
 				var storageLocation = web3.sha3(accountHash);
 				try {
 					var totalTransactionsToStore = [];
-					for (var i = 0; i < _waitingTransactions.length; i++) totalTransactionsToStore.push(_waitingTransactions[i]);
-					for (var i = 0; i < _waitingTransactionsBeingChecked.length; i++) totalTransactionsToStore.push(_waitingTransactionsBeingChecked[i]);
+					for(var i=0; i<_waitingTransactions.length; i++) totalTransactionsToStore.push(_waitingTransactions[i]);
+					for(var i=0; i<_waitingTransactionsBeingChecked.length; i++) totalTransactionsToStore.push(_waitingTransactionsBeingChecked[i]);
 
 					var data = JSON.stringify(totalTransactionsToStore);
 					data = CryptoJS.AES.encrypt(data, accountHash).toString();
 					localStorage['pixelcons' + queryNetwork() + '_' + storageLocation] = data;
-				} catch (err) {
+				} catch(err) {
 					console.log("Something went wrong trying to store transaction history...");
 				}
 			}

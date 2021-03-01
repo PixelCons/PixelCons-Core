@@ -32,34 +32,34 @@
 
 		// Watch for screen size changes
 		_this.screenSize = {};
-		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
-		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function (md) { _this.screenSize['md'] = md; });
-		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
+		$scope.$watch(function() { return $mdMedia('gt-md'); }, function(lg) { _this.screenSize['lg'] = lg; });
+		$scope.$watch(function() { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function(md) { _this.screenSize['md'] = md; });
+		$scope.$watch(function() { return $mdMedia('xs'); }, function(sm) { _this.screenSize['sm'] = sm; });
 
 		// Start with blank canvas
 		_this.canvasPixels = [];
-		for (var i = 0; i < 64; i++) _this.canvasPixels[i] = 0;
+		for(var i=0; i<64; i++) _this.canvasPixels[i] = 0;
 		generatePixelconId();
 
 		// Check if create is supported
 		checkCreateSupported();
 		function checkCreateSupported() {
 			var web3state = web3Service.getState();
-			if (web3state == "ready") {
-				if (web3Service.getActiveAccount()) {
+			if(web3state=="ready") {
+				if(web3Service.getActiveAccount()) {
 					_this.showButtons = true;
 				} else {
-					if (web3Service.isReadOnly()) {
+					if(web3Service.isReadOnly()) {
 						_this.infoText = 'You need an Ethereum Account to create PixelCons';
 						_this.showStartButton = true;
-					} else if (web3Service.isPrivacyMode()) {
+					} else if(web3Service.isPrivacyMode()) {
 						_this.infoText = 'Please connect your Ethereum Account';
 					} else {
 						_this.infoText = 'Please log into ' + web3Service.getProviderName();
 					}
 					_this.showButtons = false;
 				}
-			} else if (web3state == "not_enabled") {
+			} else if(web3state=="not_enabled") {
 				_this.infoText = 'You need an Ethereum Account to create PixelCons';
 				_this.showStartButton = true;
 				_this.showButtons = false;
@@ -71,7 +71,7 @@
 
 		// Set pixel to the selected color
 		function setPixel(index, $event) {
-			if ($event && $event.buttons != 1) return;
+			if($event && $event.buttons != 1) return;
 			_this.canvasPixels[index] = _this.selectedColor;
 			generatePixelconId();
 		}
@@ -88,7 +88,7 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.pixelcon'],
 				parent: angular.element(document.body),
-				locals: { pixelconId: _this.pixelconId },
+				locals:{pixelconId: _this.pixelconId},
 				bindToController: true,
 				clickOutsideToClose: true
 			});
@@ -96,7 +96,7 @@
 
 		// Clear the canvas
 		function clear(ev) {
-			for (var i = 0; i < 64; i++) _this.canvasPixels[i] = 0;
+			for(var i=0; i<64; i++) _this.canvasPixels[i] = 0;
 			generatePixelconId();
 		}
 
@@ -104,7 +104,7 @@
 		function generatePixelconId() {
 			_this.pixelconId = '0x';
 			var hexDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
-			for (var i = 0; i < 64; i++) _this.pixelconId += hexDigits[_this.canvasPixels[i]];
+			for(var i=0; i<64; i++) _this.pixelconId += hexDigits[_this.canvasPixels[i]];
 		}
 
 		// Listen for account data changes
