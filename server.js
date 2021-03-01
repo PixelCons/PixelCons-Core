@@ -89,12 +89,12 @@ var appLibrariesPath = "src/lib/";
 var args = process.argv.slice(2);
 var debugMode = args.indexOf('-debug') > -1;
 if(debugMode) {
-	
+
 	//start server
 	startServer();
-	
+
 } else {
-	
+
 	//build then start server
 	prepBuild().then(function() {
 		return minifyScripts();
@@ -114,7 +114,7 @@ if(debugMode) {
 		console.log('Failed to build and start server...');
 		console.log(err);
 	});
-	
+
 }
 
 
@@ -122,11 +122,11 @@ if(debugMode) {
 // Server Startup
 function startServer() {
 	console.log('Starting server...');
-	
+
 	// Serve all app files
 	var app = express();
-	if(debugMode) app.use(express.static(__dirname + '\\src')); 
-	app.use(express.static(__dirname + '\\build')); 
+	if(debugMode) app.use(express.static(__dirname + '\\src'));
+	app.use(express.static(__dirname + '\\build'));
 	app.use(function (err, req, res, next) {
 		if (req.xhr) {
 			res.status(500).send('Oops, Something went wrong!');
@@ -152,7 +152,7 @@ function prepBuild() {
 		if(!fs.existsSync(appBuildPath)) fs.mkdirSync(appBuildPath);
 		if(!fs.existsSync(appHTMLBuildPath)) fs.mkdirSync(appHTMLBuildPath);
 		copyFileSync(appMinifiedIndex, appBuildPath);
-		
+
 		resolve({});
 	});
 }
@@ -164,7 +164,7 @@ function minifyScripts() {
 		Promise.all(filePromises).then(function(results) {
 			var code = {};
 			for(var i=0; i<results.length; i++) code[results[i].file] = results[i].data;
-			
+
 			var uglified = uglifyjs.minify(code);
 			fs.writeFile(appScriptBuildPath, uglified.code, function(err) {
 				if(err) {
@@ -172,16 +172,16 @@ function minifyScripts() {
 					reject(err);
 				} else {
 					resolve({});
-				}      
+				}
 			});
-			
+
 		});
 	});
 }
 function minifyStyleSheets() {
 	console.log("Minifying style sheets...");
 	return new Promise(function(resolve, reject) {
-		
+
 		var uglified = uglifycss.processFiles(appStyleSheets);
 		fs.writeFile(appStyleSheetsBuildPath, uglified, function(err) {
 			if(err) {
@@ -189,14 +189,14 @@ function minifyStyleSheets() {
 				reject(err);
 			} else {
 				resolve({});
-			}      
+			}
 		});
 	});
 }
 function minifyHTML() {
 	console.log("Minifying html templates...");
 	return new Promise(function(resolve, reject) {
-			
+
 		var filePromises = [];
 		for(var i=0; i<appHTML.length; i++) filePromises.push(readFilePromise(appHTML[i]));
 		Promise.all(filePromises).then(function(results) {
@@ -209,20 +209,20 @@ function minifyHTML() {
 					for(var i=0; i<filePath.length; i++) {
 						if(i == filePath.length-2) {
 							var fileName = filePath[filePath.length-1];
-							if(fileName.indexOf(filePath[i]) != 0) { 
+							if(fileName.indexOf(filePath[i]) != 0) {
 								if(!firstPathPart) copyFile += "_";
 								copyFile += filePath[i];
 								firstPathPart = false;
 							}
 						} else {
-							if(filePath[i] != 'src' && filePath[i] != 'app') { 
+							if(filePath[i] != 'src' && filePath[i] != 'app') {
 								if(!firstPathPart) copyFile += "_";
 								copyFile += filePath[i];
 								firstPathPart = false;
 							}
 						}
 					}
-					
+
 					var uglified = uglifyhtml.minify(results[r].data, {collapseWhitespace:true, preserveLineBreaks:true, removeComments:true});
 					fileWritePromises.push(writeFilePromise(copyFile, uglified));
 				}
@@ -236,9 +236,9 @@ function minifyHTML() {
 				console.log("Failed to minifying html templates!");
 				reject(err);
 			}
-		
+
 		});
-			
+
 	});
 }
 function copyImages() {

@@ -425,17 +425,25 @@
 		// Converts given utf8 text into hex code
 		function fromUtf8(text) {
 			if(_state != "ready") return null;
-			var val = web3.fromUtf8(text);
-			if(val == '0x') val = 0;
 
-			return val;
+			//some characters don't seem to be recognized
+			try {
+				var val = web3.fromUtf8(text);
+				if(val == '0x') val = 0;
+				return val;
+			} catch (e) { }
+			return "";
 		}
 
 		// Converts hex code into a full string
 		function toUtf8(hex) {
-			if(_state != "ready") return null;
+			if (_state != "ready") return null;
 
-			return web3.toUtf8(hex);
+			//some characters don't seem to be recognized
+			try {
+				return web3.toUtf8(hex);
+			} catch (e) { }
+			return "";
 		}
 
 		// Converts the given Ether amount into Wei
