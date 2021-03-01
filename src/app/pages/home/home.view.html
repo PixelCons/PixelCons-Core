@@ -8,7 +8,9 @@
 				<div class="textBold textDark textCenter" ng-class="{'textTitleExLarge':!ctrl.screenSize.sm, 'textTitleLarge':ctrl.screenSize.sm}">PixelCons</div>
 				Collectible Minimalist <br/> Pixel Art Tokens 
 				<br/><br/>
-				<md-button class="md-raised md-primary" ng-click="ctrl.goPath('/start')">Start</md-button>
+				<a ng-href="/start" class="plain textDark">
+					<md-button class="md-raised md-primary">Start</md-button>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -25,10 +27,12 @@
 				<div class="textExLarge textBold textDark">What Is It?</div><br/>
 				PixelCons are collectible tokens featuring minimalist pixel art. It was created as a way for people to easily make collectibles within a shared ecosystem and showcase incredible art. Every PixelCon is unique and it's ownership is secured on the Ethereum blockchain. Feel free to browse other artists creations or make your own.
 				<br/>
-				<md-button class="browseLink" ng-click="ctrl.goPath('/create')">
-					<div class="inlineButtonIcon create" ng-show="!ctrl.screenSize.sm"></div>
-					Create
-				</md-button>
+				<a ng-href="/create" class="plain textDark">
+					<md-button class="browseLink">
+						<div class="inlineButtonIcon create" ng-show="!ctrl.screenSize.sm"></div>
+						Create
+					</md-button>
+				</a>
 			</div>
 		</div>
 	</div>
@@ -40,10 +44,12 @@
 			<div class="textExLarge textBold textDark">Why Minimalist Pixel Art?</div><br/>
 			An 8x8 grid with 16 colors fits perfectly into the 256bit ID size that Ethereum based tokens use. This means that the artwork data also serves as a PixelCons unique ID. If you think you couldn't possibly create anything meaningful with these restrictions, then definitely check out some of the impressive art already created.
 			<br/>
-			<md-button class="browseLink" ng-click="ctrl.goPath('/search')">
-				<div class="inlineButtonIcon search" ng-show="!ctrl.screenSize.sm"></div>
-				Browse
-			</md-button>
+			<a ng-href="/search" class="plain textDark">
+				<md-button class="browseLink">
+					<div class="inlineButtonIcon search" ng-show="!ctrl.screenSize.sm"></div>
+					Browse
+				</md-button>
+			</a>
 		</div>
 		<div class="detailImage crispImage textLight textSmall" ng-class="{'small':ctrl.screenSize.sm}">
 			<img ng-hide="ctrl.verticalMode" src="/img/screen/art_showcase.png">
@@ -78,7 +84,7 @@
 			For those more technically inclined, feel free to check out the code and infrastructure diagrams on the GitHub page. Everything about PixelCons is open source, including this website!
 		</div>
 		<div class="detailImage textLight textSmall" ng-class="{'small':ctrl.screenSize.sm}">
-			<a href="https://github.com/PixelCons"><img ng-hide="ctrl.verticalMode" src="/img/screen/github_logo.png"></a>
+			<a href="https://github.com/PixelCons" target="_blank" class="light"><img ng-hide="ctrl.verticalMode" src="/img/screen/github_logo.png"></a>
 		</div>
 	</div>
 	

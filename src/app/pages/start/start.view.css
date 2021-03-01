@@ -47,16 +47,16 @@ div.pixelconStartPage.sm div.startCardContainer {
 /* Steps */
 div.pixelconStartPage div.setupProcedure {
 	overflow: hidden;
-	transition: all cubic-bezier(.35,0,.25,1) 0.5s;
+	transition: all cubic-bezier(0.35, 0, 0.25, 1) 0.5s;
 	margin-bottom: 150px;
 	max-height: 550px;
-	opacity: 1.0;
+	opacity: 1;
 	filter: alpha(opacity=100);
 }
 div.pixelconStartPage div.setupProcedure.hidden {
 	margin-bottom: 0px;
 	max-height: 0px;
-	opacity: 0.0;
+	opacity: 0;
 	filter: alpha(opacity=0);
 }
 div.pixelconStartPage div.stepTabContainer {
@@ -142,7 +142,7 @@ div.pixelconStartPage div.stepContentPage.hidden {
 	z-index: 0;
 }
 div.pixelconStartPage .stepTabTransition {
-	transition: opacity cubic-bezier(.35,0,.25,1) 0.3s;
+	transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.3s;
 }
 div.pixelconStartPage div.stepNavButton {
 	display: inline-block;
@@ -189,7 +189,7 @@ div.pixelconStartPage div.ethereumImage {
 	width: 150px;
 	height: 150px;
 	max-width: 100%;
-	background-color: #FFF;
+	background-color: #fff;
 	border-radius: 150px;
 	vertical-align: middle;
 }
@@ -197,7 +197,7 @@ div.pixelconStartPage div.ethereumImage.account {
 	padding: 30px;
 }
 div.pixelconStartPage div.ethereumImage img {
-	width: 100%;
+	height: 100%;
 }
 div.pixelconStartPage .textBox {
 	display: inline-block;
@@ -216,7 +216,7 @@ div.pixelconStartPage .textBox.medium {
 	padding: 0px 20px 20px 20px;
 }
 div.pixelconStartPage.sm .textBox.medium {
-	padding: 0px 0px 10px 0px
+	padding: 0px 0px 10px 0px;
 }
 div.pixelconStartPage .textBox.large {
 	max-width: 600px;
@@ -288,10 +288,10 @@ div.pixelconStartPage div.expandContainerContent {
 	box-sizing: border-box;
 	overflow: hidden;
 	width: 100%;
-	transition: all cubic-bezier(.35,0,.25,1) 0.5s;
+	transition: all cubic-bezier(0.35, 0, 0.25, 1) 0.5s;
 	padding: 5px;
 	max-height: 540px;
-	opacity: 1.0;
+	opacity: 1;
 	filter: alpha(opacity=100);
 }
 div.pixelconStartPage.sm div.expandContainerContent {
@@ -300,7 +300,7 @@ div.pixelconStartPage.sm div.expandContainerContent {
 div.pixelconStartPage div.expandContainerContent.hidden {
 	padding: 0px 5px;
 	max-height: 0px;
-	opacity: 0.0;
+	opacity: 0;
 	filter: alpha(opacity=0);
 }
 div.pixelconStartPage div.expandContainerText {

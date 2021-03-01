@@ -41,7 +41,7 @@
 	filter: alpha(opacity=70);
 }
 .sendDialog div.dialogCloseButton:hover {
-	opacity: 1.0;
+	opacity: 1;
 	filter: alpha(opacity=100);
 }
 .sendDialog div.dialogTitle {

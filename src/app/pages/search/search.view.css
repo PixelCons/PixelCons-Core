@@ -86,13 +86,11 @@ div.pixelconSearchPage div.searchFilter .marketButton {
 	padding: 5px 10px;
 	line-height: 15px;
 	font-size: 15px;
-	background-color: #3291E9;
+	background-color: #3291e9;
 	margin: -1px 0px 0px 0px;
 	text-transform: uppercase;
 	border-radius: 5px;
 	text-decoration: none;
-	opacity: 1.0;
-	filter: alpha(opacity=100);
 }
 div.pixelconSearchPage.sm div.searchFilter .marketButton {
 	padding: 5px 5px;
@@ -131,7 +129,7 @@ div.pixelconSearchPage.sm div.searchFilter div.options {
 	bottom: 6px;
 	left: 10px;
 }
-div.pixelconSearchPage div.searchFilter div.options  md-checkbox {
+div.pixelconSearchPage div.searchFilter div.options md-checkbox {
 	margin-bottom: 0px;
 }
 

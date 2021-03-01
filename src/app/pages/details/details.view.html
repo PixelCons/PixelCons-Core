@@ -13,26 +13,32 @@
 						<md-button ng-click="ctrl.copyLink()"><div class="shareLinkIcon url"></div>Copy URL</md-button>
 					</md-menu-item>
 					<md-menu-item>
-						<md-button ng-click="ctrl.shareOnFacebook()"><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
+						<a ng-href="{{ctrl.shareOnFacebook()}}" target="_blank" class="textDark">
+							<md-button><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
+						</a>
 					</md-menu-item>
 					<md-menu-item>
-						<md-button ng-click="ctrl.shareOnTwitter()"><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
+						<a ng-href="{{ctrl.shareOnTwitter()}}" target="_blank" class="textDark">
+							<md-button><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
+						</a>
 					</md-menu-item>
 				</md-menu-content>
 			</md-menu>
-			<div class="viewWindowGroupContainer" ng-show="ctrl.details.collection" ng-click="ctrl.goPath('/collection/'+ctrl.details.collection.index)">
-				<div class="viewWindowGroup colorDarkOverlay" ng-class="{'detailsPageTransition': ctrl.loaded, 'onlyThree':!ctrl.details.collection.pixelcons[3].id && ctrl.details.collection.pixelcons[2].id}">
-					<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[0].id"><pixelcon id="ctrl.details.collection.pixelcons[0].id"></pixelcon></div>
-					<div class="viewWindowGroupElementSpacer" ng-if="!ctrl.details.collection.pixelcons[3].id && ctrl.details.collection.pixelcons[2].id"></div>
-					<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[1].id"><pixelcon id="ctrl.details.collection.pixelcons[1].id"></pixelcon></div>
-					<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[2].id"><pixelcon id="ctrl.details.collection.pixelcons[2].id"></pixelcon></div>
-					<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[3].id"><pixelcon id="ctrl.details.collection.pixelcons[3].id"></pixelcon></div>
-					<div class="viewWindowGroupCover colorDark"><div class="viewWindowGroupCoverIcon"></div></div>
+			<a ng-href="/collection/{{ctrl.details.collection.index}}" class="textDark">
+				<div class="viewWindowGroupContainer" ng-show="ctrl.details.collection">
+					<div class="viewWindowGroup colorDarkOverlay" ng-class="{'detailsPageTransition': ctrl.loaded, 'onlyThree':!ctrl.details.collection.pixelcons[3].id && ctrl.details.collection.pixelcons[2].id}">
+						<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[0].id"><pixelcon id="ctrl.details.collection.pixelcons[0].id"></pixelcon></div>
+						<div class="viewWindowGroupElementSpacer" ng-if="!ctrl.details.collection.pixelcons[3].id && ctrl.details.collection.pixelcons[2].id"></div>
+						<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[1].id"><pixelcon id="ctrl.details.collection.pixelcons[1].id"></pixelcon></div>
+						<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[2].id"><pixelcon id="ctrl.details.collection.pixelcons[2].id"></pixelcon></div>
+						<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[3].id"><pixelcon id="ctrl.details.collection.pixelcons[3].id"></pixelcon></div>
+						<div class="viewWindowGroupCover colorDark"><div class="viewWindowGroupCoverIcon"></div></div>
+					</div>
+					<div class="viewWindowGroupName colorDarkOverlay textBold textMedium" ng-class="{'detailsPageTransition': ctrl.loaded}">
+						{{ctrl.details.collection.name?ctrl.details.collection.name:('Collection '+ctrl.details.collection.index)}}
+					</div>
 				</div>
-				<div class="viewWindowGroupName colorDarkOverlay textBold textMedium" ng-class="{'detailsPageTransition': ctrl.loaded}">
-					{{ctrl.details.collection.name?ctrl.details.collection.name:('Collection '+ctrl.details.collection.index)}}
-				</div>
-			</div>
+			</a>
 			<div ng-show="ctrl.pixelconId" class="pixelconImage">
 				<pixelcon id="ctrl.pixelconId"/>
 			</div>

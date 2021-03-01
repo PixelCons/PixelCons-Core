@@ -4,8 +4,8 @@
 
 	web3Service.$inject = ['$interval', '$timeout', '$q'];
 	function web3Service($interval, $timeout, $q) {
-		var _expectedNetwork = null; //Options: Main, Morden, Ropsten, Rinkeby, Kovan (set to 'null' if you wish to support all of them)
-		var _backupWeb3Provider = 'https://mainnet.infura.io/v3/[your_token]';
+		var _expectedNetwork = 'Main'; //Options: Main, Morden, Ropsten, Rinkeby, Kovan (set to 'null' if you wish to support all of them)
+		var _backupWeb3Provider = 'https://mainnet.infura.io/v3/07d72fe8b8b74534a05d2091e108e26e';
 		var _transactionLookupUrl = 'https://etherscan.io/tx/<txHash>';
 		var _accountLookupUrl = 'https://etherscan.io/address/<address>';
 
@@ -37,38 +37,36 @@
 			_state = queryState();
 			_accounts = queryAccounts();
 			_currNetwork = queryNetwork();
+			checkWaitingTransactionsForAccount();
 
-			$timeout(function () {
-				if (web3.eth.accounts.length == 0) requestAccess();
-			}, 1000);
-		}
-		else if (window.web3) {
+			//$timeout(function () {
+			//	if (web3.eth.accounts.length == 0) requestAccess();
+			//}, 1000);
+
+		} else if (window.web3) {
 			//legacy web3
 			web3Provider = window.web3.currentProvider;
 			web3 = new Web3(web3Provider);
 			_state = queryState();
 			_accounts = queryAccounts();
 			_currNetwork = queryNetwork();
-		}
-		else {
+			checkWaitingTransactionsForAccount();
+
+		} else {
 			//read-only mode
 			var web3js = require('web3');
 			web3Provider = new web3js.providers.HttpProvider(_backupWeb3Provider);
 			web3 = new web3js(web3Provider);
 			_isReadOnly = true;
 			_state = queryState();
-			_accounts = queryAccounts();
 			_currNetwork = queryNetwork();
 		}
-		checkWaitingTransactionsForAccount();
 
 		// Poll for state changes
 		var onAccountChangeFunctions = [];
 		var onStateChangeFunctions = [];
 		var onWaitingTransactionsChangeFunctions = [];
 		function pollForWeb3Changes() {
-			queryGasPrice();
-
 			var newState = queryState();
 			var stateChanged = (_state != newState);
 			_state = newState;
@@ -84,8 +82,12 @@
 				executeCallbackFunctions(onAccountChangeFunctions, _accounts);
 				checkWaitingTransactionsForAccount();
 			}
+
 		}
-		$interval(pollForWeb3Changes, 1000);
+		if(!_isReadOnly) {
+			$interval(pollForWeb3Changes, 1000);
+			$interval(queryGasPrice, 6000);
+		}
 
 		// Setup functions
 		this.getState = getState;
@@ -524,7 +526,6 @@
 					}
 				});
 			}
-			return null;
 		}
 
 		// Helper function to query for the current network

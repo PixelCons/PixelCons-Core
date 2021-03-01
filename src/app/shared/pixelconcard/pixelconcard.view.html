@@ -5,18 +5,23 @@
 		<pixelcon id="ctrl.pixelcon.id"></pixelcon>
 		<div class="pixelconCardDirectiveDisabledShade colorDark" ng-if="ctrl.disabled" ng-hide="dirHover || ctrl.coverAlwaysOn"></div>
 		<div class="pixelconCardDirectiveImageCover" ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-hide="!dirHover && !ctrl.coverAlwaysOn" ng-cloak>
-			<div class="pixelconCardDirectiveGotoIcon"></div>
-			<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveGroupContainer colorDarkOverlay clickable" 
-					ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded, 'onlyThree': !ctrl.pixelcon.collection.pixelcons[3].id && ctrl.pixelcon.collection.pixelcons[2].id}"
-					ng-if="!ctrl.noCollection && ctrl.pixelcon.collection" ng-click="ctrl.groupInfoClick($event)">
-				<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[0].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[0].id"></pixelcon></div>
-				<div class="pixelconCardDirectiveGroupElementSpacer" ng-if="!ctrl.pixelcon.collection.pixelcons[3].id && ctrl.pixelcon.collection.pixelcons[2].id"></div>
-				<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[1].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[1].id"></pixelcon></div>
-				<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[2].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[2].id"></pixelcon></div>
-				<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[3].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[3].id"></pixelcon></div>
-			</div>
+			<a ng-href="{{ctrl.noClick?'':'/details/'+ctrl.pixelcon.id}}" class="plain textDark">
+				<div class="pixelconCardDirectiveGotoIcon"></div>
+			</a>
+			<a ng-href="{{ctrl.noClick?'':'/collection/'+ctrl.pixelcon.collection.index}}" class="plain textDark">
+				<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveGroupContainer colorDarkOverlay clickable" 
+						ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded, 'onlyThree': !ctrl.pixelcon.collection.pixelcons[3].id && ctrl.pixelcon.collection.pixelcons[2].id}"
+						ng-if="!ctrl.noCollection && ctrl.pixelcon.collection" ng-click="ctrl.groupInfoClick($event)">
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[0].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[0].id"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElementSpacer" ng-if="!ctrl.pixelcon.collection.pixelcons[3].id && ctrl.pixelcon.collection.pixelcons[2].id"></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[1].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[1].id"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[2].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[2].id"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[3].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[3].id"></pixelcon></div>
+				</div>
+			</a>
 		</div>
 	</div>
+
 	<div class="pixelconCardDirectiveInfo pixelconCardDirectiveFont textBold textDark colorLight" ng-click="ctrl.pixelconClick($event)"
 			ng-class="{'pixelconCardDirectiveTransition':ctrl.loaded}">
 		{{ctrl.pixelcon.name!==''?ctrl.pixelcon.name:'#'+ctrl.pixelcon.index}}

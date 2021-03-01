@@ -20,7 +20,6 @@
 		_this.setQueryMode = setQueryMode;
 		_this.setGroupMode = setGroupMode;
 		_this.createCollection = createCollection;
-		_this.goPath = goPath;
 		_this.pixelconSelect = pixelconSelect;
 		_this.marketEnabled = market.isEnabled();
 		_this.marketAccountLink = market.getAccountLink();
@@ -56,7 +55,8 @@
 
 			//loaded address changed?
 			var account = web3Service.getAllAccounts()[0];
-			if (_this.accountAddress.toLowerCase() != account.toLowerCase()) {
+			if ((account == null && _this.accountAddress != null) || (account != null && _this.accountAddress == null)
+					|| (account != null && _this.accountAddress != null && account.toLowerCase() != _this.accountAddress.toLowerCase())) {
 				_this.marketAccountLink = market.getAccountLink(account);
 				_this.accountAddress = account;
 				_this.accountIcon = undefined;
@@ -217,11 +217,6 @@
 			_this.groupSelection = [];
 			for (var i in _this.pixelcons) _this.pixelcons[i].selected = false;
 			_this.groupMode = mode;
-		}
-
-		// Goes to the specified path
-		function goPath(path) {
-			$location.url(path);
 		}
 
 		// Creates a collection

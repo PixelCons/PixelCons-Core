@@ -10,6 +10,7 @@
 		_this.groupInfoClick = groupInfoClick;
 		_this.pixelconClick = pixelconClick;
 		_this.marketEnabled = market.isEnabled();
+		var clicking = false;
 
 		// Watch for changes to the pixelcon data
 		$scope.$watch('ctrl.pixelcon', function () {
@@ -91,17 +92,17 @@
 		// Pixelcon card clicked
 		function pixelconClick(ev) {
 			if (_this.noClick) return;
-
-			$location.url('/details/' + _this.pixelcon.id);
-			ev.stopPropagation();
+			if (clicking) {
+				clicking = false;
+			} else {
+				$location.url('/details/' + _this.pixelcon.id);
+			}
 		}
 
 		// Group info clicked
 		function groupInfoClick(ev) {
 			if (_this.noClick) return;
-
-			$location.url('/collection/' + _this.pixelcon.collection.index);
-			ev.stopPropagation();
+			clicking = true;
 		}
 
 		// Gets page relevant pixelcon from list

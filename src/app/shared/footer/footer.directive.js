@@ -3,11 +3,10 @@
 		.directive('appFooter', appFooter)
 		.controller('FooterCtrl', FooterCtrl);
 
-	FooterCtrl.$inject = ['$scope', '$mdMedia', '$location', '$mdDialog', 'web3Service', 'coreContract'];
-	function FooterCtrl($scope, $mdMedia, $location, $mdDialog, web3Service, coreContract) {
+	FooterCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', 'web3Service'];
+	function FooterCtrl($scope, $mdMedia, $mdDialog, web3Service) {
 		var _this = this;
 		_this.tip = tip;
-		_this.goPath = goPath;
 		checkAccount();
 
 		// Watch for screen size changes
@@ -15,11 +14,6 @@
 		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
 		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function (md) { _this.screenSize['md'] = md; });
 		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
-
-		// Go to the specified path
-		function goPath(path) {
-			if ($location.path() != path) $location.url(path);
-		}
 
 		// Tip the developer
 		function tip(ev) {

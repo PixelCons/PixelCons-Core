@@ -4,14 +4,14 @@
 	outline: none;
 }
 .textSelectable {
-	-webkit-user-select: text; /* Chrome/Safari */        
+	-webkit-user-select: text; /* Chrome/Safari */
 	-moz-user-select: text; /* Firefox */
 	-ms-user-select: text; /* IE10+ */
 	-o-user-select: text;
 	user-select: text;
 }
 .textNotSelectable {
-	-webkit-user-select: none; /* Chrome/Safari */        
+	-webkit-user-select: none; /* Chrome/Safari */
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+ */
 	-o-user-select: none;
@@ -122,7 +122,7 @@
 .textNote {
 	font-size: 12px;
 	line-height: 14px;
-	color: grey; 
+	color: grey;
 }
 .textDark {
 	color: #333333;
@@ -172,9 +172,9 @@
 
 /* App Layout */
 div.appContainer {
-	height:100%; 
-	width:100%; 
-	background-color:#dddddd;
+	height: 100%;
+	width: 100%;
+	background-color: #dddddd;
 }
 div.pageContent {
 	width: 100%;
@@ -183,7 +183,7 @@ div.pageContent {
 }
 div.pageContentBackground {
 	min-height: 100%;
-	background-image: url('../img/screen/back.png');
+	background-image: url("../img/screen/back.png");
 	background-size: 640px;
 }
 div.md-open-menu-container {
@@ -193,13 +193,20 @@ div.md-open-menu-container {
 }
 
 /* Hyperlink */
-a:link,
-a:visited {
+a.light:link,
+a.light:visited {
 	opacity: 0.7;
 	filter: alpha(opacity=70);
 }
-a:hover,
-a:active {
-	opacity: 1.0;
+a.light:hover,
+a.light:active {
+	opacity: 1;
 	filter: alpha(opacity=100);
+}
+
+a.plain:link,
+a.plain:visited,
+a.plain:hover,
+a.plain:active {
+	text-decoration: none;
 }

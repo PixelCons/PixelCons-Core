@@ -2,11 +2,10 @@
 	angular.module('App')
 		.controller('PixelconDialogCtrl', PixelconDialogCtrl);
 
-	PixelconDialogCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$location', 'web3Service', 'coreContract'];
-	function PixelconDialogCtrl($scope, $mdMedia, $mdDialog, $location, web3Service, coreContract) {
+	PixelconDialogCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', 'web3Service', 'coreContract'];
+	function PixelconDialogCtrl($scope, $mdMedia, $mdDialog, web3Service, coreContract) {
 		var _this = this;
 		_this.filterPixelconName = filterPixelconName;
-		_this.goPath = goPath;
 		_this.closeDialog = closeDialog;
 		_this.update = update;
 		_this.create = create;
@@ -77,11 +76,6 @@
 		// Closes the dialog window
 		function closeDialog() {
 			$mdDialog.cancel();
-		}
-
-		// Goes to the specified path
-		function goPath(path) {
-			$location.url(path);
 		}
 
 		// Close the dialog if page/account changes

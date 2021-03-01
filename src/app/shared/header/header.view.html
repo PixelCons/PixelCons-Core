@@ -7,29 +7,38 @@
 	
 	<!-- Buttons -->
 	<div layout="row" class="menuButtons">
-		<md-button class="nav" ng-class="{'highlight':ctrl.page=='browse'}" ng-click="ctrl.goPath('/search')">
-			<div class="buttonIcon search"></div>
-			{{ctrl.screenSize.sm?'BRW':'Browse'}}
-		</md-button>
-		<md-button class="nav" ng-class="{'highlight':ctrl.page=='create'}" ng-click="ctrl.goPath('/create')">
-			<div class="buttonIcon create"></div>
-			{{ctrl.screenSize.sm?'CR8':'Create'}}
-		</md-button>
-		<md-button class="nav" ng-class="{'highlight':ctrl.page=='account'}" ng-show="ctrl.loggedIn" ng-click="ctrl.goPath('/account')">
-			<div class="buttonIcon account"></div>
-			{{ctrl.screenSize.sm?'ACCT':'Account'}}
-		</md-button>
+		<a href="/search" class="plain textDark">
+			<md-button class="nav" ng-class="{'highlight':ctrl.page=='browse'}" ng-click="ctrl.goPath('/search')">
+				<div class="buttonIcon search"></div>
+				{{ctrl.screenSize.sm?'BRW':'Browse'}}
+			</md-button>
+		<a href="/create" class="plain textDark">
+			<md-button class="nav" ng-class="{'highlight':ctrl.page=='create'}" ng-click="ctrl.goPath('/create')">
+				<div class="buttonIcon create"></div>
+				{{ctrl.screenSize.sm?'CR8':'Create'}}
+			</md-button>
+		</a>
+		<a href="/account" class="plain textDark">
+			<md-button class="nav" ng-class="{'highlight':ctrl.page=='account'}" ng-show="ctrl.loggedIn" ng-click="ctrl.goPath('/account')">
+				<div class="buttonIcon account"></div>
+				{{ctrl.screenSize.sm?'ACCT':'Account'}}
+			</md-button>
+		</a>
 		
-		<md-button class="start md-raised md-primary" ng-show="ctrl.noWeb3" ng-click="ctrl.goPath('/start')">Start</md-button>
+		<a href="/start" class="plain textDark">
+			<md-button class="start md-raised md-primary" ng-show="ctrl.noWeb3" ng-click="ctrl.goPath('/start')">Start</md-button>
+		</a>
 	</div>
 	
 	<!-- Title/Icon -->	
-	<div class="pixelconTitle">
-		<div class="pixelconLogo crispImage clickable" ng-click="ctrl.goPath('/')">
-			<div class="pixelconLogoText textBold textDark textCenter">PixelCons</div>
+	<a href="/" class="textDark">
+		<div class="pixelconTitle">
+			<div class="pixelconLogo crispImage clickable" ng-click="ctrl.goPath('/')">
+				<div class="pixelconLogoText textBold textDark textCenter">PixelCons</div>
+			</div>
+			<div ng-if="ctrl.net!='Main'" class="network textCenter" ng-class="{'ropsten':ctrl.net=='Ropsten', 'kovan':ctrl.net=='Kovan', 'rinkeby':ctrl.net=='Rinkeby'}">{{ctrl.net}}</div>	
 		</div>
-		<div ng-if="ctrl.net!='Main'" class="network textCenter" ng-class="{'ropsten':ctrl.net=='Ropsten', 'kovan':ctrl.net=='Kovan', 'rinkeby':ctrl.net=='Rinkeby'}">{{ctrl.net}}</div>	
-	</div>
+	</a>
 	
 	<!-- User Account -->
 	<div ng-if="ctrl.privacyMode" class="accountIcon connectButton clickable textBold textSmall textWhite md-whiteframe-1dp" ng-click="ctrl.connect()">
@@ -54,11 +63,13 @@
 		</div>
 		<md-menu-content class="headerDropdown textMedium textNotSelectable" width="3" ng-mouseleave="ctrl.hideActivityMenu()">
 			<div ng-if="ctrl.accounts.length>0">
-				<div class="textCenter clickable" ng-click="ctrl.goDetails()">
-					<img class="headerAccountActivityIcon md-whiteframe-1dp" ng-src="{{ctrl.userIcon}}"/>
-					<div class="headerDropdownText textLarge textDark textBold">Account Activity</div>
-					<div class="headerDropdownButtonLink"></div>
-				</div>
+				<a ng-href="{{ctrl.goDetails()}}" target="_blank" class="plain textDark">
+					<div class="textCenter clickable">
+						<img class="headerAccountActivityIcon md-whiteframe-1dp" ng-src="{{ctrl.userIcon}}"/>
+						<div class="headerDropdownText textLarge textDark textBold">Account Activity</div>
+						<div class="headerDropdownButtonLink"></div>
+					</div>
+				</a>
 				<md-divider></md-divider>
 				<div class="textCenter">
 					<div class="headerDropdownText textLight" ng-show="ctrl.waitingTransactions.length==0">No Pending Transactions</div>
@@ -75,7 +86,7 @@
 					<md-button class="headerDropdownButton md-primary" ng-click="ctrl.goDetails(transaction.txHash)">View</md-button>
 				</div>
 				<div class="textCenter">
-					<a class="textSmall textDark textBold" href="/start" ng-click="ctrl.hideActivityMenu()">Get Started</a>
+					<a class="light textSmall textDark textBold" href="/start" ng-click="ctrl.hideActivityMenu()">Get Started</a>
 				</div>
 			</div>
 		</md-menu-content>

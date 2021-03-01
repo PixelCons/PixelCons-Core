@@ -42,7 +42,7 @@
 			var web3state = web3Service.getState();
 			_this.noWeb3 = (web3state == "not_enabled" || web3Service.isReadOnly());
 			_this.loggedIn = (web3state == "ready" && !web3Service.isReadOnly());
-			_this.web3error = (web3state != "not_enabled" && web3state != "ready");
+			_this.web3error = (web3state != "not_enabled" && web3state != "ready" && !web3Service.isReadOnly());
 			_this.web3ProviderName = web3Service.getProviderName();
 			_this.privacyMode = web3Service.isPrivacyMode();
 
@@ -124,13 +124,12 @@
 
 		// Go to the specified path
 		function goPath(path) {
-			if ($location.path() != path) $location.url(path);
-			else $('#scrollTarget').scrollTop(0);
+			if ($location.path() == path) $('#scrollTarget').scrollTop(0);
 		}
 
 		// Go to lookup details page
 		function goDetails(txHash) {
-			$window.open(web3Service.getTransactionLookupUrl(txHash));
+			return web3Service.getTransactionLookupUrl(txHash);
 		}
 
 		// Show menu

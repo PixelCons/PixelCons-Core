@@ -29,7 +29,7 @@
 			<div class="note textLight">Gas: {{ctrl.cost | ethprice}}</div>
 			<md-button ng-click="ctrl.create()">Create</md-button>
 		</div>
-		<div class="textNote termsNote">By creating this PixelCon, you agree to the <a class="link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
+		<div class="textNote termsNote">By creating this PixelCon, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
 	</div>
 	
 	<!-- Edit View -->
@@ -42,13 +42,15 @@
 			<div class="note textLight">Gas: {{ctrl.cost | ethprice}}</div>
 			<md-button ng-click="ctrl.update()">Update</md-button>
 		</div>
-		<div class="textNote termsNote">By updating this PixelCon, you agree to the <a class="link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
+		<div class="textNote termsNote">By updating this PixelCon, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
 	</div>
 	
 	<!-- Duplicate View  -->
 	<div class="view textCenter" ng-show="ctrl.currView=='duplicate'" ng-cloak>
 		<div class="infoText duplicateTitle">PixelCon already exists</div>
-		<md-button class="md-raised" ng-click="ctrl.goPath('/details/'+ctrl.pixelconId)">View</md-button>
+		<a ng-href="/details/{{ctrl.pixelconId}}" class="plain textDark">
+			<md-button class="md-raised">View</md-button>
+		</a>
 	</div>
 	
 	<div class="dialogCloseButton" ng-click="ctrl.closeDialog()"></div>

@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('CollectionPageCtrl', CollectionPageCtrl);
 
-	CollectionPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$location', 'web3Service', 'coreContract'];
-	function CollectionPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $location, web3Service, coreContract) {
+	CollectionPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', 'web3Service', 'coreContract'];
+	function CollectionPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, web3Service, coreContract) {
 		var _this = this;
 		_this.index = $routeParams.index;
 		_this.rename = rename;

@@ -23,7 +23,9 @@
 			<div class="idText textSelectable">{{ctrl.pixelconId}}</div>
 			<div class="info textDark" ng-hide="ctrl.showButtons">
 				<b ng-if="!ctrl.showStartButton">Note:</b> {{ctrl.infoText}} <br/>
-				<md-button ng-if="ctrl.showStartButton" class="startButton md-raised md-primary" ng-click="ctrl.goPath('/start')">Start</md-button>
+				<a href="/start" class="plain">
+					<md-button ng-if="ctrl.showStartButton" class="startButton md-raised md-primary">Start</md-button>
+				</a>
 			</div>
 			<div layout="row" layout-align="space-between center" ng-show="ctrl.showButtons"> 
 				<md-button class="actionButton" ng-click="ctrl.clear($event)">Clear</md-button>

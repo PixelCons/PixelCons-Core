@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('CreatorPageCtrl', CreatorPageCtrl);
 
-	CreatorPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$location', 'coreContract'];
-	function CreatorPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $location, coreContract) {
+	CreatorPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', 'coreContract'];
+	function CreatorPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, coreContract) {
 		var _this = this;
 		_this.creator = $routeParams.address;
 		_this.copyLink = copyLink;

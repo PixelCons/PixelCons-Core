@@ -42,7 +42,7 @@ div.header .pixelconTitle .pixelconLogo {
 	min-width: 65px;
 	line-height: 65px;
 	margin: 0px 15px 0px 15px;
-	background-image: url('/img/logo_header.png');
+	background-image: url("/img/logo_header.png");
 	background-size: contain;
 	background-repeat: no-repeat;
 }
@@ -70,7 +70,8 @@ div.header .pixelconTitle .network {
 	padding: 0px 8px;
 	display: inline-block;
 	vertical-align: top;
-	box-shadow: 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);
+	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
+		0 2px 1px -1px rgba(0, 0, 0, 0.12);
 }
 div.header.sm .pixelconTitle .network {
 	padding: 0px 5px;
@@ -78,13 +79,13 @@ div.header.sm .pixelconTitle .network {
 	height: 15px;
 }
 div.header .pixelconTitle .network.ropsten {
-	background-color: #FF4A8D;
+	background-color: #ff4a8d;
 }
 div.header .pixelconTitle .network.kovan {
-	background-color: #7057FF;
+	background-color: #7057ff;
 }
 div.header .pixelconTitle .network.rinkeby {
-	background-color: #F6C343;
+	background-color: #f6c343;
 }
 div.header .pixelconTitle .pixelconPageText {
 	line-height: 20px;
@@ -171,20 +172,20 @@ div.header.sm .accountIcon {
 	height: 38px;
 	top: 6px;
 }
-div.header .connectButton { 
+div.header .connectButton {
 	background: #a2a2a2;
 }
-div.header .connectButton:hover { 
+div.header .connectButton:hover {
 	background: #777777;
 }
 div.header .connectButton img {
-	position: absolute; 
-	top: 0px; 
+	position: absolute;
+	top: 0px;
 	right: 0px;
 }
 div.header .connectButton div {
-	position: absolute; 
-	top: 12px; 
+	position: absolute;
+	top: 12px;
 	left: 4px;
 }
 div.header .iconFill {
@@ -230,7 +231,7 @@ button.headerDropdownButton {
 div.headerDropdownButtonLink {
 	display: inline-block;
 	vertical-align: middle;
-	background-image: url('/img/icon_goto.svg');
+	background-image: url("/img/icon_goto.svg");
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-size: 15px;
@@ -289,12 +290,12 @@ div.header .tooltip {
 	padding-right: 16px;
 	padding-left: 16px;
 
-	color: rgba(255,255,255,0.87);
-	background-color: rgb(97,97,97);
+	color: rgba(255, 255, 255, 0.87);
+	background-color: rgb(97, 97, 97);
 
 	transform-origin: center right;
-	-webkit-transition: all .3s cubic-bezier(.25,.8,.25,1);
-	transition: all .3s cubic-bezier(.25,.8,.25,1);
+	-webkit-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+	transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 	-webkit-transform: scale(1);
 	transform: scale(1);
 	opacity: 0.9;
@@ -306,7 +307,7 @@ div.header .tooltip.hidden {
 	filter: alpha(opacity=0);
 }
 div.header.sm .tooltip {
-    bottom: -26px;
+	bottom: -26px;
 	font-size: 12px;
 	height: 22px;
 	line-height: 22px;

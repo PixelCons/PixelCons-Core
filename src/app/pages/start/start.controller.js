@@ -2,10 +2,9 @@
 	angular.module('App')
 		.controller('StartPageCtrl', StartPageCtrl);
 
-	StartPageCtrl.$inject = ['$scope', '$mdMedia', '$location', '$timeout', 'web3Service'];
-	function StartPageCtrl($scope, $mdMedia, $location, $timeout, web3Service) {
+	StartPageCtrl.$inject = ['$scope', '$mdMedia', '$timeout', 'web3Service'];
+	function StartPageCtrl($scope, $mdMedia, $timeout, web3Service) {
 		var _this = this;
-		_this.goPath = goPath;
 		_this.setStepTab = setStepTab;
 
 		// Watch for screen size changes
@@ -31,11 +30,12 @@
 			var hasWeb3 = state != "not_enabled" && !web3Service.isReadOnly();
 			var isMobileOrTablet = checkMobileOrTablet();
 			var isUsingMetaMask = web3Service.getProviderName() == "MetaMask";
-			var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 			var isFirefox = typeof InstallTrigger !== 'undefined';
-			var isChrome = !!window.chrome && !!window.chrome.webstore;
+			var isEdge = window.navigator.userAgent.indexOf('Edg/') > -1;
+			var isChrome = !isEdge && !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime) && !navigator.brave;
+			var isBrave = !isEdge && !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime) && !!navigator.brave;
 
-			_this.browserCheck = hasWeb3 || (!isMobileOrTablet && (isOpera || isFirefox || isChrome));
+			_this.browserCheck = hasWeb3 || (!isMobileOrTablet && (isChrome || isFirefox || isBrave || isEdge));
 			_this.linkCheck = hasWeb3;
 			_this.accountCheck = _this.activeAccount != undefined;
 			_this.recommendMetaMask = !hasWeb3 || isUsingMetaMask;
@@ -52,11 +52,6 @@
 			if (tab < 1) tab = 1;
 			if (tab > 3) tab = 3;
 			_this.stepTab = tab;
-		}
-
-		// Go to the specified path
-		function goPath(path) {
-			$location.url(path);
 		}
 
 		// Check if browser is mobile or tablet

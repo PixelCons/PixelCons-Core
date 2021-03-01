@@ -18,7 +18,8 @@ pixelconcard .pixelconCardDirectiveDisabledShade {
 pixelconcard .pixelconCardDirectiveTransition,
 pixelconcard .pixelconCardDirectiveTransition .ng-hide-add,
 pixelconcard .pixelconCardDirectiveTransition .ng-hide-remove {
-	transition: opacity cubic-bezier(.35,0,.25,1) 0.05s, background-color cubic-bezier(.35,0,.25,1) 0.05s;
+	transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.05s,
+		background-color cubic-bezier(0.35, 0, 0.25, 1) 0.05s;
 }
 pixelconcard .ng-hide {
 	opacity: 0;
@@ -95,12 +96,10 @@ pixelconcard .pixelconCardDirectiveGroupElementSpacer {
 	width: 5px;
 }
 
-
-
 /* Size: xs */
 pixelconcard .pixelconCardDirectiveContainer.xs {
-	width: 72px; 
-	height: 93px; 
+	width: 72px;
+	height: 93px;
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
@@ -108,8 +107,8 @@ pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveFont {
 	font-size: 11px;
 }
 pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveImage {
-	width: 72px; 
-	height: 72px; 
+	width: 72px;
+	height: 72px;
 }
 pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveInfo {
 	height: 21px;
@@ -117,11 +116,15 @@ pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
 }
-pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveGroupContainer {
+pixelconcard
+	.pixelconCardDirectiveContainer.xs
+	.pixelconCardDirectiveGroupContainer {
 	max-width: 32px;
 	padding: 2px;
 }
-pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveGroupElement {
+pixelconcard
+	.pixelconCardDirectiveContainer.xs
+	.pixelconCardDirectiveGroupElement {
 	width: 14px;
 	height: 14px;
 	margin: 1px;
@@ -132,7 +135,9 @@ pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveNotification.account {
+pixelconcard
+	.pixelconCardDirectiveContainer.xs
+	.pixelconCardDirectiveNotification.account {
 	bottom: 16px;
 	right: -4px;
 	width: 12px;
@@ -141,8 +146,8 @@ pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveNotificati
 
 /* Size: sm */
 pixelconcard .pixelconCardDirectiveContainer.sm {
-	width: 88px; 
-	height: 112px; 
+	width: 88px;
+	height: 112px;
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
@@ -150,8 +155,8 @@ pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveFont {
 	font-size: 13px;
 }
 pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveImage {
-	width: 88px; 
-	height: 88px; 
+	width: 88px;
+	height: 88px;
 }
 pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveInfo {
 	height: 24px;
@@ -159,11 +164,15 @@ pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
-pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveGroupContainer {
+pixelconcard
+	.pixelconCardDirectiveContainer.sm
+	.pixelconCardDirectiveGroupContainer {
 	max-width: 36px;
 	padding: 2px;
 }
-pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveGroupElement {
+pixelconcard
+	.pixelconCardDirectiveContainer.sm
+	.pixelconCardDirectiveGroupElement {
 	width: 16px;
 	height: 16px;
 	margin: 1px;
@@ -174,8 +183,10 @@ pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveNotification.account {
-	bottom: 18px; 
+pixelconcard
+	.pixelconCardDirectiveContainer.sm
+	.pixelconCardDirectiveNotification.account {
+	bottom: 18px;
 	right: -6px;
 	width: 16px;
 	height: 16px;
@@ -183,8 +194,8 @@ pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveNotificati
 
 /* Size: md */
 pixelconcard .pixelconCardDirectiveContainer.md {
-	width: 96px; 
-	height: 121px; 
+	width: 96px;
+	height: 121px;
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
@@ -192,8 +203,8 @@ pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveFont {
 	font-size: 14px;
 }
 pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveImage {
-	width: 96px; 
-	height: 96px; 
+	width: 96px;
+	height: 96px;
 }
 pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveInfo {
 	height: 25px;
@@ -201,11 +212,15 @@ pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
-pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveGroupContainer {
+pixelconcard
+	.pixelconCardDirectiveContainer.md
+	.pixelconCardDirectiveGroupContainer {
 	max-width: 36px;
 	padding: 2px;
 }
-pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveGroupElement {
+pixelconcard
+	.pixelconCardDirectiveContainer.md
+	.pixelconCardDirectiveGroupElement {
 	width: 16px;
 	height: 16px;
 	margin: 1px;
@@ -216,8 +231,10 @@ pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveNotification.account {
-	bottom: 19px; 
+pixelconcard
+	.pixelconCardDirectiveContainer.md
+	.pixelconCardDirectiveNotification.account {
+	bottom: 19px;
 	right: -6px;
 	width: 16px;
 	height: 16px;
@@ -225,8 +242,8 @@ pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveNotificati
 
 /* Size: lg */
 pixelconcard .pixelconCardDirectiveContainer.lg {
-	width: 104px; 
-	height: 129px; 
+	width: 104px;
+	height: 129px;
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
@@ -234,8 +251,8 @@ pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveFont {
 	font-size: 15px;
 }
 pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveImage {
-	width: 104px; 
-	height: 104px; 
+	width: 104px;
+	height: 104px;
 }
 pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveInfo {
 	height: 25px;
@@ -243,11 +260,15 @@ pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
-pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveGroupContainer {
+pixelconcard
+	.pixelconCardDirectiveContainer.lg
+	.pixelconCardDirectiveGroupContainer {
 	max-width: 36px;
 	padding: 2px;
 }
-pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveGroupElement {
+pixelconcard
+	.pixelconCardDirectiveContainer.lg
+	.pixelconCardDirectiveGroupElement {
 	width: 16px;
 	height: 16px;
 	margin: 1px;
@@ -258,7 +279,9 @@ pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveNotification.account {
+pixelconcard
+	.pixelconCardDirectiveContainer.lg
+	.pixelconCardDirectiveNotification.account {
 	bottom: 20px;
 	right: -6px;
 	width: 18px;
@@ -267,8 +290,8 @@ pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveNotificati
 
 /* Size: xl */
 pixelconcard .pixelconCardDirectiveContainer.xl {
-	width: 120px; 
-	height: 148px; 
+	width: 120px;
+	height: 148px;
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
 }
@@ -276,8 +299,8 @@ pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveFont {
 	font-size: 18px;
 }
 pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveImage {
-	width: 120px; 
-	height: 120px; 
+	width: 120px;
+	height: 120px;
 }
 pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveInfo {
 	height: 27px;
@@ -285,11 +308,15 @@ pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveInfo {
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
 }
-pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveGroupContainer {
+pixelconcard
+	.pixelconCardDirectiveContainer.xl
+	.pixelconCardDirectiveGroupContainer {
 	max-width: 48px;
 	padding: 2px;
 }
-pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveGroupElement {
+pixelconcard
+	.pixelconCardDirectiveContainer.xl
+	.pixelconCardDirectiveGroupElement {
 	width: 20px;
 	height: 20px;
 	margin: 2px;
@@ -300,7 +327,9 @@ pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveNotification.account {
+pixelconcard
+	.pixelconCardDirectiveContainer.xl
+	.pixelconCardDirectiveNotification.account {
 	bottom: 22px;
 	right: -6px;
 	width: 20px;

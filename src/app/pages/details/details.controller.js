@@ -2,14 +2,13 @@
 	angular.module('App')
 		.controller('DetailsPageCtrl', DetailsPageCtrl);
 
-	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$location', 'web3Service', 'coreContract', 'market'];
-	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $location, web3Service, coreContract, market) {
+	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', 'web3Service', 'coreContract', 'market'];
+	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, web3Service, coreContract, market) {
 		var _this = this;
 		var pixelconDetails;
 		_this.rename = rename;
 		_this.create = create;
 		_this.send = send;
-		_this.goPath = goPath;
 		_this.generateTimeText = generateTimeText;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
@@ -91,11 +90,6 @@
 			}
 		}
 
-		// Go to the specified path
-		function goPath(path) {
-			$location.url(path);
-		}
-
 		// Rename the pixelcon
 		function rename(ev) {
 			$mdDialog.show({
@@ -175,14 +169,14 @@
 			var url = "https://twitter.com/intent/tweet?url=";
 			url += encodeURI(document.URL);
 			url += '&text=' + encodeURI("Check out this PixelCon!");
-			window.open(url, '_blank');
+			return url;
 		}
 
 		// Share this page on facebook
 		function shareOnFacebook() {
 			var url = "https://www.facebook.com/sharer/sharer.php?u="
 			url += encodeURI(document.URL);
-			window.open(url, '_blank');
+			return url;
 		}
 
 		// Set flag the directive as loaded

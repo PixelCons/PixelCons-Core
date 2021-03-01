@@ -41,11 +41,10 @@ div.footer.lg div.rightPadding {
 	padding-right: 30px;
 }
 div.footer a.link {
-	transition: all cubic-bezier(.35,0,.25,1) 0.05s;
+	transition: all cubic-bezier(0.35, 0, 0.25, 1) 0.05s;
 	font-size: 15px;
 	margin: 2px 0px 2px 0px;
 	cursor: pointer;
-	text-decoration: none;
 }
 div.footer a.link.disabled,
 div.footer a.link.disabled:hover {
@@ -54,7 +53,7 @@ div.footer a.link.disabled:hover {
 	filter: alpha(opacity=30);
 }
 div.footer .socialLink {
-	transition: all cubic-bezier(.35,0,.25,1) 0.05s;
+	transition: all cubic-bezier(0.35, 0, 0.25, 1) 0.05s;
 	width: 24px;
 	height: 24px;
 	margin: 0px 5px 5px 5px;
@@ -63,7 +62,6 @@ div.footer .socialLink {
 	background-repeat: no-repeat;
 	background-size: contain;
 	cursor: pointer;
-	text-decoration: none;
 	opacity: 0.45;
 	filter: alpha(opacity=45);
 }

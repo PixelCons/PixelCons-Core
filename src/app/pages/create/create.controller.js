@@ -2,10 +2,9 @@
 	angular.module('App')
 		.controller('CreatePageCtrl', CreatePageCtrl);
 
-	CreatePageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$location', 'web3Service', 'coreContract'];
-	function CreatePageCtrl($scope, $mdMedia, $mdDialog, $location, web3Service, coreContract) {
+	CreatePageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', 'web3Service', 'coreContract'];
+	function CreatePageCtrl($scope, $mdMedia, $mdDialog, web3Service, coreContract) {
 		var _this = this;
-		_this.goPath = goPath;
 		_this.setPixel = setPixel;
 		_this.setColor = setColor;
 		_this.clear = clear;
@@ -106,11 +105,6 @@
 			_this.pixelconId = '0x';
 			var hexDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
 			for (var i = 0; i < 64; i++) _this.pixelconId += hexDigits[_this.canvasPixels[i]];
-		}
-
-		// Go to the specified path
-		function goPath(path) {
-			$location.url(path);
 		}
 
 		// Listen for account data changes
