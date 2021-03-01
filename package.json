@@ -4,9 +4,7 @@
   "description": "Official site for creating and trading PixelCons!",
   "main": "server.js",
   "scripts": {
-    "run": "node server.js",
-    "build": "node server.js -build",
-    "debug": "node server.js -debug"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "dependencies": {
