@@ -1,0 +1,17 @@
+# Editor configuration, see https://editorconfig.org
+root = true
+
+[*.js]
+charset = utf-8
+indent_style = tab
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.css]
+charset = utf-8
+indent_style = tab
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.html]
+max_line_length = off
