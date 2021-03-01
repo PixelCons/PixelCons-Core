@@ -6,3 +6,7 @@
 
 # dependencies
 /node_modules
+
+#environment config
+.editorconfig
+.vscode
