@@ -16,33 +16,6 @@ div.pixelconHomePage div.bottomSpacer {
 div.pixelconHomePage.sm div.bottomSpacer {
 	height: 20px;
 }
-div.pixelconHomePage .inlineButtonIcon {
-	display: inline-block !important;
-	vertical-align: top;
-	width: 18px;
-	height: 18px;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: contain;
-	opacity: 0.7;
-	filter: alpha(opacity=70);
-}
-div.pixelconHomePage .browseLink .inlineButtonIcon.search {
-	background-image: url("/img/icon_search.svg");
-}
-div.pixelconHomePage .browseLink .inlineButtonIcon.create {
-	background-image: url("/img/icon_create.svg");
-}
-div.pixelconHomePage .browseLink {
-	margin: 0px;
-	max-height: 30px;
-	min-height: 30px;
-	padding: 5px;
-}
-div.pixelconHomePage .browseLink span {
-	line-height: 18px;
-	vertical-align: top;
-}
 
 /* Home Card Container */
 div.pixelconHomePage div.homeCard {
@@ -66,40 +39,132 @@ div.pixelconHomePage.sm div.fullCard {
 div.pixelconHomePage div.homeHeader {
 	text-align: left;
 }
-div.pixelconHomePage div.homeHeaderIcon {
+div.pixelconHomePage div.titleCollectionContainer {
 	display: inline-block;
 	vertical-align: middle;
+	font-size: 0px;
 	width: 250px;
 	height: 250px;
-	background-image: url("/img/screen/samples.png");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: contain;
 }
-div.pixelconHomePage div.detailImage {
+div.pixelconHomePage div.titleCollectionContainer a.titleCollectionItem {
 	display: inline-block;
 	vertical-align: middle;
-	width: 350px;
+	width: 72px;
+	height: 72px;
+	margin: 5px;
+	box-shadow: 1px 1px 4px #8e8e8e;
+}
+div.pixelconHomePage div.titleCollectionContainer a.titleCollectionItem:hover {
+	width: 76px;
+	height: 76px;
+	margin: 3px;
+}
+div.pixelconHomePage div.titleCollectionContainer.small {
+	width: 226px;
+	height: 226px;
+}
+div.pixelconHomePage div.titleCollectionContainer.small a.titleCollectionItem {
+	width: 64px;
+	height: 64px;
+}
+div.pixelconHomePage
+	div.titleCollectionContainer.small
+	a.titleCollectionItem:hover {
+	width: 68px;
+	height: 68px;
+	margin: 3px;
+	box-shadow: 1px 1px 6px #acacac;
+}
+div.pixelconHomePage div.ethereumImage {
+	display: inline-block;
+	vertical-align: middle;
+	box-sizing: border-box;
+	padding: 5px;
+	margin: 0px 10px;
+	width: 130px;
+	height: 130px;
+	max-width: 100%;
+	background-color: #fff;
+	border-radius: 150px;
+}
+div.pixelconHomePage div.ethereumImage.small {
+	width: 100px;
+	height: 100px;
+}
+div.pixelconHomePage div.ethereumImage img {
+	height: 100%;
+}
+div.pixelconHomePage div.sourceImage {
+	display: inline-block;
+	vertical-align: middle;
+	width: 220px;
 	font-size: 0px;
 }
-div.pixelconHomePage div.detailImage.layered {
-	font-size: 0px;
+div.pixelconHomePage div.sourceImage.small {
+	width: 200px;
 }
-div.pixelconHomePage div.detailImage.small {
-	width: 250px;
-}
-div.pixelconHomePage div.detailImage img {
+div.pixelconHomePage div.sourceImage img {
 	width: 100%;
 	height: 100%;
 }
-div.pixelconHomePage div.detailImage img.overlay {
-	margin-top: -100%;
-	opacity: 0.7;
-	filter: alpha(opacity=70);
-}
 div.pixelconHomePage .textBox {
 	display: inline-block;
-	max-width: 600px;
+	max-width: 590px;
 	vertical-align: middle;
 	padding: 0px 20px 10px 20px;
+}
+div.pixelconHomePage .textBox ul {
+	margin: 5px 0px 0px 0px;
+}
+
+/* Showcase */
+div.pixelconHomePage div.showcaseContainer {
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 0px;
+	margin: 0px 10px 10px 10px;
+	padding: 10px;
+}
+div.pixelconHomePage div.showcaseContainer div.showcaseName {
+	margin-top: 5px;
+}
+div.pixelconHomePage div.showcaseContainer a.showcaseItem {
+	display: inline-block;
+	vertical-align: middle;
+	width: 72px;
+	height: 72px;
+	margin: 4px;
+}
+div.pixelconHomePage a.showcaseItem .shadow {
+	box-shadow: 1px 1px 8px #000000;
+}
+div.pixelconHomePage div.showcaseContainer div.showcaseLink {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	padding: 19px 0px;
+	font-size: 14px;
+	box-shadow: 0px 0px 5px #bbbbbb;
+}
+div.pixelconHomePage div.showcaseContainer div.showcaseLink:hover {
+	padding: 21px 0px;
+	box-shadow: unset;
+}
+div.pixelconHomePage div.showcaseContainer.small div.showcaseLink {
+	font-size: 9px;
+	font-weight: 600;
+}
+div.pixelconHomePage div.showcaseContainer.small a.showcaseItem {
+	width: 48px;
+	height: 48px;
+}
+div.pixelconHomePage div.showcaseContainer a.showcaseItem:hover {
+	width: 76px;
+	height: 76px;
+	margin: 2px;
+}
+div.pixelconHomePage div.showcaseContainer.small a.showcaseItem:hover {
+	width: 52px;
+	height: 52px;
+	margin: 2px;
 }

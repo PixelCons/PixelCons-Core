@@ -32,6 +32,13 @@ pixelconcard .pixelconCardDirectiveNotification {
 pixelconcard .pixelconCardDirectiveNotification.account {
 	padding: 1px;
 }
+pixelconcard .pixelconCardDirectiveNotification.account .walletIcon {
+	width: 100%;
+	height: 100%;
+	background-image: url(/img/icon_myaccount.svg);
+	background-size: 120%;
+	background-position: center;
+}
 
 /* Main Appearance */
 pixelconcard .pixelconCardDirectiveImage {

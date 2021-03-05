@@ -6,22 +6,29 @@
 	</div>
 	
 	<!-- Buttons -->
+	<a ng-href="{{ctrl.marketLink}}" target="_blank" class="marketButton plain textDark" ng-if="ctrl.marketEnabled">
+		<md-button class="md-raised">
+			<div class="buttonIcon market"></div>
+			{{ctrl.screenSize.sm?'':'Market'}}
+		</md-button>
+	</a>
 	<div layout="row" class="menuButtons">
 		<a href="/search" class="plain textDark">
 			<md-button class="nav" ng-class="{'highlight':ctrl.page=='browse'}" ng-click="ctrl.goPath('/search')">
 				<div class="buttonIcon search"></div>
-				{{ctrl.screenSize.sm?'BRW':'Browse'}}
+				{{ctrl.screenSize.sm?'BR':'Browse'}}
 			</md-button>
+		</a>
 		<a href="/create" class="plain textDark">
 			<md-button class="nav" ng-class="{'highlight':ctrl.page=='create'}" ng-click="ctrl.goPath('/create')">
 				<div class="buttonIcon create"></div>
-				{{ctrl.screenSize.sm?'CR8':'Create'}}
+				{{ctrl.screenSize.sm?'CR':'Create'}}
 			</md-button>
 		</a>
 		<a href="/account" class="plain textDark">
 			<md-button class="nav" ng-class="{'highlight':ctrl.page=='account'}" ng-show="ctrl.loggedIn" ng-click="ctrl.goPath('/account')">
 				<div class="buttonIcon account"></div>
-				{{ctrl.screenSize.sm?'ACCT':'Account'}}
+				{{ctrl.screenSize.sm?'AC':'Account'}}
 			</md-button>
 		</a>
 		
@@ -35,10 +42,10 @@
 		<div class="pixelconTitle">
 			<div class="pixelconLogo crispImage clickable" ng-click="ctrl.goPath('/')">
 				<div class="pixelconLogoText textBold textDark textCenter">PixelCons</div>
-			</div>
-			<div ng-if="ctrl.net!='Main'" class="network textCenter" ng-class="{'ropsten':ctrl.net=='Ropsten', 'kovan':ctrl.net=='Kovan', 'rinkeby':ctrl.net=='Rinkeby'}">{{ctrl.net}}</div>	
+			</div>	
 		</div>
 	</a>
+	<div ng-if="ctrl.net!='Main'" class="network textCenter" ng-class="{'ropsten':ctrl.net=='Ropsten', 'kovan':ctrl.net=='Kovan', 'rinkeby':ctrl.net=='Rinkeby'}">{{ctrl.net}}</div>
 	
 	<!-- User Account -->
 	<div ng-if="ctrl.privacyMode" class="accountIcon connectButton clickable textBold textSmall textWhite md-whiteframe-1dp" ng-click="ctrl.connect()">

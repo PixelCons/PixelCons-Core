@@ -97,40 +97,21 @@ div.pixelconAccountPage div.accountHeaderBottom md-select {
 	margin: 0px;
 }
 div.pixelconAccountPage div.accountHeaderBottom .marketButton {
+	padding: 0px 8px;
+	min-width: 0px;
+	margin-left: 0px;
+}
+div.pixelconAccountPage div.accountHeaderBottom .marketButton .icon {
 	display: inline-block;
 	vertical-align: middle;
-	padding: 5px 10px;
-	line-height: 15px;
-	font-size: 15px;
-	background-color: #3291e9;
-	margin: 3px 0px 0px 0px;
-	text-transform: uppercase;
-	border-radius: 5px;
-	text-decoration: none;
-}
-div.pixelconAccountPage.sm div.accountHeaderBottom .marketButton {
-	padding: 5px 5px;
-	font-size: 13px;
-	margin: 3px 1px;
-}
-div.pixelconAccountPage div.accountHeaderBottom .marketButton:hover {
-	background-color: #2983b5;
-}
-div.pixelconAccountPage div.accountHeaderBottom .marketIcon {
-	display: inline-block;
-	vertical-align: sub;
-	width: 20px;
-	height: 20px;
-	margin-left: 5px;
-	background-image: url(/img/icon_tag_w.svg);
-	background-size: contain;
-	opacity: 0.95;
-	filter: alpha(opacity=95);
-}
-div.pixelconAccountPage.sm div.accountHeaderBottom .marketIcon {
-	width: 15px;
-	height: 15px;
-	margin-left: 4px;
+	width: 26px;
+	height: 26px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 24px;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	background-image: url("/img/icon_tag.svg");
 }
 div.pixelconAccountPage .sortDesc {
 	background-image: url("/img/icon_down.svg");

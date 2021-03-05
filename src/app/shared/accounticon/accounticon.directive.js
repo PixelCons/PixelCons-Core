@@ -9,26 +9,26 @@
 		_this.account = web3Service.getActiveAccount();
 		_this.getCompressedAddressString = getCompressedAddressString;
 		// Standardize the size [xs, sm, md, lg, xl]
-		$scope.$watch('ctrl.size', function() {
-			if(!_this.size) _this.size = 'md';
-			if(_this.size == 'xs') _this.size = 'sm';
-			if(_this.size == 'xl') _this.size = 'lg';
+		$scope.$watch('ctrl.size', function () {
+			if (!_this.size) _this.size = 'md';
+			if (_this.size == 'xs') _this.size = 'sm';
+			if (_this.size == 'xl') _this.size = 'lg';
 		});
 
 		// Standardize the max address chars [integer]
-		$scope.$watch('ctrl.maxChars', function() {
-			if(_this.maxChars && Number.isInteger(parseInt(_this.maxChars)) && parseInt(_this.maxChars) > 0) _this.maxChars = parseInt(_this.maxChars);
+		$scope.$watch('ctrl.maxChars', function () {
+			if (_this.maxChars && Number.isInteger(parseInt(_this.maxChars)) && parseInt(_this.maxChars) > 0) _this.maxChars = parseInt(_this.maxChars);
 			else _this.maxChars = null;
 		});
 
 		// Standardize the mode [icon, signature]
-		$scope.$watch('ctrl.mode', function() {
-			if(!_this.mode) _this.mode = 'icon';
+		$scope.$watch('ctrl.mode', function () {
+			if (!_this.mode) _this.mode = 'icon';
 		});
 
 		// Standardize clickable flag [boolean]
-		$scope.$watch('ctrl.clickable', function() {
-			_this.clickable = (_this.clickable===true || _this.clickable=='true');
+		$scope.$watch('ctrl.clickable', function () {
+			_this.clickable = (_this.clickable === true || _this.clickable == 'true');
 		});
 
 		// Watch for address changes
@@ -47,8 +47,8 @@
 		// Compresses the address string
 		function getCompressedAddressString(address) {
 			var comp = address || '';
-			if(_this.maxChars) {
-				comp = comp.substr(0, _this.maxChars/2) + '...' + comp.substr(comp.length - (_this.maxChars/2));
+			if (_this.maxChars) {
+				comp = comp.substr(0, _this.maxChars / 2) + '...' + comp.substr(comp.length - (_this.maxChars / 2));
 			}
 
 			return comp;
@@ -60,7 +60,7 @@
 		});
 
 		// Listen for account data changes
-		web3Service.onAccountDataChange(function(){
+		web3Service.onAccountDataChange(function () {
 			_this.account = web3Service.getActiveAccount();
 		}, $scope);
 	}

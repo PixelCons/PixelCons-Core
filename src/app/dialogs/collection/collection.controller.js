@@ -13,49 +13,49 @@
 
 		// Watch for screen size changes
 		_this.screenSize = {};
-		$scope.$watch(function() { return $mdMedia('gt-md'); }, function(lg) { _this.screenSize['lg'] = lg; });
-		$scope.$watch(function() { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function(md) { _this.screenSize['md'] = md; });
-		$scope.$watch(function() { return $mdMedia('xs'); }, function(sm) { _this.screenSize['sm'] = sm; });
+		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
+		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function (md) { _this.screenSize['md'] = md; });
+		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
 
 		// Get list of just pixelconIdx
 		var pixelconIds = [];
 		var pixelconIdxs = [];
-		for(var i=0; i<_this.pixelcons.length; i++) {
+		for (var i = 0; i < _this.pixelcons.length; i++) {
 			pixelconIds.push(_this.pixelcons[i].id);
 			pixelconIdxs.push(_this.pixelcons[i].index);
 		}
 
 		// Estimate cost
 		_this.currView = 'loading';
-		if(_this.clearMode) {
+		if (_this.clearMode) {
 			_this.title = 'Clear Collection';
 			coreContract.verifyPixelconCollectionClear(_this.index, pixelconIds)
-				.then(function(data) {
+				.then(function (data) {
 					_this.currView = 'clear';
 					_this.cost = data.estCost;
-				}, function(reason) {
+				}, function (reason) {
 					_this.currView = 'error';
 					_this.error = reason;
 				});
-		} else if(_this.editMode) {
+		} else if (_this.editMode) {
 			_this.title = 'Edit Collection';
 			coreContract.verifyPixelconCollectionEdit(_this.index, pixelconIds)
-				.then(function(data) {
+				.then(function (data) {
 					_this.currView = 'rename';
 					_this.collectionName = '';
 					_this.cost = data.estCost;
-				}, function(reason) {
+				}, function (reason) {
 					_this.currView = 'error';
 					_this.error = reason;
 				});
 		} else {
 			_this.title = 'Create Collection';
 			coreContract.verifyPixelconCollection(pixelconIdxs, pixelconIds)
-				.then(function(data) {
+				.then(function (data) {
 					_this.currView = 'create';
 					_this.collectionName = '';
 					_this.cost = data.estCost;
-				}, function(reason) {
+				}, function (reason) {
 					_this.currView = 'error';
 					_this.error = reason;
 				});
@@ -64,9 +64,9 @@
 		// Filter name
 		function filterCollectionName() {
 			var filtered = "";
-			for(var i=0; i<_this.collectionName.length; i++) {
+			for (var i = 0; i < _this.collectionName.length; i++) {
 				var c = _this.collectionName.charAt(i);
-				if(web3Service.fromUtf8(filtered + c).length <= 18) {
+				if (web3Service.fromUtf8(filtered + c).length <= 18) {
 					filtered = filtered + c;
 				} else {
 					break;

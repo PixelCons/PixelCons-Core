@@ -63,28 +63,29 @@ div.header.sm .pixelconTitle .pixelconLogoText {
 	font-size: 15px;
 	margin-left: -11px;
 }
-div.header .pixelconTitle .network {
+div.header .network {
+	position: absolute;
+	top: 0px;
+	right: 75px;
 	background-color: #6f6f6f;
 	color: #fafafa;
-	border-radius: 10px;
+	border-radius: 0px 0px 10px 10px;
 	padding: 0px 8px;
-	display: inline-block;
-	vertical-align: top;
-	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14),
-		0 2px 1px -1px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 1px 1px 0 rgb(0 0 0 / 14%), 0 2px 1px -1px rgb(0 0 0 / 12%);
 }
-div.header.sm .pixelconTitle .network {
+div.header.sm .network {
 	padding: 0px 5px;
 	font-size: 12px;
 	height: 15px;
+	right: 60px;
 }
-div.header .pixelconTitle .network.ropsten {
+div.header .network.ropsten {
 	background-color: #ff4a8d;
 }
-div.header .pixelconTitle .network.kovan {
+div.header .network.kovan {
 	background-color: #7057ff;
 }
-div.header .pixelconTitle .network.rinkeby {
+div.header .network.rinkeby {
 	background-color: #f6c343;
 }
 div.header .pixelconTitle .pixelconPageText {
@@ -154,6 +155,30 @@ div.header .menuButtons md-menu {
 }
 div.header.sm .menuButtons md-menu {
 	display: inline;
+}
+div.header .marketButton {
+	position: absolute;
+	top: 15px;
+	left: 125px;
+}
+div.header.md .marketButton {
+	left: 104px;
+}
+div.header.sm .marketButton {
+	top: 9px;
+	left: 80px;
+}
+div.header a.marketButton button.md-raised:hover {
+	background-color: #dddddd;
+}
+div.header.sm .marketButton button {
+	min-width: 0px;
+	font-size: 12px;
+	font-weight: 600;
+	height: 0px;
+	padding-left: 4px;
+	padding-right: 4px;
+	min-height: 33px;
 }
 
 /* User Icon */

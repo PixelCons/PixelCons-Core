@@ -15,14 +15,12 @@
 				</form>
 			</div>
 			<div class="options" layout="row">
-				<a ng-if="ctrl.showMarketLink" class="marketButton clickable textBold textWhite" ng-href="{{ctrl.marketLink}}" target="_blank">For Sale<div class="marketIcon"></div></a>
-				<div class="textLight" ng-if="!ctrl.showMarketLink">Browse</div>
 			</div>
 			<div class="sorting">
-				<md-select class="sortBy md-no-underline" ng-disabled="ctrl.error || ctrl.grabbingData" ng-model="ctrl.filter.sortBy" ng-change="ctrl.checkUpdateData()" placeholder="Sort By">
+				<md-select class="sortBy md-no-underline" ng-disabled="ctrl.error || ctrl.grabbingData || ctrl.disableFilters" ng-model="ctrl.filter.sortBy" ng-change="ctrl.checkUpdateData()" placeholder="Sort By">
 					<md-option value="dateCreated">Date Created</md-option>
 				</md-select>
-				<md-button class="iconButton" ng-class="{'sortDesc': ctrl.filter.sortDesc, 'sortAsc': !ctrl.filter.sortDesc}" ng-disabled="ctrl.error || ctrl.grabbingData"
+				<md-button class="iconButton" ng-class="{'sortDesc': ctrl.filter.sortDesc, 'sortAsc': !ctrl.filter.sortDesc}" ng-disabled="ctrl.error || ctrl.grabbingData || ctrl.disableFilters"
 						ng-click="ctrl.setSortOrder(!ctrl.filter.sortDesc)" aria-label="Sort Order"></md-button>
 			</div>
 		</div>

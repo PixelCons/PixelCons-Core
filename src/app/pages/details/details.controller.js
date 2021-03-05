@@ -18,9 +18,9 @@
 
 		// Watch for screen size changes
 		_this.screenSize = {};
-		$scope.$watch(function() { return $mdMedia('gt-md'); }, function(lg) { _this.screenSize['lg'] = lg; });
-		$scope.$watch(function() { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function(md) { _this.screenSize['md'] = md; });
-		$scope.$watch(function() { return $mdMedia('xs'); }, function(sm) { _this.screenSize['sm'] = sm; });
+		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
+		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function (md) { _this.screenSize['md'] = md; });
+		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
 
 		// Format id (set to null if invalid)
 		var pixelconId = coreContract.formatPixelconId($routeParams.id);
@@ -33,19 +33,19 @@
 			_this.details = null;
 			_this.unclaimed = false;
 
-			if(pixelcon) {
+			if (pixelcon) {
 				setPixelconDetails(pixelcon);
 			} else {
 				_this.loading = true;
-				coreContract.fetchPixelcon(pixelconId).then(function(pixelcon) {
+				coreContract.fetchPixelcon(pixelconId).then(function (pixelcon) {
 					_this.loading = false;
-					if(pixelcon) {
+					if (pixelcon) {
 						setPixelconDetails(pixelcon);
 					} else {
-						if(web3Service.isReadOnly()) _this.error = 'This PixelCon does not exist yet...';
+						if (web3Service.isReadOnly()) _this.error = 'This PixelCon does not exist yet...';
 						else _this.unclaimed = true;
 					}
-				}, function(reason) {
+				}, function (reason) {
 					_this.loading = false;
 					_this.error = reason;
 				});
@@ -54,9 +54,9 @@
 
 		// Update from transaction
 		function updateFromTransaction(transactionData) {
-			if(transactionData && transactionData.success && transactionData.pixelcons) {
+			if (transactionData && transactionData.success && transactionData.pixelcons) {
 				var pixelcon = findInList(transactionData.pixelcons);
-				if(pixelcon) {
+				if (pixelcon) {
 					pixelcon = angular.extend({}, pixelconDetails, pixelcon);
 					loadPixelconDetails(pixelcon);
 				}
@@ -84,7 +84,7 @@
 			var account = web3Service.getActiveAccount();
 			_this.isOwner = false;
 			_this.isCreator = false;
-			if(_this.details && account) {
+			if (_this.details && account) {
 				_this.isOwner = account == _this.details.owner;
 				_this.isCreator = account == _this.details.creator;
 			}
@@ -97,7 +97,7 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.pixelcon'],
 				parent: angular.element(document.body),
-				locals:{pixelconId: _this.pixelconId, editMode: true},
+				locals: { pixelconId: _this.pixelconId, editMode: true },
 				bindToController: true,
 				clickOutsideToClose: true
 			});
@@ -110,7 +110,7 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.pixelcon'],
 				parent: angular.element(document.body),
-				locals:{pixelconId: _this.pixelconId},
+				locals: { pixelconId: _this.pixelconId },
 				bindToController: true,
 				clickOutsideToClose: true
 			});
@@ -123,7 +123,7 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.send'],
 				parent: angular.element(document.body),
-				locals:{pixelconId: _this.pixelconId},
+				locals: { pixelconId: _this.pixelconId },
 				bindToController: true,
 				clickOutsideToClose: true
 			});
@@ -132,9 +132,9 @@
 		// Gets page relevant pixelcon from list
 		function findInList(list) {
 			var pixelcon = null;
-			if(list) {
-				for(var i=0; i<list.length; i++) {
-					if(list[i].id == _this.pixelconId) {
+			if (list) {
+				for (var i = 0; i < list.length; i++) {
+					if (list[i].id == _this.pixelconId) {
 						pixelcon = list[i];
 						break;
 					}
@@ -145,15 +145,15 @@
 
 		// Generates a time text from the given seconds
 		function generateTimeText(seconds) {
-			if(!seconds) return '???';
+			if (!seconds) return '???';
 
-			var minutes = Math.floor(seconds/60);
-			var hours = Math.floor(minutes/60);
-			var days = Math.floor(hours/24);
-			if(days > 0) return (days+1) + ' day' + (days>1?'s':'');
-			else if(hours > 0) return (hours+1) + ' hour' + (hours>1?'s':'');
-			else if(minutes > 0) return (minutes+1) + ' minute' + (minutes>1?'s':'');
-			else return (seconds+1) + ' second' + (seconds>1?'s':'');
+			var minutes = Math.floor(seconds / 60);
+			var hours = Math.floor(minutes / 60);
+			var days = Math.floor(hours / 24);
+			if (days > 0) return (days + 1) + ' day' + (days > 1 ? 's' : '');
+			else if (hours > 0) return (hours + 1) + ' hour' + (hours > 1 ? 's' : '');
+			else if (minutes > 0) return (minutes + 1) + ' minute' + (minutes > 1 ? 's' : '');
+			else return (seconds + 1) + ' second' + (seconds > 1 ? 's' : '');
 		}
 
 		// Copies share link to the clipboard
@@ -185,7 +185,7 @@
 		});
 
 		// Listen for account data changes
-		web3Service.onAccountDataChange(function(){
+		web3Service.onAccountDataChange(function () {
 			checkPermissions();
 		}, $scope);
 

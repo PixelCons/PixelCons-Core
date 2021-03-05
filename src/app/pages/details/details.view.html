@@ -6,24 +6,6 @@
 		<!-- Image window -->
 		<div class="viewWindow colorDark">
 			<div ng-hide="ctrl.pixelconId" class="pixelconInvalid textWhite textExxLarge">Invalid ID</div>
-			<md-menu md-position-mode="target-right target">
-				<div class="shareLink clickable" ng-click="$mdOpenMenu()" aria-label="Share"></div>
-				<md-menu-content class="shareLinksContextMenu">
-					<md-menu-item>
-						<md-button ng-click="ctrl.copyLink()"><div class="shareLinkIcon url"></div>Copy URL</md-button>
-					</md-menu-item>
-					<md-menu-item>
-						<a ng-href="{{ctrl.shareOnFacebook()}}" target="_blank" class="textDark">
-							<md-button><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
-						</a>
-					</md-menu-item>
-					<md-menu-item>
-						<a ng-href="{{ctrl.shareOnTwitter()}}" target="_blank" class="textDark">
-							<md-button><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
-						</a>
-					</md-menu-item>
-				</md-menu-content>
-			</md-menu>
 			<a ng-href="/collection/{{ctrl.details.collection.index}}" class="textDark">
 				<div class="viewWindowGroupContainer" ng-show="ctrl.details.collection">
 					<div class="viewWindowGroup colorDarkOverlay" ng-class="{'detailsPageTransition': ctrl.loaded, 'onlyThree':!ctrl.details.collection.pixelcons[3].id && ctrl.details.collection.pixelcons[2].id}">
@@ -51,15 +33,39 @@
 				<div class="detailsSectionMenuBar" ng-cloak>
 					<div ng-show="ctrl.details.name!==''" class="textDark textExxLarge textBold">{{ctrl.details.name}}</div>
 					<div ng-show="ctrl.details.name===''" class="textLight textExxLarge">PixelCon {{ctrl.details.index}}</div>
-					<div class="detailsSectionMoreButton" ng-show="ctrl.isOwner || ctrl.isCreator">
+					<div class="detailsSectionMoreButton">
 						<md-menu md-position-mode="target-right target">
-							<md-button class="iconButton moreMenu" ng-click="$mdOpenMenu()" aria-label="More"></md-button>
+							<md-button class="iconButton more" ng-click="$mdOpenMenu()" aria-label="More" ng-show="ctrl.isOwner || ctrl.isCreator">
+							</md-button>
 							<md-menu-content>
 								<md-menu-item ng-show="ctrl.isCreator">
 									<md-button ng-click="ctrl.rename($event)">Change Name</md-button>
 								</md-menu-item>
 								<md-menu-item ng-show="ctrl.isOwner">
 									<md-button ng-click="ctrl.send($event)">Send To</md-button>
+								</md-menu-item>
+							</md-menu-content>
+						</md-menu>
+						<md-button class="iconButton buy" aria-label="Buy/Sell" ng-if="ctrl.marketEnabled">
+							<a class="plain buttonLink" ng-href="{{ctrl.marketLink}}" target="_blank"></a>
+							<md-tooltip md-direction="left">Buy/Sell</md-tooltip>
+						</md-button>
+						<md-menu md-position-mode="target-right target">
+							<md-button class="iconButton share" ng-click="$mdOpenMenu()" aria-label="Share">
+							</md-button>
+							<md-menu-content class="shareLinksContextMenu">
+								<md-menu-item>
+									<md-button ng-click="ctrl.copyLink()"><div class="shareLinkIcon url"></div>Copy URL</md-button>
+								</md-menu-item>
+								<md-menu-item>
+									<a ng-href="{{ctrl.shareOnFacebook()}}" target="_blank" class="textDark">
+										<md-button><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
+									</a>
+								</md-menu-item>
+								<md-menu-item>
+									<a ng-href="{{ctrl.shareOnTwitter()}}" target="_blank" class="textDark">
+										<md-button><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
+									</a>
 								</md-menu-item>
 							</md-menu-content>
 						</md-menu>
@@ -73,14 +79,6 @@
 				<div class="detailsSectionFooter">
 					<accounticon class="textLight" address="ctrl.details.owner" mode="signature" size="{{ctrl.screenSize.sm?'md':'lg'}}" text="Owned By"></accounticon>
 				</div>
-				
-				<!-- Market Details -->
-				<div class="marketDetailsContainer textNotSelectable" ng-if="ctrl.marketEnabled">
-					<a class="actionButton clickable textBold textWhite" ng-href="{{ctrl.marketLink}}" target="_blank">
-						{{ctrl.isOwner?'Sell':'Buy'}}<div class="marketIcon"></div>
-					</a>
-				</div>
-				
 			</div>
 		</div>
 		

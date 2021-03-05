@@ -65145,6 +65145,12 @@
       "links": {},
       "address": "0x5536B6aAdd29eAf0DB112Bb28046A5FaD3761bD4",
       "transactionHash": "0x09c63b0b85caf92142893764a645faa06827819b2d787b331fb0592539ed17d6"
+    },
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x306f945b7bdb000f4ec474B989A80048aEF06273",
+      "transactionHash": "0xf1d57c47eb606608658d89e45aa54bc236b3aeb13f814b3458c308ceab53ee45"
     }
   },
   "schemaVersion": "2.0.1",

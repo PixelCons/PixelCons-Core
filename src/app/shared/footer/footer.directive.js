@@ -22,7 +22,7 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.send'],
 				parent: angular.element(document.body),
-				locals:{ethMode: true},
+				locals: { ethMode: true },
 				bindToController: true,
 				clickOutsideToClose: true
 			});
@@ -31,7 +31,7 @@
 		// Account change
 		function checkAccount() {
 			var web3state = web3Service.getState();
-			_this.noWeb3 = (web3state=="not_enabled" || web3Service.isReadOnly());
+			_this.noWeb3 = (web3state == "not_enabled" || web3Service.isReadOnly());
 		}
 
 		// Listen for account data changes

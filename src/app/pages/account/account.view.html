@@ -5,12 +5,12 @@
 		
 		<!-- Header -->
 		<div class="accountHeaderTop">
-			<accounticon address="ctrl.accountAddress" text="{{ctrl.filter.viewMode=='created'?'Creator View':'My Wallet'}}" max-chars="{{ctrl.screenSize.sm?'16':''}}" size="md"></accounticon>
+			<accounticon address="ctrl.accountAddress" text="{{ctrl.filter.viewMode=='created'?'Creator':'My Wallet'}}" max-chars="{{ctrl.screenSize.sm?'16':''}}" size="md"></accounticon>
 			<div class="toggleButtons md-whiteframe-2dp">
 				<md-button class="left" ng-disabled="!ctrl.accountAddress || ctrl.loading" 
 					md-colors="{background: ctrl.filter.viewMode=='owned'?'primary':'background'}" ng-click="ctrl.setQueryMode('owned')">Wallet</md-button>
 				<md-button class="right" ng-disabled="!ctrl.accountAddress || ctrl.loading" 
-					md-colors="{background: ctrl.filter.viewMode=='created'?'primary':'background'}" ng-click="ctrl.setQueryMode('created')">Creator</md-button>
+					md-colors="{background: ctrl.filter.viewMode=='created'?'primary':'background'}" ng-click="ctrl.setQueryMode('created')">Creations</md-button>
 			</div>
 		</div>
 		<div class="accountHeaderDivider colorGray"></div>
@@ -20,9 +20,11 @@
 			<div class="fontMedium" layout="row">
 				<div ng-show="!ctrl.accountAddress" class="headerPlainText textLight">No Account</div>
 				<div ng-show="ctrl.accountAddress && ctrl.filter.viewMode=='owned' && !ctrl.marketEnabled" class="headerPlainText textLight">Your Account</div>
-				<div ng-show="ctrl.accountAddress && ctrl.filter.viewMode=='owned' && ctrl.marketEnabled">
-					<a class="marketButton clickable textBold textWhite" ng-href="{{ctrl.marketAccountLink}}" target="_blank">Buy / Sell<div class="marketIcon"></div></a>
-				</div>
+				<md-button class="marketButton textSmall textDark" aria-label="Sell" ng-if="ctrl.marketEnabled && ctrl.filter.viewMode=='owned'">
+					<div class="icon"></div>
+					<span>Sell</span>
+					<a class="plain buttonLink" ng-href="{{ctrl.marketAccountLink}}" target="_blank"></a>
+				</md-button>
 				<div ng-show="ctrl.filter.viewMode=='created' && ctrl.accountAddress">
 					<md-button class="createButton md-raised" ng-show="!ctrl.groupMode" ng-disabled="ctrl.pixelconsCount<2" ng-click="ctrl.setGroupMode(true)">
 						<div ng-if="!ctrl.screenSize.sm" class="iconButton groupIcon"></div>

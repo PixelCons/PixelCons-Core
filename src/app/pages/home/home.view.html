@@ -3,10 +3,14 @@
 	
 	<div class="colorLight">
 		<div class="fullCard textExLarge textLight textCenter">
-			<div class="homeHeaderIcon crispImage"></div>
+			<div class="titleCollectionContainer" ng-class="{'small':ctrl.screenSize.sm}">
+				<a class="titleCollectionItem"  ng-repeat="id in ctrl.facesCollection track by $index" ng-href="/details/{{id}}">
+					<pixelcon id="id"></pixelcon>
+				</a>
+			</div>
 			<div class="textBox textSelectable">
 				<div class="textBold textDark textCenter" ng-class="{'textTitleExLarge':!ctrl.screenSize.sm, 'textTitleLarge':ctrl.screenSize.sm}">PixelCons</div>
-				Collectible Minimalist <br/> Pixel Art Tokens 
+				Collectible Minimalist <br/> Pixel Art NFTs 
 				<br/><br/>
 				<a ng-href="/start" class="plain textDark">
 					<md-button class="md-raised md-primary">Start</md-button>
@@ -19,21 +23,11 @@
 	
 	<div class="textCenter">
 		<div class="homeContainer homeCard colorLight">
-			<div class="detailImage crispImage small layered">
-				<img ng-hide="ctrl.verticalMode" src="/img/screen/ethereum_b.png">
-				<img ng-hide="ctrl.verticalMode" class="overlay" src="/img/icon_share.svg">
-			</div>
 			<div class="textBox textMedium textLight textCenter textSelectable">
 				<div class="textExLarge textBold textDark">What Is It?</div><br/>
-				PixelCons are collectible tokens featuring minimalist pixel art. It was created as a way for people to easily make collectibles within a shared ecosystem and showcase incredible art. Every PixelCon is unique and it's ownership is secured on the Ethereum blockchain. Feel free to browse other artists creations or make your own.
-				<br/>
-				<a ng-href="/create" class="plain textDark">
-					<md-button class="browseLink">
-						<div class="inlineButtonIcon create" ng-show="!ctrl.screenSize.sm"></div>
-						Create
-					</md-button>
-				</a>
+				PixelCons are collectible NFTs featuring minimalist pixel art. This open platform was started in 2018 to allow any artist to easily make digital collectibles within a shared ecosystem. Every PixelCon is unique and it's ownership is secured on the Ethereum blockchain.
 			</div>
+			<div class="ethereumImage crispImage" ng-class="{'small':ctrl.screenSize.sm}"><img src="/img/screen/ethereum.png" alt="Ethereum"></div>
 		</div>
 	</div>
 	
@@ -41,50 +35,34 @@
 	
 	<div class="homeContainer textCenter colorLight">
 		<div class="textBox textMedium textLight textCenter textSelectable">
-			<div class="textExLarge textBold textDark">Why Minimalist Pixel Art?</div><br/>
-			An 8x8 grid with 16 colors fits perfectly into the 256bit ID size that Ethereum based tokens use. This means that the artwork data also serves as a PixelCons unique ID. If you think you couldn't possibly create anything meaningful with these restrictions, then definitely check out some of the impressive art already created.
-			<br/>
-			<a ng-href="/search" class="plain textDark">
-				<md-button class="browseLink">
-					<div class="inlineButtonIcon search" ng-show="!ctrl.screenSize.sm"></div>
-					Browse
-				</md-button>
-			</a>
+			<div class="textExLarge textBold textDark">Check Out What's Being Created!</div><br/>
 		</div>
-		<div class="detailImage crispImage textLight textSmall" ng-class="{'small':ctrl.screenSize.sm}">
-			<img ng-hide="ctrl.verticalMode" src="/img/screen/art_showcase.png">
-			8x8 Grid, 16 Colors
+		<br/>
+		<div class="showcaseContainer textLeft" ng-class="{'small':ctrl.screenSize.sm}" 
+				ng-style="ctrl.calcShowcaseStyle(curation)" ng-repeat="curation in ctrl.curationList">
+			<a class="showcaseItem plain" ng-href="{{item.link + item.id}}" ng-repeat="item in curation.items">
+				<pixelcon class="shadow" id="item.id" ng-if="item.type=='pxcn'"></pixelcon>
+				<div class="showcaseLink textLight textCenter" ng-if="item.type=='link'">{{item.text}}</div>
+			</a>
+			<div class="showcaseName textMedium textBold textLight textCenter">{{curation.name}}</div>
 		</div>
 	</div>
 	
 	<div class="bottomSpacer"></div>
 	
 	<div class="homeContainer textCenter colorLight">
-		<div class="detailImage crispImage small">
-			<img ng-hide="ctrl.verticalMode" src="/img/screen/art_showcase_b.png">
-		</div>
-		<div class="textBox textMedium textLight textLeft textSelectable">
-			<div class="textExLarge textBold textDark textCenter">Isn't This Just a CryptoKitties Clone?</div><br/>
-			Although CryptoKitties was an inspiration, PixelCons isn't just some copy<b><i>cat</i></b>.
+		<div class="textBox textMedium textLight textLeft textCenter textSelectable">
+			<div class="textExLarge textBold textDark textCenter">What Makes PixelCons Special?</div>
 			<ul>
-				<li>PixelCons isn't really a game, just a collectibles ecosystem</li>
-				<li>No developer fees, just pay for gas</li>
-				<li>The minor admin role only effects small read-only data</li>
-				<li>Everything is done from a static website (no hidden proprietary systems)</li>
-				<li>You don't have to buy PixelCons to start, just create your own instead!</li>
+				<li>All data is fully on-chain</li>
+				<li>No developer fees (just pay for gas)</li>
+				<li>No hidden admin restrictions</li>
+				<li>Simple static website</li>
+				<li>Completely open source!</li>
 			</ul>
 		</div>
-	</div>
-	
-	<div class="bottomSpacer"></div>
-	
-	<div class="homeContainer textCenter colorLight">
-		<div class="textBox textMedium textLight textCenter textSelectable">
-			<div class="textExLarge textBold textDark">Open Source</div><br/>
-			For those more technically inclined, feel free to check out the code and infrastructure diagrams on the GitHub page. Everything about PixelCons is open source, including this website!
-		</div>
-		<div class="detailImage textLight textSmall" ng-class="{'small':ctrl.screenSize.sm}">
-			<a href="https://github.com/PixelCons" target="_blank" class="light"><img ng-hide="ctrl.verticalMode" src="/img/screen/github_logo.png"></a>
+		<div class="sourceImage textLight textSmall" ng-class="{'small':ctrl.screenSize.sm}">
+			<a href="https://github.com/PixelCons" target="_blank" class="light"><img ng-hide="ctrl.verticalMode" src="/img/screen/github_logo.svg"></a>
 		</div>
 	</div>
 	

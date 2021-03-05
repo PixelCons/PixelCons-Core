@@ -14,22 +14,22 @@
 
 		// Watch for screen size changes
 		_this.screenSize = {};
-		$scope.$watch(function() { return $mdMedia('gt-md'); }, function(lg) { _this.screenSize['lg'] = lg; });
-		$scope.$watch(function() { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function(md) { _this.screenSize['md'] = md; });
-		$scope.$watch(function() { return $mdMedia('xs'); }, function(sm) { _this.screenSize['sm'] = sm; });
+		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
+		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function (md) { _this.screenSize['md'] = md; });
+		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
 
 		// Verify the pixelcon
 		_this.currView = 'loading';
-		if(_this.ethMode) {
+		if (_this.ethMode) {
 			_this.title = 'Tip the Devs!';
 			_this.toAddress = '0x9f2fedFfF291314E5a86661e5ED5E6f12e36dd37';
 
 			var activeAccount = web3Service.getActiveAccount();
-			if(activeAccount) {
-				web3Service.verifySendEth().then(function(data) {
+			if (activeAccount) {
+				web3Service.verifySendEth().then(function (data) {
 					_this.currView = 'sendEth';
 					_this.cost = data.estCost;
-				}, function(reason) {
+				}, function (reason) {
 					_this.currView = 'sendEthError';
 				});
 			} else {
@@ -38,10 +38,10 @@
 		} else {
 			_this.title = 'Send PixelCon';
 
-			coreContract.verifyTransferPixelcon(_this.pixelconId).then(function(data) {
+			coreContract.verifyTransferPixelcon(_this.pixelconId).then(function (data) {
 				_this.currView = 'sendPixelcon';
 				_this.cost = data.estCost;
-			}, function(reason) {
+			}, function (reason) {
 				_this.currView = 'error';
 				_this.error = reason;
 			});
