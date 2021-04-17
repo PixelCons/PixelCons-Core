@@ -2,14 +2,11 @@
   "name": "PixelCons-Core",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "scripts": {
     "clean": "rimraf ./cache && rimraf ./artifacts && rimraf ./build",
     "compile": "rimraf ./cache && rimraf ./artifacts && hardhat compile",
     "test": "rimraf ./cache && rimraf ./artifacts && hardhat test",
-    "local_start": "hardhat node",
-	"local_deploy": "hardhat run --network localhost scripts/deploy.js",
-	"local_compile": "yarn compile && yarn localdeploy",
     "web_start": "node scripts/webapp.js",
     "web_build": "node scripts/webapp.js -build",
     "web_debug": "node scripts/webapp.js -debug"

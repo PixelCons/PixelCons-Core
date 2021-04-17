@@ -36,9 +36,12 @@ div.header.sm .pixelconTitle {
 	top: 5px;
 }
 div.header .pixelconTitle .pixelconLogo {
+	position: relative;
 	display: inline-block;
 	height: 65px;
 	width: 65px;
+	min-width: 65px;
+	line-height: 65px;
 	margin: 0px 15px 0px 15px;
 	background-image: url("/img/logo_header.png");
 	background-size: contain;
@@ -47,24 +50,36 @@ div.header .pixelconTitle .pixelconLogo {
 div.header.sm .pixelconTitle .pixelconLogo {
 	height: 50px;
 	width: 50px;
+	min-width: 50px;
+	line-height: 50px;
 	margin: 0px 0px 0px 12px;
 }
 div.header .pixelconTitle .pixelconLogoText {
-	text-shadow: 0 0 5px #fff;
-	font-size: 18px;
+	text-shadow: 0px 0px 30px #989898;
+	color: #7a7a7a;
+	font-size: 19px;
 	margin-left: -15px;
 	width: 95px;
-	padding-top: 20px;
-	line-height: 13px;
-}
-div.header .pixelconTitle .pixelconLogoText .sub {
-	font-style: italic;
-	font-size: 16px;
 }
 div.header.sm .pixelconTitle .pixelconLogoText {
 	text-shadow: 0px 0px 15px #a7a7a7;
 	font-size: 15px;
-	margin-left: -11px;
+	margin-left: -12px;
+	width: 74px;
+}
+div.header .pixelconTitle .pixelconLogoTextOverlay {
+	position: absolute;
+	text-shadow: 0 0 10px #dfdfdf;
+	font-size: 45px;
+	font-style: italic;
+	left: -15px;
+	top: 0;
+	width: 95px;
+}
+div.header.sm .pixelconTitle .pixelconLogoTextOverlay {
+	left: -12px;
+	width: 74px;
+	font-size: 36px;
 }
 div.header .network {
 	position: absolute;
