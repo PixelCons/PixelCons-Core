@@ -35,7 +35,9 @@
 		}
 
 		// Listen for account data changes
-		web3Service.onAccountDataChange(checkAccount, $scope);
+		web3Service.onAccountDataChange(function () {
+			checkAccount
+		}, $scope);
 	}
 
 	function appFooter() {

@@ -104,7 +104,9 @@
 		}
 
 		// Listen for account data changes
-		web3Service.onAccountDataChange(updateToAccount, $scope);
+		web3Service.onAccountDataChange(function () {
+			updateToAccount();
+		}, $scope);
 		updateToAccount();
 
 		// Listen for transactions

@@ -21,30 +21,28 @@
 		_this.currView = 'loading';
 		if (_this.editMode) {
 			_this.title = 'Edit PixelCon';
-			coreContract.verifyPixelconEdit(_this.pixelconId)
-				.then(function (data) {
-					_this.currView = 'rename';
-					_this.pixelconName = '';
-					_this.cost = data.estCost;
-				}, function (reason) {
-					_this.currView = 'error';
-					_this.error = reason;
-				});
+			coreContract.verifyPixelconEdit(_this.pixelconId).then(function (data) {
+				_this.currView = 'rename';
+				_this.pixelconName = '';
+				_this.cost = data.estCost;
+			}, function (reason) {
+				_this.currView = 'error';
+				_this.error = reason;
+			});
 		} else {
 			_this.title = 'Create PixelCon';
-			coreContract.verifyPixelcon(_this.pixelconId)
-				.then(function (data) {
-					if (data.exists) {
-						_this.currView = 'duplicate';
-					} else {
-						_this.currView = 'create';
-						_this.pixelconName = '';
-						_this.cost = data.estCost;
-					}
-				}, function (reason) {
-					_this.currView = 'error';
-					_this.error = reason;
-				});
+			coreContract.verifyPixelcon(_this.pixelconId).then(function (data) {
+				if (data.exists) {
+					_this.currView = 'duplicate';
+				} else {
+					_this.currView = 'create';
+					_this.pixelconName = '';
+					_this.cost = data.estCost;
+				}
+			}, function (reason) {
+				_this.currView = 'error';
+				_this.error = reason;
+			});
 		}
 
 		// Filter name

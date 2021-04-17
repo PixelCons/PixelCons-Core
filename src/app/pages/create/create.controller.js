@@ -108,6 +108,8 @@
 		}
 
 		// Listen for account data changes
-		web3Service.onAccountDataChange(checkCreateSupported, $scope);
+		web3Service.onAccountDataChange(function () {
+			checkCreateSupported();
+		}, $scope);
 	}
 }());

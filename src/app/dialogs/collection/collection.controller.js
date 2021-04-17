@@ -29,36 +29,33 @@
 		_this.currView = 'loading';
 		if (_this.clearMode) {
 			_this.title = 'Clear Collection';
-			coreContract.verifyPixelconCollectionClear(_this.index, pixelconIds)
-				.then(function (data) {
-					_this.currView = 'clear';
-					_this.cost = data.estCost;
-				}, function (reason) {
-					_this.currView = 'error';
-					_this.error = reason;
-				});
+			coreContract.verifyPixelconCollectionClear(_this.index, pixelconIds).then(function (data) {
+				_this.currView = 'clear';
+				_this.cost = data.estCost;
+			}, function (reason) {
+				_this.currView = 'error';
+				_this.error = reason;
+			});
 		} else if (_this.editMode) {
 			_this.title = 'Edit Collection';
-			coreContract.verifyPixelconCollectionEdit(_this.index, pixelconIds)
-				.then(function (data) {
-					_this.currView = 'rename';
-					_this.collectionName = '';
-					_this.cost = data.estCost;
-				}, function (reason) {
-					_this.currView = 'error';
-					_this.error = reason;
-				});
+			coreContract.verifyPixelconCollectionEdit(_this.index, pixelconIds).then(function (data) {
+				_this.currView = 'rename';
+				_this.collectionName = '';
+				_this.cost = data.estCost;
+			}, function (reason) {
+				_this.currView = 'error';
+				_this.error = reason;
+			});
 		} else {
 			_this.title = 'Create Collection';
-			coreContract.verifyPixelconCollection(pixelconIdxs, pixelconIds)
-				.then(function (data) {
-					_this.currView = 'create';
-					_this.collectionName = '';
-					_this.cost = data.estCost;
-				}, function (reason) {
-					_this.currView = 'error';
-					_this.error = reason;
-				});
+			coreContract.verifyPixelconCollection(pixelconIdxs, pixelconIds).then(function (data) {
+				_this.currView = 'create';
+				_this.collectionName = '';
+				_this.cost = data.estCost;
+			}, function (reason) {
+				_this.currView = 'error';
+				_this.error = reason;
+			});
 		}
 
 		// Filter name

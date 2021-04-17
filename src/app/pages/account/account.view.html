@@ -20,7 +20,7 @@
 			<div class="fontMedium" layout="row">
 				<div ng-show="!ctrl.accountAddress" class="headerPlainText textLight">No Account</div>
 				<div ng-show="ctrl.accountAddress && ctrl.filter.viewMode=='owned' && !ctrl.marketEnabled" class="headerPlainText textLight">Your Account</div>
-				<md-button class="marketButton textSmall textDark" aria-label="Sell" ng-if="ctrl.marketEnabled && ctrl.filter.viewMode=='owned'">
+				<md-button class="marketButton textSmall textDark" aria-label="Sell" ng-if="ctrl.marketEnabled && ctrl.filter.viewMode=='owned'" ng-show="ctrl.accountAddress">
 					<div class="icon"></div>
 					<span>Sell</span>
 					<a class="plain buttonLink" ng-href="{{ctrl.marketAccountLink}}" target="_blank"></a>

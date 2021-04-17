@@ -87,7 +87,11 @@
 		});
 
 		// Listen for account data changes and waiting transactions
-		web3Service.onStateChange(updateWeb3Status, $scope);
-		web3Service.onAccountDataChange(updateWeb3Status, $scope);
+		web3Service.onStateChange(function () {
+			updateWeb3Status();
+		}, $scope);
+		web3Service.onAccountDataChange(function () {
+			updateWeb3Status();
+		}, $scope);
 	}
 }());

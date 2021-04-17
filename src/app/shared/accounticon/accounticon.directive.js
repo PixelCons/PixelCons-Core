@@ -35,7 +35,7 @@
 		$scope.$watch('ctrl.address', function () {
 			_this.addressIcon = null;
 			if (_this.address) {
-				_this.address = _this.address.toLowerCase();
+				_this.address = _this.address;
 				_this.addressIcon = blockies.create({
 					seed: _this.address.toLowerCase(),
 					size: 8,

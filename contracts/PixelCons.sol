@@ -1,10 +1,10 @@
 pragma solidity ^0.4.24;
 
-import "./AddressUtils.sol";
-import "./StringUtils.sol";
-import "./Ownable.sol";
-import "./ERC721.sol";
-import "./ERC721Receiver.sol";
+import "./legacy/AddressUtils.sol";
+import "./legacy/StringUtils.sol";
+import "./legacy/Ownable.sol";
+import "./legacy/ERC721.sol";
+import "./legacy/ERC721Receiver.sol";
 
 
 /**
@@ -28,7 +28,6 @@ import "./ERC721Receiver.sol";
  * @author PixelCons
  */
 contract PixelCons is ERC721, Ownable {
-
 	using AddressUtils for address;
 
 	/** @dev Equal to 'bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))' */

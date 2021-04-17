@@ -186,7 +186,7 @@ div.pageContent {
 }
 div.pageContentBackground {
 	min-height: 100%;
-	background-image: url("../img/screen/back.png");
+	background-image: url("../img/back.png");
 	background-size: 640px;
 }
 div.md-open-menu-container {

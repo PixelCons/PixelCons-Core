@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
+
 <head>
-	<title>PixelCons</title>
+	<title>PixelCons(Legacy)</title>
 	<base href="/">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="img/icon.png">
+
+	<!-- Tag Inserts -->
 
 	<!-- Angular Material style sheet -->
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
@@ -28,10 +31,11 @@
 	<link rel="stylesheet" href="app/dialogs/pixelcon/pixelcon.view.css">
 	<link rel="stylesheet" href="app/dialogs/collection/collection.view.css">
 	<link rel="stylesheet" href="app/dialogs/send/send.view.css">
-  
+
 </head>
+
 <body ng-app="App" ng-cloak>
-	
+
 	<!-- Start of main HTML -->
 	<div ng-controller="AppCtrl" layout="column" class="appContainer textNotSelectable" ng-cloak>
 		<app-header></app-header>
@@ -44,7 +48,7 @@
 	</div>
 	<input style="position:absolute; top:-100px;" type="text" value="" id="copyToClipboard">
 	<!-- End of main HTML -->
-	
+
 	<!-- HTML templates -->
 	<script>
 		HTMLTemplates = {
@@ -76,12 +80,11 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
 	<script src="https://code.jquery.com/jquery-latest.js"></script>
-	
+
 	<!-- Lib scripts -->
-    <script src="lib/blockies.min.js"></script>
-    <script src="lib/web3.min.js"></script>
-    <script src="lib/truffle-contract.min.js"></script>
-    <script src="lib/aes.min.js"></script>
+	<script src="lib/aes.min.js"></script>
+	<script src="lib/blockies.min.js"></script>
+	<script src="lib/ethers-5.0.umd.min.js"></script>
 
 	<!-- App services -->
 	<script src="app/app.modules.js"></script>
@@ -110,4 +113,5 @@
 	<script src="app/dialogs/send/send.controller.js"></script>
 
 </body>
+
 </html>

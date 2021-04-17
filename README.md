@@ -1,91 +1,153 @@
-# PixelCons-Core
-Collectible Minimalist Pixel Art Tokens Secured on the Ethereum Blockchain! This is the whole source code including the website/app, solidity contracts, 
-and test scripts. The app is currently being hosted on the web at https://pixelcons.io/
+# Tutorial
 
-For a breakdown of the contract code, check out the flattened contract repo [here](https://github.com/PixelCons/PixelCons-Contracts)
+Hello!
+This tutorial is an introduction to the process of developing applications on Optimistic Ethereum.
+Specifically, we'll take you through the process of building, testing, deploying, and interacting with a Solidity smart contract on top of the platform.
 
-## Setup/Installation
-Please follow these steps if you wish to run the PixelCons app locally or wish to run the tests..
+Planned future iterations of this tutorial will include:
+- Communicating between Optimistic Ethereum and Ethereum.
+- Using more advanced Optimism tooling.
 
-#### 1. Install Node.js
-Make sure you have [Node.js](https://nodejs.org) installed before continuing
+## Prerequisite Software
+We make use of some external software throughout this tutorial.
+Please make sure you've installed the following before continuing:
 
-#### 2. Install Truffle/Ganache
-If you want to use a local Ethereum blockchain instead either a public test net or the main net, please install [Truffle](https://truffleframework.com/truffle) and [Ganache](https://truffleframework.com/ganache)
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node.js](https://nodejs.org/en/download/)
 
-#### 3. Clone the Core Repo
-Clone the PixelCons-Core repo by downloading the zip from GitHub and extracting it or by running the following GIT command
-```
-git clone https://github.com/PixelCons/PixelCons-Core.git
-```
+## Setting Up
+We've structured this tutorial as a follow-along exercise where we'll be writing code in tandem.
+Please clone and enter [this repository](https://github.com/ethereum-optimism/optimism-tutorial):
 
-#### 4. Run npm Install
-Finally, run the following command at the cloned PixelCons-Core directory to finish setting up your environment
-```
-npm install
-```
-
-## Configuration
-Before running the PixelCons app, please review the following configuration pieces
-
-#### web3.service.js (\src\app\services)
-The beginning of this service has some declared variables that should be changed to match your desired preferences
-```
-var _expectedNetwork = null; //Options: Main, Morden, Ropsten, Rinkeby, Kovan (set to 'null' if you wish to support all of them)
-var _backupWeb3Provider = 'https://mainnet.infura.io/v3/07d72fe8b8b74534a05d2091e108e26e';
-var _transactionLookupUrl = 'https://etherscan.io/tx/<txHash>';
-var _accountLookupUrl = 'https://etherscan.io/address/<address>';
+```sh
+git clone https://github.com/ethereum-optimism/optimism-tutorial
+cd optimism-tutorial
 ```
 
-#### 3_data_load.js (\migrations)
-The beginning of this migration script has some declared variables that allows you to disabled loading test data on truffle migration as well as specify the addresses you wish to use for testing
-```
-var enabled = false;
-var primaryAddress = '0xfE643f001caC62a5f513Af517765146d331261C8';
-var secondaryAddress = '0x9f2fedFfF291314E5a86661e5ED5E6f12e36dd37';
+We're using an Ethereum development framework called [Hardhat](https://hardhat.org) to make our lives a lot easier.
+If you haven't used Hardhat before, we hope you'll be pleasantly surprised!
+Hardhat is well designed and full of useful features.
+Go ahead and set up Hardhat by running:
+
+```sh
+yarn install
 ```
 
-#### coreContract.service.js and openSea.service.js (\src\app\services)
-There are a few additional options to configure at the beginning of these two files pertaining to interactions with the deployed contract on the Ethereum blockchain and third party market integration with OpenSea
+We'll be writing all of our smart contracts in Solidity and writing the rest of our code in TypeScript.
 
-## Run the Application
-PixelCons is a single page app for web browsers. To run the app, you simply need to host the website data (located at \src) 
-and the contract json files (located at \build\contracts). This project includes a node.js script to host these files for you at 
-http://localhost:8080. This script can also create a minified version of all the website assets for a more light weight deployment. Run the script by following these steps...
+## The Task
+We're going to be deploying an ERC20 contract (written in Solidity) to Optimistic Ethereum.
+We've already gone ahead and written that contract for you, which you should be able to locate in [`optimism-tutorial/contracts/ERC20.sol`](https://github.com/ethereum-optimism/optimism-tutorial/blob/main/contracts/ERC20.sol).
+This contract is just a relatively standard (though completely unsafe) ERC20 implementation.
 
-#### 1. Start Local Ethereum Blockchain (optional)
-If you want to run the app with a local Ethereum blockchain instead of relying on a public test net or the main net, please start up Ganache and run the following command to publish the contracts to it
-```
-truffle migrate --reset
-```
+(**Note**: Seriously! This implementation is unsafe! Don't use it in production!)
 
-#### 2. Run the Server Script
-Run the following command to minify the web assets and start hosting the app at http://localhost:8080. All the minified assets are dumped in the build folder (\build)
-```
-node server.js
-```
-Optionally, if you don't want the web assets to be minified (for easier debugging) add the argument '-debug'
+We'd recommend running the following command to compile this ERC20 contract. This will also make sure that Hardhat is installed correctly:
 
-```
-node server.js -debug
+```sh
+yarn compile
 ```
 
-#### 3. Make Sure You Are Connected to the Desired Network
-Finally, when using the app, make sure your browser has a connected Ethereum wallet and that it is pointing to your desired Ethereum network
+## The Tests
+We've also written some very basic tests for you, which you can locate in [`optimism-tutorial/test/erc20.spec.ts`](https://github.com/ethereum-optimism/optimism-tutorial/blob/main/test/erc20.spec.ts).
+Though tests are pretty straight forward, we'd recommend taking a quick read through the test file.
+We're using [Ethers](https://docs.ethers.io/v5/) for the majority of our testing and [Waffle](https://ethereum-waffle.readthedocs.io/en/latest/) for some of its utilities.
+Hardhat provides convenient plugins for both; we've already added these plugins to [`optimism-tutorial/hardhat.config.ts`](https://github.com/ethereum-optimism/optimism-tutorial/blob/main/hardhat.config.ts).
 
-## Run the Tests
-The PixelCons core project contains test scripts for verifying application integrity. It is not recommended to try and run the tests on any of
-the public Ethereum test nets and especially not the Ethereum main net. Please follow these steps if you wish to run the tests yourself...
+Once you've taken a look at the tests, feel free to verify that everything is working correctly by running the following command:
 
-#### 1. Start Local Ethereum Blockchain
-First, make sure Ganache is set up to 'automine', otherwise some of the test transactions may run over each other. Also, make sure to disable the migration data load (see **Configuration** for 3_data_load.js), then start up Ganache and run the following command to publish the contracts to it
-```
-truffle migrate --reset
-```
-
-#### 2. Run the Test Script
-Run the following command to start running the tests
-```
-truffle test
+```sh
+yarn test
 ```
 
+If everything is going as planned, you should see a bunch of green checkmarks.
+
+## Making it Optimistic
+Now that we've gotten that out of the way, it's time to get our ERC20 ready for Optimistic Ethereum.
+Contracts deployed to Optimistic Ethereum are required to [replace certain EVM opcodes with custom behavior](https://community.optimism.io/docs/protocol/evm-comparison.html#missing-replaced-and-custom-opcodes).
+Since the Solidity compiler doesn't handle this custom behavior, developers have to make sure to use the Optimism fork of the Solidity compiler instead.
+We'll need to add a special plugin to hardhat that enables this custom Optimism Solidity compiler.
+
+First, add the Optimism plugins package to your project:
+
+```sh
+yarn add @eth-optimism/plugins
+```
+
+Next, add the following line to [`optimism-tutorial/hardhat.config.ts`](https://github.com/ethereum-optimism/optimism-tutorial/blob/main/hardhat.config.ts):
+
+```ts
+// hardhat.config.ts
+
+import '@eth-optimism/plugins/hardhat/compiler'
+```
+
+Finally, compile it!
+
+```sh
+yarn compile
+```
+
+Congrats, you're ready to deploy an application to Optimistic Ethereum!
+It really is that easy.
+
+You can verify that everything went well by checking the `artifacts` folder that should be generated whenever you run `yarn compile`.
+Alongside the normal compiler output located at `artifacts/contracts/ERC20.sol/ERC20.json`, you should also see `artifacts/contracts/ERC20.sol/ERC20.ovm.json`.
+Here, `.ovm.json` signifies that this file has been compiled for the OVM, the **O**ptimistic **V**irtual **M**achine, as opposed to the Ethereum Virtual Machine.
+
+### Testing (Again)
+We provided you with an ERC20 test file earlier in this tutorial.
+Now it's time to test this ERC20 again.
+This time, however, we'll be testing our new OVM-compatible smart contract on top of Optimistic Ethereum.
+Luckily, this is almost as easy as compiling the contract!
+
+First, make a copy of [`optimism-tutorial/test/erc20.spec.ts`](https://github.com/ethereum-optimism/optimism-tutorial/blob/main/test/erc20.spec.ts).
+You can name the copy whatever you'd like, perhaps `optimistic-erc20.spec.ts`.
+We'll modify this copy in just a minute.
+
+Now we're going to add another Hardhat plugin to [`optimism-tutorial/hardhat.config.ts`](https://github.com/ethereum-optimism/optimism-tutorial/blob/main/hardhat.config.ts):
+
+```ts
+// hardhat.config.ts
+
+import '@eth-optimism/plugins/hardhat/compiler' // You already had this one.
+import '@eth-optimism/plugins/hardhat/ethers'   // Now just add this one!
+```
+
+This plugin adds a new modified version of `ethers` to Hardhat that makes it possible to test the Layer 2 version of your contracts.
+
+Finally, we're going to modify `optimistic-erc20.spec.ts` (or whatever you named your copy of the original test file).
+Don't worry though, we only have to change a single line of code to make everything work!
+Find the line of code that looks like this:
+
+```ts
+// optimistic-erc20.spec.ts
+
+import { ethers } from 'hardhat'
+```
+
+Now, replace that line of code with this:
+
+```ts
+// optimistic-erc20.spec.ts
+
+import { l2ethers as ethers } from 'hardhat'
+```
+
+You might also want to change the test description so that you can tell the difference between the normal ERC20 and this new test file:
+
+```ts
+// optimistic-erc20.spec.ts
+
+describe('Optimistic ERC20', () => {
+    ...
+```
+
+You're all set!
+Confirm that everything worked as expected by running:
+
+```sh
+yarn test
+```
+
+You should see even more green checkmarks this time around.

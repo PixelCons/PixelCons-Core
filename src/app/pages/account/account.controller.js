@@ -54,9 +54,9 @@
 			}
 
 			//loaded address changed?
-			var account = web3Service.getAllAccounts()[0];
+			var account = web3Service.getActiveAccount();
 			if ((account == null && _this.accountAddress != null) || (account != null && _this.accountAddress == null)
-				|| (account != null && _this.accountAddress != null && account.toLowerCase() != _this.accountAddress.toLowerCase())) {
+				|| (account != null && _this.accountAddress != null && account != _this.accountAddress)) {
 				_this.marketAccountLink = market.getAccountLink(account);
 				_this.accountAddress = account;
 				_this.accountIcon = undefined;

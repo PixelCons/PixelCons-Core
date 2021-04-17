@@ -1,22 +1,35 @@
 {
-  "name": "PixelCons",
+  "name": "PixelCons-Core",
   "version": "1.0.0",
-  "description": "Official site for creating and trading PixelCons!",
-  "main": "server.js",
+  "main": "index.js",
+  "license": "MIT",
   "scripts": {
-    "run": "node server.js",
-    "build": "node server.js -build",
-    "debug": "node server.js -debug"
+    "clean": "rimraf ./cache && rimraf ./artifacts && rimraf ./build",
+    "compile": "rimraf ./cache && rimraf ./artifacts && hardhat compile",
+    "test": "rimraf ./cache && rimraf ./artifacts && hardhat test",
+    "local_start": "hardhat node",
+	"local_deploy": "hardhat run --network localhost scripts/deploy.js",
+	"local_compile": "yarn compile && yarn localdeploy",
+    "web_start": "node scripts/webapp.js",
+    "web_build": "node scripts/webapp.js -build",
+    "web_debug": "node scripts/webapp.js -debug"
   },
-  "author": "",
-  "dependencies": {
-    "ethereum-blockies": "^0.1.1",
-    "express": "^4.14.0",
-    "html-minifier": "^3.5.21",
-    "save": "^2.3.3",
-    "solc": "^0.4.25",
-    "truffle-contract": "^3.0.6",
-    "uglify-js": "^3.4.9",
-    "uglifycss": "0.0.29"
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.1",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.2.0",
+    "chai": "^4.2.0",
+    "ethereum-waffle": "^3.2.1",
+    "ethers": "^5.0.24",
+    "hardhat": "^2.0.7",
+    "html-minifier": "^4.0.0",
+    "mocha": "^8.2.1",
+    "node-watch": "^0.7.1",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3",
+    "uglify-js": "^3.13.1",
+    "uglifycss": "^0.0.29"
   }
 }

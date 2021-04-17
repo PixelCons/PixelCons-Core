@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Mainnet",
+    "id": "1",
+    "contracts": [
+      {
+        "name": "PixelCons",
+        "address": "0x5536B6aAdd29eAf0DB112Bb28046A5FaD3761bD4"
+      }
+    ]
+  },
+  {
+    "name": "Rinkeby",
+    "id": "4",
+    "contracts": [
+      {
+        "name": "PixelCons",
+        "address": "0x306f945b7bdb000f4ec474B989A80048aEF06273"
+      }
+    ]
+  },
+  {
+    "name": "unknown",
+    "id": "31337",
+    "contracts": [
+      {
+        "name": "PixelCons",
+        "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+      }
+    ]
+  }
+]

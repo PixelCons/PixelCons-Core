@@ -10,7 +10,7 @@
 		_this.loggedIn = false;
 		_this.web3error = false;
 		_this.waitingTransactions = [];
-		_this.accounts = [];
+		_this.account = null;
 		_this.setAccount = setAccount;
 		_this.goPath = goPath;
 		_this.goDetails = goDetails;
@@ -38,44 +38,37 @@
 			else _this.page = 'other';
 		});
 
-		// Configure user account icon
-		updateUserAccountIcon();
-		function updateUserAccountIcon() {
+		// Configure state data
+		updateState();
+		function updateState() {
 			var web3state = web3Service.getState();
 			_this.noWeb3 = (web3state == "not_enabled" || web3Service.isReadOnly());
 			_this.loggedIn = (web3state == "ready" && !web3Service.isReadOnly());
 			_this.web3error = (web3state != "not_enabled" && web3state != "ready" && !web3Service.isReadOnly());
 			_this.web3ProviderName = web3Service.getProviderName();
 			_this.privacyMode = web3Service.isPrivacyMode();
+		};
 
+		// Configure network data
+		updateNetwork();
+		function updateNetwork() {
 			_this.net = web3Service.getExpectedNetwork();
 			_this.badNetwork = web3Service.isWrongNetwork();
+		};
 
-			var accountStrings = web3Service.getAllAccounts();
-			_this.accounts = [];
-			if (accountStrings.length > 0) {
-				for (var i = 0; i < accountStrings.length; i++) {
-					var address = accountStrings[i];
-					var icon = blockies.create({
-						seed: address.toLowerCase(),
-						size: 8,
-						scale: 3
-					}).toDataURL();
-					_this.accounts.push({
-						id: address,
-						icon: icon
-					});
-				}
-			}
-
-			var address = web3Service.getActiveAccount();
+		// Configure user account icon
+		updateUserAccountIcon();
+		function updateUserAccountIcon() {
+			let address = web3Service.getActiveAccount();
 			if (address) {
+				_this.accountAddress = address;
 				_this.userIcon = blockies.create({
 					seed: address.toLowerCase(),
 					size: 8,
 					scale: 6
 				}).toDataURL();
 			} else {
+				_this.accountAddress = null;
 				_this.userIcon = '';
 			}
 		};
@@ -156,8 +149,18 @@
 		}
 
 		// Listen for account data changes and waiting transactions
-		web3Service.onAccountDataChange(updateUserAccountIcon, $scope);
-		web3Service.onWaitingTransactionsChange(updateTransactionIndicator, $scope);
+		web3Service.onStateChange(function () {
+			updateState();
+		}, $scope);
+		web3Service.onNetworkChange(function () {
+			updateNetwork();
+		}, $scope);
+		web3Service.onAccountDataChange(function () {
+			updateUserAccountIcon();
+		}, $scope);
+		web3Service.onWaitingTransactionsChange(function () {
+			updateTransactionIndicator();
+		}, $scope);
 	}
 
 	function appHeader() {
