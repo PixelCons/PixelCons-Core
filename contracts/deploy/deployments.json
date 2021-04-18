@@ -20,12 +20,16 @@
     ]
   },
   {
-    "name": "unknown",
-    "id": "31337",
+    "name": "unknown_31337",
+    "id": 31337,
     "contracts": [
       {
         "name": "PixelCons",
-        "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+        "address": "0x8ac5eE52F70AE01dB914bE459D8B3d50126fd6aE"
+      },
+      {
+        "name": "PixelConsMigrator",
+        "address": "0x325c8Df4CFb5B068675AFF8f62aA668D1dEc3C4B"
       }
     ]
   }

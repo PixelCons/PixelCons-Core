@@ -19,6 +19,8 @@ import "./bridge/IERC721Receiver.sol";
  */
 contract PixelConsMigrator is IERC721Receiver {
 	address public _pixelconsContract;
+	address public _pixelconsV2Contract;
+	address public _l2CrossDomainMessenger;
 
     /**
      * @dev Contract constructor.

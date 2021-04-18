@@ -455,7 +455,7 @@
 						else if (network.chainId == "4") networkStr = "Rinkeby";
 						else if (network.chainId == "5") networkStr = "Goerli";
 						else if (network.chainId == "42") networkStr = "Kovan";
-						else networkStr = "unknown";
+						else networkStr = "unknown_" + network.chainId;
 					}
 
 					return ["ready", networkStr];

@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "rimraf ./cache && rimraf ./artifacts && rimraf ./build",
     "compile": "rimraf ./cache && rimraf ./artifacts && hardhat compile",
+	"deploy": "hardhat run --network optimism_l1 scripts/deploy.js",
     "test": "rimraf ./cache && rimraf ./artifacts && hardhat test",
     "web_start": "node scripts/webapp.js",
     "web_build": "node scripts/webapp.js -build",
