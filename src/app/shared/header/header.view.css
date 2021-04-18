@@ -97,6 +97,9 @@ div.header.sm .network {
 	height: 15px;
 	right: 60px;
 }
+div.header .network.mainnet {
+	background-color: #29B6AF;
+}
 div.header .network.ropsten {
 	background-color: #ff4a8d;
 }

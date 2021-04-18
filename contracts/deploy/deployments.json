@@ -21,15 +21,15 @@
   },
   {
     "name": "unknown_31337",
-    "id": 31337,
+    "id": "31337",
     "contracts": [
       {
         "name": "PixelCons",
-        "address": "0x8ac5eE52F70AE01dB914bE459D8B3d50126fd6aE"
+        "address": "0xA7240bcff60Eef40F31B8eD5d921BaD6DB13B199"
       },
       {
         "name": "PixelConsMigrator",
-        "address": "0x325c8Df4CFb5B068675AFF8f62aA668D1dEc3C4B"
+        "address": "0xc565EB7363769f8ffAe0005285ccD854c631A0a0"
       }
     ]
   }

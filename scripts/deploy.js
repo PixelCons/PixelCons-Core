@@ -1,12 +1,16 @@
 // Core
 const fs = require("fs");
 const path = require('path');
+const http = require('http');
 const { config, ethers } = require("hardhat");
 const { utils } = require("ethers");
 
 
 // Settings
-const deployementsFile = resolvePath('contracts/deploy/deployments.json');
+const deploymentsFile = resolvePath('contracts/deploy/deployments.json');
+const L1MessengerAddress = '0x59b670e9fA9D0A427751Af201D676719a970857b';
+const L2Deployments = 'http://localhost:8082/contracts/deployments.json';
+const L2ChainId = '420';
 const fundAddresses = ['0xFcc7fFEFA71E54926b87DC0624394A4DaA4c860E', '0x181D54fDBBB7Cf5C3e3959967328B5fAE4402805'];
 
 
@@ -15,25 +19,38 @@ async function main() {
 	const deployerWallet = ethers.provider.getSigner();
 	const deployerAddress = await deployerWallet.getAddress();
 	const network = await ethers.provider.getNetwork();
+	
+	//open deployment file for updating
+	let file = await readFilePromise(deploymentsFile);
+	let deployAddresses = JSON.parse(file.data) || [];
+	clearDeployAddress(deployAddresses, network.chainId);
 
 	//deploy PixelCon contract
 	const PixelCons = await ethers.getContractFactory("PixelCons");
 	const pixelcons = await PixelCons.deploy();
 	await pixelcons.deployTransaction.wait();
+	updateDeployAddress(deployAddresses, network.chainId, "PixelCons", pixelcons.address);
 	console.log("PixelCons deployed to:", pixelcons.address);
-
-	//deploy PixelConsMigrator contract
-	const PixelConsMigrator = await ethers.getContractFactory("PixelConsMigrator");
-	const pixelconsMigrator = await PixelConsMigrator.deploy(pixelcons.address);
-	await pixelconsMigrator.deployTransaction.wait();
-	console.log("PixelConsMigrator deployed to:", pixelconsMigrator.address);
+	
+	//look for L2 deployement
+	let pixelconsV2Address = await getPixelConsV2Address();
+	if(pixelconsV2Address) {
+		
+		//deploy PixelConsMigrator contract
+		const PixelConsMigrator = await ethers.getContractFactory("PixelConsMigrator");
+		const pixelconsMigrator = await PixelConsMigrator.deploy(pixelcons.address);
+		await pixelconsMigrator.deployTransaction.wait();
+		updateDeployAddress(deployAddresses, network.chainId, "PixelConsMigrator", pixelconsMigrator.address);
+		console.log("PixelConsMigrator deployed to:", pixelconsMigrator.address);
+	} else {
+		
+		//skip PixelConsMigrator deployment
+		console.log("Cannot determine L2 deployment locations");
+		console.log("Skipping PixelConsMigrator deployment...");
+	}
 
 	//update deployment file
-	let file = await readFilePromise(deployementsFile);
-	let deployAddresses = JSON.parse(file.data) || [];
-	updateDeployAddress(deployAddresses, network.chainId, "PixelCons", pixelcons.address);
-	updateDeployAddress(deployAddresses, network.chainId, "PixelConsMigrator", pixelconsMigrator.address);
-	await writeFilePromise(deployementsFile, JSON.stringify(deployAddresses, null, 2));
+	await writeFilePromise(deploymentsFile, JSON.stringify(deployAddresses, null, 2));
 
 	//set admin data
 	let tokenURITemplate = 'https://pixelcons.io/meta/data/<tokenId>?name=<name>&index=<tokenIndex>&owner=<owner>&creator=<creator>&created=<dateCreated>&collection=<collectionIndex>';
@@ -194,6 +211,14 @@ function writeFilePromise(file, data) {
 		});
 	});
 }
+function clearDeployAddress(deployAddresses, chainId) {
+	for (let i = 0; i < deployAddresses.length; i++) {
+		if (deployAddresses[i].id == chainId) {
+			deployAddresses[i].contracts = [];
+			break;
+		}
+	}
+}
 function updateDeployAddress(deployAddresses, chainId, name, address) {
 	let deployNetwork = null;
 	let deploymentContract = null;
@@ -209,7 +234,7 @@ function updateDeployAddress(deployAddresses, chainId, name, address) {
 		//create the 'unknown' network
 		deployNetwork = {
 			name: 'unknown_' + chainId,
-			id: chainId
+			id: '' + chainId
 		}
 		deployAddresses.push(deployNetwork);
 	}
@@ -232,6 +257,36 @@ function updateDeployAddress(deployAddresses, chainId, name, address) {
 
 	//set address
 	deploymentContract.address = address;
+}
+function doGET(url) {
+    return new Promise(function(resolve, reject) {
+		http.get(url, (res) => {
+			let data = '';
+			res.on('data', (chunk) => {
+				data += chunk;
+			});
+			res.on('end', () => {
+				resolve(data);
+			});
+		}).on("error", (err) => {
+			reject(err.message);
+		});
+    });
+}
+async function getPixelConsV2Address() {
+	try {
+		let deploymentData = JSON.parse(await doGET(L2Deployments));
+		for (let i = 0; i < deploymentData.length; i++) {
+			if (deploymentData[i].id == L2ChainId) {
+				for (let j = 0; j < deploymentData[i].contracts.length; j++) {
+					if (deploymentData[i].contracts[j].name == 'PixelConsV2') {
+						return deploymentData[i].contracts[j].address;
+					}
+				}
+			}
+		}
+	} catch (err) { }
+	return null;
 }
 
 main()
