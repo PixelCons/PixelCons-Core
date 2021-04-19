@@ -8,10 +8,12 @@ const { utils } = require("ethers");
 
 // Settings
 const deploymentsFile = resolvePath('contracts/deploy/deployments.json');
+const fundAddresses = ['0xFcc7fFEFA71E54926b87DC0624394A4DaA4c860E', '0x181D54fDBBB7Cf5C3e3959967328B5fAE4402805'];
 const L1MessengerAddress = '0x59b670e9fA9D0A427751Af201D676719a970857b';
 const L2Deployments = 'http://localhost:8082/contracts/deployments.json';
 const L2ChainId = '420';
-const fundAddresses = ['0xFcc7fFEFA71E54926b87DC0624394A4DaA4c860E', '0x181D54fDBBB7Cf5C3e3959967328B5fAE4402805'];
+const gasPrice = 0.00000015; //150 Gwei
+const ethPrice = 2000;
 
 
 // Main
@@ -19,6 +21,7 @@ async function main() {
 	const deployerWallet = ethers.provider.getSigner();
 	const deployerAddress = await deployerWallet.getAddress();
 	const network = await ethers.provider.getNetwork();
+	let result = null;
 	
 	//open deployment file for updating
 	let file = await readFilePromise(deploymentsFile);
@@ -28,25 +31,28 @@ async function main() {
 	//deploy PixelCon contract
 	const PixelCons = await ethers.getContractFactory("PixelCons");
 	const pixelcons = await PixelCons.deploy();
-	await pixelcons.deployTransaction.wait();
-	updateDeployAddress(deployAddresses, network.chainId, "PixelCons", pixelcons.address);
+	result = await pixelcons.deployTransaction.wait();
+	let pixelconsDeployGas = result.gasUsed.toNumber();
+	updateDeployAddress(deployAddresses, network.chainId, "PixelCons", pixelcons.address, result.transactionHash, result.blockHash, result.blockNumber);
 	console.log("PixelCons deployed to:", pixelcons.address);
 	
 	//look for L2 deployement
 	let pixelconsV2Address = await getPixelConsV2Address();
+	let pixelconsMigratorDeployGas = null;
 	if(pixelconsV2Address) {
 		
 		//deploy PixelConsMigrator contract
 		const PixelConsMigrator = await ethers.getContractFactory("PixelConsMigrator");
 		const pixelconsMigrator = await PixelConsMigrator.deploy(pixelcons.address);
-		await pixelconsMigrator.deployTransaction.wait();
-		updateDeployAddress(deployAddresses, network.chainId, "PixelConsMigrator", pixelconsMigrator.address);
+		result = await pixelconsMigrator.deployTransaction.wait();
+		pixelconsMigratorDeployGas = result.gasUsed.toNumber();
+		updateDeployAddress(deployAddresses, network.chainId, "PixelConsMigrator", pixelconsMigrator.address, result.transactionHash, result.blockHash, result.blockNumber);
 		console.log("PixelConsMigrator deployed to:", pixelconsMigrator.address);
 	} else {
 		
 		//skip PixelConsMigrator deployment
-		console.log("Cannot determine L2 deployment locations");
-		console.log("Skipping PixelConsMigrator deployment...");
+		console.log("[!]Cannot determine L2 deployment locations");
+		console.log("[!]Skipping PixelConsMigrator deployment");
 	}
 
 	//update deployment file
@@ -54,7 +60,8 @@ async function main() {
 
 	//set admin data
 	let tokenURITemplate = 'https://pixelcons.io/meta/data/<tokenId>?name=<name>&index=<tokenIndex>&owner=<owner>&creator=<creator>&created=<dateCreated>&collection=<collectionIndex>';
-	await pixelcons.adminSetTokenURITemplate(tokenURITemplate);
+	result = await (await pixelcons.adminSetTokenURITemplate(tokenURITemplate)).wait();
+	let setTokenURITemplateGas = result.gasUsed.toNumber();
 
 	//load example pixelcons
 	let pixelconSet1 = [
@@ -160,16 +167,21 @@ async function main() {
 		{ id: '0x7e7d644447e7644444707e44447777441dd11000400000044110000421d10002', name: 'Rabbit' },
 	];
 	console.log("creating pixelcons...");
+	let createTokensGas = 0;
 	for (let i = 0; i < pixelconSet1.length; i++) {
 		let addressList = (fundAddresses.length > 0) ? fundAddresses : [deployerAddress];
 		let toOwn = (i < 10) ? fundAddresses[i % fundAddresses.length] : deployerAddress;
-		await pixelcons.create(toOwn, pixelconSet1[i].id, toBytes8(pixelconSet1[i].name));
+		result = await (await pixelcons.create(toOwn, pixelconSet1[i].id, toBytes8(pixelconSet1[i].name))).wait();
+		createTokensGas += result.gasUsed.toNumber();
 	}
 
 	//load example collections
 	console.log("creating pixelcon collections...");
-	await pixelcons.createCollection([14, 15, 16, 17, 18, 19], toBytes8('Grp1'));
-	await pixelcons.createCollection([30, 31, 32, 33, 34, 35, 36, 37, 38, 39], toBytes8('Grp2'));
+	let createCollectionTokensGas = 0;
+	result = await (await pixelcons.createCollection([14, 15, 16, 17, 18, 19], toBytes8('Grp1'))).wait();
+	createCollectionTokensGas += result.gasUsed.toNumber();
+	result = await (await pixelcons.createCollection([30, 31, 32, 33, 34, 35, 36, 37, 38, 39], toBytes8('Grp2'))).wait();
+	createCollectionTokensGas += result.gasUsed.toNumber();
 
 	//fund addresses
 	//for (let i = 0; i < fundAddresses.length; i++) {
@@ -178,6 +190,14 @@ async function main() {
 	//		value: ethers.utils.parseEther("1")
 	//	});
 	//}
+	
+	console.log("");
+	console.log("deployment finished!");
+	console.log("pixelconsDeployGas: " + pixelconsDeployGas + " [$" + (pixelconsDeployGas*gasPrice*ethPrice).toFixed(2) + "]");
+	if(pixelconsMigratorDeployGas) console.log("pixelconsMigratorDeployGas: " + pixelconsMigratorDeployGas + " [$" + (pixelconsMigratorDeployGas*gasPrice*ethPrice).toFixed(2) + "]");
+	console.log("setTokenURITemplateGas: " + setTokenURITemplateGas + " [$" + (setTokenURITemplateGas*gasPrice*ethPrice).toFixed(2) + "]");
+	console.log("createTokensGas: " + createTokensGas + " [$" + (createTokensGas*gasPrice*ethPrice).toFixed(2) + "]");
+	console.log("createCollectionTokensGas: " + createCollectionTokensGas + " [$" + (createCollectionTokensGas*gasPrice*ethPrice).toFixed(2) + "]");
 }
 
 
@@ -219,7 +239,7 @@ function clearDeployAddress(deployAddresses, chainId) {
 		}
 	}
 }
-function updateDeployAddress(deployAddresses, chainId, name, address) {
+function updateDeployAddress(deployAddresses, chainId, contractName, contractAddress, transactionHash, blockHash, blockNumber) {
 	let deployNetwork = null;
 	let deploymentContract = null;
 
@@ -242,7 +262,7 @@ function updateDeployAddress(deployAddresses, chainId, name, address) {
 	//look for contract with same name
 	deployNetwork.contracts = deployNetwork.contracts || [];
 	for (let i = 0; i < deployNetwork.contracts.length; i++) {
-		if (deployNetwork.contracts[i].name == name) {
+		if (deployNetwork.contracts[i].name == contractName) {
 			deploymentContract = deployNetwork.contracts[i];
 			break;
 		}
@@ -250,13 +270,16 @@ function updateDeployAddress(deployAddresses, chainId, name, address) {
 	if (!deploymentContract) {
 		//create contract entry
 		deploymentContract = {
-			name: name
+			name: contractName
 		}
 		deployNetwork.contracts.push(deploymentContract);
 	}
 
 	//set address
-	deploymentContract.address = address;
+	deploymentContract.address = contractAddress;
+	deploymentContract.transactionHash = transactionHash;
+	deploymentContract.blockHash = blockHash;
+	deploymentContract.blockNumber = '' + blockNumber;
 }
 function doGET(url) {
     return new Promise(function(resolve, reject) {

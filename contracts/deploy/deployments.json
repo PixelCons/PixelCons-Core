@@ -5,7 +5,10 @@
     "contracts": [
       {
         "name": "PixelCons",
-        "address": "0x5536B6aAdd29eAf0DB112Bb28046A5FaD3761bD4"
+        "address": "0x5536B6aAdd29eAf0DB112Bb28046A5FaD3761bD4",
+        "transactionHash": "0x09c63b0b85caf92142893764a645faa06827819b2d787b331fb0592539ed17d6",
+        "blockHash": "0x1e8f9420e7736444d6868d436a23efb022ee397c040b193570ad7cf0509b15d2",
+        "blockNumber": "6814010"
       }
     ]
   },
@@ -15,7 +18,10 @@
     "contracts": [
       {
         "name": "PixelCons",
-        "address": "0x306f945b7bdb000f4ec474B989A80048aEF06273"
+        "address": "0x306f945b7bdb000f4ec474B989A80048aEF06273",
+        "transactionHash": "0xf1d57c47eb606608658d89e45aa54bc236b3aeb13f814b3458c308ceab53ee45",
+        "blockHash": "0x66ecab6e6c37da70834412b6cbbc9d0e4e174e031da93aa70c968d90139eff1a",
+        "blockNumber": "3341382"
       }
     ]
   },
@@ -25,11 +31,10 @@
     "contracts": [
       {
         "name": "PixelCons",
-        "address": "0xA7240bcff60Eef40F31B8eD5d921BaD6DB13B199"
-      },
-      {
-        "name": "PixelConsMigrator",
-        "address": "0xc565EB7363769f8ffAe0005285ccD854c631A0a0"
+        "address": "0x70235a3ef276f104aeE67D0B634f5978AF80ce2b",
+        "transactionHash": "0x679f221fd48c6a4d4ed404f50b70d60df70ed9cf0206591ec93a5b4dd3b3ec23",
+        "blockHash": "0x32d8d5e5685df307cdf6f99c3887c1fff9de2464e98b1e76b75f8499c5648213",
+        "blockNumber": "1334"
       }
     ]
   }
