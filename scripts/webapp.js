@@ -84,7 +84,8 @@ const appHTML = [
 const appContractsBuildPath = resolvePath("build/contracts");
 const appContracts = [
 	resolvePath("contracts/deploy/deployments.json"),
-	resolvePath("artifacts/contracts/PixelCons.sol/PixelCons.json")
+	resolvePath("artifacts/contracts/PixelCons.sol/PixelCons.json"),
+	resolvePath("artifacts/contracts/PixelConsMigrator.sol/PixelConsMigrator.json")
 ];
 
 
