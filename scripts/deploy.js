@@ -68,7 +68,7 @@ async function main() {
 	let setTokenURITemplateGas = result.gasUsed.toNumber();
 
 	//load example pixelcons
-	console.log("creating pixelcons...");
+	console.log("Creating pixelcons...");
 	let createTokensGas = 0;
 	for (let i = 0; i < pixelconDataLoad.length; i++) {
 		let addressList = (fundAddresses.length > 0) ? fundAddresses : [deployerAddress];
@@ -78,13 +78,13 @@ async function main() {
 	}
 
 	//do a sample transfer
-	//console.log("transfering pixelcons...");
+	//console.log("Transfering pixelcons...");
 	//let transferTokensGas = 0;
 	//result = await (await pixelcons['safeTransferFrom(address,address,uint256)'](deployerAddress, fundAddresses[0], pixelconDataLoad[pixelconDataLoad.length-1].id)).wait();
 	//transferTokensGas += result.gasUsed.toNumber();
 
 	//load example collections
-	console.log("creating pixelcon collections...");
+	console.log("Creating pixelcon collections...");
 	let createCollectionTokensGas = 0;
 	result = await (await pixelcons.createCollection([14, 15, 16, 17, 18, 19], toBytes8('Grp1'))).wait();
 	createCollectionTokensGas += result.gasUsed.toNumber();
@@ -100,14 +100,13 @@ async function main() {
 	//}
 	
 	console.log("");
-	console.log("deployment finished!");
+	console.log("Deployment finished!");
 	console.log("pixelconsDeployGas: " + pixelconsDeployGas + " [$" + (pixelconsDeployGas*gasPrice*ethPrice).toFixed(2) + "]");
 	if(pixelconsMigratorDeployGas) console.log("pixelconsMigratorDeployGas: " + pixelconsMigratorDeployGas + " [$" + (pixelconsMigratorDeployGas*gasPrice*ethPrice).toFixed(2) + "]");
 	console.log("setTokenURITemplateGas: " + setTokenURITemplateGas + " [$" + (setTokenURITemplateGas*gasPrice*ethPrice).toFixed(2) + "]");
 	console.log("createTokensGas: " + createTokensGas + " [$" + (createTokensGas*gasPrice*ethPrice).toFixed(2) + "]");
 	console.log("createCollectionTokensGas: " + createCollectionTokensGas + " [$" + (createCollectionTokensGas*gasPrice*ethPrice).toFixed(2) + "]");
 	//console.log("transferTokensGas: " + transferTokensGas + " [$" + (transferTokensGas*gasPrice*ethPrice).toFixed(2) + "]");
-	console.log("");
 	console.log("");
 }
 
