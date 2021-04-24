@@ -88,7 +88,8 @@ div.header .network {
 	background-color: #6f6f6f;
 	color: #fafafa;
 	border-radius: 0px 0px 10px 10px;
-	padding: 0px 8px;
+	padding: 0 30px;
+	min-width: 100px;
 	box-shadow: 0 1px 1px 0 rgb(0 0 0 / 14%), 0 2px 1px -1px rgb(0 0 0 / 12%);
 }
 div.header.sm .network {

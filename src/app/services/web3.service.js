@@ -4,7 +4,6 @@
 
 	web3Service.$inject = ['$interval', '$timeout', '$q'];
 	function web3Service($interval, $timeout, $q) {
-		var _expectedNetwork = null; //Options: Mainnet, Morden, Ropsten, Rinkeby, Goerli, Kovan (set to 'null' if you wish to support all of them)
 		var _backupWeb3Provider = 'https://mainnet.infura.io/v3/05a3d97e27434acc998cdfdd6d418bfc';
 		var _transactionWaitConfirmations = 1;
 		var _transactionWaitTimeout = 2 * 60 * 60 * 1000;
@@ -132,7 +131,6 @@
 
 		// Gets the desired network
 		function getExpectedNetwork() {
-			if (_expectedNetwork) return _expectedNetwork;
 			return getCurrentNetwork();
 		}
 
@@ -144,8 +142,7 @@
 
 		// Gets if connected to the wrong network
 		function isWrongNetwork() {
-			if (_state != "ready" || !_expectedNetwork || !_network) return false;
-			return _expectedNetwork != _network;
+			return false;
 		}
 
 		// Gets url for displaying more details about a transaction

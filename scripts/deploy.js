@@ -47,7 +47,7 @@ async function main() {
 		
 		//deploy PixelConsMigrator contract
 		const PixelConsMigrator = await ethers.getContractFactory("PixelConsMigrator");
-		const pixelconsMigrator = await PixelConsMigrator.deploy(pixelcons.address);
+		const pixelconsMigrator = await PixelConsMigrator.deploy(pixelcons.address, pixelconsV2Address, l1MessengerAddress);
 		result = await pixelconsMigrator.deployTransaction.wait();
 		pixelconsMigratorDeployGas = result.gasUsed.toNumber();
 		updateDeployAddress(deployAddresses, l1ChainId, "PixelConsMigrator", pixelconsMigrator.address, result.transactionHash, result.blockHash, result.blockNumber);

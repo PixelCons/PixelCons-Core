@@ -2,14 +2,9 @@
 
 pragma solidity ^0.8.3;
 
-import "./bridge/IPixelCons.sol";
-import "./bridge/IERC721Receiver.sol";
-
-
-//"OVM_L1CrossDomainMessenger": "0xbB5DD9c9e25497B4fED31337b150bdAfB50cc215",
-//On L2, the OVM_L2CrossDomainMessenger is always at 0x4200000000000000000000000000000000000007 or resolve("OVM_L2CrossDomainMessenger")?
-
-
+import "./optimism/IPixelCons.sol";
+import "./optimism/IERC721Receiver.sol";
+import "./optimism/OVM_CrossDomainEnabled.sol";
 
 
 /**
@@ -17,40 +12,46 @@ import "./bridge/IERC721Receiver.sol";
  * @dev Includes batch operations for the existing PixelCons contract
  * @author PixelCons
  */
-contract PixelConsMigrator is IERC721Receiver {
+contract PixelConsMigrator is IERC721Receiver, OVM_CrossDomainEnabled {
 	address public _pixelconsContract;
 	address public _pixelconsV2Contract;
-	address public _l1CrossDomainMessenger;
+	
+	uint32 constant MERGE_TO_L2_GAS = 1200000;
+	
+	event L2Merge(uint256[] tokenIds);
+	event L2Withdraw(uint256[] tokenIds);
 
     /**
      * @dev Contract constructor.
      */
-    constructor(address pixelconsContract) {
+    constructor(address pixelconsContract, address pixelconsV2Contract, address l1CrossDomainMessenger) OVM_CrossDomainEnabled(l1CrossDomainMessenger) {
 		_pixelconsContract = pixelconsContract;
+		_pixelconsV2Contract = pixelconsV2Contract;
     }
 	
     /**
      * @dev Helps create PixelCons in batch and migrate them all in one step
      */
 	function createBatch(uint256[] calldata tokenIds) public returns (uint256) {
-		uint256 startIndex = IPixelCons(_pixelconsContract).totalSupply();
+		//create all tokens to this contract and merge them to L2
 		for (uint i = 0; i < tokenIds.length; i++)	{
 			IPixelCons(_pixelconsContract).create(address(this), tokenIds[i], 0x0000000000000000);
 		}
-		//TODO: Do migration steps
+		_mergeToL2(tokenIds);
 		
-		return startIndex;
+		//return the new total supply
+		return IPixelCons(_pixelconsContract).totalSupply();
 	}
 	
     /**
      * @dev Helps transfer PixelCons in batch and migrate them all in one step
      */
-	function transferBatch(uint256[] memory tokenIds) public {
+	function transferBatch(uint256[] calldata tokenIds) public {
+		//transfer all tokens to this contract and merge them to L2
 		for (uint i = 0; i < tokenIds.length; i++)	{
 			IPixelCons(_pixelconsContract).transferFrom(msg.sender, address(this), tokenIds[i]);
 		}
-		//TODO: Do migration steps
-		
+		_mergeToL2(tokenIds);
 	}
 	
 	//TODO: function to resend message for anything sent via unsafe transfer
@@ -61,10 +62,33 @@ contract PixelConsMigrator is IERC721Receiver {
      *
      * Always returns `IERC721Receiver.onERC721Received.selector`.
      */
-    function onERC721Received(address, address, uint256, bytes memory) public override returns (bytes4) {
+    function onERC721Received(address, address, uint256 tokenId, bytes memory) public override returns (bytes4) {
 		require(msg.sender == _pixelconsContract, "Can only receive from PixelCons");
-		//TODO: Do migration steps
+		
+		//construct calldata for L2 merge function
+		uint256[] memory tokenIds = new uint256[](1);
+		tokenIds[0] = tokenId;
+		bytes memory data = abi.encodeWithSignature("mergeFromL1(uint256[])", tokenIds);
+
+		//send calldata to L2
+		sendCrossDomainMessage(_pixelconsV2Contract, data, MERGE_TO_L2_GAS);
+		emit L2Merge(tokenIds);
 		
         return this.onERC721Received.selector;
     }
+	
+	
+	
+	
+	
+	
+	
+	function _mergeToL2(uint256[] calldata tokenIds) private {
+		//construct calldata for L2 merge function
+		bytes memory data = abi.encodeWithSignature("mergeFromL1(uint256[])", tokenIds);
+
+		//send calldata to L2
+		sendCrossDomainMessage(_pixelconsV2Contract, data, MERGE_TO_L2_GAS);
+		emit L2Merge(tokenIds);
+	}
 }

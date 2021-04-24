@@ -1,10 +1,10 @@
 pragma solidity ^0.4.24;
 
-import "./legacy/AddressUtils.sol";
-import "./legacy/StringUtils.sol";
-import "./legacy/Ownable.sol";
-import "./legacy/ERC721.sol";
-import "./legacy/ERC721Receiver.sol";
+import "./v1/AddressUtils.sol";
+import "./v1/StringUtils.sol";
+import "./v1/Ownable.sol";
+import "./v1/ERC721.sol";
+import "./v1/ERC721Receiver.sol";
 
 
 /**
