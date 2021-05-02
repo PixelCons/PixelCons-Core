@@ -9,7 +9,7 @@ const { utils } = require("ethers");
 // Settings
 const deploymentsFile = resolvePath('contracts/deploy/deployments.json');
 const fundAddresses = ['0xFcc7fFEFA71E54926b87DC0624394A4DaA4c860E', '0x181D54fDBBB7Cf5C3e3959967328B5fAE4402805'];
-const l1MessengerAddress = '0x59b670e9fA9D0A427751Af201D676719a970857b';
+const l1CrossDomainMessenger = '0x59b670e9fA9D0A427751Af201D676719a970857b';
 const l2Deployments = 'http://localhost:8082/contracts/deployments.json';
 const l2Network = 'optimism_l2';
 const gasPrice = 0.00000015; //150 Gwei
@@ -38,7 +38,7 @@ async function main() {
 	result = await pixelcons.deployTransaction.wait();
 	let pixelconsDeployGas = result.gasUsed.toNumber();
 	updateDeployAddress(deployAddresses, l1ChainId, "PixelCons", pixelcons.address, result.transactionHash, result.blockHash, result.blockNumber);
-	console.log("PixelCons deployed to:", pixelcons.address);
+	console.log("PixelCons deployed to:" + pixelcons.address);
 	
 	//look for L2 deployment
 	let pixelconsV2Address = await getPixelConsV2Address(l2ChainId);
@@ -47,11 +47,11 @@ async function main() {
 		
 		//deploy PixelConsMigrator contract
 		const PixelConsMigrator = await ethers.getContractFactory("PixelConsMigrator");
-		const pixelconsMigrator = await PixelConsMigrator.deploy(pixelcons.address, pixelconsV2Address, l1MessengerAddress);
+		const pixelconsMigrator = await PixelConsMigrator.deploy(pixelcons.address, pixelconsV2Address, l1CrossDomainMessenger);
 		result = await pixelconsMigrator.deployTransaction.wait();
 		pixelconsMigratorDeployGas = result.gasUsed.toNumber();
 		updateDeployAddress(deployAddresses, l1ChainId, "PixelConsMigrator", pixelconsMigrator.address, result.transactionHash, result.blockHash, result.blockNumber);
-		console.log("PixelConsMigrator deployed to:", pixelconsMigrator.address);
+		console.log("PixelConsMigrator deployed to:" + pixelconsMigrator.address);
 	} else {
 		
 		//skip PixelConsMigrator deployment
@@ -88,8 +88,8 @@ async function main() {
 	let createCollectionTokensGas = 0;
 	result = await (await pixelcons.createCollection([14, 15, 16, 17, 18, 19], toBytes8('Grp1'))).wait();
 	createCollectionTokensGas += result.gasUsed.toNumber();
-	result = await (await pixelcons.createCollection([30, 31, 32, 33, 34, 35, 36, 37, 38, 39], toBytes8('Grp2'))).wait();
-	createCollectionTokensGas += result.gasUsed.toNumber();
+	//result = await (await pixelcons.createCollection([30, 31, 32, 33, 34, 35, 36, 37, 38, 39], toBytes8('Grp2'))).wait();
+	//createCollectionTokensGas += result.gasUsed.toNumber();
 
 	//fund addresses
 	//for (let i = 0; i < fundAddresses.length; i++) {
@@ -262,6 +262,7 @@ const pixelconDataLoad = [
 	{ id: '0x00b3b300000b300000ee28000e8e88800ee88280028288200028820000022000', name: 'Raspbry' },
 	{ id: '0x00000000070000700cd66dc006d77d600d622dd001688d1000d6d10000000000', name: 'SpsceShp' },
 	{ id: '0x001282100128a811128a988228aaaaa88aaaaa822889a821118a821001282100', name: 'Lightng' },
+	/*
 	{ id: '0x11112121212112921191112129a9211111911212112129212111121111121112', name: 'Stars' },
 	{ id: '0x00110000019a100019a100001aa100101aa911a119aaaa91019aa91000111100', name: 'Moon' },
 	{ id: '0x2119111219299291129aa92119aaaa9999aaaa91129aa9211929929121119112', name: 'Sun' },
@@ -324,6 +325,7 @@ const pixelconDataLoad = [
 	{ id: '0xccccccccc44cc99ccffc9ff9ddddeeeefdd44eeffddffeefb1fccfeb311cc223', name: 'Family' },
 	{ id: '0x3333bbb3333bb89b33101a8b316101bb301000b3310001334410144444444444', name: 'Bomb' },
 	{ id: '0x7e7d644447e7644444707e44447777441dd11000400000044110000421d10002', name: 'Rabbit' },
+	*/
 ];
 
 main()

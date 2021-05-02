@@ -16,7 +16,7 @@ contract PixelConsMigrator is IERC721Receiver, OVM_CrossDomainEnabled {
 	address public _pixelconsContract;
 	address public _pixelconsV2Contract;
 	
-	uint32 constant MERGE_TO_L2_GAS = 1200000;
+	uint32 constant MERGE_TO_L2_GAS = 6200000;
 	
 	event L2Merge(uint256[] tokenIds);
 	event L2Withdraw(uint256[] tokenIds);
@@ -54,6 +54,17 @@ contract PixelConsMigrator is IERC721Receiver, OVM_CrossDomainEnabled {
 		_mergeToL2(tokenIds);
 	}
 	
+    /**
+     * @dev Withdraw PixelCons
+     */
+	function withdrawFromL2(uint256[] calldata tokenIds, address to) external onlyFromCrossDomainAccount(_pixelconsV2Contract) {
+		//transfer all tokens from this contract to destination address
+		for (uint i = 0; i < tokenIds.length; i++)	{
+			IPixelCons(_pixelconsContract).transferFrom(address(this), to, tokenIds[i]);
+		}
+		emit L2Withdraw(tokenIds);
+	}
+	
 	//TODO: function to resend message for anything sent via unsafe transfer
 	//function rescue(uint256[] memory tokenIds) public
 
@@ -77,12 +88,9 @@ contract PixelConsMigrator is IERC721Receiver, OVM_CrossDomainEnabled {
         return this.onERC721Received.selector;
     }
 	
-	
-	
-	
-	
-	
-	
+    /**
+     * @dev Common merge function
+     */
 	function _mergeToL2(uint256[] calldata tokenIds) private {
 		//construct calldata for L2 merge function
 		bytes memory data = abi.encodeWithSignature("mergeFromL1(uint256[])", tokenIds);

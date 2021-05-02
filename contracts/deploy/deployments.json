@@ -31,17 +31,17 @@
     "contracts": [
       {
         "name": "PixelCons",
-        "address": "0x6358cCe76aD9185c37BD0e3CF976Cc132841fA68",
-        "transactionHash": "0x374fd0c0b301ec5a66a7f209e625f582ac65477e1ddee9d6be26806054fe256d",
-        "blockHash": "0x8bdf45c57715c72f0fb770346737be0b675772b498ee811007c46854d4628337",
-        "blockNumber": "3061"
+        "address": "0xAe2563b4315469bF6bdD41A6ea26157dE57Ed94e",
+        "transactionHash": "0x1fb1e5c4b95c99c235bade9a8a7e4cae202f132f5ce60664f1b907c8c93a4427",
+        "blockHash": "0xe8460c0222b35d29608c7d00e6f18b860e6e68e81c134bda1ccba2e88c89963a",
+        "blockNumber": "676"
       },
       {
         "name": "PixelConsMigrator",
-        "address": "0x5eb0B9B87a718c6Bd45C8883913d2468180697bA",
-        "transactionHash": "0xba098d54b6a1fb5c3b2c7c7f20d55c086672e05784d6c4f1872a6ead0e95172b",
-        "blockHash": "0x88a27dc22fc8d82ccce3e3746919ae3ae8157b988e2da2bfa8b34431e29500ea",
-        "blockNumber": "3062"
+        "address": "0x30426D33a78afdb8788597D5BFaBdADc3Be95698",
+        "transactionHash": "0xe9a955dcf40ba2789b6a35e55f14a8e9246927823db743883c8d4f68a6c57672",
+        "blockHash": "0x685be671ea6bc0c8690a04d7702e87783b4ebfb4f40bdd7296f8357499828f4c",
+        "blockNumber": "677"
       }
     ]
   }
