@@ -4,7 +4,7 @@
 
 	web3Service.$inject = ['$interval', '$timeout', '$q'];
 	function web3Service($interval, $timeout, $q) {
-		var _backupWeb3Provider = 'https://mainnet.infura.io/v3/05a3d97e27434acc998cdfdd6d418bfc';
+		var _backupWeb3Provider = 'http://192.168.1.104:9545';
 		var _transactionWaitConfirmations = 1;
 		var _transactionWaitTimeout = 2 * 60 * 60 * 1000;
 		let _transactionWaitPoll = 1 * 1000;

@@ -46,7 +46,7 @@
 			</div>	
 		</div>
 	</a>
-	<div class="network textCenter" ng-class="{'mainnet':ctrl.net=='Mainnet', 'ropsten':ctrl.net=='Ropsten', 'kovan':ctrl.net=='Kovan', 'rinkeby':ctrl.net=='Rinkeby', 'goerli':ctrl.net=='Goerli'}">{{ctrl.net}}</div>
+	<div class="network textCenter" ng-if="ctrl.net" ng-class="{'mainnet':ctrl.net=='Mainnet', 'ropsten':ctrl.net=='Ropsten', 'kovan':ctrl.net=='Kovan', 'rinkeby':ctrl.net=='Rinkeby', 'goerli':ctrl.net=='Goerli'}">{{ctrl.net}}</div>
 	
 	<!-- User Account -->
 	<div ng-if="ctrl.privacyMode" class="accountIcon connectButton clickable textBold textSmall textWhite md-whiteframe-1dp" ng-click="ctrl.connect()">

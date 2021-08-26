@@ -88,8 +88,8 @@ async function main() {
 	let createCollectionTokensGas = 0;
 	result = await (await pixelcons.createCollection([14, 15, 16, 17, 18, 19], toBytes8('Grp1'))).wait();
 	createCollectionTokensGas += result.gasUsed.toNumber();
-	//result = await (await pixelcons.createCollection([30, 31, 32, 33, 34, 35, 36, 37, 38, 39], toBytes8('Grp2'))).wait();
-	//createCollectionTokensGas += result.gasUsed.toNumber();
+	result = await (await pixelcons.createCollection([30, 31, 32, 33, 34, 35, 36, 37, 38, 39], toBytes8('Grp2'))).wait();
+	createCollectionTokensGas += result.gasUsed.toNumber();
 
 	//fund addresses
 	//for (let i = 0; i < fundAddresses.length; i++) {
@@ -308,6 +308,7 @@ const pixelconDataLoad = [
 	{ id: '0x00ee00000efa9000eea7dd00299ccdd014dcccdf11ddccf7011ddfff00114442', name: 'BPencil' },
 	{ id: '0x00ee00000efa4000eea79900244aa990149aaa9f1199aaf701199fff00114442', name: 'YPencil' },
 	{ id: '0x00ee00000efa9000eea73300299bb330143bbb3f1133bbf701133fff00114442', name: 'GPencil' },
+	/*
 	{ id: '0x776ccccc77888ecc788888ecc8777826c8888827cc8882ccbbbd1bbb3336d333', name: 'Sign' },
 	{ id: '0xccccccc6ccbbb3676b8bb31773bb3816763311ccccc42cccb8b9413b33333333', name: 'AplTree' },
 	{ id: '0xc7cccccccccb3ccccb3b3ccccb3b1b3cc3bb1b3ccc3bb3ccaaab324999999999', name: 'Cactus' },
@@ -324,6 +325,7 @@ const pixelconDataLoad = [
 	{ id: '0xccccccccc44cc99ccffc9ff9ddddeeeefdd44eeffddffeefb1fccfeb311cc223', name: 'Family' },
 	{ id: '0x3333bbb3333bb89b33101a8b316101bb301000b3310001334410144444444444', name: 'Bomb' },
 	{ id: '0x7e7d644447e7644444707e44447777441dd11000400000044110000421d10002', name: 'Rabbit' },
+	*/
 ];
 
 main()
