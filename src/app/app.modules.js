@@ -1,5 +1,6 @@
 (function () {
 	var app = angular.module('App', ['ngMaterial', 'ngRoute']);
+	var ignoreReload = false;
 
 	// Configuration
 	app.config(['$mdThemingProvider', function ($mdThemingProvider) {
@@ -55,6 +56,11 @@
 				controller: 'TermsPageCtrl',
 				controllerAs: 'ctrl'
 			})
+			.when("/:qrcode", {
+				templateUrl: HTMLTemplates['page.details'],
+				controller: 'DetailsPageCtrl',
+				controllerAs: 'ctrl'
+			})
 			.otherwise({
 				redirectTo: '/'
 			});
@@ -62,34 +68,57 @@
 		// use the HTML5 History API
 		$locationProvider.html5Mode(true);
 	}]);
-	app.run(['$rootScope', '$location', '$timeout', '$templateCache', '$http',
-		function ($rootScope, $location, $timeout, $templateCache, $http) {
+	app.run(['$route', '$rootScope', '$location', '$timeout', '$templateCache', '$http', '$window',
+		function ($route, $rootScope, $location, $timeout, $templateCache, $http, $window) {
 			var lastPage = $location.path();
+			var replacementRoute = null;
 
 			// always scroll to top on page load
 			$rootScope.$on("$locationChangeSuccess", function (data) {
-				var currPage = $location.path();
-				if (lastPage != currPage) {
-					$('#view')[0].style.display = 'none'
-					$timeout(function () { $('#scrollTarget').scrollTop(0); });
+				let currPage = $location.path();
+				if (replacementRoute !== null) {
+					$route.current = replacementRoute;
+					replacementRoute = null;
+				} else if (lastPage != currPage) {
+					let viewElement = $window.document.getElementById('view')
+					if(viewElement) {
+						viewElement.style.display = 'none';
+						$timeout(function () {
+							$window.document.getElementById('scrollTarget').scrollTop = 0;
+						});
+					}
 				}
 				lastPage = currPage;
 			});
+			
+			
+			// add reload parameter to the location path function
+			var _locationPath = $location.path;
+			$location.path = function (path, reload) {
+				if (reload === false) {
+					replacementRoute = $route.current;
+					ignoreReload = true;
+				}
+				return _locationPath.apply($location, [path]);
+			};
 
 			// pre-load dialogs
 			$http.get(HTMLTemplates['dialog.collection'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.pixelcon'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.send'], { cache: $templateCache });
+			$http.get(HTMLTemplates['dialog.settings'], { cache: $templateCache });
 		}]);
 
 
 	// Main controller
 	app.controller('AppCtrl', AppCtrl);
 
-	AppCtrl.$inject = ['$scope'];
-	function AppCtrl($scope) {
-
-		//nothing...
-
+	AppCtrl.$inject = ['$scope', 'decoder'];
+	function AppCtrl($scope, decoder) {
+		$scope.$on('$routeChangeStart', function($event, next, current) {
+			//clear out custom backgrounds
+			if(!ignoreReload) decoder.updateBackground(null);
+			ignoreReload = false;
+		});
 	}
 }());

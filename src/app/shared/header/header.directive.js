@@ -12,6 +12,7 @@
 		_this.waitingTransactions = [];
 		_this.account = null;
 		_this.setAccount = setAccount;
+		_this.getNetworkClass = getNetworkClass;
 		_this.goPath = goPath;
 		_this.goDetails = goDetails;
 		_this.closeMenu = $mdMenu.hide;
@@ -25,8 +26,8 @@
 
 		// Watch for screen size changes
 		_this.screenSize = {};
-		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
-		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function (md) { _this.screenSize['md'] = md; });
+		$scope.$watch(function () { return $mdMedia('gt-sm'); }, function (lg) { _this.screenSize['lg'] = lg; });
+		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-sm'); }, function (md) { _this.screenSize['md'] = md; });
 		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
 
 		// Watch for path changes
@@ -41,19 +42,12 @@
 		// Configure state data
 		updateState();
 		function updateState() {
-			var web3state = web3Service.getState();
+			let web3state = web3Service.getState();
 			_this.noWeb3 = (web3state == "not_enabled" || web3Service.isReadOnly());
 			_this.loggedIn = (web3state == "ready" && !web3Service.isReadOnly());
 			_this.web3error = (web3state != "not_enabled" && web3state != "ready" && !web3Service.isReadOnly());
 			_this.web3ProviderName = web3Service.getProviderName();
 			_this.privacyMode = web3Service.isPrivacyMode();
-		};
-
-		// Configure network data
-		updateNetwork();
-		function updateNetwork() {
-			_this.net = web3Service.getExpectedNetwork();
-			_this.badNetwork = web3Service.isWrongNetwork();
 		};
 
 		// Configure user account icon
@@ -62,6 +56,7 @@
 			let address = web3Service.getActiveAccount();
 			if (address) {
 				_this.accountAddress = address;
+				_this.userAccountId = web3Service.compressAddressString(address, 16);
 				_this.userIcon = blockies.create({
 					seed: address.toLowerCase(),
 					size: 8,
@@ -70,14 +65,15 @@
 			} else {
 				_this.accountAddress = null;
 				_this.userIcon = '';
+				_this.userAccountId = '';
 			}
 		};
 
 		// Configure transaction indicator
 		updateTransactionIndicator();
 		function updateTransactionIndicator(transactionData) {
-			var waitingTransactions = web3Service.getWaitingTransactions();
-			var activeAccount = web3Service.getActiveAccount();
+			let waitingTransactions = web3Service.getWaitingTransactions();
+			let activeAccount = web3Service.getActiveAccount();
 			if (activeAccount) {
 				_this.waitingTransactions = waitingTransactions;
 				if (transactionData) {
@@ -90,27 +86,42 @@
 								.textContent(transactionData.type)
 								.position('top right')
 								.hideDelay(3000)
-						);
+						).then(function(response) {
+							if (response === 'ok') {
+								let url = web3Service.getTransactionLookupUrl(transactionData.txHash, transactionData.chainId);
+								if(url) $window.open(url);
+							}
+						});
 					} else {
 						$mdToast.show(
 							$mdToast.simple()
 								.action('Failed')
 								.highlightAction(true)
-								.highlightClass('md-warn headerTransactionEndButton ' + transactionData.txHash)
+								.highlightClass('md-warn headerTransactionEndButton ' + transactionData.chainId + ' ' + transactionData.txHash)
 								.textContent(transactionData.type)
 								.position('top right')
-								.hideDelay(3000)
-						);
+								.hideDelay(5000)
+						).then(function(response) {
+							if (response === 'ok') {
+								let url = web3Service.getTransactionLookupUrl(transactionData.txHash, transactionData.chainId);
+								if(url) $window.open(url);
+							}
+						});
 					}
 				}
 			}
 		};
-		$(document).on('click', '.headerTransactionEndButton', function (ev) {
-			//hook into the button click at the event level to avoid popup being blocked
-			var txHash = ev.currentTarget.classList[ev.currentTarget.classList.length - 1];
-			if (txHash == 'headerTransactionEndButton') txHash = null;
-			$window.open(web3Service.getTransactionLookupUrl(txHash));
-		});
+		
+		// Gets the network class info
+		function getNetworkClass(chainId) {
+			let networkName = web3Service.getNetworkName(chainId);
+			let networkClass = {};
+			if(networkName && networkName.toLowerCase) {
+				networkClass.mainnet = (networkName.toLowerCase().indexOf('mainnet') > -1);
+				networkClass.optimism = (networkName.toLowerCase().indexOf('optimism') > -1);
+			}
+			return networkClass;
+		};
 
 		// Set to given user account
 		function setAccount(account) {
@@ -119,12 +130,12 @@
 
 		// Go to the specified path
 		function goPath(path) {
-			if ($location.path() == path) $('#scrollTarget').scrollTop(0);
+			if ($location.path() == path) $window.document.getElementById('scrollTarget').scrollTop = 0;
 		}
 
 		// Go to lookup details page
-		function goDetails(txHash) {
-			return web3Service.getTransactionLookupUrl(txHash);
+		function goDetails(txHash, chainId) {
+			return web3Service.getTransactionLookupUrl(txHash, chainId);
 		}
 
 		// Show menu
@@ -152,14 +163,11 @@
 		web3Service.onStateChange(function () {
 			updateState();
 		}, $scope);
-		web3Service.onNetworkChange(function () {
-			updateNetwork();
-		}, $scope);
 		web3Service.onAccountDataChange(function () {
 			updateUserAccountIcon();
 		}, $scope);
-		web3Service.onWaitingTransactionsChange(function () {
-			updateTransactionIndicator();
+		web3Service.onWaitingTransactionsChange(function (transactionData) {
+			updateTransactionIndicator(transactionData);
 		}, $scope);
 	}
 

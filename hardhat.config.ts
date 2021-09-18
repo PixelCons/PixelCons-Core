@@ -27,19 +27,11 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 1337
     },
-	optimism_l1: {
-      url: 'http://192.168.1.69:9545',
+	local: {
+      url: 'HTTP://127.0.0.1:7545',
       accounts: {
         mnemonic: 'test test test test test test test test test test test junk'
-      },
-      gasPrice: 0, //temporary fix since L2 accounts are not initiated with eth
-    },
-	optimism_l2: {
-      url: 'http://192.168.1.69:8545',
-      accounts: {
-        mnemonic: 'test test test test test test test test test test test junk'
-      },
-      gasPrice: 0, //temporary fix since L2 accounts are not initiated with eth
+      }
     }
   },
 };

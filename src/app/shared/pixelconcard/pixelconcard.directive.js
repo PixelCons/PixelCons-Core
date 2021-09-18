@@ -3,12 +3,13 @@
 		.directive('pixelconcard', pixelconcard)
 		.controller('PixelConCardCtrl', PixelConCardCtrl);
 
-	PixelConCardCtrl.$inject = ['$scope', '$mdDialog', '$location', '$timeout', 'web3Service'];
-	function PixelConCardCtrl($scope, $mdDialog, $location, $timeout, web3Service) {
+	PixelConCardCtrl.$inject = ['$scope', '$mdDialog', '$location', '$timeout', 'web3Service', 'coreContract'];
+	function PixelConCardCtrl($scope, $mdDialog, $location, $timeout, web3Service, coreContract) {
 		var _this = this;
 		_this.coverAlwaysOn = false;
-		_this.groupInfoClick = groupInfoClick;
+		_this.infoItemClick = infoItemClick;
 		_this.pixelconClick = pixelconClick;
+		_this.shinyStyle = shinyStyle;
 		var clicking = false;
 
 		// Watch for changes to the pixelcon data
@@ -30,11 +31,6 @@
 			if (!_this.size) _this.size = 'md';
 		});
 
-		// Standardize disabled flag [boolean]
-		$scope.$watch('ctrl.disabled', function () {
-			_this.disabled = (_this.disabled === true || _this.disabled == 'true');
-		});
-
 		// Standardize disable collection [boolean]
 		$scope.$watch('ctrl.noCollection', function () {
 			_this.noCollection = (_this.noCollection === true || _this.noCollection == 'true');
@@ -45,21 +41,27 @@
 			_this.noAccount = (_this.noAccount === true || _this.noAccount == 'true');
 		});
 
-		// Standardize disable click functionality [boolean]
-		$scope.$watch('ctrl.noClick', function () {
-			_this.noClick = (_this.noClick === true || _this.noClick == 'true');
+		// Standardize selectable functionality [boolean]
+		$scope.$watch('ctrl.selectable', function () {
+			_this.selectable = (_this.selectable === true || _this.selectable == 'true');
+		});
+
+		// Standardize disable functionality [boolean]
+		$scope.$watch('ctrl.disabled', function () {
+			_this.disabled = (_this.disabled === true || _this.disabled == 'true');
 		});
 
 		// Update to the loaded account
+		updateToAccount();
 		function updateToAccount() {
-			var activeAccount = web3Service.getActiveAccount();
+			let activeAccount = web3Service.getActiveAccount();
 			_this.account = activeAccount;
 		}
 
 		// Refresh pixelcon data
 		function refreshPixelconData(pixelcon) {
 			if (pixelcon) {
-				_this.pixelcon = angular.extend({}, _this.pixelcon, pixelcon);
+				_this.pixelcon = angular.extend(_this.pixelcon, _this.pixelcon, pixelcon);
 			} else {
 				_this.pixelcon = null;
 			}
@@ -67,33 +69,52 @@
 
 		// Update from transaction
 		function updateFromTransaction(transactionData) {
-			if (transactionData && transactionData.success && transactionData.pixelcons) {
-				var pixelcon = findInList(transactionData.pixelcons);
+			if (transactionData && transactionData.success && (transactionData.pixelcons || transactionData.pixelconsL1)) {
+				let pixelcon = null;
+				if(_this.pixelcon && _this.pixelcon.isL1) pixelcon = findInList(transactionData.pixelconsL1);
+				else pixelcon = findInList(transactionData.pixelcons);
+				
 				if (pixelcon) refreshPixelconData(pixelcon);
 			}
 		}
 
 		// Pixelcon card clicked
 		function pixelconClick(ev) {
-			if (_this.noClick) return;
-			if (clicking) {
-				clicking = false;
+			if (_this.disabled) return;
+			if (_this.selectable) {
+				_this.pixelcon.selected = !_this.pixelcon.selected;
 			} else {
-				$location.url('/details/' + _this.pixelcon.id);
+				if (clicking) {
+					clicking = false;
+				} else {
+					$location.url('/details/' + _this.pixelcon.id + (_this.pixelcon.isL1 ? '?l1' : ''));
+				}
 			}
 		}
 
-		// Group info clicked
-		function groupInfoClick(ev) {
-			if (_this.noClick) return;
+		// Info item clicked
+		function infoItemClick(ev) {
+			if (_this.selectable || _this.disabled || !_this.dirHover) return;
 			clicking = true;
+		}
+		
+		// Gets the special shiny styling
+		function shinyStyle() {
+			if (_this.pixelcon && _this.pixelcon.isMergedL1) {
+				return {
+					'background': coreContract.getShinyColor(_this.pixelcon.id),
+					'color': '#f8f8f8',
+					'text-shadow': 'rgb(83 83 83) 0px 0px 10px'
+				}
+			}
+			return {};
 		}
 
 		// Gets page relevant pixelcon from list
 		function findInList(list) {
-			var pixelcon = null;
+			let pixelcon = null;
 			if (list) {
-				for (var i = 0; i < list.length; i++) {
+				for (let i = 0; i < list.length; i++) {
 					if (list[i].id == _this.pixelcon.id) {
 						pixelcon = list[i];
 						break;
@@ -107,7 +128,6 @@
 		web3Service.onAccountDataChange(function () {
 			updateToAccount();
 		}, $scope);
-		updateToAccount();
 
 		// Listen for transactions
 		web3Service.onWaitingTransactionsChange(updateFromTransaction, $scope);
@@ -119,10 +139,10 @@
 			scope: {
 				pixelcon: '=',
 				size: '@',
-				disabled: '@',
 				noCollection: '@',
 				noAccount: '@',
-				noClick: '@'
+				selectable: '@',
+				disabled: '@'
 			},
 			bindToController: true,
 			controller: 'PixelConCardCtrl',

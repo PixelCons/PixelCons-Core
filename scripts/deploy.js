@@ -9,9 +9,6 @@ const { utils } = require("ethers");
 // Settings
 const deploymentsFile = resolvePath('contracts/deploy/deployments.json');
 const fundAddresses = ['0xFcc7fFEFA71E54926b87DC0624394A4DaA4c860E', '0x181D54fDBBB7Cf5C3e3959967328B5fAE4402805'];
-const l1CrossDomainMessenger = '0x59b670e9fA9D0A427751Af201D676719a970857b';
-const l2Deployments = 'http://localhost:8082/contracts/deployments.json';
-const l2Network = 'optimism_l2';
 const gasPrice = 0.00000015; //150 Gwei
 const ethPrice = 2000;
 
@@ -20,44 +17,21 @@ const ethPrice = 2000;
 async function main() {
 	const deployerWallet = ethers.provider.getSigner();
 	const deployerAddress = await deployerWallet.getAddress();
-	const l1ChainId = (await ethers.provider.getNetwork()).chainId;
+	const chainId = (await ethers.provider.getNetwork()).chainId;
 	let result = null;
-	
-	//get L1 provider
-	let l2Provider = new ethers.providers.JsonRpcProvider(config.networks[l2Network].url);
-	let l2ChainId = (await l2Provider.getNetwork()).chainId;
 	
 	//open deployment file for updating
 	let file = await readFilePromise(deploymentsFile);
 	let deployAddresses = JSON.parse(file.data) || [];
-	clearDeployAddress(deployAddresses, l1ChainId);
+	clearDeployAddress(deployAddresses, chainId);
 
 	//deploy PixelCon contract
 	const PixelCons = await ethers.getContractFactory("PixelCons");
 	const pixelcons = await PixelCons.deploy();
 	result = await pixelcons.deployTransaction.wait();
 	let pixelconsDeployGas = result.gasUsed.toNumber();
-	updateDeployAddress(deployAddresses, l1ChainId, "PixelCons", pixelcons.address, result.transactionHash, result.blockHash, result.blockNumber);
+	updateDeployAddress(deployAddresses, chainId, "PixelCons", pixelcons.address, result.transactionHash, result.blockHash, result.blockNumber);
 	console.log("PixelCons deployed to:" + pixelcons.address);
-	
-	//look for L2 deployment
-	let pixelconsV2Address = await getPixelConsV2Address(l2ChainId);
-	let pixelconsMigratorDeployGas = null;
-	if(pixelconsV2Address) {
-		
-		//deploy PixelConsMigrator contract
-		const PixelConsMigrator = await ethers.getContractFactory("PixelConsMigrator");
-		const pixelconsMigrator = await PixelConsMigrator.deploy(pixelcons.address, pixelconsV2Address, l1CrossDomainMessenger);
-		result = await pixelconsMigrator.deployTransaction.wait();
-		pixelconsMigratorDeployGas = result.gasUsed.toNumber();
-		updateDeployAddress(deployAddresses, l1ChainId, "PixelConsMigrator", pixelconsMigrator.address, result.transactionHash, result.blockHash, result.blockNumber);
-		console.log("PixelConsMigrator deployed to:" + pixelconsMigrator.address);
-	} else {
-		
-		//skip PixelConsMigrator deployment
-		console.log("[!]Cannot determine L2 deployment locations");
-		console.log("[!]Skipping PixelConsMigrator deployment");
-	}
 
 	//update deployment file
 	await writeFilePromise(deploymentsFile, JSON.stringify(deployAddresses, null, 2));
@@ -92,17 +66,16 @@ async function main() {
 	createCollectionTokensGas += result.gasUsed.toNumber();
 
 	//fund addresses
-	//for (let i = 0; i < fundAddresses.length; i++) {
-	//	await deployerWallet.sendTransaction({
-	//		to: fundAddresses[i],
-	//		value: ethers.utils.parseEther("1")
-	//	});
-	//}
+	for (let i = 0; i < fundAddresses.length; i++) {
+		await deployerWallet.sendTransaction({
+			to: fundAddresses[i],
+			value: ethers.utils.parseEther("1")
+		});
+	}
 	
 	console.log("");
 	console.log("Deployment finished!");
 	console.log("pixelconsDeployGas: " + pixelconsDeployGas + " [$" + (pixelconsDeployGas*gasPrice*ethPrice).toFixed(2) + "]");
-	if(pixelconsMigratorDeployGas) console.log("pixelconsMigratorDeployGas: " + pixelconsMigratorDeployGas + " [$" + (pixelconsMigratorDeployGas*gasPrice*ethPrice).toFixed(2) + "]");
 	console.log("setTokenURITemplateGas: " + setTokenURITemplateGas + " [$" + (setTokenURITemplateGas*gasPrice*ethPrice).toFixed(2) + "]");
 	console.log("createTokensGas: " + createTokensGas + " [$" + (createTokensGas*gasPrice*ethPrice).toFixed(2) + "]");
 	console.log("createCollectionTokensGas: " + createCollectionTokensGas + " [$" + (createCollectionTokensGas*gasPrice*ethPrice).toFixed(2) + "]");
@@ -206,21 +179,6 @@ function doGET(url) {
 		});
     });
 }
-async function getPixelConsV2Address(l2ChainId) {
-	try {
-		let deploymentData = JSON.parse(await doGET(l2Deployments));
-		for (let i = 0; i < deploymentData.length; i++) {
-			if (deploymentData[i].id == l2ChainId) {
-				for (let j = 0; j < deploymentData[i].contracts.length; j++) {
-					if (deploymentData[i].contracts[j].name == 'PixelConsV2') {
-						return deploymentData[i].contracts[j].address;
-					}
-				}
-			}
-		}
-	} catch (err) { }
-	return null;
-}
 
 //dataset
 const pixelconDataLoad = [
@@ -308,24 +266,6 @@ const pixelconDataLoad = [
 	{ id: '0x00ee00000efa9000eea7dd00299ccdd014dcccdf11ddccf7011ddfff00114442', name: 'BPencil' },
 	{ id: '0x00ee00000efa4000eea79900244aa990149aaa9f1199aaf701199fff00114442', name: 'YPencil' },
 	{ id: '0x00ee00000efa9000eea73300299bb330143bbb3f1133bbf701133fff00114442', name: 'GPencil' },
-	/*
-	{ id: '0x776ccccc77888ecc788888ecc8777826c8888827cc8882ccbbbd1bbb3336d333', name: 'Sign' },
-	{ id: '0xccccccc6ccbbb3676b8bb31773bb3816763311ccccc42cccb8b9413b33333333', name: 'AplTree' },
-	{ id: '0xc7cccccccccb3ccccb3b3ccccb3b1b3cc3bb1b3ccc3bb3ccaaab324999999999', name: 'Cactus' },
-	{ id: '0xccc7cccccc8822ccc888222c88882222cd7d616cc777666cb7d76663bbbbbbbb', name: 'House' },
-	{ id: '0xccccccccccc33cccca913ccccc33ccccc447cc6cc47776cccc67777c11111111', name: 'Duck' },
-	{ id: '0xcc1110ccc111110ccc070dccc9976dcccc8822cc46778644c71786dc677766d6', name: 'SnowMan' },
-	{ id: '0xeeeeeeee9aaaaaaed9d9d9cec0c0c0ce8aaaa9aa9009900a10011001dddddddd', name: 'Bus' },
-	{ id: '0xeeeeeeeeee3333eee36636eee3cc3cee8333333a3003300310011001dddddddd', name: 'Car' },
-	{ id: '0x9aa9e888e99eeeeeeeee88888887688eee7766eee333111e33333111bbbbb333', name: 'Mountain' },
-	{ id: '0x88888888899944488cc7112889994448ecc7112ef999444fd9c94141dddddddd', name: 'Building' },
-	{ id: '0xccc77cccccc66cccc76a976cc769476cccc773ccccc66c3ccccccc3c44444434', name: 'Flower' },
-	{ id: '0xcccccccccc8722ccc7e8826cc888722cccc94ccccccf9ccc3bbb333313bbbb31', name: 'Mushroom' },
-	{ id: '0xccccccccc44cc99ccffc9ff9ddddeeeefdd99eeffd9ff9efb1f88feb31188223', name: 'Family' },
-	{ id: '0xccccccccc44cc99ccffc9ff9ddddeeeefdd44eeffddffeefb1fccfeb311cc223', name: 'Family' },
-	{ id: '0x3333bbb3333bb89b33101a8b316101bb301000b3310001334410144444444444', name: 'Bomb' },
-	{ id: '0x7e7d644447e7644444707e44447777441dd11000400000044110000421d10002', name: 'Rabbit' },
-	*/
 ];
 
 main()

@@ -20,6 +20,7 @@ accounticon .accountIconDirectiveTransition .ng-hide-remove {
 }
 accounticon .ng-hide {
 	opacity: 0;
+	filter: alpha(opacity=0);
 }
 
 /* Main Appearance */

@@ -1,10 +1,10 @@
 pragma solidity ^0.4.24;
 
-import "./v1/AddressUtils.sol";
-import "./v1/StringUtils.sol";
-import "./v1/Ownable.sol";
-import "./v1/ERC721.sol";
-import "./v1/ERC721Receiver.sol";
+import "./AddressUtils.sol";
+import "./StringUtils.sol";
+import "./Ownable.sol";
+import "./ERC721.sol";
+import "./ERC721Receiver.sol";
 
 
 /**

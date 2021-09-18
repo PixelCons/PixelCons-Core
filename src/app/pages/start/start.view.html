@@ -10,7 +10,7 @@
 		<div class="fullCard textMedium textLight textCenter">
 		
 			<div ng-if="!ctrl.activeAccount">
-				<div class="ethereumImage crispImage"><img src="/img/screen/ethereum.png" alt="Ethereum"></div>
+				<div class="ethereumImage crispImage"><img src="/img/large/ethereum.png" alt="Ethereum"></div>
 				<div class="textBox large textSelectable">
 					<div class="textExLarge textBold textDark textCenter">Create an Ethereum Account</div><br/>
 					PixelCons is a decentralized application built on the Ethereum blockchain. If you want to create and trade PixelCons, you must first make an Ethereum account. If you are new to Ethereum we recommend the following setup steps...
@@ -71,7 +71,7 @@
 							<div ng-if="ctrl.recommendMetaMask">First, you need to be viewing this site from a desktop web browser that is compatible with Ethereum apps. Please make sure you are using either <a class="light textDark textBold" target="_blank" href="https://www.google.com/chrome/">Chrome</a>, <a class="light textDark textBold" target="_blank" href="https://www.mozilla.org/en-US/firefox/">Firefox</a>, <a class="light textDark textBold" target="_blank" href="https://brave.com/">Brave</a> or <a class="light textDark textBold" target="_blank" href="https://www.microsoft.com/en-us/edge">Edge</a>.</div>
 							<div ng-if="!ctrl.recommendMetaMask">First, you need to be viewing this site from a web browser that is compatible with Ethereum apps. Please make sure you are using either <a class="light textDark textBold" target="_blank" href="https://www.google.com/chrome/">Chrome</a>, <a class="light textDark textBold" target="_blank" href="https://www.mozilla.org/en-US/firefox/">Firefox</a>, <a class="light textDark textBold" target="_blank" href="https://brave.com/">Brave</a>, <a class="light textDark textBold" target="_blank" href="https://www.microsoft.com/en-us/edge">Edge</a> or another compatible browser.</div>
 						</div>
-						<div class="stepContentImage"><img src="/img/screen/browsers.png"></div>
+						<div class="stepContentImage"><img src="/img/large/browsers.png"></div>
 					</div>
 				
 					<div class="stepContentPage over" ng-class="{'stepTabTransition': ctrl.loaded, 'hidden':ctrl.stepTab!=2}">
@@ -81,8 +81,8 @@
 							<div ng-if="!ctrl.recommendMetaMask" class="textExLarge textBold textDark textCenter">2. Connect to Ethereum</div><br/>
 							<div ng-if="!ctrl.recommendMetaMask">Your browser now needs to be able to connect to the Ethereum blockchain. Please make sure your browser is providing the Ethereum JavaScript API to loaded web pages.</div>
 						</div>
-						<div ng-if="ctrl.recommendMetaMask" class="stepContentImage md-whiteframe-3dp"><img src="/img/screen/metamask.png"></div>
-						<div ng-if="!ctrl.recommendMetaMask" class="stepContentImage"><img src="/img/screen/web3.png"></div>
+						<div ng-if="ctrl.recommendMetaMask" class="stepContentImage md-whiteframe-3dp"><img src="/img/large/metamask.png"></div>
+						<div ng-if="!ctrl.recommendMetaMask" class="stepContentImage"><img src="/img/large/web3.png"></div>
 					</div>
 				
 					<div class="stepContentPage over" ng-class="{'stepTabTransition': ctrl.loaded, 'hidden':ctrl.stepTab!=3}">
@@ -91,7 +91,7 @@
 							<div ng-if="ctrl.recommendMetaMask">Lastly, please make sure you have setup and are logged into your Ethereum account in MetaMask. You should now see your account pictured in the top right corner of the site. Please take some time to familiarize yourself with Ethereum and the PixelCons app before funding your account with Eth.</div>
 							<div ng-if="!ctrl.recommendMetaMask">Lastly, please make sure you have setup and are logged into your Ethereum account. You should now see your account pictured in the top right corner of the site. Please take some time to familiarize yourself with Ethereum and the PixelCons app before funding your account with Eth.</div>
 						</div>
-						<div class="stepContentImageWrapper"><div class="stepContentImage md-whiteframe-3dp"><img src="/img/screen/account.png"></div></div>
+						<div class="stepContentImageWrapper"><div class="stepContentImage md-whiteframe-3dp"><img src="/img/large/account.png"></div></div>
 					</div>
 					
 				</div>
@@ -109,44 +109,45 @@
 	<div class="startCardContainer colorLight textCenter textSelectable">
 		<br/>
 
-		<div class="centerContent textExLarge textBold textDark">
+		<div class="centerContent textExLarge textBold textDark clickable" ng-click="ctrl.toggleHowToSection('browse')">
 			<div class="iconImg large searchIcon"></div>
 			Browse PixelCons
+			<div class="iconImg large" ng-class="{'expandAllIcon':!ctrl.checkHowToSectionExpanded('browse'), 'collapseAllIcon':ctrl.checkHowToSectionExpanded('browse')}"></div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideSearchByName = !ctrl.hideSearchByName">
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.browse.byName = !ctrl.hideHowTo.browse.byName">
 				Search by Name
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideSearchByName, 'collapseIcon':!ctrl.hideSearchByName}"></div>
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.browse.byName, 'collapseIcon':!ctrl.hideHowTo.browse.byName}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideSearchByName}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.browse.byName}">
 				<div class="expandContainerText textMedium textLight">
-					At the top of the the <b>Browse</b> page, there is a search bar to search for PixelCons by name. The results will be sorted by closest match first with a page select located at the bottom. Leaving this blank simply fetches all PixelCons currently in existence.
+					At the top of the the <a class="plain textDark textBold" href="/search">Browse</a> page, there is a search bar to search for PixelCons by name. The results will be sorted by closest match first with a page select located at the bottom. Leaving this blank simply fetches all PixelCons currently in existence.
 				</div>
-				<img class="screenLink md-whiteframe-3dp" src="/img/screen/screen1.png" alt="Search for PixelCons" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen1.png" alt="Search for PixelCons" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideSearchForSale = !ctrl.hideSearchForSale">
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.browse.forSale = !ctrl.hideHowTo.browse.forSale">
 				Search PixelCons for Sale
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideSearchForSale, 'collapseIcon':!ctrl.hideSearchForSale}"></div>
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.browse.forSale, 'collapseIcon':!ctrl.hideHowTo.browse.forSale}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideSearchForSale}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.browse.forSale}">
 				<div class="expandContainerText textMedium textLight">
-					You can search for PixelCons that are for sale on <a class="light textDark textBold" href="https://opensea.io/assets/pixelcons?toggle%5Bon_sale%5D=true">OpenSea</a>. Any other market that supports ERC-721 NFTs should work too.
+					You can search for PixelCons that are for sale on <a class="light textDark textBold" href="https://opensea.io/assets/pixelcons?toggle%5Bon_sale%5D=true">OpenSea</a>. Any other market that supports ERC-721 NFTs should allow for trading as well.
 				</div>
-				<img class="screenLink md-whiteframe-3dp" src="/img/screen/screen2.png" alt="Search for PixelCons" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen2.png" alt="Search for PixelCons" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideSearchPixelconDetails = !ctrl.hideSearchPixelconDetails">
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.browse.results = !ctrl.hideHowTo.browse.results">
 				PixelCon Result Details
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideSearchPixelconDetails, 'collapseIcon':!ctrl.hideSearchPixelconDetails}"></div>
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.browse.results, 'collapseIcon':!ctrl.hideHowTo.browse.results}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideSearchPixelconDetails}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.browse.results}">
 				<div class="expandContainerText textMedium textLight">
-					PixelCons are displayed with different indicators to illustrate their details at a glance. PixelCons that you own will have the account icon in the bottom right corner. If a PixelCon is part of a collection, it will have a collection icon in the bottom left corner. Additionally, hovering your cursor over each result will show specifics about what collection it might belong to.
+					PixelCons are displayed with different indicators to illustrate their details at a glance. PixelCons that you own will have the account icon in the bottom right corner. If a PixelCon is part of a collection, it will have a collection icon in the bottom left corner. Shiny PixelCons will display stars in the top right corner and feature a colorful gradient. Additionally, hovering your cursor over each result will show specifics about what collection it might belong to.
 				</div>
-				<img class="screenLink md-whiteframe-3dp" src="/img/screen/screen3.png" alt="Search for PixelCons" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen3.png" alt="Search for PixelCons" ng-click="">
 			</div>
 		</div>
 		
@@ -154,80 +155,126 @@
 		<div class="divider colorGray"></div>
 		<br/>
 		
-		<div class="centerContent textExLarge textBold textDark">
-			<div class="iconImg large createIcon"></div>
-			View/Create PixelCons
+		<div class="centerContent textExLarge textBold textDark clickable" ng-click="ctrl.toggleHowToSection('details')">
+			<div class="iconImg large listIcon"></div>
+			View Details
+			<div class="iconImg large" ng-class="{'expandAllIcon':!ctrl.checkHowToSectionExpanded('details'), 'collapseAllIcon':ctrl.checkHowToSectionExpanded('details')}"></div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideViewPixelcon = !ctrl.hideViewPixelcon">
-				View PixelCon
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideViewPixelcon, 'collapseIcon':!ctrl.hideViewPixelcon}"></div>
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.details.pixelcon = !ctrl.hideHowTo.details.pixelcon">
+				PixelCon Details
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.details.pixelcon, 'collapseIcon':!ctrl.hideHowTo.details.pixelcon}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideViewPixelcon}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.details.pixelcon}">
 				<div class="expandContainerText textMedium textLight">
-				Clicking on a PixelCon from any page, will take you the <b>PixelCon Details</b> page. Here you can see additional information about a PixelCon like Name, Number, Date Created, Creator and Owner. You can also see details about the PixelCons Collection if applicable.
+				Clicking on a PixelCon from any page, will take you to the <b>PixelCon Details</b> page. Here you can see additional information about a PixelCon like Name, Number, Date Created, Hosting Network, Creator and Owner. You can also see details about the PixelCons Collection if applicable. Shiny PixelCons will show with stars and a colorful gradient.
 				</div>
-				<img class="screenLink small md-whiteframe-3dp" src="/img/screen/screen4.png" alt="Create PixelCons" ng-click="">
+				<img class="screenLink small md-whiteframe-3dp" src="/img/large/screen4.png" alt="Create PixelCons" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideEditPixelcon = !ctrl.hideEditPixelcon">
-				Edit PixelCon
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideEditPixelcon, 'collapseIcon':!ctrl.hideEditPixelcon}"></div>
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.details.shinyPixelcons = !ctrl.hideHowTo.details.shinyPixelcons">
+				Shiny PixelCons
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.details.shinyPixelcons, 'collapseIcon':!ctrl.hideHowTo.details.shinyPixelcons}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideEditPixelcon}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.details.shinyPixelcons}">
 				<div class="expandContainerText textMedium textLight">
-				On the <b>PixelCon Details</b> page, if you are the current owner you will see a menu button with a drop down for different actions. As the owner, you have the option of sending it to another account. Additionally as the creator and current owner, you can rename the PixelCon.
+				PixelCons on the L2 network (the default and more efficient network) become shiny when their L1 version (on Ethereum mainnet) is merged with them. This means that the owner of a shiny PixelCon also has the withdraw rights of the L1 version back to the Ethereum mainnet. Merging and withdrawing of shiny PixelCons is done from a users <a class="plain textDark textBold" href="/account">Account</a> page.
 				</div>
-				<img class="screenLink small md-whiteframe-3dp" src="/img/screen/screen5.png" alt="Create PixelCons" ng-click="">
+				<img class="screenLink small md-whiteframe-3dp" src="/img/large/screen4.png" alt="Create PixelCons" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideViewCollection = !ctrl.hideViewCollection">
-				View Collection
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideViewCollection, 'collapseIcon':!ctrl.hideViewCollection}"></div>
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.details.l1Pixelcons = !ctrl.hideHowTo.details.l1Pixelcons">
+				L1 PixelCons
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.details.l1Pixelcons, 'collapseIcon':!ctrl.hideHowTo.details.l1Pixelcons}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideViewCollection}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.details.l1Pixelcons}">
 				<div class="expandContainerText textMedium textLight">
-				Clicking on the collection icon from the <b>PixelCon Details</b> page, will take you the <b>Collection Details</b> page. Here you can see all the PixelCons in the collection as well as the collection creator.
+				While PixelCons default to being hosted on the more efficient L2 network, L1 PixelCons instead exist on the Ethereum mainnet. L1 PixelCons require more gas to interact with which tend to make them intrinsically more valuable, but can also merged into their L2 versions to create a shiny PixelCon on the more efficient L2 network. A user can view all L1 PixelCons they own from their <a class="plain textDark textBold" href="/account">Account</a> page.
 				</div>
-				<img class="screenLink md-whiteframe-3dp" src="/img/screen/screen6.png" alt="Create PixelCons" ng-click="">
+				<img class="screenLink small md-whiteframe-3dp" src="/img/large/screen4.png" alt="Create PixelCons" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideEditCollection = !ctrl.hideEditCollection">
-				Edit Collection
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideEditCollection, 'collapseIcon':!ctrl.hideEditCollection}"></div>
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.details.collection = !ctrl.hideHowTo.details.collection">
+				PixelCon Collections
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.details.collection, 'collapseIcon':!ctrl.hideHowTo.details.collection}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideEditCollection}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.details.collection}">
 				<div class="expandContainerText textMedium textLight">
-				On the <b>Collection Details</b> page, if you are the owner and creator of all PixelCons in the collection you will see a menu button with a drop down for different actions. These actions include renaming and clearing the collection.
+				PixelCons can be arranged into collections by their creators. Clicking on the collection icon from the <b>PixelCon Details</b> page, will take you the <b>Collection Details</b> page. Here you can see all the PixelCons in the collection as well as the collection creator.
 				</div>
-				<img class="screenLink md-whiteframe-3dp" src="/img/screen/screen7.png" alt="Create PixelCons" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen6.png" alt="Create PixelCons" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideViewCreator = !ctrl.hideViewCreator">
-				View Creator
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideViewCreator, 'collapseIcon':!ctrl.hideViewCreator}"></div>
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.details.creator = !ctrl.hideHowTo.details.creator">
+				Creator View
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.details.creator, 'collapseIcon':!ctrl.hideHowTo.details.creator}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideViewCreator}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.details.creator}">
 				<div class="expandContainerText textMedium textLight">
 				Clicking on the creator icon from the <b>PixelCon Details</b> or <b>Collection Details</b> page, will take you the <b>Creator Details</b> page. Here you can see all the PixelCons that were created by the creator account.
 				</div>
-				<img class="screenLink md-whiteframe-3dp" src="/img/screen/screen8.png" alt="Create PixelCons" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen8.png" alt="Create PixelCons" ng-click="">
+			</div>
+		</div>
+		
+		<br/><br/>
+		<div class="divider colorGray"></div>
+		<br/>
+		<div class="centerContent textExLarge textBold textDark clickable" ng-click="ctrl.toggleHowToSection('create')">
+			<div class="iconImg large createIcon"></div>
+			Create PixelCons
+			<div class="iconImg large" ng-class="{'expandAllIcon':!ctrl.checkHowToSectionExpanded('create'), 'collapseAllIcon':ctrl.checkHowToSectionExpanded('create')}"></div>
+		</div>
+		<div class="centerContent expandContainer">
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.create.pixelcon = !ctrl.hideHowTo.create.pixelcon">
+				Create PixelCons
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.create.pixelcon, 'collapseIcon':!ctrl.hideHowTo.create.pixelcon}"></div>
+			</div>
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.create.pixelcon}">
+				<div class="expandContainerText textMedium textLight">
+				On the <b>Create</b> page, you can draw your own PixelCons from a palette of sixteen colors. When you are finished, click the create button to check that it does not already exist. All PixelCons must be unique, so make something new and creative! Additionally, you can make your PixelCons shiny through your <b>Account</b> page.
+				</div>
+				<img class="screenLink small md-whiteframe-3dp" src="/img/large/screen9.png" alt="Create PixelCons" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideCreatePixelcon = !ctrl.hideCreatePixelcon">
-				Create PixelCon
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideCreatePixelcon, 'collapseIcon':!ctrl.hideCreatePixelcon}"></div>
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.create.collection = !ctrl.hideHowTo.create.collection">
+				Create Collections
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.create.collection, 'collapseIcon':!ctrl.hideHowTo.create.collection}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideCreatePixelcon}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.create.collection}">
 				<div class="expandContainerText textMedium textLight">
-				On the <b>Create</b> page, you can draw your own PixelCons from a palette of sixteen colors. When you are finished, click the create button to check that it does not already exist. All PixelCons must be unique, so make something new and creative!
+				At the top of the <b>Account</b> page, there is a toggle to switch to the creator view. From this view you can can create collections by clicking the create collection button and selecting the PixelCons you want to be grouped into a collection. You can only select PixelCons that you own and are not already in a collection.
 				</div>
-				<img class="screenLink small md-whiteframe-3dp" src="/img/screen/screen9.png" alt="Create PixelCons" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen14.png" alt="Your Account" ng-click="">
+			</div>
+		</div>
+		<div class="centerContent expandContainer">
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.create.editPixelcon = !ctrl.hideHowTo.create.editPixelcon">
+				Edit PixelCon
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.create.editPixelcon, 'collapseIcon':!ctrl.hideHowTo.create.editPixelcon}"></div>
+			</div>
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.create.editPixelcon}">
+				<div class="expandContainerText textMedium textLight">
+				On the <b>PixelCon Details</b> page, if you are the current owner you will see a menu button with a drop down for different actions. As the owner, you have the option of sending it to another account. Additionally as the creator and current owner, you can rename the PixelCon.
+				</div>
+				<img class="screenLink small md-whiteframe-3dp" src="/img/large/screen5.png" alt="Create PixelCons" ng-click="">
+			</div>
+		</div>
+		<div class="centerContent expandContainer">
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.create.editCollection = !ctrl.hideHowTo.create.editCollection">
+				Edit Collection
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.create.editCollection, 'collapseIcon':!ctrl.hideHowTo.create.editCollection}"></div>
+			</div>
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.create.editCollection}">
+				<div class="expandContainerText textMedium textLight">
+				On the <b>Collection Details</b> page, if you are the owner and creator of all PixelCons in the collection you will see a menu button with a drop down for different actions. These actions include renaming and clearing the collection.
+				</div>
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen7.png" alt="Create PixelCons" ng-click="">
 			</div>
 		</div>
 		
@@ -235,72 +282,85 @@
 		<div class="divider colorGray"></div>
 		<br/>
 		
-		<div class="centerContent textExLarge textBold textDark">
+		<div class="centerContent textExLarge textBold textDark clickable" ng-click="ctrl.toggleHowToSection('account')">
 			<div class="iconImg large accountIcon"></div>
 			Your Account
+			<div class="iconImg large" ng-class="{'expandAllIcon':!ctrl.checkHowToSectionExpanded('account'), 'collapseAllIcon':ctrl.checkHowToSectionExpanded('account')}"></div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideAccountActivity = !ctrl.hideAccountActivity">
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.account.activity = !ctrl.hideHowTo.account.activity">
 				Account Activity
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideAccountActivity, 'collapseIcon':!ctrl.hideAccountActivity}"></div>
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.account.activity, 'collapseIcon':!ctrl.hideHowTo.account.activity}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideAccountActivity}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.account.activity}">
 				<div class="expandContainerText textMedium textLight">
 				When logged in, your account icon will appear in the top right corner of the page. Clicking on this icon will display any pending transactions you've made as well as links to view their status on Etherscan. A spinner will also appear on this icon if you currently have any transactions being processed on the Ethereum network.
 				</div>
-				<img class="screenLink small md-whiteframe-3dp" src="/img/screen/screen10.png" alt="Your Account" ng-click="">
+				<img class="screenLink small md-whiteframe-3dp" src="/img/large/screen10.png" alt="Your Account" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideViewWallet = !ctrl.hideViewWallet">
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.account.wallet = !ctrl.hideHowTo.account.wallet">
 				View Wallet
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideViewWallet, 'collapseIcon':!ctrl.hideViewWallet}"></div>
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.account.wallet, 'collapseIcon':!ctrl.hideHowTo.account.wallet}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideViewWallet}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.account.wallet}">
 				<div class="expandContainerText textMedium textLight">
 				On the <b>Account</b> page, you can view the PixelCons that you currently own. You can sort your collection by either Name or Date Created.
 				</div>
-				<img class="screenLink md-whiteframe-3dp" src="/img/screen/screen11.png" alt="Your Account" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen11.png" alt="Your Account" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideSellPixelcon = !ctrl.hideSellPixelcon">
-				Sell PixelCon
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideSellPixelcon, 'collapseIcon':!ctrl.hideSellPixelcon}"></div>
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.account.sendPixelcons = !ctrl.hideHowTo.account.sendPixelcons">
+				Send PixelCons
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.account.sendPixelcons, 'collapseIcon':!ctrl.hideHowTo.account.sendPixelcons}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideSellPixelcon}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.account.sendPixelcons}">
+				<div class="expandContainerText textMedium textLight">
+				L1 PixelCons can only be sent from the <b>PixelCon Details</b> page. On this page you will see a menu button with a drop down of actions including one to send your PixelCon to another account.
+				</div>
+				<img class="screenLink small md-whiteframe-3dp" src="/img/large/screen13.png" alt="Your Account" ng-click="">
+			</div>
+		</div>
+		<div class="centerContent expandContainer">
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.account.sellPixelcons = !ctrl.hideHowTo.account.sellPixelcons">
+				Sell PixelCons
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.account.sellPixelcons, 'collapseIcon':!ctrl.hideHowTo.account.sellPixelcons}"></div>
+			</div>
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.account.sellPixelcons}">
 				<div class="expandContainerText textMedium textLight">
 				You can list PixelCons for sale through OpenSea. Visit your <a class="light textDark textBold" href="https://opensea.io/account">OpenSea</a> account page and make listings from there or manage existing ones and potential offers.
 				</div>
-				<img class="screenLink md-whiteframe-3dp" src="/img/screen/screen12.png" alt="Your Account" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen12.png" alt="Your Account" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideSendPixelcon = !ctrl.hideSendPixelcon">
-				Send PixelCon
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideSendPixelcon, 'collapseIcon':!ctrl.hideSendPixelcon}"></div>
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.account.makeShiny = !ctrl.hideHowTo.account.makeShiny">
+				Make PixelCons Shiny
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.account.makeShiny, 'collapseIcon':!ctrl.hideHowTo.account.makeShiny}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideSendPixelcon}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.account.makeShiny}">
 				<div class="expandContainerText textMedium textLight">
 				You can send ownership of your PixelCons to someone else by navigating to the <b>PixelCon Details</b> page. On this page you will see a menu button with a drop down of actions including one to send your PixelCon to another account.
 				</div>
-				<img class="screenLink small md-whiteframe-3dp" src="/img/screen/screen13.png" alt="Your Account" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen11.png" alt="Your Account" ng-click="">
 			</div>
 		</div>
 		<div class="centerContent expandContainer">
-			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideCreateCollection = !ctrl.hideCreateCollection">
-				Create Collection
-				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideCreateCollection, 'collapseIcon':!ctrl.hideCreateCollection}"></div>
+			<div class="expandContainerTitle textLarge textBold textLight clickable" ng-click="ctrl.hideHowTo.account.withdrawL1 = !ctrl.hideHowTo.account.withdrawL1">
+				Withdraw Shiny to L1
+				<div class="iconImg" ng-class="{'expandIcon':ctrl.hideHowTo.account.withdrawL1, 'collapseIcon':!ctrl.hideHowTo.account.withdrawL1}"></div>
 			</div>
-			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideCreateCollection}">
+			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.account.withdrawL1}">
 				<div class="expandContainerText textMedium textLight">
-				At the top of the <b>Account</b> page, there is a toggle to switch to the creator view. From this view you can can create collections by clicking the create collection button and selecting the PixelCons you want to be grouped into a collection. You can only select PixelCons that you own and are not already in a collection.
+				You can send ownership of your PixelCons to someone else by navigating to the <b>PixelCon Details</b> page. On this page you will see a menu button with a drop down of actions including one to send your PixelCon to another account.
 				</div>
-				<img class="screenLink md-whiteframe-3dp" src="/img/screen/screen14.png" alt="Your Account" ng-click="">
+				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen11.png" alt="Your Account" ng-click="">
 			</div>
 		</div>
 		
-		<br/><br/>
+		<br/><br/><br/>
 	</div>
 	
 	<div class="bottomSpacer"></div>

@@ -1,35 +1,51 @@
 <!-- PixelCon Card Directive -->
-<div class="pixelconCardDirectiveContainer" ng-class="{'xs':ctrl.size=='xs', 'sm':ctrl.size=='sm', 'md':ctrl.size=='md', 'lg':ctrl.size=='lg', 'xl':ctrl.size=='xl', 'clickable':!ctrl.noClick}" 
-		ng-mouseenter="dirHover=(!ctrl.noClick)" ng-mouseleave="dirHover=false">
-	<div class="pixelconCardDirectiveImage" ng-mouseenter="dirHover=(!ctrl.noClick)" ng-click="ctrl.pixelconClick($event)">
+<div class="pixelconCardDirectiveContainer" ng-class="{'xs':ctrl.size=='xs', 'sm':ctrl.size=='sm', 'md':ctrl.size=='md', 'lg':ctrl.size=='lg', 'xl':ctrl.size=='xl', 'disabled':ctrl.disabled, 'clickable':!ctrl.disabled}" 
+		ng-mouseenter="ctrl.dirHover=true" ng-mouseleave="ctrl.dirHover=false">
+	<div class="pixelconCardDirectiveImage" ng-mouseenter="ctrl.dirHover=true" ng-click="ctrl.pixelconClick($event)">
 		<pixelcon id="ctrl.pixelcon.id"></pixelcon>
-		<div class="pixelconCardDirectiveDisabledShade colorDark" ng-if="ctrl.disabled" ng-hide="dirHover || ctrl.coverAlwaysOn"></div>
-		<div class="pixelconCardDirectiveImageCover" ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-hide="!dirHover && !ctrl.coverAlwaysOn" ng-cloak>
-			<a ng-href="{{ctrl.noClick?'':'/details/'+ctrl.pixelcon.id}}" class="plain textDark">
+		<div class="pixelconCardDirectiveImageCover" ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-show="(ctrl.dirHover && !ctrl.selectable && !ctrl.disabled) || ctrl.coverAlwaysOn" ng-cloak>
+			<!-- Goto Link -->
+			<a ng-href="{{(ctrl.selectable || ctrl.disabled)?'':('/details/'+ctrl.pixelcon.id+(ctrl.pixelcon.isL1?'?l1':''))}}" class="plain textDark">
 				<div class="pixelconCardDirectiveGotoIcon"></div>
 			</a>
-			<a ng-href="{{ctrl.noClick?'':'/collection/'+ctrl.pixelcon.collection.index}}" class="plain textDark">
+			<!-- Collection Link -->
+			<a ng-href="{{(ctrl.selectable || ctrl.disabled)?'':'/collection/'+ctrl.pixelcon.collection.index}}" class="plain textDark">
 				<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveGroupContainer colorDarkOverlay clickable" 
-						ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded, 'onlyThree': !ctrl.pixelcon.collection.pixelcons[3].id && ctrl.pixelcon.collection.pixelcons[2].id}"
-						ng-if="!ctrl.noCollection && ctrl.pixelcon.collection" ng-click="ctrl.groupInfoClick($event)">
-					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[0].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[0].id"></pixelcon></div>
-					<div class="pixelconCardDirectiveGroupElementSpacer" ng-if="!ctrl.pixelcon.collection.pixelcons[3].id && ctrl.pixelcon.collection.pixelcons[2].id"></div>
-					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[1].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[1].id"></pixelcon></div>
-					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[2].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[2].id"></pixelcon></div>
-					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelcons[3].id"><pixelcon id="ctrl.pixelcon.collection.pixelcons[3].id"></pixelcon></div>
+						ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-if="!ctrl.noCollection && ctrl.pixelcon.collection" ng-click="ctrl.infoItemClick($event)">
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelconIds[0]"><pixelcon id="ctrl.pixelcon.collection.pixelconIds[0]"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElementSpacer" ng-if="!ctrl.pixelcon.collection.pixelconIds[3] && ctrl.pixelcon.collection.pixelconIds[2]"></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelconIds[1]"><pixelcon id="ctrl.pixelcon.collection.pixelconIds[1]"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelconIds[2]"><pixelcon id="ctrl.pixelcon.collection.pixelconIds[2]"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelconIds[3]"><pixelcon id="ctrl.pixelcon.collection.pixelconIds[3]"></pixelcon></div>
+				</div>
+			</a>
+			<!-- Account Link -->
+			<a ng-href="{{(ctrl.selectable || ctrl.disabled)?'':'/account'}}" class="plain textDark">
+				<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveAccountContainer colorDarkOverlay clickable" ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}"
+						ng-if="!ctrl.noAccount && ctrl.pixelcon.owner==ctrl.account" ng-click="ctrl.infoItemClick($event)">
+					<div class="pixelconCardDirectiveAccountContainerIcon"></div>
 				</div>
 			</a>
 		</div>
 	</div>
 
-	<div class="pixelconCardDirectiveInfo pixelconCardDirectiveFont textBold textDark colorLight" ng-click="ctrl.pixelconClick($event)"
-			ng-class="{'pixelconCardDirectiveTransition':ctrl.loaded}">
-		{{ctrl.pixelcon.name!==''?ctrl.pixelcon.name:'#'+ctrl.pixelcon.index}}
-		<div class="pixelconCardDirectiveDisabledShade colorDark" ng-if="ctrl.disabled" ng-hide="dirHover || ctrl.coverAlwaysOn"></div>
-		<div class="pixelconCardDirectiveGroupNotification" ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-hide="dirHover || ctrl.coverAlwaysOn" ng-if="!ctrl.reloading && !ctrl.noCollection && ctrl.pixelcon.collection"></div>
+	<!-- Bottom Info -->
+	<div class="pixelconCardDirectiveInfo pixelconCardDirectiveFont textBold colorLight" ng-click="ctrl.pixelconClick($event)" ng-style="ctrl.shinyStyle()"
+			ng-class="{'pixelconCardDirectiveTransition':ctrl.loaded, 'textDark':!ctrl.pixelcon.isL1, 'textLighter':ctrl.pixelcon.isL1, 'shiny':ctrl.pixelcon.isMergedL1, 'regular':!ctrl.pixelcon.isMergedL1}">
+		<div ng-cloak>{{ctrl.pixelcon.name!==''?ctrl.pixelcon.name:'#'+ctrl.pixelcon.index}}</div>
+		<div class="pixelconCardDirectiveGroupNotification" ng-if="!ctrl.reloading && !ctrl.noCollection && ctrl.pixelcon.collection"></div>
+		<div class="pixelconCardDirectiveAccountNotification" ng-if="!ctrl.reloading && !ctrl.noAccount && ctrl.pixelcon.owner==ctrl.account"></div>
 	</div>
 	
-	<div class="pixelconCardDirectiveNotification account colorDarkOverlay pixelconCardDirectiveTransition" ng-hide="dirHover || ctrl.coverAlwaysOn" ng-if="!ctrl.reloading && !ctrl.disabled && !ctrl.noAccount && ctrl.pixelcon.owner==ctrl.account">
-		<div class="walletIcon"></div>
+	<!-- L1 Badge -->
+	<div class="l1BadgeNetwork" ng-if="!ctrl.reloading && ctrl.pixelcon.isL1" ng-cloak></div>
+	<div class="l1Badge colorDarkOverlay" ng-if="!ctrl.reloading && ctrl.pixelcon.isL1" ng-cloak>L1</div>
+	
+	<!-- Check Box -->
+	<div class="pixelconCardCheck colorDarkOverlay" ng-class="{'hovering': ctrl.dirHover || ctrl.pixelcon.selected}" ng-if="ctrl.selectable" ng-show="ctrl.loaded && !ctrl.disabled" ng-cloak>
+		<md-checkbox ng-model="ctrl.pixelcon.selected" aria-label="pixelcon"></md-checkbox>
 	</div>
+	
+	<!-- Shine -->
+	<div class="pixelconCardDirectiveNotification shiny" ng-if="ctrl.pixelcon.isMergedL1" ng-cloak></div>
 </div>

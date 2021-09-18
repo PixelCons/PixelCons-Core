@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('SearchPageCtrl', SearchPageCtrl);
 
-	SearchPageCtrl.$inject = ['$scope', '$mdMedia', '$routeParams', '$location', 'web3Service', 'coreContract'];
-	function SearchPageCtrl($scope, $mdMedia, $routeParams, $location, web3Service, coreContract) {
+	SearchPageCtrl.$inject = ['$scope', '$mdMedia', '$routeParams', '$route', '$location', '$window', '$sce', 'web3Service', 'coreContract'];
+	function SearchPageCtrl($scope, $mdMedia, $routeParams, $route, $location, $window, $sce, web3Service, coreContract) {
 		var _this = this;
 		var maxInPage = 50;
 		var minGrade = 8;
@@ -18,7 +18,6 @@
 		_this.setSortOrder = setSortOrder;
 		_this.checkUpdateData = checkUpdateData;
 		_this.updatePage = updatePage;
-		_this.goPath = goPath;
 		_this.disableFilters = true;
 
 		var loadedFilter = {};
@@ -50,53 +49,55 @@
 				pixelconCount = total;
 
 				_this.grabbingData = false;
-				var page = $routeParams.page ? parseInt($routeParams.page) : null;
+				let page = $routeParams.page ? parseInt($routeParams.page) : null;
 				checkUpdateData(true, page);
 			}, function (reason) {
 				_this.grabbingData = false;
 				_this.loading = false;
-				_this.error = reason;
+				_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
 			});
 		}
 
 		// Check if data parameters have changed
 		function checkUpdateData(forceUpdate, gotoPage) {
-			if (_this.error) return;
-			if (dirtyDatabaseData) {
-				fetchDatabaseData();
-				return;
-			}
-
-			//update url parameters
-			if (($routeParams.search === undefined && _this.filter.searchText) || ($routeParams.search !== undefined && _this.filter.searchText != $routeParams.search)) {
-				$location.search('search', _this.filter.searchText ? _this.filter.searchText : undefined).replace();
-			}
-			if (($routeParams.desc === undefined && _this.filter.sortDesc) || ($routeParams.desc !== undefined && _this.filter.sortDesc == ($routeParams.desc != 'true'))) {
-				$location.search('desc', (_this.filter.sortDesc) ? 'true' : undefined).replace();
-			}
-
-			//name grading related filter changes?
-			if (forceUpdate || _this.filter.searchText != loadedFilter.searchText) {
-				loadedFilter = JSON.parse(JSON.stringify(_this.filter));
-
-				// get list of names or just grade?
-				if (loadedFilter.searchText) fetchNames(gotoPage);
-				else gradeNames(gotoPage);
-				return;
-			}
-
-			//other filter parameters changed?
-			var needToUpdate = false;
-			for (var i in _this.filter) {
-				if (_this.filter[i] != loadedFilter[i]) {
-					needToUpdate = true;
-					break;
+			web3Service.awaitState(function () {
+				if (_this.error) return;
+				if (dirtyDatabaseData) {
+					fetchDatabaseData();
+					return;
 				}
-			}
-			if (needToUpdate) {
-				loadedFilter = JSON.parse(JSON.stringify(_this.filter));
-				updatePage(1);
-			}
+
+				//update url parameters
+				if (($routeParams.search === undefined && _this.filter.searchText) || ($routeParams.search !== undefined && _this.filter.searchText != $routeParams.search)) {
+					$location.search('search', _this.filter.searchText ? _this.filter.searchText : undefined).replace();
+				}
+				if (($routeParams.desc === undefined && _this.filter.sortDesc) || ($routeParams.desc !== undefined && _this.filter.sortDesc == ($routeParams.desc != 'true'))) {
+					$location.search('desc', (_this.filter.sortDesc) ? 'true' : undefined).replace();
+				}
+
+				//name grading related filter changes?
+				if (forceUpdate || _this.filter.searchText != loadedFilter.searchText) {
+					loadedFilter = JSON.parse(JSON.stringify(_this.filter));
+
+					// get list of names or just grade?
+					if (loadedFilter.searchText) fetchNames(gotoPage);
+					else gradeNames(gotoPage);
+					return;
+				}
+
+				//other filter parameters changed?
+				let needToUpdate = false;
+				for (let i in _this.filter) {
+					if (_this.filter[i] != loadedFilter[i]) {
+						needToUpdate = true;
+						break;
+					}
+				}
+				if (needToUpdate) {
+					loadedFilter = JSON.parse(JSON.stringify(_this.filter));
+					updatePage(1);
+				}
+			}, true);
 		}
 
 		// Grades the database names based on filter data
@@ -128,8 +129,8 @@
 			pixelconFilterGrades = new Uint8Array(pixelconCount);
 
 			//all
-			for (var i = 0; i < pixelconCount; i++) {
-				var grade = loadedFilter.searchText.length ? gradeNameWithText(pixelconNames[i], loadedFilter.searchText) : 200;
+			for (let i = 0; i < pixelconCount; i++) {
+				let grade = loadedFilter.searchText.length ? gradeNameWithText(pixelconNames[i], loadedFilter.searchText) : 200;
 				if (grade > minGrade) pixelconFilterCount++;
 				if (grade > pixelconFilterGradeMax) pixelconFilterGradeMax = grade;
 				pixelconFilterGrades[i] = grade;
@@ -141,10 +142,10 @@
 
 		// Updates data to be displayed based on paging details
 		function updatePage(page) {
-			var scrollTarget = $('#scrollTarget');
-			var resultsCard = $('#searchPagePixelconWindow');
-			if (scrollTarget[0] && resultsCard[0] && resultsCard[0].offsetHeight < scrollTarget[0].offsetHeight) {
-				_this.displayHeight = resultsCard[0].offsetHeight + 'px';
+			let scrollTarget = $window.document.getElementById('scrollTarget');
+			let resultsCard = $window.document.getElementById('searchPagePixelconWindow');
+			if (scrollTarget && resultsCard && resultsCard.offsetHeight < scrollTarget.offsetHeight) {
+				_this.displayHeight = resultsCard.offsetHeight + 'px';
 			} else {
 				_this.displayHeight = '';
 			}
@@ -155,12 +156,12 @@
 			_this.pixelcons = [];
 
 			//loop from high score to low score, until page slots are filled
-			var indexes = [];
-			var startIndex = (page - 1) * maxInPage;
+			let indexes = [];
+			let startIndex = (page - 1) * maxInPage;
 			if (loadedFilter.sortDesc) {
 				//all desc
-				for (var grade = pixelconFilterGradeMax; grade > minGrade && indexes.length < maxInPage; grade--) {
-					for (var i = pixelconFilterGrades.length - 1; i >= 0 && indexes.length < maxInPage; i--) {
+				for (let grade = pixelconFilterGradeMax; grade > minGrade && indexes.length < maxInPage; grade--) {
+					for (let i = pixelconFilterGrades.length - 1; i >= 0 && indexes.length < maxInPage; i--) {
 						if (pixelconFilterGrades[i] == grade) {
 							if (startIndex > 0) startIndex--;
 							else indexes.push(i);
@@ -169,8 +170,8 @@
 				}
 			} else {
 				//all asc
-				for (var grade = pixelconFilterGradeMax; grade > minGrade && indexes.length < maxInPage; grade--) {
-					for (var i = 0; i < pixelconFilterGrades.length && indexes.length < maxInPage; i++) {
+				for (let grade = pixelconFilterGradeMax; grade > minGrade && indexes.length < maxInPage; grade--) {
+					for (let i = 0; i < pixelconFilterGrades.length && indexes.length < maxInPage; i++) {
 						if (pixelconFilterGrades[i] == grade) {
 							if (startIndex > 0) startIndex--;
 							else indexes.push(i);
@@ -189,7 +190,7 @@
 				_this.displayHeight = '';
 			}, function (reason) {
 				_this.loading = false;
-				_this.error = reason;
+				_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
 				_this.currPage = 0;
 				_this.displayHeight = '';
 			});
@@ -201,15 +202,15 @@
 			checkUpdateData();
 		}
 
-		// Go to the specified path
-		function goPath(path) {
-			$location.url(path);
-		}
-
 		// Listen for account data changes
 		web3Service.onAccountDataChange(function () {
 			checkUpdateData();
-		}, $scope);
+		}, $scope, true);
+
+		// Listen for network data changes
+		web3Service.onNetworkChange(function () {
+			if(_this.error) $route.reload();
+		}, $scope, true);
 
 		// Listen for transactions
 		web3Service.onWaitingTransactionsChange(function (transactionData) {
@@ -218,20 +219,20 @@
 
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////// Text Search Algorithm //////////////////////////////////////////////////////////////////
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		function gradeNameWithText(name, text) {
-			var lName = name.toLowerCase();
-			var lText = text.toLowerCase();
+			let lName = name.toLowerCase();
+			let lText = text.toLowerCase();
 
-			var highestGrade = 0;
-			var foundCharacterIndexesInText = new Array(name.length);
+			let highestGrade = 0;
+			let foundCharacterIndexesInText = new Array(name.length);
 			function searchForMatchingIndexes(nameIndex) {
 				if (nameIndex == name.length) {
 					//evaluate character index pattern (recursion end condition)
-					var grade = 0;
-					for (var i = 0; i < name.length; i++) {
-						var matchingIndex = foundCharacterIndexesInText[i];
+					let grade = 0;
+					for (let i = 0; i < name.length; i++) {
+						let matchingIndex = foundCharacterIndexesInText[i];
 
 						//1 point if not null
 						if (matchingIndex === null) {
@@ -240,8 +241,8 @@
 						grade += 1;
 
 						//1 point if index is unique
-						var repeated = false;
-						for (var j = 0; j < name.length; j++) {
+						let repeated = false;
+						for (let j = 0; j < name.length; j++) {
 							if (j != i && foundCharacterIndexesInText[j] === matchingIndex) {
 								repeated = true;
 								break;
@@ -256,7 +257,7 @@
 						if (i == 0 || foundCharacterIndexesInText[i - 1] === null) {
 							continue;
 						}
-						var lastIndex = foundCharacterIndexesInText[i - 1];
+						let lastIndex = foundCharacterIndexesInText[i - 1];
 
 						//1 point if this index is greater than the last
 						if (matchingIndex <= lastIndex) continue;
@@ -275,8 +276,8 @@
 
 				} else {
 					//search through 'text' to find all matching characters to 'name[nameIndex]'
-					var foundIndexInText = false;
-					for (var t = 0; t < text.length; t++) {
+					let foundIndexInText = false;
+					for (let t = 0; t < text.length; t++) {
 						if (lName[nameIndex] == lText[t]) {
 							foundIndexInText = true;
 							foundCharacterIndexesInText[nameIndex] = t;

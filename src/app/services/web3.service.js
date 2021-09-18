@@ -2,31 +2,68 @@
 	angular.module('App')
 		.service('web3Service', web3Service);
 
-	web3Service.$inject = ['$interval', '$timeout', '$q'];
-	function web3Service($interval, $timeout, $q) {
-		var _backupWeb3Provider = 'http://192.168.1.104:9545';
-		var _transactionWaitConfirmations = 1;
-		var _transactionWaitTimeout = 2 * 60 * 60 * 1000;
-		let _transactionWaitPoll = 1 * 1000;
-		var _transactionLookupUrl = 'https://etherscan.io/tx/<txHash>';
-		var _accountLookupUrl = 'https://etherscan.io/address/<address>';
-
+	web3Service.$inject = ['$interval', '$timeout', '$window', '$mdDialog', '$q'];
+	function web3Service($interval, $timeout, $window, $mdDialog, $q) {
+		const _networkConfig = [{
+			name: 'Local Ethereum[test]',
+			chainId: '1337',
+			nativeCurrency: {
+				name: 'ETH',
+				symbol: 'ETH',
+				decimals: 18
+			},
+			fallbackRPCs: [],//['http://127.0.0.1:7545/', 'https://127.0.0.1:7545/'],
+			blockExplorer: 'https://etherscan.io/',
+			transactionLU: '/tx/<txHash>',
+			accountLU: '/address/<address>'
+		},{
+			name: 'Mainnet',
+			chainId: '1'
+		},{
+			name: 'Ropsten',
+			chainId: '3'
+		},{
+			name: 'Rinkeby',
+			chainId: '4'
+		},{
+			name: 'Goerli',
+			chainId: '5'
+		},{
+			name: 'Kovan',
+			chainId: '42'
+		},{
+			name: 'Polygon',
+			chainId: '137'
+		},{
+			name: 'Arbitrum',
+			chainId: '421611'
+		},{
+			name: 'Optimism',
+			chainId: '10'
+		}];
+		const _transactionWaitConfirmations = 1;
+		const _transactionWaitTimeout = 2 * 60 * 60 * 1000;
+		const _transactionWaitPoll = 1 * 1000;
+		const _noAccountError = 'No Account';
+		const _notEnabledError = 'No Network Connection';
+		const _notConnectedError = 'Network Provider Not Connected';
+		const _undeterminedNetworkError = 'No Network Specified';
+		const _unknownError = 'Unknown Error';
+		const _invalidAddressError = 'Invalid Address';
+		const _messageSettingsButton = '<div class="messageSettingsLink" onclick="web3ServiceOpenSettings();">settings</div>';
+		const _localStorage = window.localStorage;
+		
 		var _state = "not_enabled";
-		var _network = null;
+		var _chainId = null;
 		var _account = null;
 		var _isReadOnly = false;
 		var _isPrivacyEnabled = false;
 		var _waitingTransactions = [];
 		var _waitingTransactionsAccount = null;
 		var _transactionDataTransformers = [];
-		var _noAccountError = 'No Ethereum Account';
-		var _notEnabledError = 'No Ethereum Connection';
-		var _notConnectedError = 'Ethereum Provider Not Connected';
-		var _undeterminedNetworkError = 'No Ethereum Network Specified';
-		var _unknownError = 'Unknown Error';
-		var _invalidAddressError = 'Invalid Address';
-		var _localStorage = window.localStorage;
+		var _contractServices = {};
 
+		// Build web3 providers
 		var _web3Provider = null;
 		if (window.ethereum) {
 			_web3Provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -40,21 +77,30 @@
 
 		} else {
 			//read-only mode
-			_web3Provider = new ethers.providers.JsonRpcProvider(_backupWeb3Provider);
 			_state = "ready";
 			_isReadOnly = true;
+		}
+		for(let i = 0; i < _networkConfig.length; i++) {
+			let fallbackRPC = getFallbackRPC(_networkConfig[i].chainId);
+			if(!fallbackRPC) fallbackRPC = _networkConfig[i].fallbackRPCs ? _networkConfig[i].fallbackRPCs[0] : null;
+			if(fallbackRPC) {
+				let provider = new ethers.providers.JsonRpcProvider(fallbackRPC);
+				_networkConfig[i].fallbackProvider = provider;
+			}
 		}
 
 		// Poll for state changes
 		var _onAccountChangeFunctions = [];
 		var _onStateChangeFunctions = [];
 		var _onNetworkChangeFunctions = [];
+		var _onCheckStateFunctions = [];
 		var _onWaitingTransactionsChangeFunctions = [];
+		var _firstStateUpdateFinished = false;
 		async function checkForWeb3Changes() {
-			let [newState, newNetwork] = await queryNetworkState();
+			let [newState, newChainId] = await queryNetworkState();
 			let stateChanged = (_state != newState);
-			let networkChanged = (_network != newNetwork);
-			_network = newNetwork;
+			let networkChanged = (_chainId != newChainId);
+			_chainId = newChainId;
 			_state = newState;
 
 			let newAccount = await queryAccount();
@@ -65,13 +111,18 @@
 				executeCallbackFunctions(_onStateChangeFunctions, _state);
 			}
 			if (networkChanged) {
-				executeCallbackFunctions(_onNetworkChangeFunctions, _network);
+				executeCallbackFunctions(_onNetworkChangeFunctions, _chainId);
 				checkWaitingTransactionsForAccount();
 			}
 			if (accountChanged) {
 				executeCallbackFunctions(_onAccountChangeFunctions, _account);
 				checkWaitingTransactionsForAccount();
 			}
+			
+			//resolve anyone waiting on state update
+			for(let i=0; i<_onCheckStateFunctions.length; i++) _onCheckStateFunctions[i]();
+			_onCheckStateFunctions = [];
+			_firstStateUpdateFinished = true;
 		}
 		if (!_isReadOnly) {
 			$interval(checkForWeb3Changes, 1000);
@@ -82,12 +133,12 @@
 		this.getState = getState;
 		this.isReadOnly = isReadOnly;
 		this.isPrivacyMode = isPrivacyMode;
-		this.getExpectedNetwork = getExpectedNetwork;
 		this.getCurrentNetwork = getCurrentNetwork;
-		this.isWrongNetwork = isWrongNetwork;
 		this.getTransactionLookupUrl = getTransactionLookupUrl;
 		this.getProviderName = getProviderName;
+		this.awaitState = awaitState;
 		this.requestAccess = requestAccess;
+		this.switchNetwork = switchNetwork;
 		this.onStateChange = onStateChange;
 		this.onNetworkChange = onNetworkChange;
 		this.getActiveAccount = getActiveAccount;
@@ -96,17 +147,27 @@
 		this.addWaitingTransaction = addWaitingTransaction;
 		this.addTransactionDataTransformer = addTransactionDataTransformer;
 		this.onWaitingTransactionsChange = onWaitingTransactionsChange;
-		this.getContractWithSigner = getContractWithSigner;
 		this.getContractInterface = getContractInterface;
+		this.getContractWithSigner = getContractWithSigner;
 		this.getContract = getContract;
+		this.getContractDetails = getContractDetails;
+		this.registerContractService = registerContractService;
+		this.getContractService = getContractService;
 		this.verifySendEth = verifySendEth;
 		this.sendEth = sendEth;
 		this.isAddress = isAddress;
 		this.to256Hex = to256Hex;
 		this.fromUtf8 = fromUtf8;
 		this.toUtf8 = toUtf8;
+		this.toEncodedBytes = toEncodedBytes;
 		this.hexToInt = hexToInt;
+		this.filterTextToByteSize = filterTextToByteSize;
 		this.formatAddress = formatAddress;
+		this.checkFlag = checkFlag;
+		this.compressAddressString = compressAddressString;
+		this.getNetworkName = getNetworkName;
+		this.setFallbackRPC = setFallbackRPC;
+		this.getFallbackRPC = getFallbackRPC;
 
 
 		///////////
@@ -129,38 +190,66 @@
 			return _isPrivacyEnabled && !_account;
 		}
 
-		// Gets the desired network
-		function getExpectedNetwork() {
-			return getCurrentNetwork();
-		}
-
 		// Gets the current connected network
 		function getCurrentNetwork() {
-			if (_state != "ready") return null;
-			return _network;
-		}
-
-		// Gets if connected to the wrong network
-		function isWrongNetwork() {
-			return false;
+			if (_state != "ready" || !_chainId) return null;
+			for(let i = 0; i < _networkConfig.length; i++) {
+				if(_networkConfig[i].chainId == _chainId) {
+					return _networkConfig[i].name;
+					break;
+				}
+			}
+			return 'unknown_' + _chainId;
 		}
 
 		// Gets url for displaying more details about a transaction
-		function getTransactionLookupUrl(txHash) {
-			if (txHash) return _transactionLookupUrl.replace('<txHash>', txHash);
-			return _accountLookupUrl.replace('<address>', getActiveAccount());
+		function getTransactionLookupUrl(txHash, chainId) {			
+			let transactionLookupUrl = null;
+			let accountLookupUrl = null;
+			for(let i = 0; i < _networkConfig.length; i++) {
+				if(_networkConfig[i].chainId == chainId && _networkConfig[i].blockExplorer) {
+					transactionLookupUrl = (_networkConfig[i].blockExplorer + _networkConfig[i].transactionLU).split('//').join('/').split(':/').join('://');
+					accountLookupUrl = (_networkConfig[i].blockExplorer + _networkConfig[i].accountLU).split('//').join('/').split(':/').join('://');
+					break;
+				}
+			}
+			if(!txHash || !chainId) {
+				//if no accountLookupUrl found, just use the first network with links
+				if(accountLookupUrl == null) {
+					for(let i = 0; i < _networkConfig.length; i++) {
+						if(_networkConfig[i].blockExplorer) {
+							accountLookupUrl = (_networkConfig[i].blockExplorer + _networkConfig[i].accountLU).split('//').join('/').split(':/').join('://');
+							break;
+						}
+					}
+				}
+				if (accountLookupUrl) return accountLookupUrl.replace('<address>', getActiveAccount());
+				return '';
+			}
+			
+			if (transactionLookupUrl) return transactionLookupUrl.replace('<txHash>', txHash);
+			else if (accountLookupUrl) return accountLookupUrl.replace('<address>', getActiveAccount());
+			return '';
 		}
 
 		// Register callback for state data change
-		function onStateChange(callback, scope) {
-			if (scope) scope.$on('$destroy', cleanSubscriptions);
-			_onStateChangeFunctions.push({ func: callback, scope: scope });
+		function onStateChange(callback, scope, syncWithStateUpdate) {
+			var register = function() {
+				if (scope) scope.$on('$destroy', cleanSubscriptions);
+				_onStateChangeFunctions.push({ func: callback, scope: scope });
+			}
+			if(syncWithStateUpdate) awaitState(register);
+			else register();
 		}
 
 		// Register callback for network data change
-		function onNetworkChange(callback, scope) {
-			if (scope) scope.$on('$destroy', cleanSubscriptions);
-			_onNetworkChangeFunctions.push({ func: callback, scope: scope });
+		function onNetworkChange(callback, scope, syncWithStateUpdate) {
+			var register = function() {
+				if (scope) scope.$on('$destroy', cleanSubscriptions);
+				_onNetworkChangeFunctions.push({ func: callback, scope: scope });
+			}
+			if(syncWithStateUpdate) awaitState(register);
+			else register();
 		}
 
 		// Gets the provider name
@@ -170,31 +259,111 @@
 			if (window.ethereum && window.ethereum.isMetaMask) return 'MetaMask';
 			return 'your Ethereum Account';
 		}
+		
+		// Returns a promise that resolves after the next state update
+		function awaitState(callback, firstStateOnly) {
+			return $q(async function (resolve, reject) {
+				if (_isReadOnly || (firstStateOnly && _firstStateUpdateFinished)) {
+					resolve();
+				} else {
+					_onCheckStateFunctions.push(resolve);
+				}
+			}).then(function() {
+				if(callback) callback();
+			});
+		}
 
 		// Requests for access to the accounts
 		function requestAccess() {
-			if (_isPrivacyEnabled) {
+			if (_isPrivacyEnabled && window.ethereum) {
 				window.ethereum.enable().then(checkForWeb3Changes, function () {
-					console.log("User denied access to Ethereum account");
+					console.log("User denied access to account");
 				});
 			}
 		}
 
+		// Requests switching to the network with the given chainId
+		function switchNetwork(chainId) {
+			let networkConfig = null;
+			for(let i = 0; i < _networkConfig.length; i++) {
+				if(_networkConfig[i].chainId == chainId) {
+					networkConfig = _networkConfig[i];
+					break;
+				}
+			}
+			if (window.ethereum && networkConfig && networkConfig.fallbackRPCs && networkConfig.fallbackRPCs.length) {
+				const data = [{
+					chainId: '0x' + parseInt('' + chainId).toString(16),
+					chainName: networkConfig.name,
+					nativeCurrency: networkConfig.nativeCurrency,
+					rpcUrls: networkConfig.fallbackRPCs,
+					blockExplorerUrls: networkConfig.blockExplorer ? [networkConfig.blockExplorer] : null
+				}];
+				window.ethereum.request({method: 'wallet_addEthereumChain', params:data}).then(checkForWeb3Changes, function () {
+					console.log("Failed to switch to network: " + networkConfig.name);
+				});
+			}
+		}
+		
+		// Sets a fallback RPC endpoint
+		function setFallbackRPC(chainId, rpcEndpoint) {
+			if(chainId) {
+				if(rpcEndpoint) {
+					//set to new value
+					_localStorage.setItem('rpc_backup_' + chainId, '' + rpcEndpoint);
+					for(let i = 0; i < _networkConfig.length; i++) {
+						if(_networkConfig[i].chainId == chainId) {
+							let provider = new ethers.providers.JsonRpcProvider(rpcEndpoint);
+							_networkConfig[i].fallbackProvider = provider;
+							break;
+						}
+					}
+				} else {
+					
+					//clear (revert back to hardcoded)
+					_localStorage.removeItem('rpc_backup_' + chainId);
+					for(let i = 0; i < _networkConfig.length; i++) {
+						if(_networkConfig[i].chainId == chainId) {
+							if(_networkConfig[i].fallbackRPCs && _networkConfig[i].fallbackRPCs[0]) {
+								let provider = new ethers.providers.JsonRpcProvider(_networkConfig[i].fallbackRPCs[0]);
+								_networkConfig[i].fallbackProvider = provider;
+							} else {
+								_networkConfig[i].fallbackProvider = undefined;
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		// Gets a fallback RPC endpoint
+		function getFallbackRPC(chainId) {
+			if(chainId) {
+				return _localStorage.getItem('rpc_backup_' + chainId);
+			}
+			return null;
+		}
 
-		//////////////
+
+		/////////////
 		// Account //
-		//////////////
+		/////////////
 
 
 		// Gets the active account
 		function getActiveAccount() {
 			return _account;
 		}
-
+		
 		// Register callback for account data change
-		function onAccountDataChange(callback, scope) {
-			if (scope) scope.$on('$destroy', cleanSubscriptions);
-			_onAccountChangeFunctions.push({ func: callback, scope: scope });
+		function onAccountDataChange(callback, scope, syncWithStateUpdate) {
+			var register = function() {
+				if (scope) scope.$on('$destroy', cleanSubscriptions);
+				_onAccountChangeFunctions.push({ func: callback, scope: scope });
+			}
+			if(syncWithStateUpdate) awaitState(register);
+			else register();
 		}
 
 
@@ -205,10 +374,10 @@
 
 		// Gets waiting transactions
 		function getWaitingTransactions() {
-			let network = getCurrentNetwork();
 			let transactionsForNetwork = [];
 			for (let i = 0; i < _waitingTransactions.length; i++) {
-				if (_waitingTransactions[i].network == network) {
+				//make sure transaction chainId has a provider
+				if(getWeb3Provider(_waitingTransactions[i].chainId)) {
 					transactionsForNetwork.push(_waitingTransactions[i]);
 				}
 			}
@@ -217,10 +386,9 @@
 
 		// Adds a new transaction to the wait list
 		function addWaitingTransaction(txHash, params, type, description) {
-			let network = getCurrentNetwork();
 			let transaction = {
 				txHash: txHash,
-				network: network,
+				chainId: _chainId,
 				params: params,
 				type: type,
 				description: description,
@@ -251,46 +419,100 @@
 		///////////////
 		// Contracts //
 		///////////////
-
-		// Gets contract object based on given path to ABI with the current account as signer
-		async function getContractWithSigner(contractPath) {
-			let contract = await getContract(contractPath);
-			return contract.connect(_web3Provider.getSigner(0));
-		}
+		
 
 		// Gets contract interface object based on given path to ABI
 		async function getContractInterface(contractPath) {
 			let contractData = await getJSON(contractPath);
-			return new ethers.utils.Interface(contractData.abi);
+			let contractInterface = new ethers.utils.Interface(contractData.abi);
+			
+			//wrap the parseLog function in a try catch
+			let parseLog_unsafe = contractInterface.parseLog;
+			contractInterface.parseLog = function() {
+				try {
+					return parseLog_unsafe.apply(contractInterface, arguments);
+				} catch(err) {
+					return { name: null }
+				}
+			}
+			
+			return contractInterface;
+		}
+		
+		// Gets contract object based on given path to ABI with the current account as signer
+		async function getContractWithSigner(contractPath, chainId) {
+			//check that the chainId matches the current network
+			chainId = await resolveChainId(chainId);
+			let currNetworkName = getNetworkName(_chainId);
+			let networkName = getNetworkName(chainId);
+			if(chainId != _chainId) {
+				switchNetwork(chainId);
+				throw new UserActionNeededError('Connected to wrong network', 'Please switch your account network from <b>' + currNetworkName + '</b> to <b>' + networkName + '</b>');
+			}
+			let contract = await getContract(contractPath, chainId);
+			return contract.connect(_web3Provider.getSigner(0));
 		}
 
 		// Gets contract object based on given path to ABI
-		async function getContract(contractPath) {
-			let network = getCurrentNetwork();
-			if (network == null) {
-				let [stat, net] = await queryNetworkState();
-				network = net;
+		async function getContract(contractPath, chainId) {
+			chainId = await resolveChainId(chainId);
+			let currNetworkName = getNetworkName(_chainId);
+			let networkName = getNetworkName(chainId);
+			let contractDetails = await getContractDetails(contractPath, chainId);
+			let contractData = await getJSON(contractPath);
+			
+			//determine the provider and create the contract
+			let provider = getWeb3Provider(chainId);
+			if(!provider) {
+				switchNetwork(chainId);
+				throw new UserActionNeededError('Failed to find network provider', 'Please switch your account network from <b>' + currNetworkName + '</b> to <b>' + networkName + '</b> or update the fallback RPCs in ' + _messageSettingsButton);
 			}
+			let contract = new ethers.Contract(contractDetails.address, contractData.abi, provider);
+			
+			//wrap the queryFilter function to handle larger datasets
+			let queryFilter_unsafe = contract.queryFilter;
+			contract.queryFilter = async function(filter, fromBlock, toBlock) {
+				if(!fromBlock) fromBlock = parseInt('' + contractDetails.blockNumber);
+				if(!toBlock) toBlock = 'latest';
+				//recursively searches smaller and smaller block chunks until we get success or hit a set depth
+				const maxRecursionDepth = 15;
+				async function queryFilterRec(filter, fromBlock, toBlock, depth) {
+					try {
+						return await queryFilter_unsafe.call(contract, filter, fromBlock, toBlock);
+					} catch(err) {
+						if(toBlock === 'latest') toBlock = await this.provider.getBlockNumber();
+						if(depth < maxRecursionDepth && (toBlock - fromBlock) > 1) {
+							let halfway = fromBlock + Math.floor((toBlock - fromBlock) / 2);
+							let firstHalf = await queryFilterRec(filter, fromBlock, halfway, depth + 1);
+							let secondHalf = await queryFilterRec(filter, halfway + 1, toBlock, depth + 1);
+							return firstHalf.concat(secondHalf);
+						} else throw err;
+					}
+				}
+				return queryFilterRec(filter, fromBlock, toBlock, 0);
+			}
+			
+			return contract;
+		}
 
-			if (network == null) throw new Error(_undeterminedNetworkError);
-			else {
-				let deploymentData = await getJSON('contracts/deployments.json');
-				let contractData = await getJSON(contractPath);
-				let contractName = contractData.contractName;
+		// Gets the contract details on the current network
+		async function getContractDetails(contractPath, chainId) {
+			chainId = await resolveChainId(chainId);
+			let deploymentData = await getJSON('contracts/deployments.json');
+			let contractData = await getJSON(contractPath);
+			let contractName = contractData.contractName;
 
-				for (let i = 0; i < deploymentData.length; i++) {
-					if (deploymentData[i].name == network) {
-						for (let j = 0; j < deploymentData[i].contracts.length; j++) {
-							if (deploymentData[i].contracts[j].name == contractName) {
-								let contractAddress = deploymentData[i].contracts[j].address;
-								return new ethers.Contract(contractAddress, contractData.abi, _web3Provider);
-							}
+			for (let i = 0; i < deploymentData.length; i++) {
+				if (deploymentData[i].id == chainId) {
+					for (let j = 0; j < deploymentData[i].contracts.length; j++) {
+						if (deploymentData[i].contracts[j].name == contractName) {
+							return deploymentData[i].contracts[j];
 						}
 					}
 				}
-
-				throw new Error("Failed to find contract deployed location");
 			}
+
+			throw new Error("Failed to find contract deployed location");
 		}
 
 		// Gets the contract deployment data
@@ -314,7 +536,7 @@
 
 					try {
 						//fetch
-						let jsonData = await $.getJSON(path);
+						let jsonData = JSON.parse(await httpGet(path));
 						_loadedJSON[path] = jsonData;
 
 						//finish promises for anything that was waiting
@@ -332,6 +554,16 @@
 			});
 		}
 
+		// Registers a contract service
+		function registerContractService(name, service) {
+			_contractServices[name] = service;
+		}
+
+		// Registers a contract service
+		function getContractService(name) {
+			return _contractServices[name];
+		}
+
 
 		//////////
 		// Send //
@@ -346,7 +578,8 @@
 				else if (_state != "ready") reject(_unknownError);
 				else if (isReadOnly()) reject(_noAccountError);
 				else if (!isAddress(address)) reject(_invalidAddressError);
-				else resolve({});
+				//else resolve({});
+				reject("send eth not yet suported");
 			});
 		}
 
@@ -361,7 +594,7 @@
 				else {
 					try {
 						let signer = _web3Provider.getSigner(0);
-						let transactionResponse = await signer.sendTransaction({ to: address, value: ethers.utils.parseEther(amount) });
+						let transactionResponse = signer.sendTransaction({ to: address, value: ethers.utils.parseEther(""+amount) });
 						resolve(transactionResponse.hash);
 					} catch (err) {
 						reject('Something went wrong while sending eth');
@@ -397,7 +630,7 @@
 				if (byteSize) {
 					let bytes = new Uint8Array(byteSize);
 					let textBytes = ethers.utils.toUtf8Bytes(text);
-					for (let i = 0; i < 8 && i < textBytes.length; i++) {
+					for (let i = 0; i < byteSize && i < textBytes.length; i++) {
 						bytes[i] = textBytes[i];
 					}
 					return ethers.utils.hexlify(bytes);
@@ -416,6 +649,41 @@
 			} catch (err) { }
 			return "";
 		}
+		
+		// Encodes the given text array into bytes formatAddress
+		function toEncodedBytes(textArray) {
+			try {
+				for(let i = textArray.length - 1; i >= 0; i--) {
+					if(!textArray[i]) {
+						textArray.pop();
+					} else {
+						break;
+					}
+				}
+				
+				let bytesTotal = 0;
+				let bytes = [];
+				for(let i = 0; i < textArray.length; i++) {
+					let byteArray = ethers.utils.toUtf8Bytes(textArray[i] ? textArray[i] : '');
+					bytes.push(byteArray);
+					bytesTotal += byteArray.length;
+				}
+
+				let finalBytes = new Uint8Array((bytesTotal + textArray.length) - 1);
+				let finalBytesIndex = 0;
+				for(let i = 0; i < bytes.length; i++) {
+					for(let j = 0; j < bytes[i].length; j++) finalBytes[finalBytesIndex + j] = bytes[i][j];
+					finalBytesIndex += bytes[i].length;
+					if((i + 1) < bytes.length) {
+						finalBytes[finalBytesIndex] = 0;
+						finalBytesIndex++;
+					}
+				}
+				return ethers.utils.hexlify(finalBytes);
+			} catch (err) { }
+			return "0x";
+		}
+
 
 		// Convert a hex string into an integer string
 		function hexToInt(hex) {
@@ -425,6 +693,20 @@
 			return "0";
 		}
 
+		// Filters the given text down to the given byte size (utf8)
+		function filterTextToByteSize(text, byteSize) {
+			try {
+				for (let i = text.length; i >= 0; i--) {
+					let sub = text.substr(0,i);
+					try {
+						let bytes = ethers.utils.toUtf8Bytes(sub);
+						if(bytes.length <= byteSize) return sub;
+					} catch (err) { }
+				}
+			} catch (err) { }
+			return "";
+		}
+
 		// Formats the given hex address
 		function formatAddress(address) {
 			try {
@@ -432,6 +714,74 @@
 			} catch (err) { }
 			return null;
 		}
+
+		// Checks if the given value contains the given flag
+		function checkFlag(value, flag) {
+			try {
+				value = parseInt(value, 16);
+				flag = parseInt(flag, 16);
+				return (value & flag) == flag;
+			} catch (err) { }
+			return null;
+		}
+		
+		// Compresses the given address string
+		function compressAddressString(address, maxChars) {
+			let comp = address || '';
+			if (maxChars) {
+				if (maxChars < 5) comp = '';
+				else comp = comp.substr(0, (maxChars / 2) + 1) + '...' + comp.substr(comp.length - ((maxChars / 2) - 1));
+			}
+
+			return comp;
+		}
+		
+		// Gets the name of a network given its chainId
+		function getNetworkName(chainId) {
+			for(let i = 0; i < _networkConfig.length; i++) {
+				if(_networkConfig[i].chainId == chainId) {
+					return _networkConfig[i].name;
+				}
+			}
+			return 'Unknown';
+		}
+		
+		// Opens the settings dialog
+		$window.web3ServiceOpenSettings = function() {
+			$mdDialog.show({
+				controller: 'SettingsDialogCtrl',
+				controllerAs: 'ctrl',
+				templateUrl: HTMLTemplates['dialog.settings'],
+				parent: angular.element(document.body),
+				bindToController: true,
+				clickOutsideToClose: true
+			});
+		}
+
+
+		//////////////////////////
+		// Web3 Specific Errors //
+		//////////////////////////
+
+
+		function UserActionNeededError(message, actionNeeded) {
+			let instance = new Error(message);
+			instance.name = 'UserActionNeededError';
+			instance.actionNeeded = actionNeeded;
+			Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
+			if (Error.captureStackTrace) Error.captureStackTrace(instance, UserActionNeededError);
+			return instance;
+		}
+		UserActionNeededError.prototype = Object.create(Error.prototype, {
+			constructor: {
+				value: Error,
+				enumerable: false,
+				writable: true,
+				configurable: true
+			}
+		});
+		if (Object.setPrototypeOf) Object.setPrototypeOf(UserActionNeededError, Error);
+		else UserActionNeededError.__proto__ = Error;
 
 
 		//////////////////////
@@ -444,18 +794,7 @@
 			if (_web3Provider != null) {
 				try {
 					let network = await _web3Provider.getNetwork();
-					let networkStr = null;
-					if (network.chainId) {
-						if (network.chainId == "1") networkStr = "Mainnet";
-						else if (network.chainId == "2") networkStr = "Morden";
-						else if (network.chainId == "3") networkStr = "Ropsten";
-						else if (network.chainId == "4") networkStr = "Rinkeby";
-						else if (network.chainId == "5") networkStr = "Goerli";
-						else if (network.chainId == "42") networkStr = "Kovan";
-						else networkStr = "unknown_" + network.chainId;
-					}
-
-					return ["ready", networkStr];
+					return ["ready", '' + network.chainId];
 				} catch (err) {
 					if (err.reason == "underlying network changed") {
 						_web3Provider = new ethers.providers.Web3Provider(_web3Provider.provider);
@@ -482,6 +821,15 @@
 				}
 			}
 			return null;
+		}
+		
+		// Checks the given chainId or returns the current chainId
+		async function resolveChainId(chainId) {
+			if (!_chainId && !_isReadOnly) await checkForWeb3Changes();
+			
+			if (chainId) return chainId;
+			if (_chainId) return _chainId;
+			throw new Error(_undeterminedNetworkError);
 		}
 
 		// Helper function to clean up any subscriptions during destroy events
@@ -516,6 +864,40 @@
 				}
 			}
 		}
+		
+		// Helper function to get a provider for the given chainId
+		function getWeb3Provider(chainId) {
+			let provider = null;
+			if(chainId == _chainId && _web3Provider) provider = _web3Provider;
+			else {
+				for(let i = 0; i < _networkConfig.length; i++) {
+					if(_networkConfig[i].chainId == chainId && _networkConfig[i].fallbackProvider) {
+						provider = _networkConfig[i].fallbackProvider;
+						break;
+					}
+				}
+			}
+			return provider;
+		}
+		
+		// performs a GET REST request
+		function httpGet(path) {
+			return $q(function (resolve, reject) {
+				try {
+					var xmlHttp = new XMLHttpRequest();
+					xmlHttp.onreadystatechange = function() {
+						if (xmlHttp.readyState == 4) {
+							if(xmlHttp.status == 200) resolve(xmlHttp.responseText);
+							else reject('Request Failed');
+						}
+					}
+					xmlHttp.open("GET", path, true);
+					xmlHttp.send(null);
+				} catch (err) {
+					reject(err);
+				}
+			});
+		}
 
 
 		/////////////////////////////////////
@@ -524,17 +906,20 @@
 
 
 		// Helper function to get transaction status
-		async function getTransactionStatus(txHash) {
+		async function getTransactionStatus(txHash, chainId) {
 			if (_state == "ready") {
 				try {
-					let receipt = await _web3Provider.getTransactionReceipt(txHash);
-					if (receipt != null) {
-						return {
-							txHash: txHash,
-							status: receipt.status,
-							confirmations: receipt.confirmations,
-							logs: receipt.logs
-						};
+					let provider = getWeb3Provider(chainId);
+					if(provider != null) {
+						let receipt = await provider.getTransactionReceipt(txHash);
+						if (receipt != null) {
+							return {
+								txHash: txHash,
+								status: receipt.status,
+								confirmations: receipt.confirmations,
+								logs: receipt.logs
+							};
+						}
 					}
 				} catch (err) { }
 				return {
@@ -551,18 +936,16 @@
 				let start = (new Date).getTime();
 				let check_transaction = async function () {
 					try {
-						if (transaction.network == getCurrentNetwork()) {
-							let result = await getTransactionStatus(transaction.txHash);
-							if (result.status === 1 && result.confirmations >= _transactionWaitConfirmations) {
-								resolve(result);
-								return;
-							} else if (result.status === 0) {
-								reject(new Error("Transaction " + transaction.txHash + " failed"));
-								return;
-							} else if (_transactionWaitTimeout > 0 && (new Date).getTime() - start > _transactionWaitTimeout) {
-								reject(new Error("Transaction " + transaction.txHash + " wasn't processed within " + _transactionWaitTimeout / 1000 + " seconds"));
-								return;
-							}
+						let result = await getTransactionStatus(transaction.txHash, transaction.chainId);
+						if (result.status === 1 && result.confirmations >= _transactionWaitConfirmations) {
+							resolve(result);
+							return;
+						} else if (result.status === 0) {
+							reject(new Error("Transaction " + transaction.txHash + " failed"));
+							return;
+						} else if (_transactionWaitTimeout > 0 && (new Date).getTime() - start > _transactionWaitTimeout) {
+							reject(new Error("Transaction " + transaction.txHash + " wasn't processed within " + _transactionWaitTimeout / 1000 + " seconds"));
+							return;
 						}
 						$timeout(check_transaction, _transactionWaitPoll);
 					} catch (err) {
@@ -581,6 +964,7 @@
 				let result = await transactionWait(transaction);
 				returnData = {
 					txHash: result.txHash,
+					chainId: transaction.chainId,
 					success: true,
 					type: transaction.type,
 					description: transaction.description,
@@ -596,8 +980,11 @@
 
 				//transaction failed or timed out
 				returnData = {
-					txHash: result.txHash,
+					txHash: transaction.txHash,
+					chainId: transaction.chainId,
 					success: false,
+					type: transaction.type,
+					description: transaction.description,
 				};
 			}
 
@@ -623,7 +1010,7 @@
 
 			} else {
 				//run callbacks anyway in case transactions changed
-				executeCallbackFunctions(_onWaitingTransactionsChangeFunctions, getWaitingTransactions());
+				executeCallbackFunctions(_onWaitingTransactionsChangeFunctions, null);
 			}
 		}
 
@@ -645,7 +1032,7 @@
 						for (let i = 0; i < storedWaitingTransactions.length; i++) {
 							let timeElapsed = now - storedWaitingTransactions[i].timestamp;
 							if (_transactionWaitTimeout <= 0 || timeElapsed < _transactionWaitTimeout) {
-								let result = await getTransactionStatus(storedWaitingTransactions[i].txHash);
+								let result = await getTransactionStatus(storedWaitingTransactions[i].txHash, storedWaitingTransactions[i].chainId);
 								let failed = (result.status === 0);
 								let confirmed = (result.status === 1 && result.confirmations >= _transactionWaitConfirmations);
 								if (!failed && !confirmed) {

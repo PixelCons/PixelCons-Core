@@ -1,36 +1,24 @@
 <div class="pixelconCollectionPage" ng-class="ctrl.screenSize">
 	<div class="topSpacer"></div>
 	
-	<div class="maxWidth">
+	<div class="maxWidth" ng-style="{'max-width': ctrl.getMaxWidth()}">
 		<div class="accountCard colorLight">
 			
 			<!-- Viewer window -->
 			<div class="displayWindow colorDark">
-				<div class="groupIcon">
-					<div class="groupIconElement colorDarkOverlay"></div><div class="groupIconElement colorDarkOverlay"></div><div class="groupIconElement colorDarkOverlay"></div>
+				<div class="displayWindowGroupContainer">
+					<div class="groupIcon"></div>
+					<div class="groupTextStack" ng-show="!ctrl.cleared">
+						<div class="groupTextLarge" ng-show="ctrl.collection.name">{{ctrl.collection.name}}</div><br/>
+						<div class="groupTextSmall">{{ctrl.collection.pixelcons.length}}</div>
+					</div>
 				</div>
-				<md-menu md-position-mode="target-right target">
-					<div class="shareLink clickable" ng-click="$mdOpenMenu()" aria-label="Share"></div>
-					<md-menu-content class="shareLinksContextMenu">
-						<md-menu-item>
-							<md-button ng-click="ctrl.copyLink()"><div class="shareLinkIcon url"></div>Copy URL</md-button>
-						</md-menu-item>
-						<md-menu-item>
-							<md-button ng-click="ctrl.shareOnFacebook()"><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
-						</md-menu-item>
-						<md-menu-item>
-							<md-button ng-click="ctrl.shareOnTwitter()"><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
-						</md-menu-item>
-					</md-menu-content>
-				</md-menu>
 			
 				<!-- Error -->
-				<div class="error colorLight" ng-show="ctrl.error">
-					<b>Ethereum Network Error:</b><br/>{{ctrl.error}}
-				</div>
+				<div class="error colorLight textSelectable" ng-show="ctrl.error" ng-bind-html="ctrl.error"></div>
 			
 				<!-- Cleared -->
-				<div class="error colorLight" ng-show="ctrl.cleared">
+				<div class="error colorLight textSelectable" ng-show="ctrl.cleared">
 					<b>This collection has been cleared</b>
 				</div>
 			
@@ -41,37 +29,65 @@
 			
 				<!-- PixelCon -->
 				<div class="displayTable">
-					<pixelconcard class="pixelconCard" pixelcon="pixelcon" size="{{(ctrl.screenSize.sm)?'sm':(ctrl.screenSize.md?'md':'lg')}}" no-collection="true" ng-repeat="pixelcon in ctrl.collection.pixelcons track by $index"></pixelconcard>
+					<pixelconcard class="pixelconCard" pixelcon="pixelcon" size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" no-collection="true" ng-repeat="pixelcon in ctrl.collection.pixelcons track by $index"></pixelconcard>
 				</div>
 			</div>
 
 			<!-- Details -->
 			<div class="detailsSection textSelectable">
-				<div class="detailsInnerSection" ng-show="ctrl.error || ctrl.loading">
-					<div class="detailsSectionMenuBarTextSmall textLarge textLight"> Collection {{ctrl.index}}</div>
-				</div>
-				<div class="detailsInnerSection" ng-hide="ctrl.error || ctrl.loading">
-					<div class="detailsSectionMenuBar">
-						<div ng-show="ctrl.collection.name!==''" class="detailsSectionMenuBarText textDark textExxLarge textBold">{{ctrl.collection.name}}</div>
-						<div class="detailsSectionMenuBarTextSmall textLarge textLight" ng-class="{'textExxLarge':ctrl.collection.name===''}"> Collection {{ctrl.collection.index}}</div>
-						<div class="detailsSectionMoreButton" ng-hide="!ctrl.isCreator">
-							<md-menu md-position-mode="target-right target">
-								<md-button class="iconButton moreMenu" ng-click="$mdOpenMenu()" aria-label="More"></md-button>
-								<md-menu-content>
-									<md-menu-item>
-										<md-button ng-click="ctrl.rename($event)">Change Name</md-button>
-									</md-menu-item>
-									<md-menu-item>
-										<md-button ng-click="ctrl.clear($event)">Clear Collection</md-button>
-									</md-menu-item>
-								</md-menu-content>
-							</md-menu>
-						</div>
+				<div class="detailsInnerSection">
+					<div ng-show="!ctrl.collection.name" class="detailsSectionTopText textLarge textLight">Collection {{ctrl.index}}</div>
+					<div class="detailsSectionTopTextContainer" ng-show="ctrl.collection.name">
+						<div class="detailsSectionTopTextName textLarge textDark textBold">{{ctrl.collection.name}}</div><br/>
+						<div class="detailsSectionTopTextCollection textSmall textLight textBold">Collection {{ctrl.index}}</div>
 					</div>
-					<accounticon class="textLight" address="ctrl.collection.creator" text="Creator" max-chars="16" size="{{ctrl.screenSize.sm?'sm':'md'}}" clickable="{{ctrl.cleared?'false':'true'}}"></accounticon>
-					<div class="detailsSectionFooter textLight" ng-class="{'textLarge':ctrl.screenSize.md||ctrl.screenSize.lg, 'textMedium':ctrl.screenSize.sm}">
-						<div class="detailsSectionMenuBarText textBold">{{ctrl.collection.pixelcons.length}}</div> 
-						{{ctrl.collection.pixelcons.length==1?'PixelCon':'PixelCons'}}
+					
+					<div class="detailsSectionMoreButton" ng-hide="ctrl.error || ctrl.loading || ctrl.cleared">
+						<md-button class="iconButton buy" aria-label="Buy/Sell" ng-if="ctrl.marketEnabled">
+							<a class="plain buttonLink" ng-href="{{ctrl.marketLink}}" target="_blank"></a>
+							<md-tooltip md-direction="left">Buy/Sell</md-tooltip>
+						</md-button>
+						<md-menu md-position-mode="target-right target">
+							<md-button class="iconButton share" ng-click="$mdOpenMenu()" aria-label="Share">
+							</md-button>
+							<md-menu-content class="shareLinksContextMenu">
+								<md-menu-item>
+									<md-button ng-click="ctrl.copyLink()"><div class="shareLinkIcon url"></div>Copy URL</md-button>
+								</md-menu-item>
+								<md-menu-item>
+									<a ng-href="{{ctrl.shareOnFacebook()}}" target="_blank" class="textDark">
+										<md-button><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
+									</a>
+								</md-menu-item>
+								<md-menu-item>
+									<a ng-href="{{ctrl.shareOnTwitter()}}" target="_blank" class="textDark">
+										<md-button><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
+									</a>
+								</md-menu-item>
+							</md-menu-content>
+						</md-menu>
+						<md-menu md-position-mode="target-right target" ng-show="ctrl.isOwner">
+							<md-button class="iconButton more" ng-click="$mdOpenMenu()" aria-label="More"></md-button>
+							<md-menu-content>
+								<md-menu-item ng-if="ctrl.isCreator">
+									<md-button ng-click="ctrl.rename($event)">Change Name</md-button>
+								</md-menu-item ng-show="ctrl.isOwner || ctrl.isCreator">
+								<md-menu-item ng-if="ctrl.isCreator">
+									<md-button ng-click="ctrl.clear($event)">Clear Collection</md-button>
+								</md-menu-item>
+								<md-menu-item>
+									<md-button ng-click="ctrl.send($event)">Send To</md-button>
+								</md-menu-item>
+							</md-menu-content>
+						</md-menu>
+					</div>
+					<accounticon class="textLight" address="ctrl.collection.creator" text="Creator" max-chars="16" size="md" clickable="{{ctrl.cleared?'false':'true'}}"></accounticon>
+					<div class="detailsSectionFooter textLight textSmall" ng-class="{'large': ctrl.collectionOwner}" ng-show="ctrl.collection.pixelcons.length > 0">
+						<span ng-if="!ctrl.collectionOwner">
+							<div class="detailsSectionBottomText textBold">{{ctrl.collection.pixelcons.length}}</div> 
+							{{ctrl.collection.pixelcons.length==1?'PixelCon':'PixelCons'}}
+						</span>
+						<accounticon class="textLight" address="ctrl.collectionOwner" mode="signature" size="sm" text="Owned By" ng-if="ctrl.collectionOwner"></accounticon>
 					</div>
 				</div>
 			</div>

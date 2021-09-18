@@ -4,7 +4,7 @@ import { ethers } from 'hardhat'
 import { Contract, Signer, BigNumber } from 'ethers'
 
 describe('PixelCons', () => {
-	//return;/////////////////////////////////////////////Uncomment this line to skip test//////////////////////////////////////////////////////////////
+	//return;/////////////////////////////////////////////Uncomment this line to skip this test//////////////////////////////////////////////////////////////
 	let createdTokens = [];
 	let createdCollections = [];
 	let randomNames = ['Carmelita','Mciver','Alexandria','Cotta','Fawn','Erne','Pamela','Vansant','Annemarie','Durrell','Paulette','Casarez','Alphonse','Foret','Leila','Lindner','Claudette','Yamanaka','Meggan','Jenkinson','Franklin','Cropp','Eleanore','Bach','Shelton','Reineck','Brianne','Murrieta','Leslie','Pintor','Roselee','Barrio','Altagracia','Alaimo','Britta','Yeaton','Georgianna','Colley','Chana','Tiemann','Tamekia','Wortman','Dreama','Luhman','Kimberlee','Gagliano','Bob','Kostelnik','Carrol','Stromain','Arlyne','Hoops','Lavada','Puryear','Lasandra','Pinkham','Cornelia','Lipps','Summer','Stennett','Jerome','Bucholtz','Belen','Winningham','Stephaine','Krause','Joel','Slaugh','Ricardo','Hassel','Mirta','Zynda','Emmitt','Bahr','Vesta','Mazzola','Neda','Moscoso','Elinor','Wageman','Darby','Heiner','Romana','Sparacino','Kathleen','Volkert','Betty','Mccawley','Ellen','Lovvorn','Karyl','Hakes','Pa','Perras','Sheri','Macdonald','Pam','Pitcock','Cecille','Coderre'];

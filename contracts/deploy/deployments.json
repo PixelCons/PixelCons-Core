@@ -26,22 +26,15 @@
     ]
   },
   {
-    "name": "unknown_31337",
-    "id": "31337",
+    "name": "unknown_1337",
+    "id": "1337",
     "contracts": [
       {
         "name": "PixelCons",
-        "address": "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",
-        "transactionHash": "0xa5268b62f5d80167cfc7a0f0bce41720fe7375253d967016f243bc5a6a875e4e",
-        "blockHash": "0x4ccb3c9e06db085db19f31aa4212b38c1d0f2b0adc363a6d5ee35084eb9505af",
-        "blockNumber": "69"
-      },
-      {
-        "name": "PixelConsMigrator",
-        "address": "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
-        "transactionHash": "0x584e64cb77d20e29036f513f57940b792faf96ac52001b313e8ba5ce38afeee5",
-        "blockHash": "0xc91a55bce7b3ec5dd8685ea4ee34615757434fc97d1ddab5653eddb84d6a9898",
-        "blockNumber": "70"
+        "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+        "transactionHash": "0xecc900271a3787301193a18ae64953d1b1399b49e71c349bee9290dc7228130d",
+        "blockHash": "0xff6f81814ff6caedf6e634aefcbd1903c22f787e733c2126f055a95445a77779",
+        "blockNumber": "1"
       }
     ]
   }

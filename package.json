@@ -6,10 +6,10 @@
   "scripts": {
     "clean": "rimraf ./cache && rimraf ./artifacts && rimraf ./build",
     "compile": "rimraf ./cache && rimraf ./artifacts && hardhat compile",
-	"deploy": "hardhat run --network optimism_l1 scripts/deploy.js && yarn web_start",
+    "deploy": "hardhat run --network local scripts/deploy.js",
     "test": "rimraf ./cache && rimraf ./artifacts && hardhat test",
+    "web_build": "node scripts/webbuild.js",
     "web_start": "node scripts/webapp.js",
-    "web_build": "node scripts/webapp.js -build",
     "web_debug": "node scripts/webapp.js -debug"
   },
   "devDependencies": {
@@ -29,5 +29,9 @@
     "typescript": "^4.1.3",
     "uglify-js": "^3.13.1",
     "uglifycss": "^0.0.29"
+  },
+  "dependencies": {
+    "fast-png": "^5.0.4",
+    "qrcode": "^1.4.4"
   }
 }

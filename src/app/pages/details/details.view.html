@@ -5,34 +5,33 @@
 	
 		<!-- Image window -->
 		<div class="viewWindow colorDark">
-			<div ng-hide="ctrl.pixelconId" class="pixelconInvalid textWhite textExxLarge">Invalid ID</div>
-			<a ng-href="/collection/{{ctrl.details.collection.index}}" class="textDark">
-				<div class="viewWindowGroupContainer" ng-show="ctrl.details.collection">
-					<div class="viewWindowGroup colorDarkOverlay" ng-class="{'detailsPageTransition': ctrl.loaded, 'onlyThree':!ctrl.details.collection.pixelcons[3].id && ctrl.details.collection.pixelcons[2].id}">
-						<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[0].id"><pixelcon id="ctrl.details.collection.pixelcons[0].id"></pixelcon></div>
-						<div class="viewWindowGroupElementSpacer" ng-if="!ctrl.details.collection.pixelcons[3].id && ctrl.details.collection.pixelcons[2].id"></div>
-						<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[1].id"><pixelcon id="ctrl.details.collection.pixelcons[1].id"></pixelcon></div>
-						<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[2].id"><pixelcon id="ctrl.details.collection.pixelcons[2].id"></pixelcon></div>
-						<div class="viewWindowGroupElement" ng-if="ctrl.details.collection.pixelcons[3].id"><pixelcon id="ctrl.details.collection.pixelcons[3].id"></pixelcon></div>
-						<div class="viewWindowGroupCover colorDark"><div class="viewWindowGroupCoverIcon"></div></div>
-					</div>
-					<div class="viewWindowGroupName colorDarkOverlay textBold textMedium" ng-class="{'detailsPageTransition': ctrl.loaded}">
-						{{ctrl.details.collection.name?ctrl.details.collection.name:('Collection '+ctrl.details.collection.index)}}
+			<div class="viewWindowShine" ng-class="{'on':ctrl.details.isShiny}" ng-style="ctrl.shinyStyle()"></div>
+			<div ng-hide="ctrl.pixelconId" class="pixelconInvalid textWhite textExxLarge">{{ctrl.pixelconIndex !== null ? '#' + ctrl.pixelconIndex : 'Invalid ID'}}</div>
+			<a ng-href="/collection/{{ctrl.details.collection.index}}" ng-show="ctrl.details.collection">
+				<div class="viewWindowGroupContainer">
+					<div class="pixelconGroupIcon"></div>
+					<div class="pixelconGroupTextStack">
+						<div class="pixelconGroupCount">{{ctrl.details.collection.pixelconIds.length}}</div><br/>
+						<div class="pixelconGroupText">{{ctrl.details.collection.name}}</div>
 					</div>
 				</div>
 			</a>
 			<div ng-show="ctrl.pixelconId" class="pixelconImage">
 				<pixelcon id="ctrl.pixelconId"/>
 			</div>
+			<div class="pixelconShinyIcon" ng-class="{'on':ctrl.details.isShiny}"></div>
+			<div class="l1Badge colorDarkOverlay textDark" ng-show="ctrl.isL1">L1</div>
 		</div>
 		
 		<!-- Details -->
 		<div class="detailsSection textSelectable">
-			<div class="detailsSectionId textLight" ng-show="ctrl.pixelconId">{{ctrl.pixelconId}}</div>
+			<div class="detailsSectionId textLight" ng-show="ctrl.pixelconId !== null">{{ctrl.pixelconId}}</div>
+			<div class="detailsSectionId textLight" ng-show="ctrl.pixelconId === null && ctrl.pixelconIndex !== null">PixelCon Number {{ctrl.pixelconIndex}}</div>
 			<div class="detailsInnerSection" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-cloak>
-				<div class="detailsSectionMenuBar" ng-cloak>
-					<div ng-show="ctrl.details.name!==''" class="textDark textExxLarge textBold">{{ctrl.details.name}}</div>
-					<div ng-show="ctrl.details.name===''" class="textLight textExxLarge">PixelCon {{ctrl.details.index}}</div>
+				<div class="detailsSectionMenuBar" ng-class="{'textDark':!ctrl.isL1,'textLight':ctrl.isL1}" ng-cloak>
+					<div ng-show="ctrl.details.name!==''" class="textExxLarge textDark" ng-class="{'textBold':!ctrl.isL1,'textDark':!ctrl.isL1,'textLight':ctrl.isL1}">{{ctrl.details.name}}</div>
+					<div ng-show="ctrl.details.name===''" class="textLight textExxLarge" ng-style="{'padding-top':ctrl.details.collection.name?'':'5px'}">PixelCon {{ctrl.details.index}}</div>
+					
 					<div class="detailsSectionMoreButton">
 						<md-menu md-position-mode="target-right target">
 							<md-button class="iconButton more" ng-click="$mdOpenMenu()" aria-label="More" ng-show="ctrl.isOwner || ctrl.isCreator">
@@ -46,11 +45,7 @@
 								</md-menu-item>
 							</md-menu-content>
 						</md-menu>
-						<md-button class="iconButton buy" aria-label="Buy/Sell" ng-if="ctrl.marketEnabled">
-							<a class="plain buttonLink" ng-href="{{ctrl.marketLink}}" target="_blank"></a>
-							<md-tooltip md-direction="left">Buy/Sell</md-tooltip>
-						</md-button>
-						<md-menu md-position-mode="target-right target">
+						<md-menu md-position-mode="target-right target" ng-if="!ctrl.isL1">
 							<md-button class="iconButton share" ng-click="$mdOpenMenu()" aria-label="Share">
 							</md-button>
 							<md-menu-content class="shareLinksContextMenu">
@@ -69,12 +64,19 @@
 								</md-menu-item>
 							</md-menu-content>
 						</md-menu>
+						<md-button class="iconButton buy" aria-label="Buy/Sell" ng-if="ctrl.marketEnabled && !ctrl.isL1">
+							<a class="plain buttonLink" ng-href="{{ctrl.marketLink}}" target="_blank"></a>
+							<md-tooltip md-direction="left">Buy/Sell</md-tooltip>
+						</md-button>
 					</div>
 				</div>
-				<accounticon class="textLight" address="ctrl.details.creator" text="Creator" max-chars="16" size="{{ctrl.screenSize.sm?'sm':'md'}}" clickable="true"></accounticon>
+				<accounticon class="textLight" address="ctrl.details.creator" text="Creator" max-chars="16" size="{{ctrl.screenSize.sm?'sm':'md'}}" clickable="{{!ctrl.isL1}}"></accounticon>
 				<div class="detailsSectionLineItems textMedium textLight">
 					{{ctrl.details.date}}<br/>
 					{{ctrl.details.number}}<br/>
+					<div ng-if="!ctrl.isL1 && ctrl.details.isShiny"><div class="networkBadge bottomBadge mainnet"><div class="networkBadge optimism"></div></div>Optimism <span class="networkLayer">[L2]</span></div>
+					<div ng-if="!ctrl.isL1 && !ctrl.details.isShiny"><div class="networkBadge optimism"></div>Optimism <span class="networkLayer">[L2]</span></div>
+					<div ng-if="ctrl.isL1"><div class="networkBadge mainnet"></div>Mainnet <span class="networkLayer">[L1]</span></div>
 				</div>
 				<div class="detailsSectionFooter">
 					<accounticon class="textLight" address="ctrl.details.owner" mode="signature" size="{{ctrl.screenSize.sm?'md':'lg'}}" text="Owned By"></accounticon>
@@ -83,9 +85,7 @@
 		</div>
 		
 		<!-- Error -->
-		<div class="error" ng-show="ctrl.error">
-			<b>Ethereum Network Error:</b><br/>{{ctrl.error}}
-		</div>
+		<div class="error textSelectable" ng-show="ctrl.error" ng-bind-html="ctrl.error"></div>
 		
 		<!-- Loading icon -->
 		<div class="loading" ng-show="ctrl.loading">
@@ -95,7 +95,7 @@
 		<!-- Unclaimed -->
 		<div class="unclaimed" ng-show="ctrl.unclaimed">
 			<b>This PixelCon has not been created yet</b><br/><br/>
-			<md-button class="create md-raised md-primary" ng-click="ctrl.create($event)">Create!</md-button>
+			<md-button class="create md-raised md-primary" ng-click="ctrl.create($event)" ng-if="!ctrl.isL1">Create!</md-button>
 		</div>
 	</div>
 	

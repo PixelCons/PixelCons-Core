@@ -4,43 +4,49 @@
 
 	coreContract.$inject = ['web3Service', '$q'];
 	function coreContract(web3Service, $q) {
-		var _contractPath = 'contracts/PixelCons.json';
-		var _maxNameFetch = 10000;
-		var _cacheNameFetch = true;
+		const _contractPath = 'contracts/PixelCons.json';
+		const _chainId = '1337';
+		const _cacheNameFetch = true;
+		const _maxNameFetch = 10000;
+		const _maxFilterParamSize = 100;
+		const _maxQueryParamSize = 100;
+		const _maxCreateCollection = 60;
+		const _defaultGasParameters = {};
 
-		var _noAccountError = 'No Ethereum Account';
-		var _accountPrivateError = 'Ethereum Account Not Connected';
-		var _notEnabledError = 'No Ethereum Connection';
-		var _notConnectedError = 'Ethereum Provider Not Connected';
-		var _unknownError = 'Unknown Error';
-		var _functionDisabledError = 'Function is Disabled';
-		var _invalidIdError = 'Invalid ID';
-		var _invalidIndexError = 'Invalid Index';
-		var _invalidAddressError = 'Invalid Address';
-		var _duplicateTransactionError = 'Already Processing';
-		var _verificationError = 'Something went wrong while verifying';
+		const _noAccountError = 'No Account';
+		const _accountPrivateError = 'Account Not Connected';
+		const _notEnabledError = 'No Network Connection';
+		const _notConnectedError = 'Network Provider Not Connected';
+		const _unknownError = 'Unknown Error';
+		const _functionDisabledError = 'Function is Disabled';
+		const _invalidIdError = 'Invalid ID';
+		const _invalidIndexError = 'Invalid Index';
+		const _invalidAddressError = 'Invalid Address';
+		const _duplicateTransactionError = 'Duplicate Transaction Already Processing';
+		const _verificationError = 'Something went wrong while verifying';
+		const _overMaxError = 'Too many PixelCons selected';
 
 		// Setup functions
 		this.getTotalPixelcons = getTotalPixelcons;
 		this.getAllNames = getAllNames;
-		this.getAllCollectionNames = getAllCollectionNames;
 		this.fetchPixelcon = fetchPixelcon;
 		this.fetchCollection = fetchCollection;
 		this.fetchPixelconsByAccount = fetchPixelconsByAccount;
 		this.fetchPixelconsByCreator = fetchPixelconsByCreator;
 		this.fetchPixelconsByIndexes = fetchPixelconsByIndexes;
-		this.verifyPixelcon = verifyPixelcon;
-		this.verifyPixelconEdit = verifyPixelconEdit;
-		this.verifyPixelconCollection = verifyPixelconCollection;
-		this.verifyPixelconCollectionEdit = verifyPixelconCollectionEdit;
-		this.verifyPixelconCollectionClear = verifyPixelconCollectionClear;
+		this.fetchPixelconsByIds = fetchPixelconsByIds;
+		this.verifyCreatePixelcon = verifyCreatePixelcon;
+		this.verifyUpdatePixelcon = verifyUpdatePixelcon;
+		this.verifyCreateCollection = verifyCreateCollection;
+		this.verifyUpdateCollection = verifyUpdateCollection;
+		this.verifyClearCollection = verifyClearCollection;
 		this.verifyTransferPixelcon = verifyTransferPixelcon;
 		this.createPixelcon = createPixelcon;
 		this.updatePixelcon = updatePixelcon;
+		this.createCollection = createCollection;
+		this.updateCollection = updateCollection;
+		this.clearCollection = clearCollection;
 		this.transferPixelcon = transferPixelcon;
-		this.createPixelconCollection = createPixelconCollection;
-		this.updatePixelconCollection = updatePixelconCollection;
-		this.clearPixelconCollection = clearPixelconCollection;
 		this.formatPixelconId = formatPixelconId;
 
 		// Transaction type/description
@@ -53,6 +59,7 @@
 
 		// Init
 		web3Service.addTransactionDataTransformer(addPixelconDataForTransaction);
+		web3Service.registerContractService('coreContract', this);
 
 
 		///////////
@@ -69,12 +76,12 @@
 				else if (state != "ready") reject(_unknownError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath);
+						let contract = await web3Service.getContract(_contractPath, _chainId);
 						let total = await contract.totalSupply();
 						resolve(total.toNumber());
 					} catch (err) {
 						console.log(err);
-						reject('Something went wrong while fetching count');
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while fetching count');
 					}
 				}
 			});
@@ -82,6 +89,7 @@
 
 		// Gets the names of all pixelcons in existence
 		var pixelconNames = [];
+		var pixelconNamesPromises = [];
 		function getAllNames() {
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
@@ -89,80 +97,45 @@
 				else if (state == "not_connected") reject(_notConnectedError);
 				else if (state != "ready") reject(_unknownError);
 				else {
-					try {
-						let contract = await web3Service.getContract(_contractPath);
-						let total = (await contract.totalSupply()).toNumber();
-						if (total == 0) resolve([]);
-						else if (_cacheNameFetch && pixelconNames.length == total) resolve(pixelconNames);
-						else if (!_maxNameFetch || total <= _maxNameFetch) {
+					let othersFetching = pixelconNamesPromises.length > 0;
+					pixelconNamesPromises.push({resolve:resolve, reject:reject});
+					if(!othersFetching) {
+						try {
+							let contract = await web3Service.getContract(_contractPath, _chainId);
+							let total = (await contract.totalSupply()).toNumber();
+							if (!_cacheNameFetch || pixelconNames.length != total) {
+								pixelconNames = new Array(total);
+								if(total > 0) {
+									if (!_maxNameFetch || total <= _maxNameFetch) {
 
-							//get all at once
-							let names = await contract.getAllNames();
-							pixelconNames = new Array(total);
-							for (let i = 0; i < names.length; i++) pixelconNames[i] = web3Service.toUtf8(names[i]);
-							resolve(pixelconNames);
-						} else {
+										//get all at once
+										let names = await contract.getAllNames();
+										for (let i = 0; i < names.length; i++) pixelconNames[i] = web3Service.toUtf8(names[i]);
+									} else {
 
-							//get in pages
-							let index = 0;
-							let pixelconNamesIndex = 0;
-							pixelconNames = new Array(total);
-							while (index < total) {
-								let rangeEnd = index + _maxNameFetch;
-								if (rangeEnd > total) rangeEnd = total;
-								let names = await contract.getNamesInRange(index, rangeEnd);
-								for (let i = 0; i < names.length; i++) pixelconNames[pixelconNamesIndex++] = web3Service.toUtf8(names[i]);
-								index = rangeEnd;
+										//get in pages
+										let index = 0;
+										let pixelconNamesIndex = 0;
+										while (index < total) {
+											let rangeEnd = index + _maxNameFetch;
+											if (rangeEnd > total) rangeEnd = total;
+											let names = await contract.getNamesInRange(index, rangeEnd);
+											for (let i = 0; i < names.length; i++) pixelconNames[pixelconNamesIndex++] = web3Service.toUtf8(names[i]);
+											index = rangeEnd;
+										}
+									}
+								}
 							}
-							resolve(pixelconNames);
+								
+							//resolve for all waiting promises
+							for(let i=0; i<pixelconNamesPromises.length; i++) pixelconNamesPromises[i].resolve(pixelconNames);
+							pixelconNamesPromises = [];
+							
+						} catch (err) {
+							console.log(err);
+							for(let i=0; i<pixelconNamesPromises.length; i++) pixelconNamesPromises[i].reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while fetching names');
+							pixelconNamesPromises = [];
 						}
-					} catch (err) {
-						console.log(err);
-						reject('Something went wrong while fetching names');
-					}
-				}
-			});
-		}
-
-		// Gets the names of all pixelcons in existence
-		var collectionNames = [];
-		function getAllCollectionNames() {
-			return $q(async function (resolve, reject) {
-				let state = web3Service.getState();
-				if (state == "not_enabled") reject(_notEnabledError);
-				else if (state == "not_connected") reject(_notConnectedError);
-				else if (state != "ready") reject(_unknownError);
-				else {
-					try {
-						let contract = await web3Service.getContract(_contractPath);
-						let total = (await contract.totalCollections()).toNumber();
-						if (total == 0) resolve([]);
-						else if (_cacheNameFetch && collectionNames.length == total) resolve(collectionNames);
-						else if (!_maxNameFetch || total <= _maxNameFetch) {
-
-							//get all at once
-							let names = await contract.getAllCollectionNames();
-							collectionNames = new Array(total);
-							for (let i = 0; i < names.length; i++) collectionNames[i] = web3Service.toUtf8(names[i]);
-							resolve(collectionNames);
-						} else {
-
-							//get in pages
-							let index = 0;
-							let collectionNamesIndex = 0;
-							collectionNames = new Array(total);
-							while (index < total) {
-								let rangeEnd = index + _maxNameFetch;
-								if (rangeEnd > total) rangeEnd = total;
-								let names = await contract.getCollectionNamesInRange(index, rangeEnd);
-								for (let i = 0; i < names.length; i++) collectionNames[collectionNamesIndex++] = web3Service.toUtf8(names[i]);
-								index = rangeEnd;
-							}
-							resolve(collectionNames);
-						}
-					} catch (err) {
-						console.log(err);
-						reject('Something went wrong while fetching collection names');
 					}
 				}
 			});
@@ -170,28 +143,48 @@
 
 		// Gets the details for the given pixelcon id
 		function fetchPixelcon(id) {
+			let index = Number.isInteger(id) ? id : null;
 			id = formatPixelconId(id);
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
 				if (state == "not_enabled") reject(_notEnabledError);
 				else if (state == "not_connected") reject(_notConnectedError);
 				else if (state != "ready") reject(_unknownError);
-				else if (id == null) reject(_invalidIdError);
+				else if (id === null && index === null) reject(_invalidIdError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath);
-						let exists = await contract.exists(id);
-						if (!exists) {
+						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let pixelconRaw = null;
+						if(index !== null) {
+							let total = (await contract.totalSupply()).toNumber();
+							if (total < index) {
 
-							//not found
-							resolve(null);
-						} else {
+								//not found
+								resolve(null);
+							} else {
 
-							//get details
-							//uint256 _tknId, uint64 _tknIdx, uint64 _collection, address _owner, address _creator, bytes8 _name, uint32 _dateCreated
-							let pixelconRaw = await contract.getTokenData(id);
+								//get details
+								pixelconRaw = await contract.getTokenDataByIndex(index);
+							}
+							
+						} else if(id !== null) {
+							let exists = await contract.exists(id);
+							if (!exists) {
+
+								//not found
+								resolve(null);
+							} else {
+
+								//get details
+								pixelconRaw = await contract.getTokenData(id);
+							}
+						}
+						
+						//get details
+						//uint256 _tknId, uint64 _tknIdx, uint64 _collection, address _owner, address _creator, bytes8 _name, uint32 _dateCreated
+						if(pixelconRaw) {
 							let pixelcon = {
-								id: id,
+								id: web3Service.to256Hex(pixelconRaw[0].toHexString()),
 								index: pixelconRaw[1].toNumber(),
 								name: web3Service.toUtf8(pixelconRaw[5]),
 								owner: web3Service.formatAddress(pixelconRaw[3]),
@@ -199,14 +192,11 @@
 								date: pixelconRaw[6] * 1000,
 								collection: pixelconRaw[2].toNumber() ? pixelconRaw[2].toNumber() : null
 							};
-
-							//add collection details
-							pixelcon = await fillCollectionData(pixelcon);
 							resolve(pixelcon);
 						}
 					} catch (err) {
 						console.log(err);
-						reject('Something went wrong while fetching details');
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while fetching details');
 					}
 				}
 			});
@@ -215,14 +205,15 @@
 		// Gets the details for the given pixelcon collection index
 		function fetchCollection(index) {
 			return $q(async function (resolve, reject) {
+				index = formatCollectionIndex(index);
 				let state = web3Service.getState();
 				if (state == "not_enabled") reject(_notEnabledError);
 				else if (state == "not_connected") reject(_notConnectedError);
 				else if (state != "ready") reject(_unknownError);
-				else if (index == 0) reject(_invalidIndexError);
+				else if (index == null) reject(_invalidIndexError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath);
+						let contract = await web3Service.getContract(_contractPath, _chainId);
 						let exists = await contract.collectionExists(index);
 						if (!exists) {
 
@@ -231,18 +222,19 @@
 						} else {
 
 							//get collection
-							let collection = await getCollection(index, undefined);
+							let collection = await getCollectionByIndex(contract, index);
+							collection.pixelcons = await getPixelconsByIds(contract, collection.pixelconIds);
 							resolve(collection);
 						}
 					} catch (err) {
 						console.log(err);
-						reject('Something went wrong while fetching collection details');
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while fetching collection details');
 					}
 				}
 			});
 		}
 
-		// Gets all pixelcons either created or owned by the given address
+		// Gets all pixelcons owned by the given address
 		function fetchPixelconsByAccount(address) {
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
@@ -252,57 +244,16 @@
 				else if (!web3Service.isAddress(address)) reject(_invalidAddressError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath);
-						let createdRaw = await contract.getForCreator(address);
-						let ownedRaw = await contract.getForOwner(address);
+						let contract = await web3Service.getContract(_contractPath, _chainId);
 
-						//combine owned and created
-						let owned = [];
-						let created = [];
-						for (let i = 0; i < ownedRaw.length; i++) owned.push(ownedRaw[i].toNumber());
-						for (let i = 0; i < createdRaw.length; i++) created.push(createdRaw[i].toNumber());
-						let combinedIndexes = [];
-						for (let i = 0; i < owned.length; i++) if (combinedIndexes.indexOf(owned[i]) == -1) combinedIndexes.push(owned[i]);
-						for (let i = 0; i < created.length; i++) if (combinedIndexes.indexOf(created[i]) == -1) combinedIndexes.push(created[i]);
-						combinedIndexes.sort(function (a, b) { return a - b; });
-
-						//get basic details
-						if (combinedIndexes.length > 0) {
-							let basicDataRaw = await contract.getBasicData(combinedIndexes);
-							let pixelcons = [];
-							for (let i = 0; i < basicDataRaw[0].length; i++) {
-								pixelcons.push({
-									id: web3Service.to256Hex(basicDataRaw[0][i]),
-									index: combinedIndexes[i],
-									name: web3Service.toUtf8(basicDataRaw[1][i]),
-									owner: web3Service.formatAddress(basicDataRaw[2][i].toString()),
-									created: created.indexOf(combinedIndexes[i]) > -1,
-									owned: owned.indexOf(combinedIndexes[i]) > -1,
-									collection: basicDataRaw[3][i].toNumber() ? basicDataRaw[3][i].toNumber() : null
-								});
-							}
-
-							//add collection details
-							pixelcons = await fillCollectionData(pixelcons);
-
-							//add additional flags to pixelcon objects in the collection objects
-							for (let i = 0; i < pixelcons.length; i++) {
-								if (pixelcons[i].collection) {
-									for (let j = 0; j < pixelcons[i].collection.pixelcons.length; j++) {
-										pixelcons[i].collection.pixelcons[j].created = created.indexOf(pixelcons[i].collection.pixelcons[j].index) > -1;
-										pixelcons[i].collection.pixelcons[j].owned = owned.indexOf(pixelcons[i].collection.pixelcons[j].index) > -1;
-									}
-								}
-							}
-							resolve(pixelcons);
-						} else {
-
-							//no pixelcons
-							resolve([]);
-						}
+						//get all for owner
+						let ownerPixelconIndexes = await contract.getForOwner(address);
+						let pixelcons = await getPixelconsByIndexes(contract, ownerPixelconIndexes);
+						resolve(pixelcons);
+						
 					} catch (err) {
 						console.log(err);
-						reject('Something went wrong while fetching account details');
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while fetching account PixelCons');
 					}
 				}
 			});
@@ -318,36 +269,16 @@
 				else if (!web3Service.isAddress(address)) reject(_invalidAddressError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath);
+						let contract = await web3Service.getContract(_contractPath, _chainId);
 
-						//get all tokens for creator
+						//get all for creator
 						let creatorPixelconIndexes = await contract.getForCreator(address);
-
-						//get details for pixelcons
-						if (creatorPixelconIndexes.length > 0) {
-							let basicDataRaw = await contract.getBasicData(creatorPixelconIndexes);
-							let pixelcons = [];
-							for (let i = 0; i < basicDataRaw[0].length; i++) {
-								pixelcons.push({
-									id: web3Service.to256Hex(basicDataRaw[0][i]),
-									index: creatorPixelconIndexes[i].toNumber(),
-									name: web3Service.toUtf8(basicDataRaw[1][i]),
-									owner: web3Service.formatAddress(basicDataRaw[2][i].toString()),
-									collection: basicDataRaw[3][i].toNumber() ? basicDataRaw[3][i].toNumber() : null
-								});
-							}
-
-							//add collection details
-							pixelcons = await fillCollectionData(pixelcons);
-							resolve(pixelcons);
-						} else {
-
-							//no pixelcons
-							resolve([]);
-						}
+						let pixelcons = await getPixelconsByIndexes(contract, creatorPixelconIndexes);
+						resolve(pixelcons);
+						
 					} catch (err) {
 						console.log(err);
-						reject('Something went wrong while fetching creator details');
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while fetching creator PixelCons');
 					}
 				}
 			});
@@ -363,26 +294,36 @@
 				else if (!indexes || indexes.length == 0) resolve([]);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath);
-						let basicDataRaw = await contract.getBasicData(indexes);
-						let pixelcons = [];
-						for (let i = 0; i < basicDataRaw[0].length; i++) {
-							pixelcons.push({
-								id: web3Service.to256Hex(basicDataRaw[0][i]),
-								index: indexes[i],
-								name: web3Service.toUtf8(basicDataRaw[1][i]),
-								owner: web3Service.formatAddress(basicDataRaw[2][i].toString()),
-								collection: basicDataRaw[3][i].toNumber() ? basicDataRaw[3][i].toNumber() : null
-							});
-						}
-
-						//add collection details
-						pixelcons = await fillCollectionData(pixelcons);
+						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let pixelcons = await getPixelconsByIndexes(contract, indexes);
 						resolve(pixelcons);
 
 					} catch (err) {
 						console.log(err);
-						reject('Something went wrong while fetching pixelcons details');
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while fetching PixelCons');
+					}
+				}
+			});
+		}
+
+		// Gets all pixelcons with the given ids
+		function fetchPixelconsByIds(ids) {
+			ids = formatPixelconIds(ids);
+			return $q(async function (resolve, reject) {
+				let state = web3Service.getState();
+				if (state == "not_enabled") reject(_notEnabledError);
+				else if (state == "not_connected") reject(_notConnectedError);
+				else if (state != "ready") reject(_unknownError);
+				else if (!ids || ids.length == 0) resolve([]);
+				else {
+					try {
+						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let pixelcons = await getPixelconsByIds(contract, ids);
+						resolve(pixelcons);
+
+					} catch (err) {
+						console.log(err);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while fetching PixelCons');
 					}
 				}
 			});
@@ -394,8 +335,8 @@
 		//////////////////
 
 
-		// Verifies the status of a given pixelcon id
-		function verifyPixelcon(id) {
+		// Verifies the pixelcon can be created
+		function verifyCreatePixelcon(id) {
 			id = formatPixelconId(id);
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
@@ -408,20 +349,20 @@
 				else if (isDuplicateTransaction(_createTypeDescription[0], [id])) reject(_duplicateTransactionError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath);
+						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
 						let exists = await contract.exists(id);
-						resolve({ exists: exists });
+						if(exists) reject('PixelCon already exists');
+						else resolve({ });
 					} catch (err) {
 						console.log(err);
-						reject(_verificationError);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : _verificationError);
 					}
 				}
 			});
 		}
 
-		// Verifies the status for edit of a given pixelcon
-		function verifyPixelconEdit(id) {
-			let address = web3Service.getActiveAccount();
+		// Verifies the pixelcon can be updated
+		function verifyUpdatePixelcon(id) {
 			id = formatPixelconId(id);
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
@@ -434,21 +375,182 @@
 				else if (isDuplicateTransaction(_updateTypeDescription[0], [id])) reject(_duplicateTransactionError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath);
+						let address = web3Service.getActiveAccount();
+						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
 						let owner = web3Service.formatAddress(await contract.ownerOf(id));
 						if (owner == address) resolve({ owner: owner });
 						else reject('Account does not own this PixelCon');
 					} catch (err) {
 						console.log(err);
-						reject(_verificationError);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : _verificationError);
 					}
 				}
 			});
 		}
 
-		// Verifies the pixelcon transfer
+		// Verifies the collection can be created
+		function verifyCreateCollection(pixelconIds) {
+			pixelconIds = formatPixelconIds(pixelconIds);
+			return $q(async function (resolve, reject) {
+				let state = web3Service.getState();
+				if (state == "not_enabled") reject(_notEnabledError);
+				else if (state == "not_connected") reject(_notConnectedError);
+				else if (state != "ready") reject(_unknownError);
+				else if (web3Service.isReadOnly()) reject(_noAccountError);
+				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
+				else if (pixelconIds == null) reject(_invalidIdError);
+				else if (pixelconIds.length > _maxCreateCollection) reject(_overMaxError + '<br/>(maximum of ' + _maxCreateCollection + ')');
+				else if (isDuplicateTransaction(_createCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
+				else {
+					try {
+						let address = web3Service.getActiveAccount();
+						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						
+						//get pixelcon data
+						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
+						let creatorPixelconIndexes = await contract.getForCreator(address);
+						for(let i=0; i<creatorPixelconIndexes.length; i++) creatorPixelconIndexes[i] = creatorPixelconIndexes[i].toNumber();
+						
+						//verify that the user is the owner of all pixelcons
+						//and that the user is the creator of all pixelcons
+						//and that the pixelcons are not already in a collection
+						let verified = true;
+						for (let i = 0; i < pixelcons.length; i++) {
+							if (pixelcons[i].owner != address) {
+								reject('Account does not own all PixelCons');
+								verified = false;
+								break;
+							} else if (creatorPixelconIndexes.indexOf(pixelcons[i].index) < 0) { 
+								reject('Account did not create all PixelCons');
+								verified = false;
+								break;
+							} else if (pixelcons[i].collection !== null) {
+								reject('PixelCon is already in a collection');
+								verified = false;
+								break;
+							}
+						}
+						if (verified) {
+							resolve({ owner: address, creator: address });
+						}
+					} catch (err) {
+						console.log(err);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : _verificationError);
+					}
+				}
+			});
+		}
+
+		// Verifies the collection can be updated
+		function verifyUpdateCollection(index, pixelconIds) {
+			index = formatCollectionIndex(index);
+			pixelconIds = formatPixelconIds(pixelconIds);
+			return $q(async function (resolve, reject) {
+				let state = web3Service.getState();
+				if (state == "not_enabled") reject(_notEnabledError);
+				else if (state == "not_connected") reject(_notConnectedError);
+				else if (state != "ready") reject(_unknownError);
+				else if (web3Service.isReadOnly()) reject(_noAccountError);
+				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
+				else if (pixelconIds == null) reject(_invalidIdError);
+				else if (index == null) reject(_invalidIndexError);
+				else if (isDuplicateTransaction(_updateCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
+				else {
+					try {
+						let address = web3Service.getActiveAccount();
+						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						
+						//get pixelcon data
+						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
+						let creatorPixelconIndexes = await contract.getForCreator(address);
+						for(let i=0; i<creatorPixelconIndexes.length; i++) creatorPixelconIndexes[i] = creatorPixelconIndexes[i].toNumber();
+						
+						//verify that the user is the owner of all pixelcons
+						//and that the user is the creator of all pixelcons
+						//and that the pixelcons are not already in a collection
+						let verified = true;
+						for (let i = 0; i < pixelcons.length; i++) {
+							if (pixelcons[i].owner != address) {
+								reject('Account does not own all PixelCons');
+								verified = false;
+								break;
+							} else if (creatorPixelconIndexes.indexOf(pixelcons[i].index) < 0) { 
+								reject('Account did not create all PixelCons');
+								verified = false;
+								break;
+							} else if (pixelcons[i].collection !== index) {
+								reject('PixelCon is not part of collection');
+								verified = false;
+								break;
+							}
+						}
+						if (verified) {
+							resolve({ owner: address, creator: address });
+						}
+					} catch (err) {
+						console.log(err);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : _verificationError);
+					}
+				}
+			});
+		}
+
+		// Verifies the collection can be cleared
+		function verifyClearCollection(index, pixelconIds) {
+			index = formatCollectionIndex(index);
+			pixelconIds = formatPixelconIds(pixelconIds);
+			return $q(async function (resolve, reject) {
+				let state = web3Service.getState();
+				if (state == "not_enabled") reject(_notEnabledError);
+				else if (state == "not_connected") reject(_notConnectedError);
+				else if (state != "ready") reject(_unknownError);
+				else if (web3Service.isReadOnly()) reject(_noAccountError);
+				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
+				else if (pixelconIds == null) reject(_invalidIdError);
+				else if (index == null) reject(_invalidIndexError);
+				else if (isDuplicateTransaction(_clearCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
+				else {
+					try {
+						let address = web3Service.getActiveAccount();
+						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						
+						//get pixelcon data
+						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
+						let creatorPixelconIndexes = await contract.getForCreator(address);
+						for(let i=0; i<creatorPixelconIndexes.length; i++) creatorPixelconIndexes[i] = creatorPixelconIndexes[i].toNumber();
+						
+						//verify that the user is the owner of all pixelcons
+						//and that the user is the creator of all pixelcons
+						//and that the pixelcons are not already in a collection
+						let verified = true;
+						for (let i = 0; i < pixelcons.length; i++) {
+							if (pixelcons[i].owner != address) {
+								reject('Account does not own all PixelCons');
+								verified = false;
+								break;
+							} else if (creatorPixelconIndexes.indexOf(pixelcons[i].index) < 0) { 
+								reject('Account did not create all PixelCons');
+								verified = false;
+								break;
+							} else if (pixelcons[i].collection !== index) {
+								reject('PixelCon is not part of collection');
+								verified = false;
+								break;
+							}
+						}
+						if (verified) {
+							resolve({ owner: address, creator: address });
+						}
+					} catch (err) {
+						console.log(err);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : _verificationError);
+					}
+				}
+			});
+		}
+
+		// Verifies the pixelcon can be transfered
 		function verifyTransferPixelcon(id) {
-			let address = web3Service.getActiveAccount();
 			id = formatPixelconId(id);
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
@@ -461,153 +563,14 @@
 				else if (isDuplicateTransaction(_transferTypeDescription[0], [id])) reject(_duplicateTransactionError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath);
+						let address = web3Service.getActiveAccount();
+						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
 						let owner = web3Service.formatAddress(await contract.ownerOf(id));
 						if (owner == address) resolve({ owner: owner });
 						else reject('Account does not own this PixelCon');
 					} catch (err) {
 						console.log(err);
-						reject(_verificationError);
-					}
-				}
-			});
-		}
-
-		// Verifies the pixelcon collection
-		function verifyPixelconCollection(indexes, pixelconIds) {
-			let address = web3Service.getActiveAccount();
-			return $q(async function (resolve, reject) {
-				let state = web3Service.getState();
-				if (state == "not_enabled") reject(_notEnabledError);
-				else if (state == "not_connected") reject(_notConnectedError);
-				else if (state != "ready") reject(_unknownError);
-				else if (web3Service.isReadOnly()) reject(_noAccountError);
-				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
-				else if (isDuplicateTransaction(_createCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
-				else {
-					try {
-						let contract = await web3Service.getContract(_contractPath);
-						let createdRaw = await contract.getForCreator(address);
-						let basicDataRaw = await contract.getBasicData(indexes);
-						let created = [];
-						for (let i = 0; i < createdRaw.length; i++)created.push(createdRaw[i].toNumber());
-						let pixelcons = [];
-						for (let i = 0; i < basicDataRaw[0].length; i++) {
-							pixelcons.push({
-								id: web3Service.to256Hex(basicDataRaw[0][i]),
-								index: indexes[i],
-								owner: web3Service.formatAddress(basicDataRaw[2][i].toString()),
-								collection: basicDataRaw[3][i].toNumber() ? basicDataRaw[3][i].toNumber() : null
-							});
-						}
-
-						//verify that the user is the owner of all pixelcons
-						//and that the user is the creator of all pixelcons
-						//and that the pixelcons are not already in a collection
-						let verified = true;
-						for (let i = 0; i < pixelcons.length; i++) {
-							if (pixelcons[i].owner != address) {
-								reject('Account does not own all PixelCons');
-								verified = false;
-								break;
-							} else if (pixelcons[i].collection !== null) {
-								reject('PixelCon is already in a collection');
-								verified = false;
-								break;
-							} else if (created.indexOf(pixelcons[i].index) == -1) {
-								reject('Account did not create all PixelCons');
-								verified = false;
-								break;
-							}
-						}
-						if (verified) {
-							resolve({ owner: address, creator: address });
-						}
-					} catch (err) {
-						console.log(err);
-						reject(_verificationError);
-					}
-				}
-			});
-		}
-
-		// Verifies the pixelcon collection for edit
-		function verifyPixelconCollectionEdit(index, pixelconIds) {
-			let address = web3Service.getActiveAccount();
-			return $q(async function (resolve, reject) {
-				let state = web3Service.getState();
-				if (state == "not_enabled") reject(_notEnabledError);
-				else if (state == "not_connected") reject(_notConnectedError);
-				else if (state != "ready") reject(_unknownError);
-				else if (web3Service.isReadOnly()) reject(_noAccountError);
-				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
-				else if (index == 0) reject(_invalidIndexError);
-				else if (isDuplicateTransaction(_updateCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
-				else {
-					try {
-						let collection = await getCollection(index, false);
-
-						//verify that the user is the creator of the collection and owner of all pixelcons
-						let verified = true;
-						if (collection.creator != address) {
-							reject('Account is not the creator of the collection');
-							verified = false;
-						} else {
-							for (let i = 0; i < collection.pixelcons.length; i++) {
-								if (collection.pixelcons[i].owner != address) {
-									reject('Account does not own all PixelCons');
-									verified = false;
-									break;
-								}
-							}
-						}
-						if (verified) {
-							resolve({ owner: address, creator: address });
-						}
-					} catch (err) {
-						console.log(err);
-						reject(_verificationError);
-					}
-				}
-			});
-		}
-
-		// Verifies the pixelcon collection for clearing
-		function verifyPixelconCollectionClear(index, pixelconIds) {
-			let address = web3Service.getActiveAccount();
-			return $q(async function (resolve, reject) {
-				let state = web3Service.getState();
-				if (state == "not_enabled") reject(_notEnabledError);
-				else if (state == "not_connected") reject(_notConnectedError);
-				else if (state != "ready") reject(_unknownError);
-				else if (web3Service.isReadOnly()) reject(_noAccountError);
-				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
-				else if (index == 0) reject(_invalidIndexError);
-				else if (isDuplicateTransaction(_clearCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
-				else {
-					try {
-						let collection = await getCollection(index, false);
-
-						//verify that the user is the creator of the collection and owner of all pixelcons
-						let verified = true;
-						if (collection.creator != address) {
-							reject('Account is not the creator of the collection');
-							verified = false;
-						} else {
-							for (let i = 0; i < collection.pixelcons.length; i++) {
-								if (collection.pixelcons[i].owner != address) {
-									reject('Account does not own all PixelCons');
-									verified = false;
-									break;
-								}
-							}
-						}
-						if (verified) {
-							resolve({ owner: address, creator: address });
-						}
-					} catch (err) {
-						console.log(err);
-						reject(_verificationError);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : _verificationError);
 					}
 				}
 			});
@@ -636,21 +599,20 @@
 						let to = web3Service.getActiveAccount();
 
 						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath);
-						let tx = await contractWithSigner.create(to, id, name);
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let tx = await contractWithSigner.create(to, id, name, _defaultGasParameters);
 
 						//add the waiting transaction to web3Service list
-						let transactionParams = { pixelconId: id, name: name, creator: to };
+						let transactionParams = { pixelconIds: [id], data: {id:id, name:name} };
 						resolve(web3Service.addWaitingTransaction(tx.hash, transactionParams, _createTypeDescription[0], _createTypeDescription[1]));
 					} catch (err) {
 						console.log(err);
-						reject('Something went wrong while creating PixelCon');
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while creating PixelCon');
 					}
 				}
 			});
 		}
-
-
+		
 		// Updates pixelcon name
 		function updatePixelcon(id, name) {
 			id = formatPixelconId(id);
@@ -666,15 +628,107 @@
 				else {
 					try {
 						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath);
-						let tx = await contractWithSigner.rename(id, name);
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let tx = await contractWithSigner.rename(id, name, _defaultGasParameters);
 
 						//add the waiting transaction to web3Service list
-						let transactionParams = { pixelconId: id, name: name };
+						let transactionParams = { pixelconIds: [id], data: {id:id, name:name} };
 						resolve(web3Service.addWaitingTransaction(tx.hash, transactionParams, _updateTypeDescription[0], _updateTypeDescription[1]));
 					} catch (err) {
 						console.log(err);
-						reject('Something went wrong while updating PixelCon');
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while updating PixelCon');
+					}
+				}
+			});
+		}
+
+		// Creates a new pixelcon collection
+		function createCollection(pixelconIds, name) {
+			pixelconIds = formatPixelconIds(pixelconIds);
+			name = web3Service.fromUtf8(name, 8);
+			return $q(async function (resolve, reject) {
+				let state = web3Service.getState();
+				if (state == "not_enabled") reject(_notEnabledError);
+				else if (state == "not_connected") reject(_notConnectedError);
+				else if (state != "ready") reject(_unknownError);
+				else if (web3Service.isReadOnly()) reject(_noAccountError);
+				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
+				else if (pixelconIds == null) reject(_invalidIdError);
+				else if (pixelconIds.length > _maxCreateCollection) reject(_overMaxError + '<br/>(maximum of ' + _maxCreateCollection + ')');
+				else {
+					try {
+						//do transaction
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let pixelconIdexes = await getPixelconIndexesByIds(contractWithSigner, pixelconIds);
+						let tx = await contractWithSigner.createCollection(pixelconIdexes, name, _defaultGasParameters);
+
+						//add the waiting transaction to web3Service list
+						let transactionParams = { pixelconIds: pixelconIds, data: {pixelconIds:pixelconIds, name:name} };
+						resolve(web3Service.addWaitingTransaction(tx.hash, transactionParams, _createCollectionTypeDescription[0], _createCollectionTypeDescription[1]));
+					} catch (err) {
+						console.log(err);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while creating PixelCon collection');
+					}
+				}
+			});
+		}
+
+		// Update the pixelcon collection name
+		function updateCollection(index, pixelconIds, name) {
+			index = formatCollectionIndex(index);
+			pixelconIds = formatPixelconIds(pixelconIds);
+			name = web3Service.fromUtf8(name, 8);
+			return $q(async function (resolve, reject) {
+				let state = web3Service.getState();
+				if (state == "not_enabled") reject(_notEnabledError);
+				else if (state == "not_connected") reject(_notConnectedError);
+				else if (state != "ready") reject(_unknownError);
+				else if (web3Service.isReadOnly()) reject(_noAccountError);
+				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
+				else if (pixelconIds == null) reject(_invalidIdError);
+				else if (index == null) reject(_invalidIndexError);
+				else {
+					try {
+						//do transaction
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let tx = await contractWithSigner.renameCollection(index, name, _defaultGasParameters);
+
+						//add the waiting transaction to web3Service list
+						let transactionParams = { pixelconIds: pixelconIds, data: {index:index, pixelconIds:pixelconIds, name:name} };
+						resolve(web3Service.addWaitingTransaction(tx.hash, transactionParams, _updateCollectionTypeDescription[0], _updateCollectionTypeDescription[1]));
+					} catch (err) {
+						console.log(err);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while updating PixelCon collection');
+					}
+				}
+			});
+		}
+
+		// Clears the pixelcon collection
+		function clearCollection(index, pixelconIds) {
+			index = formatCollectionIndex(index);
+			pixelconIds = formatPixelconIds(pixelconIds);
+			return $q(async function (resolve, reject) {
+				let state = web3Service.getState();
+				if (state == "not_enabled") reject(_notEnabledError);
+				else if (state == "not_connected") reject(_notConnectedError);
+				else if (state != "ready") reject(_unknownError);
+				else if (web3Service.isReadOnly()) reject(_noAccountError);
+				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
+				else if (pixelconIds == null) reject(_invalidIdError);
+				else if (index == null) reject(_invalidIndexError);
+				else {
+					try {
+						//do transaction
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let tx = await contractWithSigner.clearCollection(index, _defaultGasParameters);
+
+						//add the waiting transaction to web3Service list
+						let transactionParams = { pixelconIds: pixelconIds, data: {index:index, pixelconIds:pixelconIds} };
+						resolve(web3Service.addWaitingTransaction(tx.hash, transactionParams, _clearCollectionTypeDescription[0], _clearCollectionTypeDescription[1]));
+					} catch (err) {
+						console.log(err);
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while clearing PixelCon collection');
 					}
 				}
 			});
@@ -697,115 +751,15 @@
 						let owner = web3Service.getActiveAccount();
 
 						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath);
-						let tx = await contractWithSigner['safeTransferFrom(address,address,uint256)'](owner, address, id);
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let tx = await contractWithSigner.transferFrom(owner, address, id, _defaultGasParameters);
 
 						//add the waiting transaction to web3Service list
-						let transactionParams = { pixelconId: id, address: address };
+						let transactionParams = { pixelconIds: [id], data: {id:id, address:address} };
 						resolve(web3Service.addWaitingTransaction(tx.hash, transactionParams, _transferTypeDescription[0], _transferTypeDescription[1]));
 					} catch (err) {
 						console.log(err);
-						reject('Something went wrong while sending PixelCon');
-					}
-				}
-			});
-		}
-
-		// Creates a new pixelcon collection
-		function createPixelconCollection(indexes, name) {
-			name = web3Service.fromUtf8(name, 8);
-			return $q(async function (resolve, reject) {
-				let state = web3Service.getState();
-				if (state == "not_enabled") reject(_notEnabledError);
-				else if (state == "not_connected") reject(_notConnectedError);
-				else if (state != "ready") reject(_unknownError);
-				else if (web3Service.isReadOnly()) reject(_noAccountError);
-				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
-				else {
-					try {
-						let contract = await web3Service.getContractWithSigner(_contractPath);
-						let basicDataRaw = await contract.getBasicData(indexes);
-						let pixelconIds = [];
-						for (let i = 0; i < basicDataRaw[0].length; i++) pixelconIds.push(web3Service.to256Hex(basicDataRaw[0][i]));
-						let creator = web3Service.getActiveAccount();
-
-						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath);
-						let tx = await contractWithSigner.createCollection(indexes, name);
-
-						//add the waiting transaction to web3Service list
-						let transactionParams = { pixelconIds: pixelconIds, pixelconIndexes: indexes, name: name, creator: creator };
-						resolve(web3Service.addWaitingTransaction(tx.hash, transactionParams, _createCollectionTypeDescription[0], _createCollectionTypeDescription[1]));
-					} catch (err) {
-						console.log(err);
-						reject('Something went wrong while creating PixelCon collection');
-					}
-				}
-			});
-		}
-
-		// Update the pixelcon collection name
-		function updatePixelconCollection(index, name) {
-			name = web3Service.fromUtf8(name, 8);
-			return $q(async function (resolve, reject) {
-				let state = web3Service.getState();
-				if (state == "not_enabled") reject(_notEnabledError);
-				else if (state == "not_connected") reject(_notConnectedError);
-				else if (state != "ready") reject(_unknownError);
-				else if (web3Service.isReadOnly()) reject(_noAccountError);
-				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
-				else if (index == 0) reject(_invalidIndexError);
-				else {
-					try {
-						let collection = await getCollection(index, true);
-						let pixelconIds = [];
-						for (let i = 0; i < collection.pixelcons.length; i++) pixelconIds.push(collection.pixelcons[i].id);
-
-						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath);
-						let tx = await contractWithSigner.renameCollection(index, name);
-
-						//add the waiting transaction to web3Service list
-						let transactionParams = { pixelconIds: pixelconIds, collectionIndex: index, name: name };
-						resolve(web3Service.addWaitingTransaction(tx.hash, transactionParams, _updateCollectionTypeDescription[0], _updateCollectionTypeDescription[1]));
-					} catch (err) {
-						console.log(err);
-						reject('Something went wrong while updating PixelCon collection');
-					}
-				}
-			});
-		}
-
-		// Clears the pixelcon collection
-		function clearPixelconCollection(index) {
-			return $q(async function (resolve, reject) {
-				let state = web3Service.getState();
-				if (state == "not_enabled") reject(_notEnabledError);
-				else if (state == "not_connected") reject(_notConnectedError);
-				else if (state != "ready") reject(_unknownError);
-				else if (web3Service.isReadOnly()) reject(_noAccountError);
-				else if (web3Service.isPrivacyMode()) reject(_accountPrivateError);
-				else if (index == 0) reject(_invalidIndexError);
-				else {
-					try {
-						let collection = await getCollection(index, true);
-						let pixelconIds = [];
-						let pixelconIndexes = [];
-						for (let i = 0; i < collection.pixelcons.length; i++) {
-							pixelconIds.push(collection.pixelcons[i].id);
-							pixelconIndexes.push(collection.pixelcons[i].index);
-						}
-
-						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath);
-						let tx = await contractWithSigner.clearCollection(index);
-
-						//add the waiting transaction to web3Service list
-						let transactionParams = { pixelconIds: pixelconIds, collectionIndex: index, pixelconIndexes: pixelconIndexes };
-						resolve(web3Service.addWaitingTransaction(tx.hash, transactionParams, _clearCollectionTypeDescription[0], _clearCollectionTypeDescription[1]));
-					} catch (err) {
-						console.log(err);
-						reject('Something went wrong while clearing PixelCon collection');
+						reject(err.name == 'UserActionNeededError' ? err.actionNeeded : 'Something went wrong while sending PixelCon');
 					}
 				}
 			});
@@ -837,118 +791,190 @@
 			if (id == '0x0000000000000000000000000000000000000000000000000000000000000000') return null;
 			return id;
 		}
-
-		// Gets the details for the given pixelcon collection index
-		function getCollection(index, skipCreator) {
-			return $q(async function (resolve, reject) {
-				try {
-					let contract = await web3Service.getContract(_contractPath);
-					let collectionRaw = await contract.getCollectionData(index);
-					let collectionPixelcons = [];
-					let collectionName = web3Service.toUtf8(collectionRaw[0]);
-					let collectionPixelconIndexes = collectionRaw[1];
-					let basicDataRaw = await contract.getBasicData(collectionPixelconIndexes);
-					if (basicDataRaw) {
-						for (let i = 0; i < basicDataRaw[0].length; i++) {
-							collectionPixelcons.push({
-								id: web3Service.to256Hex(basicDataRaw[0][i]),
-								index: collectionPixelconIndexes[i].toNumber(),
-								name: web3Service.toUtf8(basicDataRaw[1][i]),
-								owner: web3Service.formatAddress(basicDataRaw[2][i].toString()),
-								collection: basicDataRaw[3][i].toNumber() ? basicDataRaw[3][i].toNumber() : null
-							});
-						}
-					}
-
-					// get creator
-					let creator = null;
-					if (!skipCreator && collectionPixelcons[0]) {
-						creator = web3Service.formatAddress(await contract.creatorOf(collectionPixelcons[0].id));
-					}
-
-					// return collection object
-					resolve({
-						index: index,
-						creator: creator,
-						name: collectionName,
-						pixelcons: collectionPixelcons
-					});
-
-				} catch (err) {
-					reject(err);
-				}
-			});
+		
+		// Converts to standard format of given pixelcon ids (or null if invalid)
+		function formatPixelconIds(ids) {
+			let formattedIds = [];
+			for(let i = 0; i < ids.length; i++) {
+				let id = formatPixelconId(ids[i]);
+				if (id == null) return null;
+				formattedIds.push(id);
+			}
+			return formattedIds;
 		}
-
-		// Fills in collection data for the given pixelcons
-		function fillCollectionData(pixelcons) {
+		
+		// Converts to standard format of a given collection index (or null if invalid)
+		function formatCollectionIndex(index) {
+			index = parseInt(index);
+			if(isNaN(index) || index == 0) return null;
+			return index;
+		}
+		
+		// Gets the list of Ids for the given pixelcons
+		function getPixelConIds(pixelcons) {
+			let ids = [];
+			if(pixelcons && pixelcons.length) {
+				for(let i=0; i<pixelcons.length; i++) ids.push(pixelcons[i].id);
+			}
+			return ids;
+		}
+		
+		// Breaks up the given list to query for data in chunks
+		async function breakUpQuery(list, querySubset, max) {
+			if(list && !Array.isArray(list)) list = [list];
+			if(!max) max = 1000;
+			
+			let subList = [];
+			let results = [];
+			for(let i=0; i<list.length; i++) {
+				if(subList.length >= max) {
+					results = results.concat(await querySubset(subList));
+					subList = [];
+				}
+				subList.push(list[i]);
+			}
+			if(subList.length > 0) results = results.concat(await querySubset(subList));
+			
+			return results;
+		}
+		
+		// Gets pixelcon indexes from the given ids
+		async function getPixelconIndexesByIds(contract, ids) {
+			if(!ids || !ids.length) return [];
+			
+			let createEvents = await breakUpQuery(ids, async function(ids_subset) {
+				return await contract.queryFilter(contract.filters.Create(ids_subset, null, null));
+			}, _maxFilterParamSize);
+			
+			//sort into the same order as given indexes
+			let sortedIndexes = [];
+			for(let i=0; i<ids.length; i++) {
+				for(let j=0; j<createEvents.length; j++) {
+					let createEventId = web3Service.to256Hex(createEvents[j].args["_tokenId"]);
+					let createEventsIndex = createEvents[j].args["_tokenIndex"].toNumber();
+					if(createEventId == ids[i]) {
+						sortedIndexes.push(createEventsIndex);
+						break;
+					}
+				}
+			}
+			return sortedIndexes;
+		}
+		
+		// Gets pixelcon ids from the given indexes
+		async function getPixelconIdsByIndexes(contract, indexes) {
+			if(!indexes || !indexes.length) return [];
+			
+			let basicDataRaw = await breakUpQuery(indexes, async function(indexes_subset) {
+				let tokenData = await contract.getBasicData(indexes_subset);
+				let dataByToken = [];
+				for(let i=0; i<tokenData[0].length; i++) dataByToken.push([tokenData[0][i], tokenData[1][i], tokenData[2][i], tokenData[3][i]]);
+				return dataByToken;
+			}, _maxQueryParamSize);
+			
+			let ids = [];
+			for (let i = 0; i < basicDataRaw.length; i++) ids.push(web3Service.to256Hex(basicDataRaw[i][0]));
+			return ids;
+		}
+		
+		// Gets pixelcons from the given indexes
+		async function getPixelconsByIndexes(contract, indexes) {
+			if(!indexes || !indexes.length) return [];
+			
+			let basicDataRaw = await breakUpQuery(indexes, async function(indexes_subset) {
+				let tokenData = await contract.getBasicData(indexes_subset);
+				let dataByToken = [];
+				for(let i=0; i<tokenData[0].length; i++) dataByToken.push([tokenData[0][i], tokenData[1][i], tokenData[2][i], tokenData[3][i]]);
+				return dataByToken;
+			}, _maxQueryParamSize);
+				
+			let pixelcons = [];
+			for (let i = 0; i < basicDataRaw.length; i++) {
+				pixelcons.push({
+					id: web3Service.to256Hex(basicDataRaw[i][0]),
+					index: indexes[i],
+					name: web3Service.toUtf8(basicDataRaw[i][1]),
+					owner: web3Service.formatAddress(basicDataRaw[i][2].toString()),
+					collection: basicDataRaw[i][3].toNumber() ? basicDataRaw[i][3].toNumber() : null
+				});
+			}
+			
+			//fill in collection data
+			await addCollectionData(contract, pixelcons);
+			
+			return pixelcons;
+		}
+		
+		// Gets pixelcons from the given indexes
+		async function getPixelconsByIds(contract, ids) {
+			if(!ids || !ids.length) return [];
+			
+			let indexes = await getPixelconIndexesByIds(contract, ids);
+			return await getPixelconsByIndexes(contract, indexes);
+		}
+		
+		// Gets collection from the given index
+		async function getCollectionByIndex(contract, index) {
+			let collectionRaw = await contract.getCollectionData(index);
+			let collectionName = web3Service.toUtf8(collectionRaw[0]);
+			let collectionPixelconIds = await getPixelconIdsByIndexes(contract, collectionRaw[1]);
+			let createCollectionEvent = await contract.queryFilter(contract.filters.CreateCollection(null, index));
+			let collectionCreator = web3Service.formatAddress(createCollectionEvent[0].args["_creator"]);
+			
+			return {
+				index: index,
+				name: collectionName,
+				creator: collectionCreator,
+				pixelconIds: collectionPixelconIds
+			}
+		}
+		
+		// Adds collection details to the given pixelcons
+		async function addCollectionData(contract, pixelcons) {
 			let isArray = true;
 			if (pixelcons.length === undefined && pixelcons.id) {
 				isArray = false;
 				pixelcons = [pixelcons];
 			}
-			return $q(async function (resolve, reject) {
-				try {
-					let cachedGroups = {};
-					for (let i = 0; i < pixelcons.length; i++) {
-						if (pixelcons[i].collection !== null) {
-							if (cachedGroups[pixelcons[i].collection]) {
-								//group data already fetched
-								pixelcons[i].collection = cachedGroups[pixelcons[i].collection];
-
-							} else {
-								let collection = await getCollection(pixelcons[i].collection, true);
-
-								//replace group pixelcon data, with more detailed versions
-								for (let j = 0; j < collection.pixelcons.length; j++) {
-									for (let k = 0; k < pixelcons.length; k++) {
-										if (collection.pixelcons[j].id == pixelcons[k].id) {
-											collection.pixelcons[j] = pixelcons[k];
-											break;
-										}
-									}
-								}
-
-								//set collection and cache results
-								if (pixelcons[i].creator) collection.creator = pixelcons[i].creator;
-								cachedGroups[pixelcons[i].collection] = collection;
-								pixelcons[i].collection = collection;
-							}
-						}
+			try {
+				let cache = {};
+				for (let i = 0; i < pixelcons.length; i++) {
+					if (pixelcons[i].collection && !isNaN(pixelcons[i].collection)) {
+						
+						//fetch collection details (possible already in cache)
+						let collectionIndex = pixelcons[i].collection;
+						let collection = cache[collectionIndex] ? cache[collectionIndex] : (await getCollectionByIndex(contract, collectionIndex));
+						pixelcons[i].collection = collection;
+						cache[collectionIndex] = collection;
 					}
-					resolve(isArray ? pixelcons : pixelcons[0]);
-
-				} catch (err) {
-					reject(err);
 				}
-			});
+			} catch (err) {
+				console.log(err);
+			}
+			return isArray ? pixelcons : pixelcons[0];
 		}
-
+		
 		// Checks if the given data looks like a currently processing transaction
 		function isDuplicateTransaction(transactionType, pixelconIds) {
 			let transactions = web3Service.getWaitingTransactions();
 			for (let i = 0; i < transactions.length; i++) {
 				if (transactions[i].type == transactionType && transactions[i].params) {
-					if (pixelconIds.length == 1) {
-						if (transactions[i].params.pixelconId == pixelconIds[0]) return true;
-					} else {
-						if (transactions[i].params.pixelconIds && transactions[i].params.pixelconIds.length == pixelconIds.length) {
-							let containsAll = true;
-							for (let x = 0; x < pixelconIds.length; x++) {
-								let found = false;
-								for (let y = 0; y < transactions[i].params.pixelconIds.length; y++) {
-									if (pixelconIds[x] == transactions[i].params.pixelconIds[y]) {
-										found = true;
-										break;
-									}
-								}
-								if (!found) {
-									containsAll = false;
+					if (transactions[i].params.pixelconIds && transactions[i].params.pixelconIds.length == pixelconIds.length) {
+						let containsAll = true;
+						for (let x = 0; x < pixelconIds.length; x++) {
+							let found = false;
+							for (let y = 0; y < transactions[i].params.pixelconIds.length; y++) {
+								if (pixelconIds[x] == transactions[i].params.pixelconIds[y]) {
+									found = true;
 									break;
 								}
 							}
-							if (containsAll) return true;
+							if (!found) {
+								containsAll = false;
+								break;
+							}
 						}
+						if (containsAll) return true;
 					}
 				}
 			}
@@ -963,156 +989,134 @@
 
 		// Adds data to return for create transaction
 		async function addPixelconDataForCreate(params, data) {
-			//params.pixelconId
-			//params.name
-			//params.creator
-
 			//scan event logs for data
-			let pixelconIndex = null;
+			let pixelcon = {};
 			let contractInterface = await web3Service.getContractInterface(_contractPath);
-			for (var i = 0; i < data.logs.length; i++) {
+			for (let i = 0; i < data.logs.length; i++) {
 				let event = contractInterface.parseLog(data.logs[i]);
 				if (event.name == "Create") {
-					pixelconIndex = event.args["_tokenIndex"].toNumber();
-					break;
+					pixelcon.id = web3Service.to256Hex(event.args["_tokenId"].toHexString())
+					pixelcon.index = event.args["_tokenIndex"].toNumber();
+					pixelcon.name = web3Service.toUtf8(params.data.name),
+					pixelcon.creator = web3Service.formatAddress(event.args["_creator"]);
+					pixelcon.owner = web3Service.formatAddress(event.args["_to"]);
+					pixelcon.collection = null;
 				}
 			}
-
+			debugger;
+			
 			//set pixelcon data
-			data.pixelcons = [{
-				id: params.pixelconId,
-				index: pixelconIndex,
-				name: web3Service.toUtf8("" + params.name),
-				owner: params.creator,
-				creator: params.creator,
-				date: (new Date()).getTime(),
-				collection: null
-			}];
+			data.pixelcons = [pixelcon];
 			return data;
 		}
 
 		// Adds data to return for update transaction
 		async function addPixelconDataForUpdate(params, data) {
-			//params.pixelconId
-			//params.name
-
-			//fetch additional data
-			let pixelcon = await fetchPixelcon(params.pixelconId);
-
-			//update the name cache
-			if (_cacheNameFetch && pixelconNames.length > pixelcon.index) pixelconNames[pixelcon.index] = pixelcon.name;
+			//fetch pixelcon
+			let pixelcon = await fetchPixelcon(params.pixelconIds[0]);
+			
+			//scan event logs for data
+			let contractInterface = await web3Service.getContractInterface(_contractPath);
+			for (let i = 0; i < data.logs.length; i++) {
+				let event = contractInterface.parseLog(data.logs[i]);
+				if (event.name == "Rename") {
+					pixelcon.name = web3Service.toUtf8(event.args["_newName"]);
+				}
+			}
+			debugger;
 
 			//set pixelcon data
-			pixelcon.name = web3Service.toUtf8("" + params.name);
 			data.pixelcons = [pixelcon];
 			return data;
 		}
 
 		// Adds data to return for transfer transaction
 		async function addPixelconDataForTransfer(params, data) {
-			//params.pixelconId
-			//params.address
-
-			//fetch additional data
-			let pixelcon = await fetchPixelcon(params.pixelconId);
+			//fetch pixelcon
+			let pixelcon = await fetchPixelcon(params.pixelconIds[0]);
+			
+			//scan event logs for data
+			let contractInterface = await web3Service.getContractInterface(_contractPath);
+			for (let i = 0; i < data.logs.length; i++) {
+				let event = contractInterface.parseLog(data.logs[i]);
+				if (event.name == "Transfer") {
+					pixelcon.owner = web3Service.formatAddress(event.args["_to"]);
+				}
+			}
+			debugger;
 
 			//set pixelcon data
-			pixelcon.owner = params.address;
 			data.pixelcons = [pixelcon];
 			return data;
 		}
 
 		// Adds data to return for create collection transaction
 		async function addPixelconDataForCreateCollection(params, data) {
-			//params.pixelconIds
-			//params.pixelconIndexes
-			//params.name
-			//params.creator
-
 			//scan event logs for data
-			let collectionIndex = null;
+			let collection = null;
 			let contractInterface = await web3Service.getContractInterface(_contractPath);
-			for (var i = 0; i < data.logs.length; i++) {
+			for (let i = 0; i < data.logs.length; i++) {
 				let event = contractInterface.parseLog(data.logs[i]);
 				if (event.name == "CreateCollection") {
-					collectionIndex = event.args["_collectionIndex"].toNumber();
+					collection = {
+						index: event.args["_collectionIndex"].toNumber(),
+						name: web3Service.toUtf8(params.data.name),
+						creator: web3Service.formatAddress(event.args["_creator"]),
+						pixelconIds: params.pixelconIds
+					};
 					break;
 				}
 			}
 
 			//fetch additional data
-			let pixelcons = await fetchPixelconsByIndexes(params.pixelconIndexes);
+			let contract = await web3Service.getContract(_contractPath, _chainId);
+			let pixelcons = await getPixelconsByIds(contract, params.pixelconIds);
 
-			//set pixelcon data
-			let collectionPixelcons = [];
-			for (let i = 0; i < pixelcons.length; i++) {
-				collectionPixelcons.push({
-					id: pixelcons[i].id,
-					index: pixelcons[i].index,
-					name: pixelcons[i].name,
-					owner: pixelcons[i].owner,
-					collection: collectionIndex
-				});
-			}
-			let collection = {
-				index: collectionIndex,
-				creator: params.creator,
-				name: web3Service.toUtf8("" + params.name),
-				pixelcons: collectionPixelcons
-			}
+			//set collection data
 			for (let i = 0; i < pixelcons.length; i++) pixelcons[i].collection = collection;
+			debugger;
+			
+			//set pixelcon data
 			data.pixelcons = pixelcons;
 			return data;
 		}
-
+		
 		// Adds data to return for update collection transaction
 		async function addPixelconDataForUpdateCollection(params, data) {
-			//params.pixelconIds
-			//params.collectionIndex
-			//params.name
-
-			//fetch additional data
-			let collection = await getCollection(params.collectionIndex);
-
-			//update the name cache
-			if (_cacheNameFetch && collectionNames.length > collection.index) collectionNames[collection.index] = collection.name;
-
-			//set pixelcon data
-			collection.name = web3Service.toUtf8("" + params.name);
-			let pixelcons = [];
-			for (let i = 0; i < collection.pixelcons.length; i++) {
-				pixelcons.push({
-					id: collection.pixelcons[i].id,
-					index: collection.pixelcons[i].index,
-					name: collection.pixelcons[i].name,
-					owner: collection.pixelcons[i].owner,
-					collection: collection
-				});
+			//scan event logs for data
+			let collectionName = null;
+			let contractInterface = await web3Service.getContractInterface(_contractPath);
+			for (let i = 0; i < data.logs.length; i++) {
+				let event = contractInterface.parseLog(data.logs[i]);
+				if (event.name == "RenameCollection") {
+					collectionName = web3Service.toUtf8(event.args["_newName"]);
+				}
 			}
+			
+			//fetch pixelcon
+			let contract = await web3Service.getContract(_contractPath, _chainId);
+			let pixelcons = await getPixelconsByIds(contract, params.pixelconIds);
+			
+			//update collection data
+			for (let i = 0; i < pixelcons.length; i++) pixelcons[i].collection.name = collectionName;
+			debugger;
+			
+			//set pixelcon data
 			data.pixelcons = pixelcons;
 			return data;
 		}
 
 		// Adds data to return for clear collection transaction
 		async function addPixelconDataForClearCollection(params, data) {
-			//params.pixelconIds
-			//params.collectionIndex
-			//params.pixelconIndexes
-
-			//fetch additional data
-			let collectionPixelcons = await fetchPixelconsByIndexes(params.pixelconIndexes);
-
+			//fetch pixelcon
+			let contract = await web3Service.getContract(_contractPath, _chainId);
+			let pixelcons = await getPixelconsByIds(contract, params.pixelconIds);
+			
+			//clear collection data
+			for (let i = 0; i < pixelcons.length; i++) pixelcons[i].collection = null;
+			debugger;
+			
 			//set pixelcon data
-			let pixelcons = [];
-			for (let i = 0; i < collectionPixelcons.length; i++) {
-				pixelcons.push({
-					id: collectionPixelcons[i].id,
-					index: collectionPixelcons[i].index,
-					name: collectionPixelcons[i].name,
-					owner: collectionPixelcons[i].owner,
-					collection: null
-				});
-			}
 			data.pixelcons = pixelcons;
 			return data;
 		}

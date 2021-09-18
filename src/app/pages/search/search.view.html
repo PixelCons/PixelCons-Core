@@ -30,12 +30,10 @@
 		<div id="searchPagePixelconWindow" class="displayWindow colorDark"  ng-style="{'min-height': ctrl.displayHeight}">
 		
 			<!-- Error -->
-			<div class="error colorLight" ng-show="ctrl.error">
-				<b>Ethereum Network Error:</b><br/>{{ctrl.error}}
-			</div>
+			<div class="error colorLight textSelectable" ng-show="ctrl.error" ng-bind-html="ctrl.error"></div>
 		
 			<!-- Empty -->
-			<div class="error colorLight" ng-show="!ctrl.error && !ctrl.loading && !ctrl.grabbingData && ctrl.pixelcons.length==0">
+			<div class="error colorLight textSelectable" ng-show="!ctrl.error && !ctrl.loading && !ctrl.grabbingData && ctrl.pixelcons.length==0">
 				No PixelCons
 			</div>
 		

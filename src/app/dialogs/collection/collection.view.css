@@ -17,6 +17,7 @@
 .collectionDialog div.infoText {
 	text-align: center;
 	margin: 10px;
+	min-height: 5px;
 }
 .collectionDialog div.actionButtons {
 	position: absolute;
@@ -94,8 +95,8 @@
 	margin-top: 80px;
 }
 .collectionDialog .nameInput {
-	width: 150px;
-	margin-left: 58px;
+	width: 200px;
+	margin-left: 33px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
@@ -107,9 +108,4 @@
 	left: 15px;
 	bottom: 10px;
 	font-size: 14px;
-}
-
-/* Duplicate View */
-.collectionDialog div.duplicateTitle {
-	margin-top: 125px;
 }

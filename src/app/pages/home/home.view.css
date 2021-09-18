@@ -40,38 +40,40 @@ div.pixelconHomePage div.homeHeader {
 	text-align: left;
 }
 div.pixelconHomePage div.titleCollectionContainer {
-	position: relative;
 	display: inline-block;
 	vertical-align: middle;
 	font-size: 0px;
 	width: 250px;
 	height: 250px;
 }
+div.pixelconHomePage div.titleCollectionContainer a.titleCollectionItem {
+	display: inline-block;
+	vertical-align: middle;
+	width: 72px;
+	height: 72px;
+	margin: 5px;
+	box-shadow: 1px 1px 4px #8e8e8e;
+}
+div.pixelconHomePage div.titleCollectionContainer a.titleCollectionItem:hover {
+	width: 76px;
+	height: 76px;
+	margin: 3px;
+}
 div.pixelconHomePage div.titleCollectionContainer.small {
 	width: 226px;
 	height: 226px;
 }
-div.pixelconHomePage div.titleCollectionContainer .titleCollectionImg {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
+div.pixelconHomePage div.titleCollectionContainer.small a.titleCollectionItem {
+	width: 64px;
+	height: 64px;
 }
-div.pixelconHomePage div.titleCollectionContainer .titleCollectionOverlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	font-size: 170px;
-	font-style: italic;
-	line-height: 250px;
-	text-shadow: 0px 0px 10px #ebebeb;
-}
-div.pixelconHomePage div.titleCollectionContainer.small .titleCollectionOverlay {
-	font-size: 56px;
-	line-height: 226px;
+div.pixelconHomePage
+	div.titleCollectionContainer.small
+	a.titleCollectionItem:hover {
+	width: 68px;
+	height: 68px;
+	margin: 3px;
+	box-shadow: 1px 1px 6px #acacac;
 }
 div.pixelconHomePage div.ethereumImage {
 	display: inline-block;

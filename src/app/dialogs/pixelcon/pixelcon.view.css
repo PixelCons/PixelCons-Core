@@ -17,6 +17,7 @@
 .pixelconDialog div.infoText {
 	text-align: center;
 	margin: 10px;
+	min-height: 5px;
 }
 .pixelconDialog div.actionButtons {
 	position: absolute;
@@ -59,6 +60,21 @@
 	width: 48px;
 	height: 48px;
 }
+.pixelconDialog div.multiPixelconContainer {
+	position: absolute;
+	display: inline-block;
+	top: 5px;
+	right: 5px;
+	width: 54px;
+	font-size: 0px;
+	text-align: right;
+}
+.pixelconDialog div.multiPixelconContainer pixelcon {
+	display: inline-block;
+	width: 23px;
+	height: 23px;
+	margin: 2px;
+}
 .pixelconDialog .md-errors-spacer {
 	max-height: 0px;
 	min-height: 0px;
@@ -86,8 +102,8 @@
 	margin-top: 80px;
 }
 .pixelconDialog .nameInput {
-	width: 150px;
-	margin-left: 58px;
+	width: 180px;
+	margin-left: 43px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }

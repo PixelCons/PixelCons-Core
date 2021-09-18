@@ -19,11 +19,8 @@ div.pixelconCollectionPage.sm div.bottomSpacer {
 }
 div.pixelconCollectionPage div.maxWidth {
 	width: calc(100% - 60px);
-	max-width: 900px;
+	max-width: 1280px;
 	display: inline-block;
-}
-div.pixelconCollectionPage.md div.maxWidth {
-	max-width: 800px;
 }
 div.pixelconCollectionPage.sm div.maxWidth {
 	width: calc(100% - 16px);
@@ -42,42 +39,59 @@ div.pixelconCollectionPage.sm div.accountCard {
 div.pixelconCollectionPage div.displayWindow {
 	position: relative;
 	box-sizing: border-box;
-	padding: 25px 60px 15px 60px;
+	padding: 45px 30px 10px 30px;
 	border-radius: 15px;
 	min-height: 200px;
 }
-div.pixelconCollectionPage.md div.displayWindow {
-	padding: 25px 50px 15px 50px;
-}
 div.pixelconCollectionPage.sm div.displayWindow {
-	padding: 50px 10px 15px 10px;
+	padding: 45px 10px 5px 10px;
 }
-div.pixelconCollectionPage div.groupIcon {
+div.pixelconCollectionPage div.displayWindowGroupContainer {
 	position: absolute;
-	display: inline-block;
+	top: 10px;
+	left: 10px;
 	font-size: 0px;
-	top: 15px;
-	left: 15px;
 }
-div.pixelconCollectionPage.sm div.groupIcon {
+div.pixelconCollectionPage div.displayWindowGroupContainer div.groupTextStack {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: left;
+	font-size: 0px;
+	margin-top: -2px;
+	min-height: 26px;
+}
+div.pixelconCollectionPage div.displayWindowGroupContainer div.groupIcon {
+	display: inline-block;
+	vertical-align: middle;
+	width: 32px;
+	height: 32px;
+    background-image: url(/img/icon_group_w.svg);
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+	background-size: contain;
+}
+div.pixelconCollectionPage.sm div.displayWindowGroupContainer div.groupIcon {
 	top: 20px;
 	left: 15px;
 }
-div.pixelconCollectionPage div.groupIconElement {
+div.pixelconCollectionPage div.displayWindowGroupContainer div.groupTextLarge {
+	font-size: 18px;
+	height: 18px;
 	display: inline-block;
-	width: 8px;
-	height: 10px;
-	margin-right: 8px;
+	vertical-align: bottom;
+	color: #FFFFFF;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
 }
-div.pixelconCollectionPage.md div.groupIconElement {
-	width: 7px;
-	height: 9px;
-	margin-right: 7px;
-}
-div.pixelconCollectionPage.sm div.groupIconElement {
-	width: 7px;
-	height: 9px;
-	margin-right: 7px;
+div.pixelconCollectionPage div.displayWindowGroupContainer div.groupTextSmall {
+	font-size: 12px;
+	height: 12px;
+	font-weight: bold;
+	display: inline-block;
+	vertical-align: bottom;
+	color: #FFFFFF;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
 }
 div.pixelconCollectionPage div.displayTable {
 	box-sizing: border-box;
@@ -104,7 +118,8 @@ div.pixelconCollectionPage div.error {
 	top: 50%;
 	margin: -38px -153px;
 	width: 276px;
-	height: 42px;
+	min-height: 42px;
+	max-height: 100px;
 	padding: 15px;
 	border-radius: 15px;
 }
@@ -112,7 +127,7 @@ div.pixelconCollectionPage div.loading {
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	margin: -45px -45px;
+	margin: -50px -50px;
 	width: 80px;
 	height: 80px;
 	padding: 10px;
@@ -124,7 +139,7 @@ div.pixelconCollectionPage .shareLink {
 	right: 10px;
 	width: 30px;
 	height: 30px;
-	background-image: url(/img/icon_share_w.svg);
+	background-image: url(/img/icon_share.svg);
 	background-size: contain;
 	opacity: 0.5;
 	filter: alpha(opacity=50);
@@ -138,35 +153,55 @@ div.pixelconCollectionPage .shareLink:hover {
 div.pixelconCollectionPage div.detailsSection {
 	padding: 5px;
 	text-align: left;
-	min-height: 35px;
+	min-height: 88px;
 }
 div.pixelconCollectionPage div.detailsInnerSection {
+	position: relative;
 	padding-left: 5px;
 	padding-right: 5px;
 }
-div.pixelconCollectionPage div.detailsSectionMenuBar {
-	position: relative;
-	width: calc(100% - 50px);
-	padding-right: 50px;
+div.pixelconCollectionPage div.detailsSectionMoreButton {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	line-height: 0px;
 }
-div.pixelconCollectionPage div.detailsSectionMenuBarText {
+div.pixelconCollectionPage div.detailsSectionMoreButton button {
+	margin: 0px;
+}
+div.pixelconCollectionPage div.detailsSectionMoreButton .more {
+	background-image: url("/img/icon_more.svg");
+}
+div.pixelconCollectionPage div.detailsSectionMoreButton .share {
+	background-image: url("/img/icon_share.svg");
+}
+div.pixelconCollectionPage div.detailsSectionMoreButton .buy {
+	background-image: url("/img/icon_tag.svg");
+}
+div.pixelconCollectionPage div.detailsSectionBottomText {
 	display: inline-block;
 	vertical-align: bottom;
 }
-div.pixelconCollectionPage div.detailsSectionMenuBarTextSmall {
+div.pixelconCollectionPage div.detailsSectionTopText {
 	display: inline-block;
 	vertical-align: bottom;
 	padding-bottom: 3px;
 }
-div.pixelconCollectionPage div.detailsSectionMoreButton {
-	position: absolute;
-	right: -10px;
-	top: -5px;
+div.pixelconCollectionPage div.detailsSectionTopTextContainer {
+	font-size: 0px;
 }
-div.pixelconCollectionPage div.detailsSectionMoreButton .moreMenu {
-	background-image: url("/img/icon_more.svg");
+div.pixelconCollectionPage div.detailsSectionTopTextName {
+	display: inline-block;
+	vertical-align: bottom;
+}
+div.pixelconCollectionPage div.detailsSectionTopTextCollection {
+	display: inline-block;
+	vertical-align: bottom;
 }
 div.pixelconCollectionPage div.detailsSectionFooter {
 	width: 100%;
 	text-align: right;
+}
+div.pixelconCollectionPage div.detailsSectionFooter.large {
+	margin-top: -20px;
 }

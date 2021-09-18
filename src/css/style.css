@@ -31,6 +31,11 @@
 .clickable {
 	cursor: pointer;
 }
+.messageSettingsLink {
+	display: inline-block;
+	cursor: pointer;
+	text-decoration: underline;
+}
 
 /* Colors */
 .colorDark {
@@ -130,6 +135,9 @@
 .textLight {
 	color: #717171;
 }
+.textLighter {
+	color: #a1a1a1;
+}
 .textWhite {
 	color: #f2f2f2;
 }
@@ -167,7 +175,10 @@
 	background-image: url("/img/icon_search.svg");
 }
 .buttonIcon.account {
-	background-image: url("/img/icon_myaccount.svg");
+	background-image: url("/img/icon_wallet.svg");
+}
+.buttonIcon.migrate {
+	background-image: url("/img/icon_migrate.svg");
 }
 .buttonIcon.create {
 	background-image: url("/img/icon_create.svg");
@@ -187,7 +198,16 @@ div.pageContent {
 div.pageContentBackground {
 	min-height: 100%;
 	background-image: url("../img/back.png");
-	background-size: 640px;
+	background-size: 560px;
+    background-position: 32px 40px;
+}
+div.pageContentBackground.groupOverride {
+	background-image: url("../img/back.png");
+	-webkit-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.4s;
+	-moz-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.4s;
+	-ms-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.4s;
+	-o-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.4s;
+	transition: cubic-bezier(0.35, 0, 0.25, 1) 0.4s;
 }
 div.md-open-menu-container {
 	font-size: 0px;
@@ -211,6 +231,7 @@ a.plain:visited,
 a.plain:hover,
 a.plain:active {
 	text-decoration: none;
+	color: unset;
 }
 a.buttonLink {
 	display: block;

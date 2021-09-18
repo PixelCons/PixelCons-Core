@@ -1,6 +1,6 @@
 <!-- Account Icon Directive -->
 <div class="accountIconDirectiveContainer textNotSelectable" 
-		ng-class="{'xs':ctrl.size=='xs', 'sm':ctrl.size=='sm', 'md':ctrl.size=='md', 'lg':ctrl.size=='lg', 'xl':ctrl.size=='xl', 'clickable':ctrl.clickable}" 
+		ng-class="{'xs':ctrl.size=='xs', 'sm':ctrl.size=='sm', 'md':ctrl.size=='md', 'lg':ctrl.size=='lg', 'xl':ctrl.size=='xl', 'clickable':(ctrl.clickable && ctrl.address)}" 
 		ng-mouseenter="dirHover=true" ng-mouseleave="dirHover=false">
 	
 	<!-- Signature Mode -->
@@ -19,11 +19,11 @@
 	</div>
 		
 	<!-- Icon Mode -->
-	<a ng-href="{{ctrl.clickable?('/creator/'+ctrl.address):''}}" class="plain textDark">
+	<a ng-href="{{(ctrl.clickable && ctrl.address)?('/creator/'+ctrl.address):''}}" class="plain">
 		<div class="accountIconDirectiveInline accountIconDirectiveIcon" ng-class="{'colorWhite':ctrl.text}" ng-if="ctrl.mode=='icon'">
 			<div class="accountIconDirectiveIconContainer">
 				<img class="crispImage" style="width:100%; height:100%" ng-src="{{ctrl.addressIcon}}"/>
-				<div class="accountIconDirectiveIconGotoCover accountIconDirectiveFull" ng-class="{'accountIconDirectiveTransition': ctrl.loaded}" ng-show="dirHover && ctrl.clickable">
+				<div class="accountIconDirectiveIconGotoCover accountIconDirectiveFull" ng-class="{'accountIconDirectiveTransition': ctrl.loaded}" ng-show="dirHover && ctrl.clickable && ctrl.address">
 					<div class="accountIconDirectiveIconGotoIcon accountIconDirectiveFull"></div>
 				</div>
 			</div>
