@@ -7,8 +7,6 @@
 		var _this = this;
 		_this.closeDialog = closeDialog;
 		_this.apply = apply;
-		const _l1ChainId = '31337';
-		const _l2ChainId = '420';
 
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -17,13 +15,13 @@
 		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
 
 		// Load initial data
-		_this.L1_RPC = web3Service.getFallbackRPC(_l1ChainId);
-		_this.L2_RPC = web3Service.getFallbackRPC(_l2ChainId);
+		var mainNetwork = web3Service.getMainNetwork();
+		_this.networkName = mainNetwork.name + ' RPC';
+		_this.networkRPC = web3Service.getFallbackRPC(mainNetwork.chainId);
 		
 		// Applies the set values
 		function apply() {
-			web3Service.setFallbackRPC(_l1ChainId, _this.L1_RPC);
-			web3Service.setFallbackRPC(_l2ChainId, _this.L2_RPC);
+			web3Service.setFallbackRPC(mainNetwork.chainId, _this.networkRPC);
 			$mdDialog.cancel();
 			$route.reload();
 		}

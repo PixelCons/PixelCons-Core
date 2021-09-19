@@ -166,6 +166,7 @@
 		this.checkFlag = checkFlag;
 		this.compressAddressString = compressAddressString;
 		this.getNetworkName = getNetworkName;
+		this.getMainNetwork = getMainNetwork;
 		this.setFallbackRPC = setFallbackRPC;
 		this.getFallbackRPC = getFallbackRPC;
 
@@ -744,6 +745,15 @@
 				}
 			}
 			return 'Unknown';
+		}
+
+		// Gets the main network
+		function getMainNetwork(index) {
+			if(!index) index = 0;
+			return {
+				name: _networkConfig[index].name,
+				chainId: _networkConfig[index].chainId
+			}
 		}
 		
 		// Opens the settings dialog

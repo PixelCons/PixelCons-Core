@@ -60,21 +60,6 @@
 	width: 48px;
 	height: 48px;
 }
-.pixelconDialog div.multiPixelconContainer {
-	position: absolute;
-	display: inline-block;
-	top: 5px;
-	right: 5px;
-	width: 54px;
-	font-size: 0px;
-	text-align: right;
-}
-.pixelconDialog div.multiPixelconContainer pixelcon {
-	display: inline-block;
-	width: 23px;
-	height: 23px;
-	margin: 2px;
-}
 .pixelconDialog .md-errors-spacer {
 	max-height: 0px;
 	min-height: 0px;

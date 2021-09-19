@@ -192,6 +192,10 @@
 								date: pixelconRaw[6] * 1000,
 								collection: pixelconRaw[2].toNumber() ? pixelconRaw[2].toNumber() : null
 							};
+							
+							//fill in collection data
+							await addCollectionData(contract, pixelcon);
+							
 							resolve(pixelcon);
 						}
 					} catch (err) {

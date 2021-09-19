@@ -2,13 +2,7 @@
 	
 	<!-- Header -->
 	<div class="dialogTitle" ng-class="{'sendEthDialogTitle': ctrl.ethMode}">{{ctrl.title}}</div>
-	<div class="pixelconContainer md-whiteframe-1dp" ng-if="!ctrl.ethMode && ctrl.pixelconIds.length == 1"><pixelcon id="ctrl.pixelconIds[0]"></pixelcon></div>
-	<div class="multiPixelconContainer" ng-if="!ctrl.ethMode && ctrl.pixelconIds.length > 1">
-		<pixelcon ng-if="ctrl.pixelconIds[0]" class="md-whiteframe-1dp" id="ctrl.pixelconIds[0]"></pixelcon>
-		<pixelcon ng-if="ctrl.pixelconIds[1]" class="md-whiteframe-1dp" id="ctrl.pixelconIds[1]"></pixelcon>
-		<pixelcon ng-if="ctrl.pixelconIds[2]" class="md-whiteframe-1dp" id="ctrl.pixelconIds[2]"></pixelcon>
-		<pixelcon ng-if="ctrl.pixelconIds[3]" class="md-whiteframe-1dp" id="ctrl.pixelconIds[3]"></pixelcon>
-	</div>
+	<div class="pixelconContainer md-whiteframe-1dp" ng-if="!ctrl.ethMode"><pixelcon id="ctrl.pixelconId"></pixelcon></div>
 	
 	<!-- Error View -->
 	<div class="view" ng-show="ctrl.currView=='error'" ng-cloak>
@@ -41,11 +35,10 @@
 			<input md-autofocus ng-model="ctrl.toAddress" ng-change="ctrl.checkValid()" placeholder="Receiving Address"/>
 		</md-input-container>
 		<div class="actionButtons">
-			<div class="note textLight">{{ctrl.pixelconIds.length}} <span class="textSmall">PixelCon{{ctrl.pixelconIds.length > 1 ? 's' : ''}}</span></div>
+			<div class="note textLight">1 <span class="textSmall">PixelCon</span></div>
 			<md-button ng-disabled="!ctrl.canSend" ng-click="ctrl.sendPixelcon()">Send</md-button>
 		</div>
-		<div class="textNote termsNote" ng-if="ctrl.pixelconIds.length == 1">By sending this PixelCon, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
-		<div class="textNote termsNote" ng-if="ctrl.pixelconIds.length > 1">By sending these PixelCons, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
+		<div class="textNote termsNote">By sending this PixelCon, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
 	</div>
 	
 	<!-- Send Eth View -->

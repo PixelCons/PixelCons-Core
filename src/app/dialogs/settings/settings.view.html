@@ -6,13 +6,8 @@
 	<!-- Inputs -->
 	<md-content layout-padding>
 		<md-input-container class="md-block" flex>
-			<label class="dialogInputLabel">Mainnet RPC</label>
-			<input ng-model="ctrl.L1_RPC">
-		</md-input-container>
-
-		<md-input-container class="md-block" flex>
-			<label class="dialogInputLabel">Optimism RPC</label>
-			<input ng-model="ctrl.L2_RPC">
+			<label class="dialogInputLabel">{{ctrl.networkName}}</label>
+			<input ng-model="ctrl.networkRPC">
 		</md-input-container>
 	</md-content>
 	

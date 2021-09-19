@@ -2,20 +2,18 @@
 	angular.module('App')
 		.controller('DetailsPageCtrl', DetailsPageCtrl);
 
-	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$routeParams', '$sce', '$location', 'web3Service', 'coreContract', 'mergeContract', 'decoder', 'market'];
-	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $routeParams, $sce, $location, web3Service, coreContract, mergeContract, decoder, market) {
+	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$routeParams', '$sce', '$location', 'web3Service', 'coreContract', 'decoder', 'market'];
+	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $routeParams, $sce, $location, web3Service, coreContract, decoder, market) {
 		var _this = this;
 		var pixelconDetails;
 		_this.rename = rename;
 		_this.create = create;
 		_this.send = send;
-		_this.shinyStyle = shinyStyle;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
 		_this.shareOnFacebook = shareOnFacebook;
 		_this.marketEnabled = market.isEnabled();
 		_this.marketLink = market.getItemLink();
-		_this.isL1 = (!!$routeParams.l1) || checkL1FromQRCode($routeParams.qrcode);
 
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -45,22 +43,13 @@
 			} else {
 				_this.loading = true;
 				_this.error = null;
-				let fetchPromise = null;
-				if(_this.isL1) {
-					if(!!$routeParams.qrcode) fetchPromise = mergeContract.fetchL1Pixelcon(_this.pixelconIndex);
-					else fetchPromise = mergeContract.fetchL1Pixelcon(_this.pixelconId);
-				} else {
-					if(!!$routeParams.qrcode) fetchPromise = coreContract.fetchPixelconsByIndexes([_this.pixelconIndex]);
-					else fetchPromise = coreContract.fetchPixelconsByIds([_this.pixelconId]);
-				}
-				fetchPromise.then(function (pixelcon) {
+				coreContract.fetchPixelcon((!!$routeParams.qrcode) ? _this.pixelconIndex : _this.pixelconId).then(function (pixelcon) {
 					if (pixelcon && Array.isArray(pixelcon)) pixelcon = pixelcon[0];			
 					_this.loading = false;
 					if (pixelcon) {
 						//correct to more standard url if from qr link
 						if(!!$routeParams.qrcode) {
 							$location.path('/details/' + pixelcon.id, false);
-							$location.search(_this.isL1 ? 'l1' : '');
 							$location.replace();
 						}
 						setPixelconDetails(pixelcon);
@@ -82,11 +71,8 @@
 
 		// Update from transaction
 		function updateFromTransaction(transactionData) {
-			if (transactionData && transactionData.success && (transactionData.pixelcons || transactionData.pixelconsL1)) {
-				let pixelcon = null;
-				if(_this.isL1) pixelcon = findInList(transactionData.pixelconsL1);
-				else pixelcon = findInList(transactionData.pixelcons);
-				
+			if (transactionData && transactionData.success && transactionData.pixelcons) {
+				let pixelcon = findInList(transactionData.pixelcons);
 				if (pixelcon) {
 					pixelcon = angular.extend({}, pixelconDetails, pixelcon);
 					loadPixelconDetails(pixelcon);
@@ -108,19 +94,10 @@
 				name: pixelcon.name,
 				number: 'Number ' + pixelcon.index,
 				date: 'Created ' + (new Date(pixelcon.date)).toLocaleDateString(),
-				collection: pixelcon.collection,
-				isShiny: pixelcon.isMergedL1
+				collection: pixelcon.collection
 			}
 			
 			checkPermissions();
-			setCollectionBackground();
-		}
-		
-		// Updates the background image according to collection details
-		function setCollectionBackground() {
-			let backgroundImage = null;
-			if(_this.details.collection) backgroundImage = decoder.backgroundPNG(_this.details.collection.pixelconIds);
-			decoder.updateBackground(backgroundImage, '/details', 100);
 		}
 
 		// Checks permissions for the action buttons
@@ -130,7 +107,7 @@
 			_this.isCreator = false;
 			if (_this.details && account) {
 				_this.isOwner = (account == _this.details.owner);
-				_this.isCreator = (account == _this.details.creator) && !_this.isL1;
+				_this.isCreator = (account == _this.details.creator);
 			}
 		}
 
@@ -154,7 +131,7 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.pixelcon'],
 				parent: angular.element(document.body),
-				locals: { pixelconIds: [_this.pixelconId] },
+				locals: { pixelconId: _this.pixelconId },
 				bindToController: true,
 				clickOutsideToClose: true
 			});
@@ -167,20 +144,10 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.send'],
 				parent: angular.element(document.body),
-				locals: { pixelconIds: [_this.pixelconId], l1Mode: _this.isL1 },
+				locals: { pixelconId: _this.pixelconId },
 				bindToController: true,
 				clickOutsideToClose: true
 			});
-		}
-		
-		// Gets the special shiny styling
-		function shinyStyle() {
-			if (_this.pixelconId && _this.details && _this.details.isShiny) {
-				return {
-					'background': coreContract.getShinyColor(_this.pixelconId)
-				}
-			}
-			return {};
 		}
 
 		// Gets page relevant pixelcon from list
@@ -195,12 +162,6 @@
 				}
 			}
 			return pixelcon;
-		}
-		
-		// Check if the given qrcode signals from L1
-		function checkL1FromQRCode(qrcode) {
-			if(qrcode) return qrcode.indexOf('_') === 0;
-			return false;
 		}
 		
 		// Gets the encoded index from the qrcode

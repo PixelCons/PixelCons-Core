@@ -1,7 +1,7 @@
 /* General */
 .settingsDialog {
 	position: relative;
-	height: 250px;
+	height: 200px;
 	width: 500px;
 	max-width: calc(100% - 40px);
 	margin-bottom: 200px;

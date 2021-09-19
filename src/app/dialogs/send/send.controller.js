@@ -2,15 +2,14 @@
 	angular.module('App')
 		.controller('SendDialogCtrl', SendDialogCtrl);
 
-	SendDialogCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$sce', 'web3Service', 'coreContract', 'mergeContract'];
-	function SendDialogCtrl($scope, $mdMedia, $mdDialog, $sce, web3Service, coreContract, mergeContract) {
+	SendDialogCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$sce', 'web3Service', 'coreContract'];
+	function SendDialogCtrl($scope, $mdMedia, $mdDialog, $sce, web3Service, coreContract) {
 		var _this = this;
 		_this.closeDialog = closeDialog;
 		_this.checkValid = checkValid;
 		_this.checkValidAmount = checkValidAmount;
 		_this.sendPixelcon = sendPixelcon;
 		_this.sendEth = sendEth;
-		_this.pixelconIds = cloneList(_this.pixelconIds);
 
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -39,10 +38,7 @@
 				}
 			} else {
 				_this.title = 'Send PixelCon';
-				let verifyPromise = null;
-				if (_this.l1Mode) verifyPromise = mergeContract.verifyTransferL1Pixelcon(_this.pixelconIds[0]);
-				else verifyPromise = coreContract.verifyTransferPixelcons(_this.pixelconIds);
-				verifyPromise.then(function (data) {
+				coreContract.verifyTransferPixelcon(_this.pixelconId).then(function (data) {
 					_this.currView = 'sendPixelcon';
 					_this.cost = data.estCost;
 				}, function (reason) {
@@ -61,31 +57,11 @@
 		function checkValidAmount() {
 			_this.canSend = (_this.sendAmount > 0);
 		}
-		
-		// Clones the given array
-		function cloneList(list) {
-			if(!list) return null;
-			let clonedList = [];
-			for(let i = 0; i < list.length; i++) {
-				clonedList.push((' ' + list[i]).slice(1));
-			}
-			return clonedList;
-		}
 
 		// Send pixelcon
 		function sendPixelcon() {
-			if(_this.pixelconIds.length == 1) {
-				if (_this.l1Mode) {
-					let transaction = mergeContract.transferL1Pixelcon(_this.pixelconIds[0], web3Service.formatAddress(_this.toAddress));
-					$mdDialog.hide({transaction: transaction});
-				} else {
-					let transaction = coreContract.transferPixelcon(_this.pixelconIds[0],web3Service.formatAddress( _this.toAddress));
-					$mdDialog.hide({transaction: transaction});
-				}
-			} else {
-				let transaction = coreContract.transferPixelcons(_this.pixelconIds, web3Service.formatAddress(_this.toAddress));
-				$mdDialog.hide({transaction: transaction});
-			}
+			let transaction = coreContract.transferPixelcon(_this.pixelconId, web3Service.formatAddress(_this.toAddress));
+			$mdDialog.hide({transaction: transaction});
 		}
 
 		// Send ether
