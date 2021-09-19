@@ -59,26 +59,23 @@
 					</div>
 				</div>
 				<accounticon class="textLight" address="ctrl.details.creator" text="Creator" max-chars="16" size="{{ctrl.screenSize.sm?'sm':'md'}}" clickable="true"></accounticon>
-				
-				
-				<a ng-href="/collection/{{ctrl.details.collection.index}}" ng-show="ctrl.details.collection">
-					<div class="viewWindowGroupContainer textLight">
-						<div class="pixelconGroupIconContainer">
-							<div class="pixelconGroupIcon"></div>
-							<div class="groupElement" ng-if="ctrl.details.collection.pixelconIds[0]"><pixelcon id="ctrl.details.collection.pixelconIds[0]"></pixelcon></div>
-							<div class="groupElementSpacer" ng-if="!ctrl.details.collection.pixelconIds[3] && ctrl.details.collection.pixelconIds[2]"></div>
-							<div class="groupElement" ng-if="ctrl.details.collection.pixelconIds[1]"><pixelcon id="ctrl.details.collection.pixelconIds[1]"></pixelcon></div>
-							<div class="groupElement" ng-if="ctrl.details.collection.pixelconIds[2]"><pixelcon id="ctrl.details.collection.pixelconIds[2]"></pixelcon></div>
-							<div class="groupElement" ng-if="ctrl.details.collection.pixelconIds[3]"><pixelcon id="ctrl.details.collection.pixelconIds[3]"></pixelcon></div>
-								
+				<a ng-href="/collection/{{ctrl.details.collection.index}}" ng-if="ctrl.details.collection">
+					<div class="groupContainer textLight">
+						<div class="groupIconContainer">
+							<div class="groupElement" ng-if="ctrl.scrambledCollectionPixelconIds[0]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[0]"></pixelcon></div>
+							<div class="groupElement" ng-if="ctrl.scrambledCollectionPixelconIds[1]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[1]"></pixelcon></div>
+							<div class="groupElement" ng-if="ctrl.scrambledCollectionPixelconIds[2]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[2]"></pixelcon></div>
+							<div class="groupElement" ng-if="ctrl.scrambledCollectionPixelconIds[3]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[3]"></pixelcon></div>
+							<div class="iconGotoCover">
+								<div class="gotoIcon"></div>
+							</div>
 						</div>
-						<div class="pixelconGroupTextStack">
-							<div class="pixelconGroupCount textMedium">{{ctrl.details.collection.pixelconIds.length}}</div><br/>
-							<div class="pixelconGroupText textMedium">{{ctrl.details.collection.name}}</div>
+						<div class="groupTextStack">
+							<div class="groupText textMedium" ng-class="{'sm': !!ctrl.details.collection.name}">{{ctrl.details.collection.pixelconIds.length}}</div><br/>
+							<div class="groupText textMedium">{{ctrl.details.collection.name}}</div>
 						</div>
 					</div>
 				</a>
-			
 				<div class="detailsSectionLineItems textMedium textLight">
 					{{ctrl.details.date}}<br/>
 					{{ctrl.details.number}}<br/>

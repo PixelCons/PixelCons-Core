@@ -85,7 +85,7 @@
 			pixelconDetails = pixelcon;
 			_this.marketLink = market.getItemLink(pixelcon.id);
 			_this.pixelconId = pixelcon.id;
-			_this.pixelconIndex = pixelcon.index;
+			_this.pixelconIndex = pixelcon.index;			
 			_this.details = {
 				id: pixelcon.id,
 				index: pixelcon.index,
@@ -95,6 +95,13 @@
 				number: 'Number ' + pixelcon.index,
 				date: 'Created ' + (new Date(pixelcon.date)).toLocaleDateString(),
 				collection: pixelcon.collection
+			}
+			
+			//scramble the collection pixelconIds
+			if(pixelcon.collection) {
+				_this.scrambledCollectionPixelconIds = web3Service.scrambleList(pixelcon.collection.pixelconIds, pixelcon.id);
+			} else {
+				_this.scrambledCollectionPixelconIds = null;
 			}
 			
 			checkPermissions();

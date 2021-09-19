@@ -24,12 +24,6 @@ pixelconcard .pixelconCardDirectiveNotification {
 	font-size: 0px;
 	pointer-events: none;
 }
-pixelconcard .pixelconCardDirectiveNotification.shiny {
-    background-image: url(/img/icon_shine_w.svg);
-	opacity: 0.75;
-	filter: alpha(opacity=75);
-	background-size: contain;
-}
 pixelconcard div.pixelconCardCheck {
 	position: absolute;
 	top: -5px;
@@ -56,18 +50,6 @@ pixelconcard .pixelconCardDirectiveInfo {
 	width: 100%;
 	text-align: center;
 }
-pixelconcard .pixelconCardDirectiveL1Notification {
-	position: absolute;
-	top: 0px;
-	left: 1px;
-	width: 11px;
-	height: 11px;
-	opacity: 0.6;
-	filter: alpha(opacity=60);
-	font-size: 9px;
-	line-height: 11px;
-	font-weight: 800;
-}
 pixelconcard .pixelconCardDirectiveGroupNotification {
 	position: absolute;
     top: 0px;
@@ -79,11 +61,8 @@ pixelconcard .pixelconCardDirectiveGroupNotification {
 	opacity: 0.6;
 	filter: alpha(opacity=60);
 }
-pixelconcard .pixelconCardDirectiveInfo.regular .pixelconCardDirectiveGroupNotification {
+pixelconcard .pixelconCardDirectiveInfo .pixelconCardDirectiveGroupNotification {
     background-image: url(/img/icon_group.svg);
-}
-pixelconcard .pixelconCardDirectiveInfo.shiny .pixelconCardDirectiveGroupNotification {
-    background-image: url(/img/icon_group_w.svg);
 }
 pixelconcard .pixelconCardDirectiveAccountNotification {
 	position: absolute;
@@ -96,33 +75,8 @@ pixelconcard .pixelconCardDirectiveAccountNotification {
 	opacity: 0.8;
 	filter: alpha(opacity=80);
 }
-pixelconcard .pixelconCardDirectiveInfo.regular .pixelconCardDirectiveAccountNotification {
+pixelconcard .pixelconCardDirectiveInfo .pixelconCardDirectiveAccountNotification {
     background-image: url(/img/icon_wallet.svg);
-}
-pixelconcard .pixelconCardDirectiveInfo.shiny .pixelconCardDirectiveAccountNotification {
-    background-image: url(/img/icon_wallet_w.svg);
-}
-pixelconcard .l1Badge {
-	height: 28px;
-	width: 28px;
-	position: absolute;
-	bottom: 28px;
-	left: 2px;
-	font-size: 20px;
-	line-height: 28px;
-	text-align: center;
-	font-weight: 800;
-	border-radius: 5px;
-}
-pixelconcard .l1BadgeNetwork {
-    position: absolute;
-    bottom: 11px;
-    left: 1px;
-    background-image: url(/img/network_mainnet.png);
-    background-size: cover;
-    border-radius: 3px;
-    width: 12px;
-    height: 12px;
 }
 
 /* Hover Details */
@@ -219,25 +173,9 @@ pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard
-	.pixelconCardDirectiveContainer.xs
-	.pixelconCardDirectiveNotification.shiny {
-	top: -9px;
-	right: -9px;
-	width: 22px;
-	height: 22px;
-}
 pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveAccountContainer {
 	width: 22px;
 	height: 22px;
-}
-pixelconcard .pixelconCardDirectiveContainer.xs .l1Badge {
-	bottom: 23px;
-}
-pixelconcard .pixelconCardDirectiveContainer.xs .l1BadgeNetwork {
-	bottom: 10px;
-	width: 10px;
-    height: 10px;
 }
 
 /* Size: sm */
@@ -282,23 +220,9 @@ pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard
-	.pixelconCardDirectiveContainer.sm
-	.pixelconCardDirectiveNotification.shiny {
-	top: -12px;
-	right: -12px;
-	width: 30px;
-	height: 30px;
-}
 pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveAccountContainer {
 	width: 26px;
 	height: 26px;
-}
-pixelconcard .pixelconCardDirectiveContainer.sm .l1Badge {
-	bottom: 26px;
-}
-pixelconcard .pixelconCardDirectiveContainer.sm .l1BadgeNetwork {
-	bottom: 11px;
 }
 
 /* Size: md */
@@ -343,23 +267,9 @@ pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard
-	.pixelconCardDirectiveContainer.md
-	.pixelconCardDirectiveNotification.shiny {
-	top: -13px;
-	right: -13px;
-	width: 34px;
-	height: 34px;
-}
 pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveAccountContainer {
 	width: 28px;
 	height: 28px;
-}
-pixelconcard .pixelconCardDirectiveContainer.md .l1Badge {
-	bottom: 27px;
-}
-pixelconcard .pixelconCardDirectiveContainer.md .l1BadgeNetwork {
-	bottom: 12px;
 }
 
 /* Size: lg */
@@ -404,23 +314,9 @@ pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard
-	.pixelconCardDirectiveContainer.lg
-	.pixelconCardDirectiveNotification.shiny {
-	top: -15px;
-	right: -15px;
-	width: 38px;
-	height: 38px;
-}
 pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveAccountContainer {
 	width: 30px;
 	height: 30px;
-}
-pixelconcard .pixelconCardDirectiveContainer.lg .l1Badge {
-	bottom: 27px;
-}
-pixelconcard .pixelconCardDirectiveContainer.lg .l1BadgeNetwork {
-	bottom: 12px;
 }
 
 /* Size: xl */
@@ -465,25 +361,7 @@ pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveGotoIcon {
 	margin-left: -18px;
 	margin-top: -18px;
 }
-pixelconcard
-	.pixelconCardDirectiveContainer.xl
-	.pixelconCardDirectiveNotification.shiny {
-	top: -17px;
-	right: -17px;
-	width: 44px;
-	height: 44px;
-}
 pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveAccountContainer {
 	width: 32px;
 	height: 32px;
-}
-pixelconcard .pixelconCardDirectiveContainer.xl .l1Badge {
-	height: 36px;
-	width: 36px;
-	bottom: 30px;
-	font-size: 24px;
-	line-height: 36px;
-}
-pixelconcard .pixelconCardDirectiveContainer.xl .l1BadgeNetwork {
-	bottom: 15px;
 }

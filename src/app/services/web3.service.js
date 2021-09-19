@@ -163,8 +163,8 @@
 		this.hexToInt = hexToInt;
 		this.filterTextToByteSize = filterTextToByteSize;
 		this.formatAddress = formatAddress;
-		this.checkFlag = checkFlag;
 		this.compressAddressString = compressAddressString;
+		this.scrambleList = scrambleList;
 		this.getNetworkName = getNetworkName;
 		this.getMainNetwork = getMainNetwork;
 		this.setFallbackRPC = setFallbackRPC;
@@ -715,16 +715,6 @@
 			} catch (err) { }
 			return null;
 		}
-
-		// Checks if the given value contains the given flag
-		function checkFlag(value, flag) {
-			try {
-				value = parseInt(value, 16);
-				flag = parseInt(flag, 16);
-				return (value & flag) == flag;
-			} catch (err) { }
-			return null;
-		}
 		
 		// Compresses the given address string
 		function compressAddressString(address, maxChars) {
@@ -735,6 +725,26 @@
 			}
 
 			return comp;
+		}
+		
+		// Returns a repeatable scrambled version of the given list
+		function scrambleList(list, seed) {
+			//generate a seed integer
+			let seedStr = ''+seed;
+			seed = 123456789;
+			for(let i=0; i<seedStr.length; i++) seed += seedStr.charCodeAt(i);
+			seed = seed % 2147483648;
+			
+			//sort based on random inputs
+			list = JSON.parse(JSON.stringify(list));
+			list.sort(function(a,b) {
+				seed = (1103515245 * seed + 12345) % 2147483648;
+				let v1 = seed;
+				seed = (1103515245 * seed + 12345) % 2147483648;
+				let v2 = seed;
+				return v1-v2;
+			});
+			return list;
 		}
 		
 		// Gets the name of a network given its chainId

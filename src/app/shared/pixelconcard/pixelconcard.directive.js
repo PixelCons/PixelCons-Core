@@ -9,7 +9,6 @@
 		_this.coverAlwaysOn = false;
 		_this.infoItemClick = infoItemClick;
 		_this.pixelconClick = pixelconClick;
-		_this.shinyStyle = shinyStyle;
 		var clicking = false;
 
 		// Watch for changes to the pixelcon data
@@ -24,6 +23,7 @@
 					_this.loaded = true;
 				});
 			}
+			scramblePixelconCollection();
 		});
 
 		// Standardize the size [xs, sm, md, lg, xl]
@@ -62,6 +62,7 @@
 		function refreshPixelconData(pixelcon) {
 			if (pixelcon) {
 				_this.pixelcon = angular.extend(_this.pixelcon, _this.pixelcon, pixelcon);
+				scramblePixelconCollection();
 			} else {
 				_this.pixelcon = null;
 			}
@@ -69,12 +70,18 @@
 
 		// Update from transaction
 		function updateFromTransaction(transactionData) {
-			if (transactionData && transactionData.success && (transactionData.pixelcons || transactionData.pixelconsL1)) {
-				let pixelcon = null;
-				if(_this.pixelcon && _this.pixelcon.isL1) pixelcon = findInList(transactionData.pixelconsL1);
-				else pixelcon = findInList(transactionData.pixelcons);
-				
+			if (transactionData && transactionData.success && transactionData.pixelcons) {
+				let pixelcon = findInList(transactionData.pixelcons);
 				if (pixelcon) refreshPixelconData(pixelcon);
+			}
+		}
+		
+		// Scramble pixelcon collection
+		function scramblePixelconCollection() {
+			if(_this.pixelcon && _this.pixelcon.collection) {
+				_this.scrambledCollectionPixelconIds = web3Service.scrambleList(_this.pixelcon.collection.pixelconIds, _this.pixelcon.id);
+			} else {
+				_this.scrambledCollectionPixelconIds = null;
 			}
 		}
 
@@ -87,7 +94,7 @@
 				if (clicking) {
 					clicking = false;
 				} else {
-					$location.url('/details/' + _this.pixelcon.id + (_this.pixelcon.isL1 ? '?l1' : ''));
+					$location.url('/details/' + _this.pixelcon.id);
 				}
 			}
 		}
@@ -96,18 +103,6 @@
 		function infoItemClick(ev) {
 			if (_this.selectable || _this.disabled || !_this.dirHover) return;
 			clicking = true;
-		}
-		
-		// Gets the special shiny styling
-		function shinyStyle() {
-			if (_this.pixelcon && _this.pixelcon.isMergedL1) {
-				return {
-					'background': coreContract.getShinyColor(_this.pixelcon.id),
-					'color': '#f8f8f8',
-					'text-shadow': 'rgb(83 83 83) 0px 0px 10px'
-				}
-			}
-			return {};
 		}
 
 		// Gets page relevant pixelcon from list

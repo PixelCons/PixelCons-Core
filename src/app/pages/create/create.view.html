@@ -37,7 +37,7 @@
 			
 			<!-- Collection tab -->
 			<div ng-show="ctrl.tabSelection=='collection'">
-				<div class="windowSectionLabel topLabel textMedium">Select the PixelCons you both own and created to make into a collection</div>
+				<div class="windowSectionLabel topLabel textMedium">Select the PixelCons you want to make into a collection (must be the creator and current owner)</div>
 				<div class="displayTable">
 					<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-account="true" selectable="true" size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" 
 						ng-repeat="pixelcon in ctrl.collectionPixelcons track by $index"></pixelconcard>

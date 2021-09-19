@@ -48,92 +48,6 @@ div.pixelconDetailsPage div.viewWindow {
 div.pixelconDetailsPage.sm div.viewWindow {
 	height: 282px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-div.pixelconDetailsPage div.viewWindowGroupContainer {
-
-	font-size: 0px;
-	cursor: pointer;
-	margin-top: 4px;
-}
-div.pixelconDetailsPage div.viewWindowGroupContainer div.pixelconGroupIconContainer {
-	position: relative;
-	display: inline-block;
-	vertical-align: middle;
-	width: 36px;
-	height: 36px;
-}
-div.pixelconDetailsPage	div.viewWindowGroupContainer:hover div.pixelconGroupIcon {
-    background-image: unset;
-}
-div.pixelconDetailsPage div.viewWindowGroupContainer div.pixelconGroupIcon {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-    background-image: url(/img/icon_group.svg);
-	opacity: 0.55;
-	filter: alpha(opacity=55);
-	background-size: contain;
-}
-div.pixelconDetailsPage div.viewWindowGroupContainer div.pixelconGroupTextStack {
-	display: inline-block;
-	vertical-align: bottom;
-	margin-bottom: -1px;
-	margin-left: 2px;
-	font-size: 0px;
-}
-div.pixelconDetailsPage div.viewWindowGroupContainer div.pixelconGroupText {
-
-	display: inline-block;
-	vertical-align: bottom;
-}
-div.pixelconDetailsPage div.viewWindowGroupContainer div.pixelconGroupCount {
-
-	display: inline-block;
-	vertical-align: bottom;
-}
-
-div.pixelconDetailsPage div.viewWindowGroupContainer:hover div.groupElement {
-	display: inline-block;
-	background-color: #000000;
-	width: 16px;
-	height: 16px;
-	margin: 1px;
-}
-div.pixelconDetailsPage div.viewWindowGroupContainer div.groupElement {
-	display: inline-block;
-	background-color: #000000;
-	width: 0px;
-	height: 0px;
-	margin: 0px;
-}
-div.pixelconDetailsPagediv.viewWindowGroupContainer  div.groupElementSpacer {
-	width: 5px;
-}
-
-
-
-
-
-
-
-
-
-
 div.pixelconDetailsPage div.pixelconInvalid {
 	position: absolute;
 	top: 50%;
@@ -225,6 +139,81 @@ div.pixelconDetailsPage div.detailsSectionFooter {
 	text-align: right;
 	margin-top: -10px;
 }
+div.pixelconDetailsPage div.groupContainer {
+	font-size: 0px;
+	cursor: pointer;
+	margin-top: 4px;
+	display: inline-block;
+	min-width: 50%;
+}
+div.pixelconDetailsPage div.groupContainer div.groupIconContainer {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+	width: 36px;
+	height: 36px;
+	background-color: #c0c0c0;
+	border-radius: 4px;
+	padding: 1px;
+}
+div.pixelconDetailsPage.sm div.groupContainer div.groupIconContainer {
+	width: 32px;
+	height: 32px;
+}
+div.pixelconDetailsPage div.groupContainer div.groupTextStack {
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 2px;
+	font-size: 0px;
+}
+div.pixelconDetailsPage div.groupContainer div.groupText {
+	display: inline-block;
+	vertical-align: bottom;
+}
+div.pixelconDetailsPage div.groupContainer div.groupText.sm {
+	font-size: 12px;
+	margin-top: 2px;
+}
+div.pixelconDetailsPage div.groupContainer div.groupElement {
+	display: inline-block;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+	margin: 1px;
+}
+div.pixelconDetailsPage.sm div.groupContainer div.groupElement {
+	width: 14px;
+	height: 14px;
+}
+div.pixelconDetailsPage div.groupContainer div.iconGotoCover {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 0px;
+    height: 0px;
+	background-color: rgba(51, 51, 51, 0.4);
+}
+div.pixelconDetailsPage div.groupContainer:hover div.iconGotoCover {
+	width: 34px;
+    height: 34px;
+}
+div.pixelconDetailsPage.sm div.groupContainer:hover div.iconGotoCover {
+	width: 30px;
+    height: 30px;
+}
+div.pixelconDetailsPage div.groupContainer div.gotoIcon {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("/img/icon_goto_w.svg");
+	background-size: 22px;
+	opacity: 0.8;
+	filter: alpha(opacity=80);
+}
 
 /* Share links */
 .shareLinksContextMenu a:link,
@@ -280,11 +269,11 @@ div.pixelconDetailsPage div.loading {
 	width: 80px;
 	height: 80px;
 	padding-top: 50px;
-	padding-bottom: 103px;
+	padding-bottom: 60px;
 }
 div.pixelconDetailsPage.sm div.loading {
 	padding-top: 40px;
-	padding-bottom: 88px;
+	padding-bottom: 50px;
 }
 div.pixelconDetailsPage div.unclaimed {
 	text-align: center;

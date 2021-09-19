@@ -5,18 +5,18 @@
 		<pixelcon id="ctrl.pixelcon.id"></pixelcon>
 		<div class="pixelconCardDirectiveImageCover" ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-show="(ctrl.dirHover && !ctrl.selectable && !ctrl.disabled) || ctrl.coverAlwaysOn" ng-cloak>
 			<!-- Goto Link -->
-			<a ng-href="{{(ctrl.selectable || ctrl.disabled)?'':('/details/'+ctrl.pixelcon.id+(ctrl.pixelcon.isL1?'?l1':''))}}" class="plain textDark">
+			<a ng-href="{{(ctrl.selectable || ctrl.disabled)?'':('/details/'+ctrl.pixelcon.id)}}" class="plain textDark">
 				<div class="pixelconCardDirectiveGotoIcon"></div>
 			</a>
 			<!-- Collection Link -->
 			<a ng-href="{{(ctrl.selectable || ctrl.disabled)?'':'/collection/'+ctrl.pixelcon.collection.index}}" class="plain textDark">
 				<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveGroupContainer colorDarkOverlay clickable" 
 						ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-if="!ctrl.noCollection && ctrl.pixelcon.collection" ng-click="ctrl.infoItemClick($event)">
-					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelconIds[0]"><pixelcon id="ctrl.pixelcon.collection.pixelconIds[0]"></pixelcon></div>
-					<div class="pixelconCardDirectiveGroupElementSpacer" ng-if="!ctrl.pixelcon.collection.pixelconIds[3] && ctrl.pixelcon.collection.pixelconIds[2]"></div>
-					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelconIds[1]"><pixelcon id="ctrl.pixelcon.collection.pixelconIds[1]"></pixelcon></div>
-					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelconIds[2]"><pixelcon id="ctrl.pixelcon.collection.pixelconIds[2]"></pixelcon></div>
-					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.pixelcon.collection.pixelconIds[3]"><pixelcon id="ctrl.pixelcon.collection.pixelconIds[3]"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.scrambledCollectionPixelconIds[0]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[0]"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElementSpacer" ng-if="!ctrl.scrambledCollectionPixelconIds[3] && ctrl.scrambledCollectionPixelconIds[2]"></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.scrambledCollectionPixelconIds[1]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[1]"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.scrambledCollectionPixelconIds[2]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[2]"></pixelcon></div>
+					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.scrambledCollectionPixelconIds[3]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[3]"></pixelcon></div>
 				</div>
 			</a>
 			<!-- Account Link -->
@@ -30,22 +30,14 @@
 	</div>
 
 	<!-- Bottom Info -->
-	<div class="pixelconCardDirectiveInfo pixelconCardDirectiveFont textBold colorLight" ng-click="ctrl.pixelconClick($event)" ng-style="ctrl.shinyStyle()"
-			ng-class="{'pixelconCardDirectiveTransition':ctrl.loaded, 'textDark':!ctrl.pixelcon.isL1, 'textLighter':ctrl.pixelcon.isL1, 'shiny':ctrl.pixelcon.isMergedL1, 'regular':!ctrl.pixelcon.isMergedL1}">
+	<div class="pixelconCardDirectiveInfo pixelconCardDirectiveFont textBold textDark colorLight" ng-click="ctrl.pixelconClick($event)" ng-class="{'pixelconCardDirectiveTransition':ctrl.loaded}">
 		<div ng-cloak>{{ctrl.pixelcon.name!==''?ctrl.pixelcon.name:'#'+ctrl.pixelcon.index}}</div>
 		<div class="pixelconCardDirectiveGroupNotification" ng-if="!ctrl.reloading && !ctrl.noCollection && ctrl.pixelcon.collection"></div>
 		<div class="pixelconCardDirectiveAccountNotification" ng-if="!ctrl.reloading && !ctrl.noAccount && ctrl.pixelcon.owner==ctrl.account"></div>
 	</div>
 	
-	<!-- L1 Badge -->
-	<div class="l1BadgeNetwork" ng-if="!ctrl.reloading && ctrl.pixelcon.isL1" ng-cloak></div>
-	<div class="l1Badge colorDarkOverlay" ng-if="!ctrl.reloading && ctrl.pixelcon.isL1" ng-cloak>L1</div>
-	
 	<!-- Check Box -->
 	<div class="pixelconCardCheck colorDarkOverlay" ng-class="{'hovering': ctrl.dirHover || ctrl.pixelcon.selected}" ng-if="ctrl.selectable" ng-show="ctrl.loaded && !ctrl.disabled" ng-cloak>
 		<md-checkbox ng-model="ctrl.pixelcon.selected" aria-label="pixelcon"></md-checkbox>
 	</div>
-	
-	<!-- Shine -->
-	<div class="pixelconCardDirectiveNotification shiny" ng-if="ctrl.pixelcon.isMergedL1" ng-cloak></div>
 </div>

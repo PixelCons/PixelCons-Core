@@ -91,56 +91,32 @@
 
 		// Create the pixelcon
 		function create(ev) {
-			if(_this.tabSelection=='canvas') {
-				$mdDialog.show({
-					controller: 'PixelconDialogCtrl',
-					controllerAs: 'ctrl',
-					templateUrl: HTMLTemplates['dialog.pixelcon'],
-					parent: angular.element(document.body),
-					locals: { pixelconIds: [_this.pixelconId] },
-					bindToController: true,
-					clickOutsideToClose: true
-				});
-			} else {
-				$mdDialog.show({
-					controller: 'PixelconDialogCtrl',
-					controllerAs: 'ctrl',
-					templateUrl: HTMLTemplates['dialog.pixelcon'],
-					parent: angular.element(document.body),
-					locals: { pixelcons: _this.advancedPixelcons },
-					bindToController: true,
-					clickOutsideToClose: true
-				});
-			}
+			$mdDialog.show({
+				controller: 'PixelconDialogCtrl',
+				controllerAs: 'ctrl',
+				templateUrl: HTMLTemplates['dialog.pixelcon'],
+				parent: angular.element(document.body),
+				locals: { pixelconId: _this.pixelconId },
+				bindToController: true,
+				clickOutsideToClose: true
+			});
 		}
 
 		// Create the pixelcon collection
 		function createCollection(ev) {
-			if(_this.tabSelection=='collection') {
-				let pixelconIds = [];
-				for (let i = 0; i < _this.collectionPixelcons.length; i++) {
-					if (_this.collectionPixelcons[i].selected) pixelconIds.push(_this.collectionPixelcons[i].id);
-				}
-				$mdDialog.show({
-					controller: 'CollectionDialogCtrl',
-					controllerAs: 'ctrl',
-					templateUrl: HTMLTemplates['dialog.collection'],
-					parent: angular.element(document.body),
-					locals: { pixelconIds: pixelconIds },
-					bindToController: true,
-					clickOutsideToClose: true
-				});
-			} else {
-				$mdDialog.show({
-					controller: 'CollectionDialogCtrl',
-					controllerAs: 'ctrl',
-					templateUrl: HTMLTemplates['dialog.collection'],
-					parent: angular.element(document.body),
-					locals: { pixelcons: _this.advancedPixelcons },
-					bindToController: true,
-					clickOutsideToClose: true
-				});
+			let pixelconIds = [];
+			for (let i = 0; i < _this.collectionPixelcons.length; i++) {
+				if (_this.collectionPixelcons[i].selected) pixelconIds.push(_this.collectionPixelcons[i].id);
 			}
+			$mdDialog.show({
+				controller: 'CollectionDialogCtrl',
+				controllerAs: 'ctrl',
+				templateUrl: HTMLTemplates['dialog.collection'],
+				parent: angular.element(document.body),
+				locals: { pixelconIds: pixelconIds },
+				bindToController: true,
+				clickOutsideToClose: true
+			});
 		}
 
 		// Checks if valid state for creating a pixelcon
