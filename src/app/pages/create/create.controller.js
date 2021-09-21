@@ -14,7 +14,6 @@
 		_this.canCreateCollection = canCreateCollection;
 		_this.setTab = setTab;
 		_this.filterPixelconName = filterPixelconName;
-		_this.removeAdvPixelcon = removeAdvPixelcon;
 		_this.tabSelection = ($routeParams.view == 'advanced') ? 'advanced' : ($routeParams.view == 'collection') ? 'collection' : 'canvas';
 		_this.pixelconId = '';
 		_this.selectedColor = 0;
@@ -90,16 +89,28 @@
 		}
 
 		// Create the pixelcon
-		function create(ev) {
-			$mdDialog.show({
-				controller: 'PixelconDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: HTMLTemplates['dialog.pixelcon'],
-				parent: angular.element(document.body),
-				locals: { pixelconId: _this.pixelconId },
-				bindToController: true,
-				clickOutsideToClose: true
-			});
+		function create(ev, pixelconId) {
+			if(_this.tabSelection=='canvas') {
+				$mdDialog.show({
+					controller: 'PixelconDialogCtrl',
+					controllerAs: 'ctrl',
+					templateUrl: HTMLTemplates['dialog.pixelcon'],
+					parent: angular.element(document.body),
+					locals: { pixelconId: _this.pixelconId },
+					bindToController: true,
+					clickOutsideToClose: true
+				});
+			} else if(pixelconId) {
+				$mdDialog.show({
+					controller: 'PixelconDialogCtrl',
+					controllerAs: 'ctrl',
+					templateUrl: HTMLTemplates['dialog.pixelcon'],
+					parent: angular.element(document.body),
+					locals: { pixelconId: pixelconId },
+					bindToController: true,
+					clickOutsideToClose: true
+				});
+			}
 		}
 
 		// Create the pixelcon collection
@@ -271,11 +282,6 @@
 			pixelcon.name = web3Service.filterTextToByteSize(pixelcon.name, 12);
 		}
 
-		// Removes the advanced pixelcon from the list
-		function removeAdvPixelcon(index) {
-			_this.advancedPixelcons.splice(index, 1);
-		}
-
 		// Generate the pixelcon id from canvas
 		function generatePixelconId() {
 			_this.pixelconId = '0x';
@@ -286,9 +292,10 @@
 		// Checks if page needs to be reloaded
 		function checkReload(transactionData) {
 			if (transactionData && transactionData.success && transactionData.pixelcons) {
-				let effectsLoadedPixelcons = false;
-				for(let i = 0; i < transactionData.pixelcons.length; i++) {
-					if(_this.tabSelection == 'collection') {
+				//collection page
+				if(_this.tabSelection == 'collection') {
+					let effectsLoadedPixelcons = false;
+					for(let i = 0; i < transactionData.pixelcons.length; i++) {
 						if(_this.collectionPixelcons) {
 							for(let j = 0; j < _this.collectionPixelcons.length; j++) {
 								if(transactionData.pixelcons[i].id == _this.collectionPixelcons[j].id) {
@@ -297,25 +304,27 @@
 								}
 							}
 						}
-					} else if(_this.tabSelection == 'advanced') {
+						if(effectsLoadedPixelcons) break;
+					}
+					if(effectsLoadedPixelcons) fetchForCollection();
+				
+				//advanced page
+				} else if(_this.tabSelection == 'advanced') {
+					for(let i = 0; i < transactionData.pixelcons.length; i++) {
 						if(_this.advancedPixelcons) {
+							let matches = [];
 							for(let j = 0; j < _this.advancedPixelcons.length; j++) {
 								if(transactionData.pixelcons[i].id == _this.advancedPixelcons[j].id) {
-									effectsLoadedPixelcons = true;
+									matches.push(j);
 									break;
 								}
 							}
+							if(matches.length) {
+								for(let j=0; j<matches.length; j++) {
+									_this.alreadyCreatedPixelconIds.push(_this.advancedPixelcons.splice(matches[j], 1)[0].id);
+								}
+							}
 						}
-					}
-					if(effectsLoadedPixelcons) break;
-				}
-				
-				//reload any necessary page details
-				if(effectsLoadedPixelcons) {
-					if(_this.tabSelection == 'collection') {
-						fetchForCollection();
-					} else if(_this.tabSelection == 'advanced') {
-						clear();
 					}
 				}
 			}

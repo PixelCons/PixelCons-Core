@@ -58,7 +58,7 @@
 					<input class="uploadInput" type="file" accept="image/png" onchange="advancedCreateFileUpload(event.target);">
 				</div>
 				
-				<div class="windowSectionLabel textMedium" ng-show="ctrl.alreadyCreatedPixelconIds.length>0">[!] These PixelCon have already been created</div>
+				<div class="windowSectionLabel textMedium" ng-show="ctrl.alreadyCreatedPixelconIds.length>0">Already Created</div>
 				<div class="alreadyCreatedPixelconContainer" ng-show="ctrl.alreadyCreatedPixelconIds.length>0">
 					<div class="alreadyCreatedPixelcon" ng-repeat="id in ctrl.alreadyCreatedPixelconIds track by $index">
 						<a ng-href="{{'/details/'+id}}" class="plain textDark">
@@ -76,15 +76,8 @@
 					<div class="advancedPixelcon" ng-repeat="advPixelcon in ctrl.advancedPixelcons track by $index">
 						<div class="advancedPixelconImage">
 							<pixelcon id="advPixelcon.id"></pixelcon>
-							<div class="advancedPixelconCover" ng-click="ctrl.removeAdvPixelcon($index)">
-								<div class="advancedPixelconRemoveIcon"></div>
-							</div>
 						</div>
-						<div class="advancedNameInputContainer">
-							<md-input-container md-no-float class="nameInput md-block">
-								<input md-autofocus ng-model="advPixelcon.name" ng-change="ctrl.filterPixelconName(advPixelcon)" placeholder="Name" ng-trim="false"/>
-							</md-input-container>
-						</div>
+						<md-button class="advancedCreateButton md-raised md-primary" ng-click="ctrl.create($event, advPixelcon.id)" ng-disabled="!ctrl.canCreate()">Create</md-button>
 					</div>
 				</div>
 			</div>
@@ -112,12 +105,6 @@
 					ng-disabled="!ctrl.canCreate()" ng-show="ctrl.tabSelection=='canvas'">Create</md-button>
 				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.createCollection($event)" 
 					ng-disabled="!ctrl.canCreateCollection()" ng-show="ctrl.tabSelection=='collection'">Create Collection</md-button>
-				<span ng-show="ctrl.tabSelection=='advanced'">
-					<md-button class="actionButton md-raised md-primary" ng-click="ctrl.createCollection($event)" ng-disabled="!ctrl.canCreateCollection()">
-						{{(!ctrl.screenSize.sm?'Create ':'') + 'Collection'}}
-					</md-button>
-					<md-button class="actionButton md-raised md-primary" ng-click="ctrl.create($event)" ng-disabled="!ctrl.canCreate()">Create</md-button>
-				</span>
 			</div>
 		</div>
 	</div>

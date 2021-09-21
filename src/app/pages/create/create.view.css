@@ -267,7 +267,7 @@ div.pixelconCreatePage div.alreadyCreatedPixelconContainer {
 	box-sizing: border-box;
 	padding: 0px 20px 15px 20px;
 	width: 100%;
-	text-align: left;
+	text-align: center;
 }
 div.pixelconCreatePage div.alreadyCreatedPixelcon {
 	position: relative;
@@ -286,10 +286,12 @@ div.pixelconCreatePage div.alreadyCreatedPixelconCover {
 }
 div.pixelconCreatePage div.alreadyCreatedPixelconGotoIcon {
 	display: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url(/img/icon_goto_w.svg);
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	background-image: url(/img/icon_goto_w.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 18px;
@@ -303,13 +305,13 @@ div.pixelconCreatePage div.advancedPixelconContainer {
 	box-sizing: border-box;
 	padding: 0px 10px 20px 10px;
 	width: 100%;
-	text-align: left;
+	text-align: center;
 	font-size: 0px;
 }
 div.pixelconCreatePage div.advancedPixelcon {
 	position: relative;
 	width: 88px;
-	height: 118px;
+	height: 123px;
 	display: inline-block;
 	margin: 10px;
 }
@@ -319,51 +321,18 @@ div.pixelconCreatePage div.advancedPixelconImage {
 	left: 0px;
 	width: 88px;
 	height: 88px;
-	cursor: pointer;
 }
-div.pixelconCreatePage div.advancedPixelconCover {
-	display: none;
+div.pixelconCreatePage button.advancedCreateButton {
 	position: absolute;
-	top: 0px;
-	left: 0px;
-	background-color: rgba(51, 51, 51, 0.7);
-	width: 100%;
-	height: 100%;
-}
-div.pixelconCreatePage div.advancedPixelconImage:hover div.advancedPixelconCover {
-	display: inline-block;
-}
-div.pixelconCreatePage div.advancedPixelconRemoveIcon {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: url(/img/icon_remove_w.svg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 48px;
-	opacity: 0.8;
-	filter: alpha(opacity=80);
-}
-div.pixelconCreatePage div.advancedNameInputContainer {
-	position: absolute;
-	left: 0px;
+	margin: 0px;
+	height: 30px;
+	max-height: 30px;
+	min-height: 30px;
+	line-height: 30px;
+	width: 80px;
+	min-width: 80px;
 	bottom: 0px;
-	width: 100%;
-	height: 26px;
-	border-radius: 3px;
-	overflow: hidden;
-	background-color: #ffffffc2;
-}
-div.pixelconCreatePage .nameInput {
-	width: 100%;
-	margin: 2px 0px;
-	padding: 0px 4px;
-	box-sizing: border-box;
-	font-size: 14px;
-}
-div.pixelconCreatePage .nameInput input {
-	text-align: center;
-	height: 20px;
+	left: 4px;
 }
 
 /* Card Details */

@@ -412,8 +412,9 @@
 						
 						//get pixelcon data
 						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
-						let creatorPixelconIndexes = await contract.getForCreator(address);
-						for(let i=0; i<creatorPixelconIndexes.length; i++) creatorPixelconIndexes[i] = creatorPixelconIndexes[i].toNumber();
+						let creatorIndexes = await contract.getForCreator(address);
+						let creatorPixelconIndexes = [];
+						for(let i=0; i<creatorIndexes.length; i++) creatorPixelconIndexes[i] = creatorIndexes[i].toNumber();
 						
 						//verify that the user is the owner of all pixelcons
 						//and that the user is the creator of all pixelcons
@@ -1007,7 +1008,6 @@
 					pixelcon.collection = null;
 				}
 			}
-			debugger;
 			
 			//set pixelcon data
 			data.pixelcons = [pixelcon];
@@ -1078,7 +1078,6 @@
 
 			//set collection data
 			for (let i = 0; i < pixelcons.length; i++) pixelcons[i].collection = collection;
-			debugger;
 			
 			//set pixelcon data
 			data.pixelcons = pixelcons;
