@@ -2,8 +2,8 @@
 	angular.module('App')
 		.service('decoder', decoder);
 
-	decoder.$inject = ['$q', '$timeout', '$location'];
-	function decoder($q, $timeout, $location) {
+	decoder.$inject = ['$q', '$timeout'];
+	function decoder($q, $timeout) {
 		this.decodePNG = decodePNG;
 		this.encodePNG = encodePNG;
 		this.backgroundPNG = backgroundPNG;
@@ -172,18 +172,16 @@
 		
 		//Updates the background image
 		var backgroundUpdateTimeout = null;
-		function updateBackground(backgroundImage, path, delay) {
-			if(!path || $location.path().indexOf(path) == 0) {
-				if(backgroundUpdateTimeout) $timeout.cancel(backgroundUpdateTimeout);
-				backgroundUpdateTimeout = null;
-				if(delay) {
-					backgroundUpdateTimeout = $timeout(function() {
-						backgroundUpdateTimeout = null;
-						updateBackgroundImage(backgroundImage);
-					}, delay);
-				} else {
+		function updateBackground(backgroundImage, delay) {
+			if(backgroundUpdateTimeout) $timeout.cancel(backgroundUpdateTimeout);
+			backgroundUpdateTimeout = null;
+			if(delay) {
+				backgroundUpdateTimeout = $timeout(function() {
+					backgroundUpdateTimeout = null;
 					updateBackgroundImage(backgroundImage);
-				}
+				}, delay);
+			} else {
+				updateBackgroundImage(backgroundImage);
 			}
 		}
 		

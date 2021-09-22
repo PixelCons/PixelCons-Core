@@ -855,19 +855,19 @@
 		// Helper function to clean up any subscriptions during destroy events
 		function cleanSubscriptions(ev) {
 			for (let i = 0; i < _onStateChangeFunctions.length;) {
-				if (_onStateChangeFunctions[i].scope.$id === ev.currentScope.$id) _onStateChangeFunctions.splice(i, 1);
+				if (_onStateChangeFunctions[i].scope && _onStateChangeFunctions[i].scope.$id === ev.currentScope.$id) _onStateChangeFunctions.splice(i, 1);
 				else i++;
 			}
 			for (let i = 0; i < _onNetworkChangeFunctions.length;) {
-				if (_onNetworkChangeFunctions[i].scope.$id === ev.currentScope.$id) _onNetworkChangeFunctions.splice(i, 1);
+				if (_onNetworkChangeFunctions[i].scope && _onNetworkChangeFunctions[i].scope.$id === ev.currentScope.$id) _onNetworkChangeFunctions.splice(i, 1);
 				else i++;
 			}
 			for (let i = 0; i < _onAccountChangeFunctions.length;) {
-				if (_onAccountChangeFunctions[i].scope.$id === ev.currentScope.$id) _onAccountChangeFunctions.splice(i, 1);
+				if (_onAccountChangeFunctions[i].scope && _onAccountChangeFunctions[i].scope.$id === ev.currentScope.$id) _onAccountChangeFunctions.splice(i, 1);
 				else i++;
 			}
 			for (let i = 0; i < _onWaitingTransactionsChangeFunctions.length;) {
-				if (_onWaitingTransactionsChangeFunctions[i].scope.$id === ev.currentScope.$id) _onWaitingTransactionsChangeFunctions.splice(i, 1);
+				if (_onWaitingTransactionsChangeFunctions[i].scope && _onWaitingTransactionsChangeFunctions[i].scope.$id === ev.currentScope.$id) _onWaitingTransactionsChangeFunctions.splice(i, 1);
 				else i++;
 			}
 		}

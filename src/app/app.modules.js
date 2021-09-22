@@ -68,8 +68,8 @@
 		// use the HTML5 History API
 		$locationProvider.html5Mode(true);
 	}]);
-	app.run(['$route', '$rootScope', '$location', '$timeout', '$templateCache', '$http', '$window',
-		function ($route, $rootScope, $location, $timeout, $templateCache, $http, $window) {
+	app.run(['$route', '$rootScope', '$location', '$timeout', '$templateCache', '$http', '$window', 'web3Service', 'coreContract', 'decoder',
+		function ($route, $rootScope, $location, $timeout, $templateCache, $http, $window, web3Service, coreContract, decoder) {
 			var lastPage = $location.path();
 			var replacementRoute = null;
 
@@ -101,6 +101,32 @@
 				}
 				return _locationPath.apply($location, [path]);
 			};
+			
+			// update background according to account data
+			var backgroundAccount = null;
+			function updateBackground() {
+				web3Service.awaitState(async function() {
+					let loadedAccount = web3Service.getActiveAccount();
+					if(backgroundAccount != loadedAccount) {
+						backgroundAccount = loadedAccount;
+						if(backgroundAccount) {
+							let pixelcons = await coreContract.fetchPixelconsByAccount(backgroundAccount);
+							if(pixelcons && pixelcons.length) {
+								let pixelconIds = [];
+								for(let i=0; i<pixelcons.length; i++) pixelconIds.push(pixelcons[i].id);
+								let backgroundImage = decoder.backgroundPNG(pixelconIds, true);
+								decoder.updateBackground(backgroundImage, 500);
+								
+							} else {
+								let backgroundImage = decoder.backgroundPNG([], true);
+								decoder.updateBackground(backgroundImage, 500);
+							}
+						}
+					}
+				}, true);
+			}
+			web3Service.onAccountDataChange(updateBackground, null, true);
+			updateBackground();
 
 			// pre-load dialogs
 			$http.get(HTMLTemplates['dialog.collection'], { cache: $templateCache });
@@ -117,7 +143,7 @@
 	function AppCtrl($scope, decoder) {
 		$scope.$on('$routeChangeStart', function($event, next, current) {
 			//clear out custom backgrounds
-			if(!ignoreReload) decoder.updateBackground(null);
+			//if(!ignoreReload) decoder.updateBackground(null);
 			ignoreReload = false;
 		});
 	}

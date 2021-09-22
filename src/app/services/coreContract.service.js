@@ -1047,7 +1047,6 @@
 					pixelcon.owner = web3Service.formatAddress(event.args["_to"]);
 				}
 			}
-			debugger;
 
 			//set pixelcon data
 			data.pixelcons = [pixelcon];
