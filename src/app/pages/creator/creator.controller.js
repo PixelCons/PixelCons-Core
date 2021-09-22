@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('CreatorPageCtrl', CreatorPageCtrl);
 
-	CreatorPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$sce', 'web3Service', 'coreContract', 'market', 'decoder'];
-	function CreatorPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $sce, web3Service, coreContract, market, decoder) {
+	CreatorPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$sce', 'web3Service', 'coreContract', 'market'];
+	function CreatorPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $sce, web3Service, coreContract, market) {
 		var _this = this;
 		_this.creator = $routeParams.address;
 		_this.getMaxWidth = getMaxWidth;
@@ -28,7 +28,6 @@
 				.then(function (pixelcons) {
 					_this.loading = false;
 					_this.pixelcons = pixelcons;
-					setBackground();
 				}, function (reason) {
 					_this.loading = false;
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
@@ -77,17 +76,6 @@
 			let url = "https://www.facebook.com/sharer/sharer.php?u="
 			url += encodeURI(document.URL);
 			return url;
-		}
-		
-		// Updates the background image according to loaded pixelcon
-		function setBackground() {
-			let backgroundImage = null;
-			if(_this.pixelcons) {
-				let ids = [];
-				for(let i=0; i<_this.pixelcons.length; i++) ids.push(_this.pixelcons[i].id);
-				backgroundImage = decoder.backgroundPNG(ids, true);
-			}
-			decoder.updateBackground(backgroundImage, '/creator', 500);
 		}
 
 		// Listen for network data changes

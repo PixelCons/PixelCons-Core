@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('AccountPageCtrl', AccountPageCtrl);
 
-	AccountPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$mdToast', '$routeParams', '$timeout', '$location', '$sce', 'web3Service', 'coreContract', 'mergeContract', 'market', 'decoder'];
-	function AccountPageCtrl($scope, $mdMedia, $mdDialog, $mdToast, $routeParams, $timeout, $location, $sce, web3Service, coreContract, mergeContract, market, decoder) {
+	AccountPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$mdToast', '$routeParams', '$timeout', '$location', '$sce', 'web3Service', 'coreContract', 'market'];
+	function AccountPageCtrl($scope, $mdMedia, $mdDialog, $mdToast, $routeParams, $timeout, $location, $sce, web3Service, coreContract, market) {
 		var _this = this;
 		_this.pixelcons = [];
 		_this.accountAddress;
@@ -16,12 +16,10 @@
 		_this.setSortOrder = setSortOrder;
 		_this.setSelectionMode = setSelectionMode;
 		_this.getNumSelected = getNumSelected;
+		_this.checkActionDisabled = checkActionDisabled;
 		_this.checkDisabled = checkDisabled;
 		_this.checkSelectModeActionable = checkSelectModeActionable;
 		_this.send = send;
-		_this.mergeL1 = mergeL1;
-		_this.createL1 = createL1;
-		_this.withdrawL1 = withdrawL1;
 		_this.marketEnabled = market.isEnabled();
 		_this.marketAccountLink = market.getAccountLink();
 
@@ -93,51 +91,11 @@
 				_this.loading = true;
 				_this.error = null;
 				
-				//get l2 pixelcons for account
+				//get pixelcons for account
 				coreContract.fetchPixelconsByAccount(_this.accountAddress).then(function (data) {
-					let l2Pixelcons = data;
-					
-					//try to get l1 pixelcon data
-					let l1Pixelcons = null;
-					mergeContract.fetchL1PixelconsByAccount(_this.accountAddress).then(function (data) {
-						l1Pixelcons = data;
-						_this.pixelcons = l2Pixelcons.concat(l1Pixelcons);
-						
-						updateOwnedOnL2();
-						return updateNotOnL1();
-					}).then(function () {
-						
-						_this.loading = false;
-						setBackground();
-						sortData();
-					}, function (reason) {
-						
-						//failed to get l1 data, just show l2 data
-						$mdToast.show(
-							$mdToast.simple()
-								.action('Settings')
-								.highlightAction(true)
-								.highlightClass('md-primary')
-								.textContent("Showing only L2 PixelCons (Bad Mainnet RPC)")
-								.position('top right')
-								.hideDelay(10000)
-						).then(function(response) {
-							if (response === 'ok') {
-								$mdDialog.show({
-									controller: 'SettingsDialogCtrl',
-									controllerAs: 'ctrl',
-									templateUrl: HTMLTemplates['dialog.settings'],
-									parent: angular.element(document.body),
-									bindToController: true,
-									clickOutsideToClose: true
-								});
-							}
-						});
-						_this.loading = false;
-						_this.pixelcons = l2Pixelcons;
-						setBackground();
-						sortData();
-					});
+					_this.pixelcons = data;
+					_this.loading = false;
+					sortData();
 				}, function (reason) {
 					_this.loading = false;
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
@@ -151,83 +109,39 @@
 
 		// Updates data from transactions
 		function updateFromTransaction(transactionData) {
-			if (transactionData && transactionData.success && (transactionData.pixelcons || transactionData.pixelconsL1)) {
+			if (transactionData && transactionData.success && transactionData.pixelcons) {
 				let updated = false;
-				if (transactionData.pixelcons) {
-					for (let i = 0; i < transactionData.pixelcons.length; i++) {
-						let pixelcon = transactionData.pixelcons[i];
+				for (let i = 0; i < transactionData.pixelcons.length; i++) {
+					let pixelcon = transactionData.pixelcons[i];
 
-						let found = false;
-						for (let j = 0; j < _this.pixelcons.length; j++) {
-							if (_this.pixelcons[j].id == pixelcon.id && !_this.pixelcons[j].isL1) {
-								if (pixelcon.owner == _this.accountAddress) {
-									//update
-									updated = true;
-									_this.pixelcons[j] = pixelcon;
-								} else {
-									//delete
-									updated = true;
-									_this.pixelcons.splice(j, 1);
-									j--;
-								}
-								found = true;
-								break;
+					let found = false;
+					for (let j = 0; j < _this.pixelcons.length; j++) {
+						if (_this.pixelcons[j].id == pixelcon.id) {
+							if (pixelcon.owner == _this.accountAddress) {
+								//update
+								updated = true;
+								_this.pixelcons[j] = pixelcon;
+							} else {
+								//delete
+								updated = true;
+								_this.pixelcons.splice(j, 1);
+								j--;
 							}
-						}
-
-						if (!found && pixelcon.owner == _this.accountAddress) {
-							//insert
-							updated = true;
-							_this.pixelcons.push(pixelcon);
+							found = true;
+							break;
 						}
 					}
-				}
-				if (transactionData.pixelconsL1) {
-					for (let i = 0; i < transactionData.pixelconsL1.length; i++) {
-						let pixelcon = transactionData.pixelconsL1[i];
 
-						let found = false;
-						for (let j = 0; j < _this.pixelcons.length; j++) {
-							if (_this.pixelcons[j].id == pixelcon.id && _this.pixelcons[j].isL1) {
-								if (pixelcon.owner == _this.accountAddress) {
-									//update
-									updated = true;
-									_this.pixelcons[j] = pixelcon;
-								} else {
-									//delete
-									updated = true;
-									_this.pixelcons.splice(j, 1);
-									j--;
-								}
-								found = true;
-								break;
-							}
-						}
-
-						if (!found && pixelcon.owner == _this.accountAddress) {
-							//insert
-							updated = true;
-							_this.pixelcons.push(pixelcon);
-						}
+					if (!found && pixelcon.owner == _this.accountAddress) {
+						//insert
+						updated = true;
+						_this.pixelcons.push(pixelcon);
 					}
 				}
 				if(updated) {
-					updateOwnedOnL2();
-					updateNotOnL1();
 					sortData();
 				}
 			}
-		}
-		
-		// Updates the background image according to loaded pixelcon
-		function setBackground() {
-			let backgroundImage = null;
-			if(_this.pixelcons) {
-				let ids = [];
-				for(let i=0; i<_this.pixelcons.length; i++) ids.push(_this.pixelcons[i].id);
-				backgroundImage = decoder.backgroundPNG(ids, true);
-			}
-			decoder.updateBackground(backgroundImage, '/account', 500);
 		}
 
 		// Sorts the data collection according to filters
@@ -242,74 +156,6 @@
 				}
 				return 0;
 			});
-		}
-		
-		// Sets the ownedOnL2 flags for the pixelcon data
-		function updateOwnedOnL2() {
-			for(let i = 0; i < _this.pixelcons.length; i++) {
-				if(_this.pixelcons[i].isL1) {
-					let foundOnL2 = false;
-					for(let j = 0; j < _this.pixelcons.length; j++) {
-						if(!_this.pixelcons[j].isL1 && _this.pixelcons[i].id == _this.pixelcons[j].id) {
-							foundOnL2 = true;
-							break;
-						}
-					}
-					_this.pixelcons[i].ownedOnL2 = foundOnL2 ? true : undefined;
-				}
-			}
-			return _this.pixelcons;
-		}
-		
-		// Sets the notOnL1 flags for the pixelcon data
-		function updateNotOnL1() {
-			let foundL1Pixelcons = [];
-			let searchL1TokenIds = [];
-			for(let i = 0; i < _this.pixelcons.length; i++) {
-				if(!_this.pixelcons[i].isL1) {
-					let foundOnL1 = false;
-					for(let j = 0; j < _this.pixelcons.length; j++) {
-						if(_this.pixelcons[j].isL1 && _this.pixelcons[i].id == _this.pixelcons[j].id) {
-							foundL1Pixelcons.push(_this.pixelcons[j]);
-							foundOnL1 = true;
-							break;
-						}
-					}
-					if(!foundOnL1) {
-						if(_this.pixelcons[i].isMergedL1) {
-							foundL1Pixelcons.push({
-								id: _this.pixelcons[i].id
-							});
-						} else {
-							searchL1TokenIds.push(_this.pixelcons[i].id);
-						}
-					}
-				}
-			}
-			let finishUpdate = function(l1Pixelcons) {
-				for(let i = 0; i < _this.pixelcons.length; i++) {
-					if(!_this.pixelcons[i].isL1) {
-						let foundOnL1 = false;
-						for(let j = 0; j < l1Pixelcons.length; j++) {
-							if(_this.pixelcons[i].id == l1Pixelcons[j].id) {
-								foundOnL1 = true;
-								break;
-							}
-						}
-						_this.pixelcons[i].notOnL1 = foundOnL1 ? undefined : true;
-					}
-				}
-			}
-			if(searchL1TokenIds.length == 0) {
-				finishUpdate(foundL1Pixelcons);
-				return _this.pixelcons;
-			} else {
-				return mergeContract.fetchL1PixelconsByIds(searchL1TokenIds).then(function(l1Pixelcons) {
-					foundL1Pixelcons = foundL1Pixelcons.concat(l1Pixelcons);
-					finishUpdate(foundL1Pixelcons);
-					return _this.pixelcons;
-				});
-			}
 		}
 
 		// Set the sort order
@@ -333,17 +179,21 @@
 			return count;
 		}
 		
+		// Checks if the selection mode action is enabled
+		function checkActionDisabled(selectionMode) {
+			if(!selectionMode) selectionMode = _this.selectionMode;
+			if(selectionMode == 'send') {
+				singleSelectionOnly();
+				return (getNumSelected() != 1);
+			}
+			return false;
+		}
+		
 		// Checks if a pixelcon should be enabled or disabled
 		function checkDisabled(pixelcon, selectionMode) {
 			if(!selectionMode) selectionMode = _this.selectionMode;
-			if(selectionMode == 'mergeL1') {
-				return !pixelcon.ownedOnL2;
-			} else if(selectionMode == 'createL1') {
-				return !pixelcon.notOnL1;
-			} else if(selectionMode == 'withdrawL1') {
-				return !pixelcon.isMergedL1;
-			} else if(selectionMode == 'send') {
-				return pixelcon.isL1;
+			if(selectionMode == 'send') {
+				return false;
 			}
 			return false;
 		}
@@ -358,75 +208,37 @@
 			return false;
 		}
 		
+		// Enforce single selection
+		function singleSelectionOnly() {
+			for(let i = 0; i < _this.pixelcons.length; i++) {
+				if(_this.pixelcons[i].selected && !_this.pixelcons[i].singleSelect) {
+					_this.pixelcons[i].singleSelect = true;
+					for(let j = 0; j < _this.pixelcons.length; j++) {
+						if(j != i) {
+							delete _this.pixelcons[j].singleSelect;
+							_this.pixelcons[j].selected = false;
+						}
+					}
+					break;
+				}
+			}
+		}
+		
 		// Sends the selected pixelcons
 		function send(ev) {
-			let pixelconIds = [];
+			let pixelconId = null;
 			for(let i = 0; i < _this.pixelcons.length; i++) {
-				if(_this.pixelcons[i].selected) pixelconIds.push(_this.pixelcons[i].id);
+				if(_this.pixelcons[i].selected) {
+					pixelconId = _this.pixelcons[i].id;
+					break;
+				}
 			}
 			$mdDialog.show({
 				controller: 'SendDialogCtrl',
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.send'],
 				parent: angular.element(document.body),
-				locals: { pixelconIds: pixelconIds },
-				bindToController: true,
-				clickOutsideToClose: true
-			}).then(function(result) {
-				setSelectionMode(null);
-			});
-		}
-		
-		// Merges the selected pixelcons from L1
-		function mergeL1(ev) {
-			let tokenIds = [];
-			for(let i = 0; i < _this.pixelcons.length; i++) {
-				if(_this.pixelcons[i].selected) tokenIds.push(_this.pixelcons[i].id);
-			}
-			$mdDialog.show({
-				controller: 'MergeDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: HTMLTemplates['dialog.merge'],
-				parent: angular.element(document.body),
-				locals: { tokenIds: tokenIds, transferMode: true },
-				bindToController: true,
-				clickOutsideToClose: true
-			}).then(function(result) {
-				if(!result.approvingTransfer) setSelectionMode(null);
-			});
-		}
-		
-		// Creates the selected pixelcons on L1 and merges to L2
-		function createL1(ev) {
-			let tokenIds = [];
-			for(let i = 0; i < _this.pixelcons.length; i++) {
-				if(_this.pixelcons[i].selected) tokenIds.push(_this.pixelcons[i].id);
-			}
-			$mdDialog.show({
-				controller: 'MergeDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: HTMLTemplates['dialog.merge'],
-				parent: angular.element(document.body),
-				locals: { tokenIds: tokenIds, createMode: true },
-				bindToController: true,
-				clickOutsideToClose: true
-			}).then(function(result) {
-				setSelectionMode(null);
-			});
-		}
-		
-		// Withdraws the selected pixelcons to L1
-		function withdrawL1(ev) {
-			let tokenIds = [];
-			for(let i = 0; i < _this.pixelcons.length; i++) {
-				if(_this.pixelcons[i].selected) tokenIds.push(_this.pixelcons[i].id);
-			}
-			$mdDialog.show({
-				controller: 'MergeDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: HTMLTemplates['dialog.merge'],
-				parent: angular.element(document.body),
-				locals: { tokenIds: tokenIds, withdrawMode: true },
+				locals: { pixelconId: pixelconId },
 				bindToController: true,
 				clickOutsideToClose: true
 			}).then(function(result) {

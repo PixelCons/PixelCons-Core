@@ -101,9 +101,6 @@ div.pixelconAccountPage .market {
 div.pixelconAccountPage .more {
 	background-image: url("/img/icon_more.svg");
 }
-div.pixelconAccountPage .migrate {
-	background-image: url("/img/icon_migrate.svg");
-}
 div.pixelconAccountPage.sm .sortBy .md-select-icon {
 	width: 5px;
 }

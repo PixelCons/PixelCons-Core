@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('DetailsPageCtrl', DetailsPageCtrl);
 
-	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$routeParams', '$sce', '$location', 'web3Service', 'coreContract', 'decoder', 'market'];
-	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $routeParams, $sce, $location, web3Service, coreContract, decoder, market) {
+	DetailsPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$timeout', '$routeParams', '$sce', '$location', 'web3Service', 'coreContract', 'market'];
+	function DetailsPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $timeout, $routeParams, $sce, $location, web3Service, coreContract, market) {
 		var _this = this;
 		var pixelconDetails;
 		_this.rename = rename;

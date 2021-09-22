@@ -15,20 +15,6 @@
 						ng-click="ctrl.setSortOrder(!ctrl.filter.sortDesc)" aria-label="Sort Order"></md-button>
 				<div class="actionButtons" ng-show="ctrl.accountAddress && ctrl.pixelcons.length > 0">
 					<md-menu md-position-mode="target-right target">
-						<md-button class="iconButton migrate" ng-click="$mdOpenMenu()" aria-label="Migrate"></md-button>
-						<md-menu-content>
-							<md-menu-item>
-								<md-button ng-click="ctrl.setSelectionMode('mergeL1')" ng-disabled="!ctrl.checkSelectModeActionable('mergeL1')">Merge L1&#10140;L2</md-button>
-							</md-menu-item>
-							<md-menu-item>
-								<md-button ng-click="ctrl.setSelectionMode('createL1')" ng-disabled="!ctrl.checkSelectModeActionable('createL1')">Create L1&#10140;L2</md-button>
-							</md-menu-item>
-							<md-menu-item>
-								<md-button ng-click="ctrl.setSelectionMode('withdrawL1')" ng-disabled="!ctrl.checkSelectModeActionable('withdrawL1')">Withdraw &#10140;L1</md-button>
-							</md-menu-item>
-						</md-menu-content>
-					</md-menu>
-					<md-menu md-position-mode="target-right target">
 						<md-button class="iconButton more" ng-click="$mdOpenMenu()" aria-label="More">
 						</md-button>
 						<md-menu-content>
@@ -37,7 +23,7 @@
 							</md-menu-item>
 							<md-menu-item ng-if="ctrl.marketEnabled">
 								<md-button ng-click="">
-									<span>Sell</span>
+									<span>Buy/Sell</span>
 									<a class="plain buttonLink" ng-href="{{ctrl.marketAccountLink}}" target="_blank"></a>
 								</md-button>
 							</md-menu-item>
@@ -65,9 +51,6 @@
 		
 			<!-- PixelCons -->
 			<div class="displayTable" ng-show="!ctrl.loading">
-				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='mergeL1'">Select the L1 PixelCons you want to merge to L2</div>
-				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='createL1'">Select the PixelCons you want to create on L1 and merge to L2</div>
-				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='withdrawL1'">Select the PixelCons you want to withdraw to L1</div>
 				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='send'">Select the PixelCons you want to send</div>
 				<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-account="true" selectable="{{!!ctrl.selectionMode}}" disabled="{{ctrl.checkDisabled(pixelcon)}}" 
 					size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" ng-repeat="pixelcon in ctrl.pixelcons track by $index"></pixelconcard>
@@ -79,14 +62,8 @@
 			<md-button class="actionButton" ng-click="ctrl.setSelectionMode(null)" ng-show="ctrl.selectionMode">Cancel</md-button>
 			<span ng-show="ctrl.selectionMode">
 				<div class="selectionText textLight textMedium"><b>{{ctrl.getNumSelected()}}</b> Selected</div>
-				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.mergeL1($event)" 
-					ng-disabled="!ctrl.getNumSelected()" ng-show="ctrl.selectionMode=='mergeL1'">Merge</md-button>
-				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.createL1($event)" 
-					ng-disabled="!ctrl.getNumSelected()" ng-show="ctrl.selectionMode=='createL1'">Create</md-button>
-				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.withdrawL1($event)" 
-					ng-disabled="!ctrl.getNumSelected()" ng-show="ctrl.selectionMode=='withdrawL1'">Withdraw</md-button>
 				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.send($event)" 
-					ng-disabled="!ctrl.getNumSelected()" ng-show="ctrl.selectionMode=='send'">Send</md-button>
+					ng-disabled="ctrl.checkActionDisabled()" ng-show="ctrl.selectionMode=='send'">Send</md-button>
 			</span>
 			<div class="countText textLight textMedium" ng-show="!ctrl.selectionMode">
 				<b>{{ctrl.pixelcons.length}}</b> {{ctrl.pixelcons.length?'PixelCon':'PixelCons'}}

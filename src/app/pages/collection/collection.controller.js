@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('CollectionPageCtrl', CollectionPageCtrl);
 
-	CollectionPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$sce', 'web3Service', 'coreContract', 'market', 'decoder'];
-	function CollectionPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $sce, web3Service, coreContract, market, decoder) {
+	CollectionPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$sce', 'web3Service', 'coreContract', 'market'];
+	function CollectionPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $sce, web3Service, coreContract, market) {
 		var _this = this;
 		_this.index = $routeParams.index;
 		_this.rename = rename;
@@ -34,19 +34,11 @@
 				_this.cleared = (collection.pixelcons.length == 0);
 				_this.collection = collection;
 				_this.marketLink = market.getCollectionLink(_this.collection.index);
-				setCollectionBackground();
 				checkPermissions();
 			}, function (reason) {
 				_this.loading = false;
 				_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
 			});
-		}
-		
-		// Updates the background image according to collection details
-		function setCollectionBackground() {
-			let backgroundImage = null;
-			if(_this.collection) backgroundImage = decoder.backgroundPNG(_this.collection.pixelconIds, true);
-			decoder.updateBackground(backgroundImage, '/collection', 500);
 		}
 
 		// Update from transaction
