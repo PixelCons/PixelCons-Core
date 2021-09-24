@@ -16,8 +16,6 @@
 			},
 			details: {
 				pixelcon: true,
-				shinyPixelcons: true,
-				l1Pixelcons: true,
 				collection: true,
 				creator: true
 			},
@@ -31,9 +29,7 @@
 				activity: true,
 				wallet: true,
 				sendPixelcons: true,
-				sellPixelcons: true,
-				makeShiny: true,
-				withdrawL1: true
+				sellPixelcons: true
 			},
 		}
 
