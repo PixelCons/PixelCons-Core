@@ -233,16 +233,10 @@ button.headerDropdownButton .networkBadge {
 	background-image: url(/img/network_unknown.png);
 	width: 16px;
 	height: 16px;
-	display: inline-block;
 	vertical-align: text-top;
 	background-size: cover;
 	border-radius: 3px;
-}
-button.headerDropdownButton .networkBadge.mainnet {
-    background-image: url(/img/network_mainnet.png);
-}
-button.headerDropdownButton .networkBadge.optimism {
-    background-image: url(/img/network_optimism.png);
+	display: none;
 }
 div.headerDropdownButtonLink {
 	display: inline-block;

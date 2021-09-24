@@ -42,7 +42,7 @@
 						<div class="detailsSectionTopTextCollection textSmall textLight textBold">Collection {{ctrl.index}}</div>
 					</div>
 					
-					<div class="detailsSectionMoreButton" ng-hide="ctrl.error || ctrl.loading || ctrl.cleared">
+					<div class="detailsSectionMoreButton textNotSelectable" ng-hide="ctrl.error || ctrl.loading || ctrl.cleared">
 						<md-button class="iconButton buy" aria-label="Buy/Sell" ng-if="ctrl.marketEnabled">
 							<a class="plain buttonLink" ng-href="{{ctrl.marketLink}}" target="_blank"></a>
 							<md-tooltip md-direction="left">Buy/Sell</md-tooltip>
@@ -74,9 +74,6 @@
 								</md-menu-item ng-show="ctrl.isOwner || ctrl.isCreator">
 								<md-menu-item ng-if="ctrl.isCreator">
 									<md-button ng-click="ctrl.clear($event)">Clear Collection</md-button>
-								</md-menu-item>
-								<md-menu-item>
-									<md-button ng-click="ctrl.send($event)">Send To</md-button>
 								</md-menu-item>
 							</md-menu-content>
 						</md-menu>

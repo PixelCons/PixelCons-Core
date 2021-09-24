@@ -91,7 +91,7 @@
 					</div>
 					<div class="headerDropdownTextItem textLight">{{transaction.description}}</div>
 					<md-button class="headerDropdownButton md-primary" ng-click="">
-						<div class="networkBadge" ng-class="ctrl.getNetworkClass(transaction.chainId)"></div>
+						<div class="networkBadge" ng-style="ctrl.getNetworkStyle(transaction.chainId)"></div>
 						<span>View</span>
 						<a class="plain buttonLink" ng-href="{{ctrl.goDetails(transaction.txHash, transaction.chainId)}}" target="_blank"></a>
 					</md-button>

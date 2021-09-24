@@ -8,7 +8,6 @@
 		_this.index = $routeParams.index;
 		_this.rename = rename;
 		_this.clear = clear;
-		_this.send = send;
 		_this.getMaxWidth = getMaxWidth;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
@@ -33,7 +32,7 @@
 				_this.loading = false;
 				_this.cleared = (collection.pixelcons.length == 0);
 				_this.collection = collection;
-				_this.marketLink = market.getCollectionLink(_this.collection.index);
+				_this.marketLink = market.getCollectionLink(_this.collection.index, _this.collection.name);
 				checkPermissions();
 			}, function (reason) {
 				_this.loading = false;
@@ -103,7 +102,7 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.collection'],
 				parent: angular.element(document.body),
-				locals: { pixelcons: _this.collection.pixelcons, index: _this.index, editMode: true },
+				locals: { pixelconIds: _this.collection.pixelconIds, index: _this.index, editMode: true },
 				bindToController: true,
 				clickOutsideToClose: true
 			});
@@ -116,20 +115,7 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.collection'],
 				parent: angular.element(document.body),
-				locals: { pixelcons: _this.collection.pixelcons, index: _this.index, clearMode: true },
-				bindToController: true,
-				clickOutsideToClose: true
-			});
-		}
-
-		// Send the entire pixelcon collection
-		function send(ev) {
-			$mdDialog.show({
-				controller: 'SendDialogCtrl',
-				controllerAs: 'ctrl',
-				templateUrl: HTMLTemplates['dialog.send'],
-				parent: angular.element(document.body),
-				locals: { pixelconIds: _this.collection.pixelconIds },
+				locals: { pixelconIds: _this.collection.pixelconIds, index: _this.index, clearMode: true },
 				bindToController: true,
 				clickOutsideToClose: true
 			});

@@ -18,7 +18,7 @@
 		_this.setSortOrder = setSortOrder;
 		_this.checkUpdateData = checkUpdateData;
 		_this.updatePage = updatePage;
-		_this.disableFilters = true;
+		_this.disableFilters = false;
 
 		var loadedFilter = {};
 

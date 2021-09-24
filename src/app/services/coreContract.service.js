@@ -467,8 +467,9 @@
 						
 						//get pixelcon data
 						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
-						let creatorPixelconIndexes = await contract.getForCreator(address);
-						for(let i=0; i<creatorPixelconIndexes.length; i++) creatorPixelconIndexes[i] = creatorPixelconIndexes[i].toNumber();
+						let creatorIndexes = await contract.getForCreator(address);
+						let creatorPixelconIndexes = [];
+						for(let i=0; i<creatorIndexes.length; i++) creatorPixelconIndexes[i] = creatorIndexes[i].toNumber();
 						
 						//verify that the user is the owner of all pixelcons
 						//and that the user is the creator of all pixelcons
@@ -483,7 +484,7 @@
 								reject('Account did not create all PixelCons');
 								verified = false;
 								break;
-							} else if (pixelcons[i].collection !== index) {
+							} else if (pixelcons[i].collection.index !== index) {
 								reject('PixelCon is not part of collection');
 								verified = false;
 								break;
@@ -521,8 +522,9 @@
 						
 						//get pixelcon data
 						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
-						let creatorPixelconIndexes = await contract.getForCreator(address);
-						for(let i=0; i<creatorPixelconIndexes.length; i++) creatorPixelconIndexes[i] = creatorPixelconIndexes[i].toNumber();
+						let creatorIndexes = await contract.getForCreator(address);
+						let creatorPixelconIndexes = [];
+						for(let i=0; i<creatorIndexes.length; i++) creatorPixelconIndexes[i] = creatorIndexes[i].toNumber();
 						
 						//verify that the user is the owner of all pixelcons
 						//and that the user is the creator of all pixelcons
@@ -537,7 +539,7 @@
 								reject('Account did not create all PixelCons');
 								verified = false;
 								break;
-							} else if (pixelcons[i].collection !== index) {
+							} else if (pixelcons[i].collection.index !== index) {
 								reject('PixelCon is not part of collection');
 								verified = false;
 								break;
@@ -1027,7 +1029,6 @@
 					pixelcon.name = web3Service.toUtf8(event.args["_newName"]);
 				}
 			}
-			debugger;
 
 			//set pixelcon data
 			data.pixelcons = [pixelcon];
@@ -1101,7 +1102,6 @@
 			
 			//update collection data
 			for (let i = 0; i < pixelcons.length; i++) pixelcons[i].collection.name = collectionName;
-			debugger;
 			
 			//set pixelcon data
 			data.pixelcons = pixelcons;
@@ -1116,7 +1116,6 @@
 			
 			//clear collection data
 			for (let i = 0; i < pixelcons.length; i++) pixelcons[i].collection = null;
-			debugger;
 			
 			//set pixelcon data
 			data.pixelcons = pixelcons;

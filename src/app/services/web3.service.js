@@ -12,6 +12,7 @@
 				symbol: 'ETH',
 				decimals: 18
 			},
+			icon: '/img/network_mainnet.png',
 			fallbackRPCs: [],//['http://127.0.0.1:7545/', 'https://127.0.0.1:7545/'],
 			blockExplorer: 'https://etherscan.io/',
 			transactionLU: '/tx/<txHash>',
@@ -166,6 +167,7 @@
 		this.compressAddressString = compressAddressString;
 		this.scrambleList = scrambleList;
 		this.getNetworkName = getNetworkName;
+		this.getNetworkIcon = getNetworkIcon;
 		this.getMainNetwork = getMainNetwork;
 		this.setFallbackRPC = setFallbackRPC;
 		this.getFallbackRPC = getFallbackRPC;
@@ -755,6 +757,16 @@
 				}
 			}
 			return 'Unknown';
+		}
+		
+		// Gets the icon of a network given its chainId
+		function getNetworkIcon(chainId) {
+			for(let i = 0; i < _networkConfig.length; i++) {
+				if(_networkConfig[i].chainId == chainId) {
+					return _networkConfig[i].icon;
+				}
+			}
+			return null;
 		}
 
 		// Gets the main network

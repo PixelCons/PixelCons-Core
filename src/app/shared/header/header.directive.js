@@ -12,7 +12,7 @@
 		_this.waitingTransactions = [];
 		_this.account = null;
 		_this.setAccount = setAccount;
-		_this.getNetworkClass = getNetworkClass;
+		_this.getNetworkStyle = getNetworkStyle;
 		_this.goPath = goPath;
 		_this.goDetails = goDetails;
 		_this.closeMenu = $mdMenu.hide;
@@ -112,16 +112,17 @@
 			}
 		};
 		
-		// Gets the network class info
-		function getNetworkClass(chainId) {
-			let networkName = web3Service.getNetworkName(chainId);
-			let networkClass = {};
-			if(networkName && networkName.toLowerCase) {
-				networkClass.mainnet = (networkName.toLowerCase().indexOf('mainnet') > -1);
-				networkClass.optimism = (networkName.toLowerCase().indexOf('optimism') > -1);
+		// Gets the network badge style
+		function getNetworkStyle(chainId) {
+			let networkIcon = web3Service.getNetworkIcon(chainId);
+			if(networkIcon) {
+				return {
+					backgroundImage: 'url(' + networkIcon + ')',
+					display: 'inline-block'
+				}
 			}
-			return networkClass;
-		};
+			return {};
+		}
 
 		// Set to given user account
 		function setAccount(account) {

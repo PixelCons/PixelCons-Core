@@ -125,7 +125,7 @@
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.pixelcon'],
 				parent: angular.element(document.body),
-				locals: { pixelconIds: [_this.pixelconId], editMode: true },
+				locals: { pixelconId: _this.pixelconId, editMode: true },
 				bindToController: true,
 				clickOutsideToClose: true
 			});
