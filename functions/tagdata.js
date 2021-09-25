@@ -2,13 +2,15 @@
  * tagdata.js
  * Provides functions inserting tag data into the plain typical HTML
  ***********************************************************************/
+const settings = require('./settings.js');
 const ethdata = require('./ethdata.js');
 const webdata = require('./webdata.js');
 
 // Settings
-const customizedHTMLTagsEnabled = false;
+const customizedHTMLTagsEnabled = true;
+const genesisCount = 651;
+const appWebDomain = settings.appWebDomain;
 const tagEntryPoint = '<!-- Tag Inserts -->';
-const imageURLRoot = 'https://pixelcons.io';
 
 // Data
 var plain_html_obj = null;
@@ -19,18 +21,15 @@ async function getTagDataHTML(path, plainHTMLPath) {
 	if(!htmlData.taglessHTML || !customizedHTMLTagsEnabled) return htmlData.plainHTML;
 	
 	if(path.indexOf('/details/') === 0) {
-		let isL1 = path.indexOf('?l1') > -1;
 		let id = formatId(path.substring(path.lastIndexOf('/') + 1, (path.indexOf('?') > -1) ? path.indexOf('?') : path.length));
 		if(id) {
 			//get pixelcon details
-			let pixelconData = null;
-			if(isL1) pixelconData = await ethdata.getPixelconDataL1(id);
-			else pixelconData = await ethdata.getPixelconData(id);
+			let pixelconData = await ethdata.getPixelcon(id);
 			if(pixelconData) {
 				let type = 'summary';
-				let name = (isL1 ? 'L1 ' : '') + 'PixelCon' + (pixelconData.name ? (' [' + pixelconData.name + ']') : '');
-				let description = getDescription(pixelconData.name, pixelconData.index, pixelconData.collection, pixelconData.creator);
-				let imageUrl = imageURLRoot + '/meta/image/' + id + (isL1 ? '?l1' : '');
+				let name = 'PixelCon' + (pixelconData.name ? (' [' + pixelconData.name + ']') : '');
+				let description = getDescription(pixelconData.name, pixelconData.index, pixelconData.collection, pixelconData.creator, pixelconData.date);
+				let imageUrl = appWebDomain + 'meta/image/' + id;
 	
 				let tagHTML = insertTagData(htmlData, type, name, description, imageUrl);
 				return tagHTML;
@@ -40,12 +39,12 @@ async function getTagDataHTML(path, plainHTMLPath) {
 		let index = formatIndex(path.substring(path.lastIndexOf('/') + 1, (path.indexOf('?') > -1) ? path.indexOf('?') : path.length));
 		if(index) {
 			//get collection details
-			let collectionData = await ethdata.getCollectionData(index);
+			let collectionData = await ethdata.getCollection(index);
 			if(collectionData) {
 				let type = 'summary_large_image';
 				let name = 'PixelCon Collection' + (collectionData.name ? (' [' + collectionData.name + ']') : '');
 				let description = 'Collection ' + index;
-				let imageUrl = imageURLRoot + '/meta/image_multi/' + getIdsList(collectionData.pixelcons);
+				let imageUrl = appWebDomain + 'meta/image_multi/' + getIdsList(collectionData.pixelcons);
 	
 				let tagHTML = insertTagData(htmlData, type, name, description, imageUrl);
 				return tagHTML;
@@ -55,12 +54,14 @@ async function getTagDataHTML(path, plainHTMLPath) {
 		let creator = formatAddress(path.substring(path.lastIndexOf('/') + 1, (path.indexOf('?') > -1) ? path.indexOf('?') : path.length));
 		if(creator) {
 			//get creator details
-			let creatorData = await ethdata.getCreatorData(creator);
+			let creatorData = await ethdata.getCreator(creator);
+			//console.log(creatorData);
+			console.log(getIdsList(creatorData.pixelcons))
 			if(creatorData) {
 				let type = 'summary_large_image';
 				let name = 'PixelCon Creator';
 				let description = creator;
-				let imageUrl = imageURLRoot + '/meta/image_multi/' + getIdsList(creatorData.pixelcons);
+				let imageUrl = appWebDomain + 'meta/image_multi/' + getIdsList(creatorData.pixelcons);
 	
 				let tagHTML = insertTagData(htmlData, type, name, description, imageUrl);
 				return tagHTML;
@@ -117,6 +118,9 @@ function insertTagData(htmlData, type, title, description, imageUrl) {
 	tagHTML = tagHTML.substring(0, tagStartIndex + tagEntryPoint.length + htmlData.lineEnding.length)
 		+ htmlData.whitespace + '<meta name="twitter:card" content="' + type + '">' + htmlData.lineEnding
 		+ htmlData.whitespace + '<meta name="twitter:site" content="@PixelConsToken">' + htmlData.lineEnding
+		+ htmlData.whitespace + '<meta name="twitter:title" content="' + title + '">' + htmlData.lineEnding
+		+ htmlData.whitespace + '<meta name="twitter:description" content="' + description + '">' + htmlData.lineEnding
+		+ htmlData.whitespace + '<meta name="twitter:image" content="' + imageUrl + '">' + htmlData.lineEnding
 		+ htmlData.whitespace + '<meta property="og:url" content="https://pixelcons.io/">' + htmlData.lineEnding
 		+ htmlData.whitespace + '<meta property="og:title" content="' + title + '">' + htmlData.lineEnding
 		+ htmlData.whitespace + '<meta property="og:description" content="' + description + '">' + htmlData.lineEnding
@@ -145,11 +149,28 @@ function formatId(id) {
 	for(let i=0; i<64; i++) if(hexCharacters.indexOf(id[i]) == -1) return null;
 	return '0x' + id;
 }
-function getDescription(name, index, collection, creator) {
+function formatDate(millis) {
+	if(millis) {
+		let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		let date = new Date(millis);
+		
+		let day = (''+date.getDate()).padStart(2,'0');
+		let month = months[date.getMonth()];
+		let year = date.getFullYear();
+		return day + ' ' + month + ' ' + year;
+	}
+	return null;
+}
+function getDescription(name, index, collection, creator, created) {
 	let result = "";
+	
 	if(index) result += "PixelCon #" + index;
-	if(collection) result += " - Collection " + collection;
-	if(creator) result += " - Creator 0x" + creator;
+	if(index < genesisCount) result += " - ✨Genesis";
+	if(collection > 0) {
+		result += " - Collection " + collection;
+	}
+	if(created) result += " - " + formatDate(created);
+	if(creator) result += " - Creator " + creator;
 	return result;
 }
 function scrambleList(list) {
@@ -166,7 +187,7 @@ function scrambleList(list) {
 function getIdsList(list) {
 	let ids = '';
 	list = scrambleList(list);
-	for(let i=0; i<list.length && i<6; i++) ids += list[i].substring(2, 66);
+	for(let i=0; i<list.length && i<6; i++) ids += list[i].id.substring(2, 66);
 	return ids;
 }
 

@@ -8,7 +8,7 @@ const webbuild = require('./webbuild.js');
 const webFunctions = require('../functions/webFunctions.js');
 
 // Settings
-const serverPort = 8082;
+const serverPort = 8080;
 
 // Start Server
 if (require.main === module) {
@@ -42,7 +42,7 @@ function start(debugMode) {
 	
 	//web functions
 	app.get('/meta/data/:id', async function(req, res) {
-		let metadata = await webFunctions.getMetadata(req.params.id);
+		let metadata = await webFunctions.getMetadata(req.params.id, req.query);
 		if(!metadata.errorText) {
 			res.contentType('application/json');
 			res.send(JSON.stringify(metadata)); 
@@ -51,7 +51,7 @@ function start(debugMode) {
 		}
 	});
 	app.get('/meta/image/:id', async function(req, res) {
-		let imageData = await webFunctions.getStandardImage(req.params.id, req.query.l1 !== undefined);
+		let imageData = await webFunctions.getStandardImage(req.params.id, req.query.index);
 		if(!imageData.errorText) {
 			res.contentType('image/png');
 			res.end(imageData, 'binary');
@@ -61,15 +61,6 @@ function start(debugMode) {
 	});
 	app.get('/meta/image_multi/:ids', async function(req, res) {
 		let imageData = await webFunctions.getMultiImage(req.params.ids.split(','));
-		if(!imageData.errorText) {
-			res.contentType('image/png');
-			res.end(imageData, 'binary');
-		} else {
-			res.status(500).send(imageData.errorText);
-		}
-	});
-	app.get('/meta/image_plain/:id', async function(req, res) {
-		let imageData = await webFunctions.getPlainImage(req.params.id);
 		if(!imageData.errorText) {
 			res.contentType('image/png');
 			res.end(imageData, 'binary');

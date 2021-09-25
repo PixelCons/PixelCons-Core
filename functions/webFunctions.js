@@ -7,9 +7,9 @@ const imagedata = require('./imagedata.js');
 const tagdata = require('./tagdata.js');
 
 // Gets the metadata JSON for the given pixelcon id
-async function getMetadata(pixelconId) {
+async function getMetadata(pixelconId, params) {
 	try {
-		return await metadata.getMetadata(pixelconId);
+		return await metadata.getMetadata(pixelconId, params);
 	} catch (err) {
 		if (!err) err = 'Error';
 		return { errorText: err.message ? err.message : err }
@@ -17,9 +17,9 @@ async function getMetadata(pixelconId) {
 }
 
 // Gets the standard PNG for the given pixelcon id
-async function getStandardImage(pixelconId, isL1) {
+async function getStandardImage(pixelconId, pixelconIndex) {
 	try {
-		return await imagedata.getStandardImage(pixelconId, isL1);
+		return await imagedata.getStandardImage(pixelconId, pixelconIndex);
 	} catch (err) {
 		if (!err) err = 'Error';
 		return { errorText: err.message ? err.message : err }
@@ -30,16 +30,6 @@ async function getStandardImage(pixelconId, isL1) {
 async function getMultiImage(pixelconIds) {
 	try {
 		return await imagedata.getMultiImage(pixelconIds);
-	} catch (err) {
-		if (!err) err = 'Error';
-		return { errorText: err.message ? err.message : err }
-	}
-}
-
-// Gets a plain PNG for the given pixelcon id
-async function getPlainImage(pixelconId) {
-	try {
-		return await imagedata.getPlainImage(pixelconId);
 	} catch (err) {
 		if (!err) err = 'Error';
 		return { errorText: err.message ? err.message : err }
@@ -61,6 +51,5 @@ module.exports = {
     getMetadata: getMetadata,
 	getStandardImage: getStandardImage,
 	getMultiImage: getMultiImage,
-	getPlainImage: getPlainImage,
 	getTagDataHTML: getTagDataHTML
 }
