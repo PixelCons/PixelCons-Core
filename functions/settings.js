@@ -4,13 +4,17 @@
  ***********************************************************************/
 
 // Settings
-const appWebDomain = 'http://localhost:8080/';//'https://pixelcons.io/';
-const jsonRpc = 'http://127.0.0.1:7545/';
-const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';//'0x5536b6aadd29eaf0db112bb28046a5fad3761bd4';
+const customizedHTMLTagsEnabled = false;									/* Enables automatically adjusting the HTML tag data with details about the page being requested */
+const detailedMetadataEnabled = false;										/* Enables extra data querying to fetch additional details in a PixelCons metadata */
+const appWebDomain = 'https://pixelcons.io/';								/* Web domain that the app is hosted on */
+const contractAddress = '0x5536b6aadd29eaf0db112bb28046a5fad3761bd4';		/* Deployed PixelCons contract address */
+const jsonRpc = '';															/* JSON RPC endpoint to query PixelCons contract state from */
 
 // Export
 module.exports = {
+	customizedHTMLTagsEnabled: customizedHTMLTagsEnabled,
+	detailedMetadataEnabled: detailedMetadataEnabled,
     appWebDomain: appWebDomain,
-	jsonRpc: jsonRpc,
-	contractAddress: contractAddress
+	contractAddress: contractAddress,
+	jsonRpc: jsonRpc
 }

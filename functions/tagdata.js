@@ -7,9 +7,9 @@ const ethdata = require('./ethdata.js');
 const webdata = require('./webdata.js');
 
 // Settings
-const customizedHTMLTagsEnabled = true;
-const genesisCount = 651;
+const customizedHTMLTagsEnabled = settings.customizedHTMLTagsEnabled;
 const appWebDomain = settings.appWebDomain;
+const genesisCount = 651;
 const tagEntryPoint = '<!-- Tag Inserts -->';
 
 // Data
@@ -55,8 +55,6 @@ async function getTagDataHTML(path, plainHTMLPath) {
 		if(creator) {
 			//get creator details
 			let creatorData = await ethdata.getCreator(creator);
-			//console.log(creatorData);
-			console.log(getIdsList(creatorData.pixelcons))
 			if(creatorData) {
 				let type = 'summary_large_image';
 				let name = 'PixelCon Creator';

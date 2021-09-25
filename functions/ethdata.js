@@ -60,23 +60,25 @@ const hexCharacters = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','
 async function getTokenData(id) {
 	return await cachedata.cacheData('ethdata_getTokenData(' + id + ')', async function() {
 		try {
-			let payload = {
-				id: 1,
-				jsonrpc: "2.0",
-				method: "eth_call",
-				params:[{ to:contractAddress, data:(getTokenDataFunctionSelector + id)}, "latest"]
-			};
-			let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
-			let result = JSON.parse(data).result;
-			if(!result || result.length < 64) return null;
-			return {
-				id: '0x' + id,
-				index: parseInt(result.substr(1*64 + 2, 64), 16),
-				owner: '0x' + formatAddress(result.substr(3*64 + 2, 64)),
-				creator: '0x' + formatAddress(result.substr(4*64 + 2, 64)),
-				name: toUtf8(result.substr(5*64 + 2, 64)),
-				collection: parseInt(result.substr(2*64 + 2, 64), 16),
-				date: parseInt(result.substr(6*64 +2, 64), 16) * 1000
+			if(contractAddress && jsonRpc) {
+				let payload = {
+					id: 1,
+					jsonrpc: "2.0",
+					method: "eth_call",
+					params:[{ to:contractAddress, data:(getTokenDataFunctionSelector + id)}, "latest"]
+				};
+				let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
+				let result = JSON.parse(data).result;
+				if(!result || result.length < 64) return null;
+				return {
+					id: '0x' + id,
+					index: parseInt(result.substr(1*64 + 2, 64), 16),
+					owner: '0x' + formatAddress(result.substr(3*64 + 2, 64)),
+					creator: '0x' + formatAddress(result.substr(4*64 + 2, 64)),
+					name: toUtf8(result.substr(5*64 + 2, 64)),
+					collection: parseInt(result.substr(2*64 + 2, 64), 16),
+					date: parseInt(result.substr(6*64 +2, 64), 16) * 1000
+				}
 			}
 		} catch (err) {
 			console.log(err);
@@ -87,23 +89,25 @@ async function getTokenData(id) {
 async function getCollectionData(index) {
 	return await cachedata.cacheData('ethdata_getCollectionData(' + index + ')', async function() {
 		try {
-			let payload = {
-				id: 1,
-				jsonrpc: "2.0",
-				method: "eth_call",
-				params:[{ to:contractAddress, data:(getCollectionDataFunctionSelector + index.toString(16).padStart(64,'0'))}, "latest"]
-			};
-			let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
-			let result = JSON.parse(data).result;
-			if(!result) return null;
-			
-			let name = toUtf8(result.substr(0*64 + 2, 64));
-			let size = parseInt(result.substr(2*64 + 2, 64), 16);
-			let indexes = [];
-			for(let i=0; i<size; i++) indexes.push(parseInt(result.substr((i+3)*64 + 2, 64), 16));
-			return {
-				name: name,
-				pixelconIndexes: indexes
+			if(contractAddress && jsonRpc) {
+				let payload = {
+					id: 1,
+					jsonrpc: "2.0",
+					method: "eth_call",
+					params:[{ to:contractAddress, data:(getCollectionDataFunctionSelector + index.toString(16).padStart(64,'0'))}, "latest"]
+				};
+				let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
+				let result = JSON.parse(data).result;
+				if(!result) return null;
+				
+				let name = toUtf8(result.substr(0*64 + 2, 64));
+				let size = parseInt(result.substr(2*64 + 2, 64), 16);
+				let indexes = [];
+				for(let i=0; i<size; i++) indexes.push(parseInt(result.substr((i+3)*64 + 2, 64), 16));
+				return {
+					name: name,
+					pixelconIndexes: indexes
+				}
 			}
 		} catch (err) {
 			console.log(err);
@@ -114,21 +118,23 @@ async function getCollectionData(index) {
 async function getForCreator(address) {
 	return await cachedata.cacheData('ethdata_getForCreator(' + address + ')', async function() {
 		try {
-			let payload = {
-				id: 1,
-				jsonrpc: "2.0",
-				method: "eth_call",
-				params:[{ to:contractAddress, data:(getForCreatorFunctionSelector + address.padStart(64,'0'))}, "latest"]
-			};
-			let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
-			let result = JSON.parse(data).result;
-			if(!result) return null;
-			
-			let size = parseInt(result.substr(1*64 + 2, 64), 16);
-			let indexes = [];
-			for(let i=0; i<size; i++) indexes.push(parseInt(result.substr((i+2)*64 + 2, 64), 16));
-			return {
-				pixelconIndexes: indexes
+			if(contractAddress && jsonRpc) {
+				let payload = {
+					id: 1,
+					jsonrpc: "2.0",
+					method: "eth_call",
+					params:[{ to:contractAddress, data:(getForCreatorFunctionSelector + address.padStart(64,'0'))}, "latest"]
+				};
+				let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
+				let result = JSON.parse(data).result;
+				if(!result) return null;
+				
+				let size = parseInt(result.substr(1*64 + 2, 64), 16);
+				let indexes = [];
+				for(let i=0; i<size; i++) indexes.push(parseInt(result.substr((i+2)*64 + 2, 64), 16));
+				return {
+					pixelconIndexes: indexes
+				}
 			}
 		} catch (err) {
 			console.log(err);
@@ -139,45 +145,47 @@ async function getForCreator(address) {
 async function getBasicData(indexes) {
 	return await cachedata.cacheData('ethdata_getBasicData([' + indexes + '])', async function() {
 		try {
-			let numSearches = Math.ceil(indexes.length/getBasicDataMaxSearchSize);
-			let indexesCallData = [];
-			for(let i=0; i<numSearches; i++) {
-				let indexesStr = '';
-				let count = 0;
-				for(let j=(i*getBasicDataMaxSearchSize); j<indexes.length && j<((i+1)*getBasicDataMaxSearchSize); j++) {
-					indexesStr += parseInt(indexes[j]).toString(16).padStart(64,'0');
-					count++;
-				}
-				indexesCallData.push({
-					size: count,
-					sizeHex: count.toString(16).padStart(64,'0'),
-					indexesStr: indexesStr
-				});
-			}
-			
-			let basicData = [];
-			for(let i=0; i<indexesCallData.length; i++) {
-				let payload = {
-					id: 1,
-					jsonrpc: "2.0",
-					method: "eth_call",
-					params:[{ to:contractAddress, data:(getBasicDataFunctionSelector + "20".padStart(64,'0') + indexesCallData[i].sizeHex + indexesCallData[i].indexesStr)}, "latest"]
-				};
-				let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
-				let result = JSON.parse(data).result;
-				if(!result) return null;
-				
-				let querySize = indexesCallData[i].size;
-				for(let j=0; j<indexesCallData[i].size; j++) {
-					basicData.push({
-						id: '0x' + result.substr((4+(querySize+1)*0+1+j)*64 + 2, 64),
-						name: toUtf8(result.substr((4+(querySize+1)*1+1+j)*64 + 2, 64)),
-						owner: '0x' + formatAddress(result.substr((4+(querySize+1)*2+1+j)*64 + 2, 64)),
-						collection: parseInt(result.substr((4+(querySize+1)*3+1+j)*64 + 2, 64), 16)
+			if(contractAddress && jsonRpc) {
+				let numSearches = Math.ceil(indexes.length/getBasicDataMaxSearchSize);
+				let indexesCallData = [];
+				for(let i=0; i<numSearches; i++) {
+					let indexesStr = '';
+					let count = 0;
+					for(let j=(i*getBasicDataMaxSearchSize); j<indexes.length && j<((i+1)*getBasicDataMaxSearchSize); j++) {
+						indexesStr += parseInt(indexes[j]).toString(16).padStart(64,'0');
+						count++;
+					}
+					indexesCallData.push({
+						size: count,
+						sizeHex: count.toString(16).padStart(64,'0'),
+						indexesStr: indexesStr
 					});
 				}
+				
+				let basicData = [];
+				for(let i=0; i<indexesCallData.length; i++) {
+					let payload = {
+						id: 1,
+						jsonrpc: "2.0",
+						method: "eth_call",
+						params:[{ to:contractAddress, data:(getBasicDataFunctionSelector + "20".padStart(64,'0') + indexesCallData[i].sizeHex + indexesCallData[i].indexesStr)}, "latest"]
+					};
+					let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
+					let result = JSON.parse(data).result;
+					if(!result) return null;
+					
+					let querySize = indexesCallData[i].size;
+					for(let j=0; j<indexesCallData[i].size; j++) {
+						basicData.push({
+							id: '0x' + result.substr((4+(querySize+1)*0+1+j)*64 + 2, 64),
+							name: toUtf8(result.substr((4+(querySize+1)*1+1+j)*64 + 2, 64)),
+							owner: '0x' + formatAddress(result.substr((4+(querySize+1)*2+1+j)*64 + 2, 64)),
+							collection: parseInt(result.substr((4+(querySize+1)*3+1+j)*64 + 2, 64), 16)
+						});
+					}
+				}
+				return basicData;
 			}
-			return basicData;
 		} catch (err) {
 			console.log(err);
 		}

@@ -6,8 +6,9 @@ const settings = require('./settings.js');
 const ethdata = require('./ethdata.js');
 
 // Settings
-const genesisCount = 651;
 const appWebDomain = settings.appWebDomain;
+const detailedMetadataEnabled = settings.detailedMetadataEnabled;
+const genesisCount = 651;
 const genesisArtists = ['9f2fedfff291314e5a86661e5ed5e6f12e36dd37', '3bf64000788a356d9d7c38a332adbce539fff13d', '0507873482d57637e8d975640316b0a6b2ebbfc1', 'f88e77f202db096e75596b468eef7c16282156b1', '4ff81761e0e8d3d311163b1b17607165c2d4955f'];
 
 // Gets the metadata JSON for the given pixelcon id
@@ -65,7 +66,7 @@ async function getMetadata(pixelconId, params) {
 	}
 				
 	//add collection details
-	if(collection) {
+	if(collection && detailedMetadataEnabled) {
 		let collectionData = await ethdata.getCollection(collection);
 		if(collectionData) {
 			metadata["description"] = getDescription(params.name, params.index, params.collection, collectionData.name, params.creator, params.created);
