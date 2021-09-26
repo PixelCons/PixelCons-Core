@@ -15,7 +15,7 @@ async function cacheData(key, fetchPromise, lifetime) {
 		let data = cacheFetch(key);
 		if(data) return data;
 		data = await fetchPromise();
-		cacheAdd(key, data, lifetime);
+		data = cacheAdd(key, data, lifetime);
 		return data;
 	}
 	return await fetchPromise();
@@ -26,7 +26,7 @@ function cacheFetch(key) {
 	let currTime = (new Date()).getTime();
 	let cacheEntry = data_cache[key];
 	if(cacheEntry !== undefined) {
-		if(cacheEntry.expireTime > currTime) return cacheEntry.data;
+		if(cacheEntry.expireTime > currTime) return JSON.parse(JSON.stringify(cacheEntry.data));
 		cacheRemove(key);
 	}
 	return null;
@@ -37,6 +37,7 @@ function cacheAdd(key, data, lifetime) {
 		data: data,
 		expireTime: (new Date()).getTime() + (lifetime*1000)
 	}
+	return JSON.parse(JSON.stringify(data));
 }
 function cacheRemove(key) {
 	delete data_cache[key];
