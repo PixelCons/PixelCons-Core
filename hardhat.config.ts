@@ -28,7 +28,7 @@ const config: HardhatUserConfig = {
       chainId: 1337
     },
 	local: {
-      url: 'HTTP://127.0.0.1:7545',
+      url: 'http://127.0.0.1:7545',
       accounts: {
         mnemonic: 'test test test test test test test test test test test junk'
       }

@@ -91,8 +91,8 @@ function start(debugMode) {
 		}
 		
 		//return main page html with customized tag data
-		let plainHTMLPath = req.protocol + '://' + req.get('host') + '/' + (debugMode ? 'index.html' : 'index.min.html');
-		let pageHTML = await webFunctions.getTagDataHTML(requestPath, req.protocol + '://' + req.get('host') + '/' + (debugMode ? 'index.html' : 'index.min.html'));
+		let plainHTMLPath = req.protocol + '://' + req.get('host') + '/index.html';
+		let pageHTML = await webFunctions.getTagDataHTML(requestPath, plainHTMLPath);
 		if(!pageHTML.errorText) {
 			res.set('Content-Type', 'text/html');
 			res.send(Buffer.from(pageHTML));

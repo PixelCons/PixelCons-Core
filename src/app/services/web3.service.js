@@ -5,21 +5,18 @@
 	web3Service.$inject = ['$interval', '$timeout', '$window', '$mdDialog', '$q'];
 	function web3Service($interval, $timeout, $window, $mdDialog, $q) {
 		const _networkConfig = [{
-			name: 'Local Ethereum[test]',
-			chainId: '1337',
+			name: 'Mainnet',
+			chainId: '1',
 			nativeCurrency: {
 				name: 'ETH',
 				symbol: 'ETH',
 				decimals: 18
 			},
 			icon: '/img/network_mainnet.png',
-			fallbackRPCs: [],//['http://127.0.0.1:7545/', 'https://127.0.0.1:7545/'],
+			fallbackRPCs: [],
 			blockExplorer: 'https://etherscan.io/',
 			transactionLU: '/tx/<txHash>',
 			accountLU: '/address/<address>'
-		},{
-			name: 'Mainnet',
-			chainId: '1'
 		},{
 			name: 'Ropsten',
 			chainId: '3'

@@ -24,18 +24,5 @@
         "blockNumber": "3341382"
       }
     ]
-  },
-  {
-    "name": "unknown_1337",
-    "id": "1337",
-    "contracts": [
-      {
-        "name": "PixelCons",
-        "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-        "transactionHash": "0xecc900271a3787301193a18ae64953d1b1399b49e71c349bee9290dc7228130d",
-        "blockHash": "0xff6f81814ff6caedf6e634aefcbd1903c22f787e733c2126f055a95445a77779",
-        "blockNumber": "1"
-      }
-    ]
   }
 ]

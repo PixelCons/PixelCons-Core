@@ -259,7 +259,7 @@
 				//find the style rule
 				let styleRule = null;
 				for(let i = 0; i < document.styleSheets.length; i++) {
-					if(document.styleSheets[i].href && document.styleSheets[i].href.indexOf('/style.css') > -1) {
+					if(document.styleSheets[i].href && (document.styleSheets[i].href.indexOf('/style.css') > -1 || document.styleSheets[i].href.indexOf('/style.min.css') > -1)) {
 						for(let j = 0; j < document.styleSheets[i].cssRules.length; j++) {
 							if(document.styleSheets[i].cssRules[j].selectorText.indexOf('div.pageContentBackground.groupOverride') > -1) {
 								styleRule = document.styleSheets[i].cssRules[j];

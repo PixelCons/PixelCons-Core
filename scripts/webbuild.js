@@ -158,7 +158,7 @@ async function startBuildProcess() {
 	if (!fs.existsSync(appContractsBuildPath)) fs.mkdirSync(appContractsBuildPath);
 
 	//copy over the minified index.html
-	copyFileSync(appMinifiedIndex, appBuildPath);
+	copyFileSync(appMinifiedIndex, appBuildPath, 'index.html');
 
 	//run build steps in parallel
 	await Promise.all([minifyScripts(), minifyStyleSheets(), minifyHTML(), copyImages(), copyLibraries(), copyData(), copyContracts()]);
@@ -306,13 +306,14 @@ function writeFilePromise(file, data) {
 		});
 	});
 }
-function copyFileSync(source, target) {
+function copyFileSync(source, target, newFilename) {
 	let targetFile = target;
 
 	//if target is a directory a new file with the same name will be created
 	if (fs.existsSync(target)) {
 		if (fs.lstatSync(target).isDirectory()) {
-			targetFile = path.join(target, path.basename(source));
+			if(newFilename) targetFile = path.join(target, newFilename);
+			else targetFile = path.join(target, path.basename(source));
 		}
 	}
 

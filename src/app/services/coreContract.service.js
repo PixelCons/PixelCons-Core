@@ -5,7 +5,7 @@
 	coreContract.$inject = ['web3Service', '$q'];
 	function coreContract(web3Service, $q) {
 		const _contractPath = 'contracts/PixelCons.json';
-		const _chainId = '1337';
+		const _networkIndex = 0;
 		const _cacheNameFetch = true;
 		const _maxNameFetch = 10000;
 		const _maxFilterParamSize = 100;
@@ -76,7 +76,8 @@
 				else if (state != "ready") reject(_unknownError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contract = await web3Service.getContract(_contractPath, chainId);
 						let total = await contract.totalSupply();
 						resolve(total.toNumber());
 					} catch (err) {
@@ -101,7 +102,8 @@
 					pixelconNamesPromises.push({resolve:resolve, reject:reject});
 					if(!othersFetching) {
 						try {
-							let contract = await web3Service.getContract(_contractPath, _chainId);
+							let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+							let contract = await web3Service.getContract(_contractPath, chainId);
 							let total = (await contract.totalSupply()).toNumber();
 							if (!_cacheNameFetch || pixelconNames.length != total) {
 								pixelconNames = new Array(total);
@@ -153,7 +155,8 @@
 				else if (id === null && index === null) reject(_invalidIdError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contract = await web3Service.getContract(_contractPath, chainId);
 						let pixelconRaw = null;
 						if(index !== null) {
 							let total = (await contract.totalSupply()).toNumber();
@@ -217,7 +220,8 @@
 				else if (index == null) reject(_invalidIndexError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contract = await web3Service.getContract(_contractPath, chainId);
 						let exists = await contract.collectionExists(index);
 						if (!exists) {
 
@@ -248,7 +252,8 @@
 				else if (!web3Service.isAddress(address)) reject(_invalidAddressError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contract = await web3Service.getContract(_contractPath, chainId);
 
 						//get all for owner
 						let ownerPixelconIndexes = await contract.getForOwner(address);
@@ -273,7 +278,8 @@
 				else if (!web3Service.isAddress(address)) reject(_invalidAddressError);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contract = await web3Service.getContract(_contractPath, chainId);
 
 						//get all for creator
 						let creatorPixelconIndexes = await contract.getForCreator(address);
@@ -298,7 +304,8 @@
 				else if (!indexes || indexes.length == 0) resolve([]);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contract = await web3Service.getContract(_contractPath, chainId);
 						let pixelcons = await getPixelconsByIndexes(contract, indexes);
 						resolve(pixelcons);
 
@@ -321,7 +328,8 @@
 				else if (!ids || ids.length == 0) resolve([]);
 				else {
 					try {
-						let contract = await web3Service.getContract(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contract = await web3Service.getContract(_contractPath, chainId);
 						let pixelcons = await getPixelconsByIds(contract, ids);
 						resolve(pixelcons);
 
@@ -353,7 +361,8 @@
 				else if (isDuplicateTransaction(_createTypeDescription[0], [id])) reject(_duplicateTransactionError);
 				else {
 					try {
-						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contract = await web3Service.getContractWithSigner(_contractPath, chainId);
 						let exists = await contract.exists(id);
 						if(exists) reject('PixelCon already exists');
 						else resolve({ });
@@ -379,8 +388,9 @@
 				else if (isDuplicateTransaction(_updateTypeDescription[0], [id])) reject(_duplicateTransactionError);
 				else {
 					try {
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let address = web3Service.getActiveAccount();
-						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let contract = await web3Service.getContractWithSigner(_contractPath, chainId);
 						let owner = web3Service.formatAddress(await contract.ownerOf(id));
 						if (owner == address) resolve({ owner: owner });
 						else reject('Account does not own this PixelCon');
@@ -407,8 +417,9 @@
 				else if (isDuplicateTransaction(_createCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
 				else {
 					try {
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let address = web3Service.getActiveAccount();
-						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let contract = await web3Service.getContractWithSigner(_contractPath, chainId);
 						
 						//get pixelcon data
 						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
@@ -462,8 +473,9 @@
 				else if (isDuplicateTransaction(_updateCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
 				else {
 					try {
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let address = web3Service.getActiveAccount();
-						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let contract = await web3Service.getContractWithSigner(_contractPath, chainId);
 						
 						//get pixelcon data
 						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
@@ -517,8 +529,9 @@
 				else if (isDuplicateTransaction(_clearCollectionTypeDescription[0], pixelconIds)) reject(_duplicateTransactionError);
 				else {
 					try {
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let address = web3Service.getActiveAccount();
-						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let contract = await web3Service.getContractWithSigner(_contractPath, chainId);
 						
 						//get pixelcon data
 						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
@@ -570,8 +583,9 @@
 				else if (isDuplicateTransaction(_transferTypeDescription[0], [id])) reject(_duplicateTransactionError);
 				else {
 					try {
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let address = web3Service.getActiveAccount();
-						let contract = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let contract = await web3Service.getContractWithSigner(_contractPath, chainId);
 						let owner = web3Service.formatAddress(await contract.ownerOf(id));
 						if (owner == address) resolve({ owner: owner });
 						else reject('Account does not own this PixelCon');
@@ -606,7 +620,8 @@
 						let to = web3Service.getActiveAccount();
 
 						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, chainId);
 						let tx = await contractWithSigner.create(to, id, name, _defaultGasParameters);
 
 						//add the waiting transaction to web3Service list
@@ -635,7 +650,8 @@
 				else {
 					try {
 						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, chainId);
 						let tx = await contractWithSigner.rename(id, name, _defaultGasParameters);
 
 						//add the waiting transaction to web3Service list
@@ -665,7 +681,8 @@
 				else {
 					try {
 						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, chainId);
 						let pixelconIdexes = await getPixelconIndexesByIds(contractWithSigner, pixelconIds);
 						let tx = await contractWithSigner.createCollection(pixelconIdexes, name, _defaultGasParameters);
 
@@ -697,7 +714,8 @@
 				else {
 					try {
 						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, chainId);
 						let tx = await contractWithSigner.renameCollection(index, name, _defaultGasParameters);
 
 						//add the waiting transaction to web3Service list
@@ -727,7 +745,8 @@
 				else {
 					try {
 						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, chainId);
 						let tx = await contractWithSigner.clearCollection(index, _defaultGasParameters);
 
 						//add the waiting transaction to web3Service list
@@ -758,7 +777,8 @@
 						let owner = web3Service.getActiveAccount();
 
 						//do transaction
-						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, _chainId);
+						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+						let contractWithSigner = await web3Service.getContractWithSigner(_contractPath, chainId);
 						let tx = await contractWithSigner.transferFrom(owner, address, id, _defaultGasParameters);
 
 						//add the waiting transaction to web3Service list
@@ -1073,7 +1093,8 @@
 			}
 
 			//fetch additional data
-			let contract = await web3Service.getContract(_contractPath, _chainId);
+			let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+			let contract = await web3Service.getContract(_contractPath, chainId);
 			let pixelcons = await getPixelconsByIds(contract, params.pixelconIds);
 
 			//set collection data
@@ -1097,7 +1118,8 @@
 			}
 			
 			//fetch pixelcon
-			let contract = await web3Service.getContract(_contractPath, _chainId);
+			let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+			let contract = await web3Service.getContract(_contractPath, chainId);
 			let pixelcons = await getPixelconsByIds(contract, params.pixelconIds);
 			
 			//update collection data
@@ -1111,7 +1133,8 @@
 		// Adds data to return for clear collection transaction
 		async function addPixelconDataForClearCollection(params, data) {
 			//fetch pixelcon
-			let contract = await web3Service.getContract(_contractPath, _chainId);
+			let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
+			let contract = await web3Service.getContract(_contractPath, chainId);
 			let pixelcons = await getPixelconsByIds(contract, params.pixelconIds);
 			
 			//clear collection data
