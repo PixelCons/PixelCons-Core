@@ -5,7 +5,6 @@
 	TermsPageCtrl.$inject = ['$scope', '$mdMedia'];
 	function TermsPageCtrl($scope, $mdMedia) {
 		var _this = this;
-		_this.goPath = goPath;
 
 		// Watch for screen size changes
 		_this.screenSize = {};

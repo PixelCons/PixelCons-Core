@@ -8,6 +8,7 @@
 		var _this = this;
 		_this.account = web3Service.getActiveAccount();
 		_this.getCompressedAddressString = getCompressedAddressString;
+		
 		// Standardize the size [xs, sm, md, lg, xl]
 		$scope.$watch('ctrl.size', function () {
 			if (!_this.size) _this.size = 'md';
@@ -35,7 +36,7 @@
 		$scope.$watch('ctrl.address', function () {
 			_this.addressIcon = null;
 			if (_this.address) {
-				_this.address = _this.address.toLowerCase();
+				_this.address = _this.address;
 				_this.addressIcon = blockies.create({
 					seed: _this.address.toLowerCase(),
 					size: 8,
@@ -46,12 +47,7 @@
 
 		// Compresses the address string
 		function getCompressedAddressString(address) {
-			var comp = address || '';
-			if (_this.maxChars) {
-				comp = comp.substr(0, _this.maxChars / 2) + '...' + comp.substr(comp.length - (_this.maxChars / 2));
-			}
-
-			return comp;
+			return web3Service.compressAddressString(address, _this.maxChars);
 		}
 
 		// Set flag the directive as loaded

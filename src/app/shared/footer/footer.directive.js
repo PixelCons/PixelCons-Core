@@ -7,6 +7,7 @@
 	function FooterCtrl($scope, $mdMedia, $mdDialog, web3Service) {
 		var _this = this;
 		_this.tip = tip;
+		_this.openSettings = openSettings;
 		checkAccount();
 
 		// Watch for screen size changes
@@ -27,15 +28,29 @@
 				clickOutsideToClose: true
 			});
 		}
+		
+		// Opens the settings window
+		function openSettings(ev) {
+			$mdDialog.show({
+				controller: 'SettingsDialogCtrl',
+				controllerAs: 'ctrl',
+				templateUrl: HTMLTemplates['dialog.settings'],
+				parent: angular.element(document.body),
+				bindToController: true,
+				clickOutsideToClose: true
+			});
+		}
 
 		// Account change
 		function checkAccount() {
-			var web3state = web3Service.getState();
+			let web3state = web3Service.getState();
 			_this.noWeb3 = (web3state == "not_enabled" || web3Service.isReadOnly());
 		}
 
 		// Listen for account data changes
-		web3Service.onAccountDataChange(checkAccount, $scope);
+		web3Service.onAccountDataChange(function () {
+			checkAccount();
+		}, $scope);
 	}
 
 	function appFooter() {

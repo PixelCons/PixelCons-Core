@@ -6,9 +6,7 @@
 	
 	<!-- Error View -->
 	<div class="view" ng-show="ctrl.currView=='error'" ng-cloak>
-		<div class="infoText errorTitle">
-			<b>Ethereum Network Error:</b><br/><br/>{{ctrl.error}}
-		</div>
+		<div class="infoText errorTitle textSelectable" ng-bind-html="ctrl.error"></div>
 	</div>
 	
 	<!-- Loading View -->
@@ -23,10 +21,10 @@
 	<div class="view" ng-if="ctrl.currView=='create'" ng-cloak>
 		<div class="infoText createTitle">Name and Create</div>
 		<md-input-container md-no-float class="nameInput md-block">
-			<input md-autofocus ng-model="ctrl.pixelconName" ng-change="ctrl.filterPixelconName()" placeholder="Name"/>
+			<input md-autofocus ng-model="ctrl.pixelconName" ng-change="ctrl.filterPixelconName()" placeholder="Name" ng-trim="false"/>
 		</md-input-container>
 		<div class="actionButtons">
-			<div class="note textLight">Gas: {{ctrl.cost | ethprice}}</div>
+			<div class="note textLight">1 <span class="textSmall">PixelCon</span></div>
 			<md-button ng-click="ctrl.create()">Create</md-button>
 		</div>
 		<div class="textNote termsNote">By creating this PixelCon, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
@@ -36,10 +34,10 @@
 	<div class="view" ng-if="ctrl.currView=='rename'" ng-cloak>
 		<div class="infoText createTitle">Rename and Update</div>
 		<md-input-container md-no-float class="nameInput md-block">
-			<input md-autofocus ng-model="ctrl.pixelconName" ng-change="ctrl.filterPixelconName()" placeholder="Name"/>
+			<input md-autofocus ng-model="ctrl.pixelconName" ng-change="ctrl.filterPixelconName()" placeholder="Name" ng-trim="false"/>
 		</md-input-container>
 		<div class="actionButtons">
-			<div class="note textLight">Gas: {{ctrl.cost | ethprice}}</div>
+			<div class="note textLight">1 <span class="textSmall">PixelCon</span></div>
 			<md-button ng-click="ctrl.update()">Update</md-button>
 		</div>
 		<div class="textNote termsNote">By updating this PixelCon, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>

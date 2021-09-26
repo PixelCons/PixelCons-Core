@@ -9,20 +9,6 @@ div.header.sm {
 	height: 60px;
 }
 
-/* Bad network error */
-div.header .badNetwork {
-	position: absolute;
-	top: 10px;
-	left: calc(50% - 140px);
-	background-color: #ffa44b;
-	width: 280px;
-	height: 72px;
-	z-index: 100;
-	text-align: center;
-	border-radius: 4px;
-	padding: 4px;
-}
-
 /* Title/Icon */
 div.header .pixelconTitle {
 	position: absolute;
@@ -62,31 +48,6 @@ div.header.sm .pixelconTitle .pixelconLogoText {
 	text-shadow: 0px 0px 15px #a7a7a7;
 	font-size: 15px;
 	margin-left: -11px;
-}
-div.header .network {
-	position: absolute;
-	top: 0px;
-	right: 75px;
-	background-color: #6f6f6f;
-	color: #fafafa;
-	border-radius: 0px 0px 10px 10px;
-	padding: 0px 8px;
-	box-shadow: 0 1px 1px 0 rgb(0 0 0 / 14%), 0 2px 1px -1px rgb(0 0 0 / 12%);
-}
-div.header.sm .network {
-	padding: 0px 5px;
-	font-size: 12px;
-	height: 15px;
-	right: 60px;
-}
-div.header .network.ropsten {
-	background-color: #ff4a8d;
-}
-div.header .network.kovan {
-	background-color: #7057ff;
-}
-div.header .network.rinkeby {
-	background-color: #f6c343;
 }
 div.header .pixelconTitle .pixelconPageText {
 	line-height: 20px;
@@ -131,19 +92,23 @@ div.header .menuButtons button.nav.highlight {
 	border-radius: 0px;
 }
 div.header.md .menuButtons button.nav {
-	margin-left: 1px;
-	margin-right: 1px;
-}
-div.header.sm .menuButtons button.nav {
 	margin-left: 2px;
 	margin-right: 1px;
 	min-width: 0px;
-	font-size: 12px;
-	font-weight: 600;
 	height: 0px;
 	padding-left: 2px;
 	min-height: 33px;
 }
+div.header.sm .menuButtons button.nav {
+	margin-left: 3px;
+	margin-right: 3px;
+	min-width: 0px;
+	height: 0px;
+	padding-left: 5px;
+	padding-right: 5px;
+	min-height: 33px;
+}
+div.header.md .menuButtons button.nav .buttonIcon,
 div.header.sm .menuButtons button.nav .buttonIcon {
 	margin-top: 4px;
 }
@@ -229,11 +194,17 @@ div.header .iconFillOverlay {
 /* Menu Dropdown and Tooltip */
 md-menu-content.headerDropdown {
 	display: inline-block;
-	min-width: 290px;
+	min-width: 300px;
 	max-height: 500px;
 }
 md-menu-content.headerDropdown md-divider {
 	margin: 5px;
+}
+div.headerDropdownTextTop {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 5px 10px;
+	font-size: 0px;
 }
 div.headerDropdownText {
 	display: inline-block;
@@ -245,13 +216,27 @@ div.headerDropdownTextItem {
 	vertical-align: middle;
 	margin: 10px 0px;
 }
+div.headerDropdownRow {
+	padding: 0px 10px;
+}
 button.headerDropdownButton {
 	display: inline-block;
 	vertical-align: middle;
 	float: right;
-	margin: 0px 10px 0px 0px;
+	margin: 0px;
 	min-width: 0px;
-	padding: 0px 15px;
+	padding: 0px 10px;
+    margin: 0px 5px;
+}
+button.headerDropdownButton .networkBadge {
+	background-color: #b4b4b4;
+	background-image: url(/img/network_unknown.png);
+	width: 16px;
+	height: 16px;
+	vertical-align: text-top;
+	background-size: cover;
+	border-radius: 3px;
+	display: none;
 }
 div.headerDropdownButtonLink {
 	display: inline-block;
@@ -262,7 +247,7 @@ div.headerDropdownButtonLink {
 	background-size: 15px;
 	background-position: center;
 	padding: 0px;
-	margin: 0px 0px 11px -10px;
+	margin: 0px 0px 25px -10px;
 	min-width: 0px;
 	min-height: 0px;
 	width: 20px;
@@ -270,22 +255,11 @@ div.headerDropdownButtonLink {
 	opacity: 0.7;
 	filter: alpha(opacity=70);
 }
-img.headerAccountActivityIcon {
-	display: inline-block;
-	vertical-align: middle;
-	width: 32px;
-	height: 32px;
-	margin-right: -5px;
-	padding: 3px;
-	border-radius: 4px;
-	background-color: #ffffff;
-}
 div.headerDropdownIcon {
 	display: inline-block;
 	vertical-align: middle;
 	width: 27px;
 	height: 27px;
-	margin-left: 10px;
 	margin-right: 3px;
 	font-size: 0px;
 }
@@ -294,7 +268,7 @@ div.headerDropdownIconCollection {
 	vertical-align: middle;
 	width: 32px;
 	height: 32px;
-	margin-left: 8px;
+	margin-left: -2px;
 	font-size: 0px;
 }
 div.headerDropdownIconCollection pixelcon {
@@ -302,6 +276,21 @@ div.headerDropdownIconCollection pixelcon {
 	width: 14px;
 	height: 14px;
 	margin: 1px;
+}
+div.headerDropdownAccountIcon {
+	position: relative;
+	display: inline-block;
+	width: 36px;
+	height: 36px;
+	padding: 3px;
+	vertical-align: top;
+	border-radius: 4px;
+	background-color: #ffffff;
+}
+div.headerDropdownAccountIcon img.headerAccountActivityIcon {
+	display: inline-block;
+	width: 100%;
+	height: 100%;
 }
 div.header .tooltip {
 	position: absolute;

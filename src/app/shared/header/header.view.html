@@ -1,9 +1,4 @@
 <div class="header md-whiteframe-1dp" ng-class="ctrl.screenSize">
-
-	<!-- Bad Network -->
-	<div ng-if="ctrl.badNetwork" class="badNetwork md-whiteframe-3dp">
-		<b>You are currently connected to the wrong Ethereum Network!</b><br/>Please make sure your account is connected to the {{ctrl.net}} Network
-	</div>
 	
 	<!-- Buttons -->
 	<a ng-href="{{ctrl.marketLink}}" target="_blank" class="marketButton plain textDark" ng-if="ctrl.marketEnabled">
@@ -16,19 +11,19 @@
 		<a href="/search" class="plain textDark">
 			<md-button class="nav" ng-class="{'highlight':ctrl.page=='browse'}" ng-click="ctrl.goPath('/search')">
 				<div class="buttonIcon search"></div>
-				{{ctrl.screenSize.sm?'BR':'Browse'}}
+				{{ctrl.screenSize.sm?'':(ctrl.screenSize.md?'BRW':'Browse')}}
 			</md-button>
 		</a>
 		<a href="/create" class="plain textDark">
 			<md-button class="nav" ng-class="{'highlight':ctrl.page=='create'}" ng-click="ctrl.goPath('/create')">
 				<div class="buttonIcon create"></div>
-				{{ctrl.screenSize.sm?'CR':'Create'}}
+				{{ctrl.screenSize.sm?'':(ctrl.screenSize.md?'CR8':'Create')}}
 			</md-button>
 		</a>
 		<a href="/account" class="plain textDark">
 			<md-button class="nav" ng-class="{'highlight':ctrl.page=='account'}" ng-show="ctrl.loggedIn" ng-click="ctrl.goPath('/account')">
 				<div class="buttonIcon account"></div>
-				{{ctrl.screenSize.sm?'AC':'Account'}}
+				{{ctrl.screenSize.sm?'':(ctrl.screenSize.md?'ACC':'Account')}}
 			</md-button>
 		</a>
 		
@@ -45,7 +40,6 @@
 			</div>	
 		</div>
 	</a>
-	<div ng-if="ctrl.net!='Main'" class="network textCenter" ng-class="{'ropsten':ctrl.net=='Ropsten', 'kovan':ctrl.net=='Kovan', 'rinkeby':ctrl.net=='Rinkeby'}">{{ctrl.net}}</div>
 	
 	<!-- User Account -->
 	<div ng-if="ctrl.privacyMode" class="accountIcon connectButton clickable textBold textSmall textWhite md-whiteframe-1dp" ng-click="ctrl.connect()">
@@ -54,13 +48,13 @@
 	</div>
 	<div class="accountIcon md-whiteframe-1dp" ng-if="ctrl.web3error">
 		<img class="iconFill" ng-src="img/icon_error.svg"/>
-		<md-tooltip md-direction="bottom">Error Connecting to Ethereum</md-tooltip>
+		<md-tooltip md-direction="bottom">Error Connecting to Network</md-tooltip>
 	</div>
-	<div class="accountIcon md-whiteframe-1dp" ng-if="ctrl.loggedIn && ctrl.accounts.length==0 && !ctrl.privacyMode">
+	<div class="accountIcon md-whiteframe-1dp" ng-if="ctrl.loggedIn && !ctrl.accountAddress && !ctrl.privacyMode">
 		<img class="iconFill" ng-src="img/icon_account.svg"/>
 		<md-tooltip md-direction="bottom">Please log into {{ctrl.web3ProviderName}}</md-tooltip>
 	</div>
-	<md-menu ng-if="ctrl.loggedIn && ctrl.accounts.length>0" md-position-mode="target-right target">
+	<md-menu ng-if="ctrl.loggedIn && ctrl.accountAddress" md-position-mode="target-right target">
 		<div class="accountIcon clickable crispImage md-whiteframe-1dp" ng-click="ctrl.showActivityMenu($mdOpenMenu)">
 			<div class="iconFill" ng-mouseenter="ctrl.showActivityMenu($mdOpenMenu)" ng-mouseleave="ctrl.cancelActivityMenu()">
 				<img class="iconFill" ng-src="{{ctrl.userIcon}}"/>
@@ -69,11 +63,16 @@
 			<div class="tooltip" ng-class="{'hidden':ctrl.waitingTransactions.length==0}">Processing...</div>
 		</div>
 		<md-menu-content class="headerDropdown textMedium textNotSelectable" width="3" ng-mouseleave="ctrl.hideActivityMenu()">
-			<div ng-if="ctrl.accounts.length>0">
+			<div ng-if="ctrl.accountAddress">
 				<a ng-href="{{ctrl.goDetails()}}" target="_blank" class="plain textDark">
 					<div class="textCenter clickable">
-						<img class="headerAccountActivityIcon md-whiteframe-1dp" ng-src="{{ctrl.userIcon}}"/>
-						<div class="headerDropdownText textLarge textDark textBold">Account Activity</div>
+						<div class="headerDropdownAccountIcon md-whiteframe-1dp">
+							<img class="headerAccountActivityIcon" ng-src="{{ctrl.userIcon}}"/>
+						</div>
+						<div class="headerDropdownTextTop">
+							<div class="textLarge textDark textBold">Account Activity</div><br/>
+							<div class="textSmall textDark textBold">{{ctrl.userAccountId}}</div>
+						</div>
 						<div class="headerDropdownButtonLink"></div>
 					</div>
 				</a>
@@ -81,16 +80,21 @@
 				<div class="textCenter">
 					<div class="headerDropdownText textLight" ng-show="ctrl.waitingTransactions.length==0">No Pending Transactions</div>
 				</div>
-				<div ng-repeat="transaction in ctrl.waitingTransactions track by $index">
-					<div ng-if="transaction.params.pixelconId" class="headerDropdownIcon"><pixelcon class="md-whiteframe-1dp" id="transaction.params.pixelconId"></pixelcon></div>
-					<div ng-if="transaction.params.pixelconIds" class="headerDropdownIconCollection">
+				<md-button style="display:none" ng-click="" aria-label="null"></md-button>
+				<div ng-repeat="transaction in ctrl.waitingTransactions track by $index" class="headerDropdownRow">
+					<div ng-if="transaction.params.pixelconIds.length==1" class="headerDropdownIcon"><pixelcon class="md-whiteframe-1dp" id="transaction.params.pixelconIds[0]"></pixelcon></div>
+					<div ng-if="transaction.params.pixelconIds.length>1" class="headerDropdownIconCollection">
 						<pixelcon ng-if="transaction.params.pixelconIds[0]" class="md-whiteframe-1dp" id="transaction.params.pixelconIds[0]"></pixelcon>
 						<pixelcon ng-if="transaction.params.pixelconIds[1]" class="md-whiteframe-1dp" id="transaction.params.pixelconIds[1]"></pixelcon>
 						<pixelcon ng-if="transaction.params.pixelconIds[2]" class="md-whiteframe-1dp" id="transaction.params.pixelconIds[2]"></pixelcon>
 						<pixelcon ng-if="transaction.params.pixelconIds[3]" class="md-whiteframe-1dp" id="transaction.params.pixelconIds[3]"></pixelcon>
 					</div>
 					<div class="headerDropdownTextItem textLight">{{transaction.description}}</div>
-					<md-button class="headerDropdownButton md-primary" ng-click="ctrl.goDetails(transaction.txHash)">View</md-button>
+					<md-button class="headerDropdownButton md-primary" ng-click="">
+						<div class="networkBadge" ng-style="ctrl.getNetworkStyle(transaction.chainId)"></div>
+						<span>View</span>
+						<a class="plain buttonLink" ng-href="{{ctrl.goDetails(transaction.txHash, transaction.chainId)}}" target="_blank"></a>
+					</md-button>
 				</div>
 				<div class="textCenter">
 					<a class="light textSmall textDark textBold" href="/start" ng-click="ctrl.hideActivityMenu()">Get Started</a>

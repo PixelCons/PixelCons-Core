@@ -137,7 +137,8 @@ div.pixelconSearchPage div.error {
 	top: 50%;
 	margin: -50px -153px;
 	width: 276px;
-	height: 42px;
+	min-height: 42px;
+	max-height: 100px;
 	padding: 15px;
 	border-radius: 15px;
 }
@@ -145,24 +146,18 @@ div.pixelconSearchPage div.loading {
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	margin: -45px -45px;
+	margin: -50px -50px;
 	width: 80px;
 	height: 80px;
 	padding: 10px;
 	border-radius: 15px;
-}
-div.pixelconSearchPage div.loading div.loadingText {
-	position: absolute;
-	text-align: center;
-	width: 100%;
-	left: 0px;
-	bottom: 10px;
 }
 div.pixelconSearchPage div.displayTable {
 	box-sizing: border-box;
 	width: 100%;
 	text-align: center;
 	padding: 20px;
+	font-size: 0px;
 }
 div.pixelconSearchPage.md div.displayTable {
 	padding: 15px;

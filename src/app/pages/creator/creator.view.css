@@ -42,23 +42,37 @@ div.pixelconCreatorPage.sm div.accountCard {
 div.pixelconCreatorPage div.displayWindow {
 	position: relative;
 	box-sizing: border-box;
-	padding: 25px 60px 15px 60px;
+	padding: 50px 10px 5px 10px;
 	border-radius: 15px;
 	min-height: 200px;
 }
-div.pixelconCreatorPage.sm div.displayWindow {
-	padding: 50px 10px 15px 10px;
-}
-div.pixelconCreatorPage div.accountIcon {
+div.pixelconCreatorPage div.displayWindowAccountContainer {
 	position: absolute;
-	display: inline-block;
-	font-size: 0px;
-	top: 15px;
-	left: 15px;
-}
-div.pixelconCreatorPage.sm div.accountIcon {
 	top: 10px;
 	left: 10px;
+}
+div.pixelconCreatorPage div.accountIcon {
+	position: relative;
+	display: inline-block;
+	font-size: 0px;
+	vertical-align: middle;
+}
+div.pixelconCreatorPage div.accountIcon div.accountIconShade {
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	width: calc(100% - 2px);
+	height: calc(100% - 2px);
+	border-radius: 4px;
+}
+div.pixelconCreatorPage div.displayWindowAccountContainer div.accountText {
+	font-size: 20px;
+	height: 20px;
+	display: inline-block;
+	vertical-align: top;
+	color: #FFFFFF;
+	opacity: 0.7;
+	filter: alpha(opacity=70);
 }
 div.pixelconCreatorPage div.displayTable {
 	box-sizing: border-box;
@@ -85,7 +99,8 @@ div.pixelconCreatorPage div.error {
 	top: 50%;
 	margin: -38px -153px;
 	width: 276px;
-	height: 42px;
+	min-height: 42px;
+	max-height: 100px;
 	padding: 15px;
 	border-radius: 15px;
 }
@@ -93,26 +108,11 @@ div.pixelconCreatorPage div.loading {
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	margin: -45px -45px;
+	margin: -50px -50px;
 	width: 80px;
 	height: 80px;
 	padding: 10px;
 	border-radius: 15px;
-}
-div.pixelconCreatorPage .shareLink {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	width: 30px;
-	height: 30px;
-	background-image: url(/img/icon_share_w.svg);
-	background-size: contain;
-	opacity: 0.5;
-	filter: alpha(opacity=50);
-}
-div.pixelconCreatorPage .shareLink:hover {
-	opacity: 0.8;
-	filter: alpha(opacity=80);
 }
 
 /* Card Details */
@@ -133,6 +133,21 @@ div.pixelconCreatorPage div.detailsSectionMenuBar {
 div.pixelconCreatorPage div.detailsSectionMenuBarText {
 	display: inline-block;
 	vertical-align: bottom;
+}
+div.pixelconCreatorPage div.detailsSectionMoreButton {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	line-height: 0px;
+}
+div.pixelconCreatorPage div.detailsSectionMoreButton button {
+	margin: 0px;
+}
+div.pixelconCreatorPage div.detailsSectionMoreButton .share {
+	background-image: url("/img/icon_share.svg");
+}
+div.pixelconCreatorPage div.detailsSectionMoreButton .buy {
+	background-image: url("/img/icon_tag.svg");
 }
 div.pixelconCreatorPage div.detailsSectionFooter {
 	width: 100%;

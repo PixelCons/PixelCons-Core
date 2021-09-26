@@ -257,14 +257,23 @@ div.pixelconStartPage div.searchIcon {
 div.pixelconStartPage div.createIcon {
 	background-image: url("/img/icon_create.svg");
 }
+div.pixelconStartPage div.listIcon {
+	background-image: url("/img/icon_list.svg");
+}
 div.pixelconStartPage div.accountIcon {
-	background-image: url("/img/icon_myaccount.svg");
+	background-image: url("/img/icon_wallet.svg");
 }
 div.pixelconStartPage div.expandIcon {
 	background-image: url("/img/icon_expand.svg");
 }
 div.pixelconStartPage div.collapseIcon {
 	background-image: url("/img/icon_collapse.svg");
+}
+div.pixelconStartPage div.expandAllIcon {
+	background-image: url("/img/icon_expandall.svg");
+}
+div.pixelconStartPage div.collapseAllIcon {
+	background-image: url("/img/icon_collapseall.svg");
 }
 div.pixelconStartPage div.centerContent {
 	display: inline-block;

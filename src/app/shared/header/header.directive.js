@@ -10,8 +10,9 @@
 		_this.loggedIn = false;
 		_this.web3error = false;
 		_this.waitingTransactions = [];
-		_this.accounts = [];
+		_this.account = null;
 		_this.setAccount = setAccount;
+		_this.getNetworkStyle = getNetworkStyle;
 		_this.goPath = goPath;
 		_this.goDetails = goDetails;
 		_this.closeMenu = $mdMenu.hide;
@@ -25,8 +26,8 @@
 
 		// Watch for screen size changes
 		_this.screenSize = {};
-		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
-		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function (md) { _this.screenSize['md'] = md; });
+		$scope.$watch(function () { return $mdMedia('gt-sm'); }, function (lg) { _this.screenSize['lg'] = lg; });
+		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-sm'); }, function (md) { _this.screenSize['md'] = md; });
 		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
 
 		// Watch for path changes
@@ -38,53 +39,41 @@
 			else _this.page = 'other';
 		});
 
-		// Configure user account icon
-		updateUserAccountIcon();
-		function updateUserAccountIcon() {
-			var web3state = web3Service.getState();
+		// Configure state data
+		updateState();
+		function updateState() {
+			let web3state = web3Service.getState();
 			_this.noWeb3 = (web3state == "not_enabled" || web3Service.isReadOnly());
 			_this.loggedIn = (web3state == "ready" && !web3Service.isReadOnly());
 			_this.web3error = (web3state != "not_enabled" && web3state != "ready" && !web3Service.isReadOnly());
 			_this.web3ProviderName = web3Service.getProviderName();
 			_this.privacyMode = web3Service.isPrivacyMode();
+		};
 
-			_this.net = web3Service.getExpectedNetwork();
-			_this.badNetwork = web3Service.isWrongNetwork();
-
-			var accountStrings = web3Service.getAllAccounts();
-			_this.accounts = [];
-			if (accountStrings.length > 0) {
-				for (var i = 0; i < accountStrings.length; i++) {
-					var address = accountStrings[i];
-					var icon = blockies.create({
-						seed: address.toLowerCase(),
-						size: 8,
-						scale: 3
-					}).toDataURL();
-					_this.accounts.push({
-						id: address,
-						icon: icon
-					});
-				}
-			}
-
-			var address = web3Service.getActiveAccount();
+		// Configure user account icon
+		updateUserAccountIcon();
+		function updateUserAccountIcon() {
+			let address = web3Service.getActiveAccount();
 			if (address) {
+				_this.accountAddress = address;
+				_this.userAccountId = web3Service.compressAddressString(address, 16);
 				_this.userIcon = blockies.create({
 					seed: address.toLowerCase(),
 					size: 8,
 					scale: 6
 				}).toDataURL();
 			} else {
+				_this.accountAddress = null;
 				_this.userIcon = '';
+				_this.userAccountId = '';
 			}
 		};
 
 		// Configure transaction indicator
 		updateTransactionIndicator();
 		function updateTransactionIndicator(transactionData) {
-			var waitingTransactions = web3Service.getWaitingTransactions();
-			var activeAccount = web3Service.getActiveAccount();
+			let waitingTransactions = web3Service.getWaitingTransactions();
+			let activeAccount = web3Service.getActiveAccount();
 			if (activeAccount) {
 				_this.waitingTransactions = waitingTransactions;
 				if (transactionData) {
@@ -97,27 +86,43 @@
 								.textContent(transactionData.type)
 								.position('top right')
 								.hideDelay(3000)
-						);
+						).then(function(response) {
+							if (response === 'ok') {
+								let url = web3Service.getTransactionLookupUrl(transactionData.txHash, transactionData.chainId);
+								if(url) $window.open(url);
+							}
+						});
 					} else {
 						$mdToast.show(
 							$mdToast.simple()
 								.action('Failed')
 								.highlightAction(true)
-								.highlightClass('md-warn headerTransactionEndButton ' + transactionData.txHash)
+								.highlightClass('md-warn headerTransactionEndButton ' + transactionData.chainId + ' ' + transactionData.txHash)
 								.textContent(transactionData.type)
 								.position('top right')
-								.hideDelay(3000)
-						);
+								.hideDelay(5000)
+						).then(function(response) {
+							if (response === 'ok') {
+								let url = web3Service.getTransactionLookupUrl(transactionData.txHash, transactionData.chainId);
+								if(url) $window.open(url);
+							}
+						});
 					}
 				}
 			}
 		};
-		$(document).on('click', '.headerTransactionEndButton', function (ev) {
-			//hook into the button click at the event level to avoid popup being blocked
-			var txHash = ev.currentTarget.classList[ev.currentTarget.classList.length - 1];
-			if (txHash == 'headerTransactionEndButton') txHash = null;
-			$window.open(web3Service.getTransactionLookupUrl(txHash));
-		});
+		
+		// Gets the network badge style
+		function getNetworkStyle(chainId) {
+			let networkIcon = web3Service.getNetworkIcon(chainId);
+			if(networkIcon) {
+				return {
+					backgroundImage: 'url(' + networkIcon + ')',
+					display: 'inline-block'
+				}
+			}
+			return {};
+		}
 
 		// Set to given user account
 		function setAccount(account) {
@@ -126,12 +131,12 @@
 
 		// Go to the specified path
 		function goPath(path) {
-			if ($location.path() == path) $('#scrollTarget').scrollTop(0);
+			if ($location.path() == path) $window.document.getElementById('scrollTarget').scrollTop = 0;
 		}
 
 		// Go to lookup details page
-		function goDetails(txHash) {
-			return web3Service.getTransactionLookupUrl(txHash);
+		function goDetails(txHash, chainId) {
+			return web3Service.getTransactionLookupUrl(txHash, chainId);
 		}
 
 		// Show menu
@@ -156,8 +161,15 @@
 		}
 
 		// Listen for account data changes and waiting transactions
-		web3Service.onAccountDataChange(updateUserAccountIcon, $scope);
-		web3Service.onWaitingTransactionsChange(updateTransactionIndicator, $scope);
+		web3Service.onStateChange(function () {
+			updateState();
+		}, $scope);
+		web3Service.onAccountDataChange(function () {
+			updateUserAccountIcon();
+		}, $scope);
+		web3Service.onWaitingTransactionsChange(function (transactionData) {
+			updateTransactionIndicator(transactionData);
+		}, $scope);
 	}
 
 	function appHeader() {

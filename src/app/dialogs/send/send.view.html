@@ -2,17 +2,15 @@
 	
 	<!-- Header -->
 	<div class="dialogTitle" ng-class="{'sendEthDialogTitle': ctrl.ethMode}">{{ctrl.title}}</div>
-	<div ng-if="!ctrl.ethMode" class="pixelconContainer md-whiteframe-1dp"><pixelcon id="ctrl.pixelconId"></pixelcon></div>
+	<div class="pixelconContainer md-whiteframe-1dp" ng-if="!ctrl.ethMode"><pixelcon id="ctrl.pixelconId"></pixelcon></div>
 	
 	<!-- Error View -->
 	<div class="view" ng-show="ctrl.currView=='error'" ng-cloak>
-		<div class="infoText errorTitle">
-			<b>Ethereum Network Error:</b><br/><br/>{{ctrl.error}}
-		</div>
+		<div class="infoText errorTitle textSelectable" ng-bind-html="ctrl.error"></div>
 	</div>
 	
 	<!-- No Account Send View -->
-	<div class="view" ng-show="ctrl.currView=='sendEthError'" ng-cloak>
+	<div class="view" ng-if="ctrl.currView=='sendEthError'" ng-cloak>
 		<div class="infoText noAccountTitle">
 			<b>You can tip the Devs at the following Ethereum Address:</b>
 			<br/><br/>
@@ -23,7 +21,7 @@
 	</div>
 	
 	<!-- Loading View -->
-	<div class="view" ng-show="ctrl.currView=='loading'" ng-cloak>
+	<div class="view" ng-if="ctrl.currView=='loading'" ng-cloak>
 		<div class="loadingIcon">
 			<img class="crispImage" src="img/loading.gif" alt="Loading.." height="100%" width="100%"/>
 		</div>
@@ -37,7 +35,7 @@
 			<input md-autofocus ng-model="ctrl.toAddress" ng-change="ctrl.checkValid()" placeholder="Receiving Address"/>
 		</md-input-container>
 		<div class="actionButtons">
-			<div class="note textLight">Gas: {{ctrl.cost | ethprice}}</div>
+			<div class="note textLight">1 <span class="textSmall">PixelCon</span></div>
 			<md-button ng-disabled="!ctrl.canSend" ng-click="ctrl.sendPixelcon()">Send</md-button>
 		</div>
 		<div class="textNote termsNote">By sending this PixelCon, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
@@ -51,7 +49,6 @@
 			<input md-autofocus ng-model="ctrl.sendAmount" ng-change="ctrl.checkValidAmount()" placeholder="Amount (Eth)" type="number" step="0.001"/>
 		</md-input-container>
 		<div class="actionButtons">
-			<div class="note textLight">Gas: {{ctrl.cost | ethprice}}</div>
 			<md-button ng-disabled="!ctrl.canSend" ng-click="ctrl.sendEth()">Tip!</md-button>
 		</div>
 	</div>

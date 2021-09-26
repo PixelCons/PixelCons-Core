@@ -3,34 +3,108 @@
 	
 	<div class="createCard colorLight">
 	
+		<!-- Tabs -->
+		<div class="createTabContainer">
+			<div class="tabBackground">
+				<div class="tab roundLeftCorner rightBorder" ng-class="{'highlight':ctrl.tabSelection=='canvas'}" ng-click="ctrl.setTab('canvas')">CANVAS</div>
+				<div class="tab leftRightBorder" ng-click="ctrl.setTab('collection')"
+					ng-class="{'highlight':ctrl.tabSelection=='collection', 'disabled':!ctrl.showButtons && !(ctrl.tabSelection=='collection' || ctrl.tabSelection=='advanced')}">COLLECTION</div>
+				<div class="tab leftRightBorder" ng-click="ctrl.setTab('advanced')"
+					ng-class="{'highlight':ctrl.tabSelection=='advanced', 'disabled':!ctrl.showButtons && !(ctrl.tabSelection=='collection' || ctrl.tabSelection=='advanced')}">ADVANCED</div>
+			</div>
+		</div>
+	
 		<!-- Creator window -->
 		<div class="createWindow colorDark">
-			<div class="newTag colorDarkOverlay textMedium textBold">NEW</div>
-			<div class="pixelconCanvas">
-				<div class="canvasPixel" ng-mousedown="ctrl.setPixel($index)"  ng-mouseenter="ctrl.setPixel($index, $event)"
-					ng-style="{'background-color':ctrl.colorPalette[pixel]}" ng-repeat="pixel in ctrl.canvasPixels track by $index"></div>
+		
+			<!-- Canvas tab -->
+			<div ng-show="ctrl.tabSelection=='canvas'">
+				<div class="windowSectionLabel topLabel textMedium">Draw a new PixelCon!</div>
+				<div class="pixelconCanvas">
+					<div class="pixelconCanvasGrid">
+						<div class="canvasPixel" ng-mousedown="ctrl.setPixel($index)"  ng-mouseenter="ctrl.setPixel($index, $event)"
+							ng-style="{'background-color':ctrl.colorPalette[pixel]}" ng-repeat="pixel in ctrl.canvasPixels track by $index"></div>
+					</div>
+				</div>
+				<div class="pixelconPalette">
+					<div class="pixelconPaletteGrid">
+						<div class="palettePixel" ng-class="{'selected': ctrl.selectedColor==$index}" ng-click="ctrl.setColor($index)"
+							ng-style="{'background-color':color}" ng-repeat="color in ctrl.colorPalette track by $index"></div>
+					</div>
+				</div>
+				<div class="windowSectionLabel idText textSelectable">{{ctrl.pixelconId}}</div>
 			</div>
-			<div class="pixelconPalette">
-				<div class="palettePixel" ng-class="{'selected': ctrl.selectedColor==$index}" ng-click="ctrl.setColor($index)"
-					ng-style="{'background-color':color}" ng-repeat="color in ctrl.colorPalette track by $index"></div>
+			
+			<!-- Collection tab -->
+			<div ng-show="ctrl.tabSelection=='collection'">
+				<div class="windowSectionLabel topLabel textMedium">Select the PixelCons you want to make into a collection (must be the creator and current owner)</div>
+				<div class="displayTable">
+					<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-account="true" selectable="true" size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" 
+						ng-repeat="pixelcon in ctrl.collectionPixelcons track by $index"></pixelconcard>
+				</div>
+		
+				<!-- Empty -->
+				<div class="error colorLight textSelectable" ng-show="!ctrl.error && !ctrl.loading && (!ctrl.collectionPixelcons || ctrl.collectionPixelcons.length==0)">
+					No PixelCons
+				</div>
 			</div>
+			
+			<!-- Advanced tab -->
+			<div ng-show="ctrl.tabSelection=='advanced'">
+				<div class="windowSectionLabel topLabel textMedium">Create multiple PixelCons by uploading a PNG file. See templates <a class="light textWhite textBold" target="_blank" href="/data/PixelCons_AdvancedCreatorTemplates.zip" download>here</a></div>
+				<div class="fileUpload">
+					<span>Click Here to Uplod File</span><br>
+					<span>(Or Drag and Drop)</span>
+					<input class="uploadInput" type="file" accept="image/png" onchange="advancedCreateFileUpload(event.target);">
+				</div>
+				
+				<div class="windowSectionLabel textMedium" ng-show="ctrl.alreadyCreatedPixelconIds.length>0">Already Created</div>
+				<div class="alreadyCreatedPixelconContainer" ng-show="ctrl.alreadyCreatedPixelconIds.length>0">
+					<div class="alreadyCreatedPixelcon" ng-repeat="id in ctrl.alreadyCreatedPixelconIds track by $index">
+						<a ng-href="{{'/details/'+id}}" class="plain textDark">
+							<pixelcon id="id"></pixelcon>
+							<div class="alreadyCreatedPixelconCover">
+								<div class="alreadyCreatedPixelconGotoIcon"></div>
+							</div>
+						</a>
+					</div>
+				</div>
+				
+				<div class="windowSectionLabel textMedium" ng-show="ctrl.alreadyCreatedPixelconIds.length>0 && ctrl.advancedPixelcons.length==0">No new PixelCons...</div>
+				<div class="windowSectionLabel textMedium" ng-show="ctrl.advancedPixelcons.length>0">Loaded PixelCons</div>
+				<div class="advancedPixelconContainer">
+					<div class="advancedPixelcon" ng-repeat="advPixelcon in ctrl.advancedPixelcons track by $index">
+						<div class="advancedPixelconImage">
+							<pixelcon id="advPixelcon.id"></pixelcon>
+						</div>
+						<md-button class="advancedCreateButton md-raised md-primary" ng-click="ctrl.create($event, advPixelcon.id)" ng-disabled="!ctrl.canCreate()">Create</md-button>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Loading -->
+			<div class="loading colorLight" ng-show="ctrl.loading">
+				<img class="crispImage" src="img/loading.gif" alt="Loading.." height="100%" width="100%"/>
+			</div>
+		
+			<!-- Error -->
+			<div class="error colorLight textSelectable" ng-show="ctrl.error" ng-bind-html="ctrl.error"></div>
 		</div>
 		
 		<!-- Actions -->
-		<div>
-		</div>
 		<div class="actions textMedium textLight">
-			<div class="idText textSelectable">{{ctrl.pixelconId}}</div>
 			<div class="info textDark" ng-hide="ctrl.showButtons">
 				<b ng-if="!ctrl.showStartButton">Note:</b> {{ctrl.infoText}} <br/>
 				<a href="/start" class="plain">
 					<md-button ng-if="ctrl.showStartButton" class="startButton md-raised md-primary">Start</md-button>
 				</a>
 			</div>
-			<div layout="row" layout-align="space-between center" ng-show="ctrl.showButtons"> 
+			<div class="buttonContainer" layout="row" layout-align="space-between center" ng-show="ctrl.showButtons"> 
 				<md-button class="actionButton" ng-click="ctrl.clear($event)">Clear</md-button>
-				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.create($event)"
-					ng-disabled="ctrl.pixelconId=='0x0000000000000000000000000000000000000000000000000000000000000000'">Create</md-button>
+				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.create($event)" 
+					ng-disabled="!ctrl.canCreate()" ng-show="ctrl.tabSelection=='canvas'">Create</md-button>
+				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.createCollection($event)" 
+					ng-disabled="!ctrl.canCreateCollection()" ng-show="ctrl.tabSelection=='collection'">Create Collection</md-button>
 			</div>
 		</div>
 	</div>

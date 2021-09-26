@@ -179,8 +179,8 @@
 				{ type: 'pxcn', link: '/details/', id: '0x008cc80008dcd88008c8cc80cc0dc0cc00700700024cd420240c004220400420' }]
 		}];
 		_this.calcShowcaseStyle = function (curation) {
-			var itemWidth = (_this.screenSize.sm) ? 56 : 80;
-			var columns = curation.width;
+			let itemWidth = (_this.screenSize.sm) ? 56 : 80;
+			let columns = curation.width;
 			return {
 				width: columns * itemWidth + 'px'
 			};

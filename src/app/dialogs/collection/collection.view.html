@@ -3,17 +3,15 @@
 	<!-- Header -->
 	<div class="dialogTitle">{{ctrl.title}}</div>
 	<div class="pixelconContainer">
-		<pixelcon ng-if="ctrl.pixelcons[0].id" class="md-whiteframe-1dp" id="ctrl.pixelcons[0].id"></pixelcon>
-		<pixelcon ng-if="ctrl.pixelcons[1].id" class="md-whiteframe-1dp" id="ctrl.pixelcons[1].id"></pixelcon>
-		<pixelcon ng-if="ctrl.pixelcons[2].id" class="md-whiteframe-1dp" id="ctrl.pixelcons[2].id"></pixelcon>
-		<pixelcon ng-if="ctrl.pixelcons[3].id" class="md-whiteframe-1dp" id="ctrl.pixelcons[3].id"></pixelcon>
+		<pixelcon ng-if="ctrl.pixelconIds[0]" class="md-whiteframe-1dp" id="ctrl.pixelconIds[0]"></pixelcon>
+		<pixelcon ng-if="ctrl.pixelconIds[1]" class="md-whiteframe-1dp" id="ctrl.pixelconIds[1]"></pixelcon>
+		<pixelcon ng-if="ctrl.pixelconIds[2]" class="md-whiteframe-1dp" id="ctrl.pixelconIds[2]"></pixelcon>
+		<pixelcon ng-if="ctrl.pixelconIds[3]" class="md-whiteframe-1dp" id="ctrl.pixelconIds[3]"></pixelcon>
 	</div>
 	
 	<!-- Error View -->
 	<div class="view" ng-show="ctrl.currView=='error'" ng-cloak>
-		<div class="infoText errorTitle">
-			<b>Ethereum Network Error:</b><br/><br/>{{ctrl.error}}
-		</div>
+		<div class="infoText errorTitle textSelectable" ng-bind-html="ctrl.error"></div>
 	</div>
 	
 	<!-- Loading View -->
@@ -25,37 +23,38 @@
 	</div>
 	
 	<!-- Create View -->
-	<div class="view" ng-show="ctrl.currView=='create'" ng-cloak>
+	<div class="view" ng-if="ctrl.currView=='create'" ng-cloak>
 		<div class="infoText createTitle">Name and Create</div>
 		<md-input-container md-no-float class="nameInput md-block">
-			<input md-autofocus ng-model="ctrl.collectionName" ng-change="ctrl.filterCollectionName()" placeholder="Name"/>
+			<input md-autofocus ng-model="ctrl.collectionName" ng-change="ctrl.filterCollectionName()" placeholder="Name" ng-trim="false"/>
 		</md-input-container>
 		<div class="actionButtons">
-			<div class="note textLight">Gas: {{ctrl.cost | ethprice}}</div>
+			<div class="note textLight">{{ctrl.pixelconIds.length}} <span class="textSmall">PixelCon{{ctrl.pixelconIds.length > 1 ? 's' : ''}}</span></div>
 			<md-button ng-click="ctrl.create()">Create</md-button>
 		</div>
 		<div class="textNote termsNote">By creating this collection, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
 	</div>
 	
 	<!-- Rename View -->
-	<div class="view" ng-show="ctrl.currView=='rename'" ng-cloak>
+	<div class="view" ng-if="ctrl.currView=='rename'" ng-cloak>
 		<div class="infoText createTitle">Rename and Update</div>
 		<md-input-container md-no-float class="nameInput md-block">
-			<input md-autofocus ng-model="ctrl.collectionName" ng-change="ctrl.filterCollectionName()" placeholder="Name"/>
+			<input md-autofocus ng-model="ctrl.collectionName" ng-change="ctrl.filterCollectionName()" placeholder="Name" ng-trim="false"/>
 		</md-input-container>
 		<div class="actionButtons">
-			<div class="note textLight">Gas: {{ctrl.cost | ethprice}}</div>
+			<div class="note textLight">{{ctrl.pixelconIds.length}} <span class="textSmall">PixelCon{{ctrl.pixelconIds.length > 1 ? 's' : ''}}</span></div>
 			<md-button ng-click="ctrl.update()">Update</md-button>
 		</div>
 		<div class="textNote termsNote">By updating this collection, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
 	</div>
 	
 	<!-- Clear View -->
-	<div class="view" ng-show="ctrl.currView=='clear'" ng-cloak>
+	<div class="view" ng-if="ctrl.currView=='clear'" ng-cloak>
 		<div class="infoText createTitle"><b>Clear Collection</b></div>
 		<div class="infoText">Are you sure?</div>
+		<div class="infoText"></div>
 		<div class="actionButtons">
-			<div class="note textLight">Gas: {{ctrl.cost | ethprice}}</div>
+			<div class="note textLight">{{ctrl.pixelconIds.length}} <span class="textSmall">PixelCon{{ctrl.pixelconIds.length > 1 ? 's' : ''}}</span></div>
 			<md-button ng-click="ctrl.clear()">Clear</md-button>
 		</div>
 		<div class="textNote termsNote">By clearing this collection, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>

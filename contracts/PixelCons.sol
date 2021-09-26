@@ -28,7 +28,6 @@ import "./ERC721Receiver.sol";
  * @author PixelCons
  */
 contract PixelCons is ERC721, Ownable {
-
 	using AddressUtils for address;
 
 	/** @dev Equal to 'bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))' */

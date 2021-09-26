@@ -31,6 +31,7 @@ div.footer div.socialContainer {
 	display: inline-block;
 	text-align: right;
 	font-size: 0px;
+	max-width: 200px;
 }
 div.footer.md div.leftPadding,
 div.footer.lg div.leftPadding {
@@ -82,15 +83,28 @@ div.footer .socialLink.opensea {
 	background-image: url("/img/icon_opensea.svg");
 }
 div.footer .tipButton {
-	position: absolute;
-	bottom: 23px;
-	right: 30px;
 	min-width: 60px;
 	line-height: 25px;
 	min-height: 25px;
+    display: inline-block;
+    margin: 5px;
 }
-div.footer.sm .tipButton {
-	right: 10px;
+div.footer .settingsButton {
+	min-width: 30px;
+	line-height: 25px;
+	min-height: 25px;
+    display: inline-block;
+    margin: 5px;
+    padding: 0px;
+}
+div.footer .settingsButton .settingsButtonIcon {
+	width: 100%;
+	height: 25px;
+    background: url(/img/icon_settings.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+	opacity: 0.65;
+	filter: alpha(opacity=65);
 }
 div.footer .copyright {
 	position: absolute;

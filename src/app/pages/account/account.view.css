@@ -32,86 +32,62 @@ div.pixelconAccountPage div.accountCard {
 div.pixelconAccountPage.sm div.accountCard {
 	width: calc(100% - 16px);
 }
-div.pixelconAccountPage div.accountPaging {
+div.pixelconAccountPage .selectionButtonContainer {
+	padding: 0px 10px;
+	height: 50px;
+}
+div.pixelconAccountPage .actionButton {
+	margin: 1px;
+}
+div.pixelconAccountPage div.selectionText {
+	display: inline-block;
 	text-align: right;
 	padding: 10px;
 }
+div.pixelconAccountPage div.countText {
+	text-align: right;
+	width: 100%;
+	padding: 10px;
+}
+div.pixelconAccountPage div.helpText {
+	display: inline-block;
+	width: 100%;
+	text-align: left;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+	color: #fff;
+	opacity: 0.75;
+	filter: alpha(opacity=75);
+}
 
 /* Account Card Container: Header */
-div.pixelconAccountPage div.accountHeaderTop {
-	text-align: right;
-	padding: 10px 10px 0px 10px;
+div.pixelconAccountPage div.accountHeader {
+	position: relative;
+    text-align: right;
+    padding: 5px 7px;
+    height: 45px;
 }
-div.pixelconAccountPage.sm div.accountHeaderTop {
-	padding: 7px 7px 0px 7px;
+div.pixelconAccountPage div.accountHeader accounticon {
+	position: absolute;
+	left: 7px;
+	top: 4px;
 }
-div.pixelconAccountPage div.accountHeaderTop accounticon {
-	display: inline-block;
-	float: left;
-}
-div.pixelconAccountPage div.toggleButtons {
-	display: inline-block;
-	border-radius: 3px;
-	font-size: 0px;
-	margin: 5px 0px 7px 0px;
-}
-div.pixelconAccountPage div.toggleButtons button {
-	margin: 0px;
-}
-div.pixelconAccountPage.sm div.toggleButtons button {
-	min-width: 70px;
-	font-size: 13px;
-}
-div.pixelconAccountPage div.accountHeaderDivider {
-	width: calc(100% - 10px);
-	height: 1px;
-	margin: 5px 5px 5px 5px;
-}
-div.pixelconAccountPage.sm div.accountHeaderDivider {
-	margin: 3px 5px 3px 5px;
-}
-div.pixelconAccountPage div.accountHeaderBottom {
-	padding: 0px 10px 5px 10px;
-	width: 100%;
-}
-div.pixelconAccountPage.sm div.accountHeaderBottom {
-	padding: 0px 7px 3px 7px;
-}
-div.pixelconAccountPage div.accountHeaderBottom button {
-	display: inline-block;
-	margin: 0px 0px 0px 8px;
-}
-div.pixelconAccountPage div.accountHeaderBottom button.createButton {
-	margin: 0px;
-}
-div.pixelconAccountPage.sm div.accountHeaderBottom button.createButton {
-	min-width: 10px;
-}
-div.pixelconAccountPage.sm div.accountHeaderBottom button {
-	max-height: 32px;
-	min-height: 32px;
-	line-height: 32px;
-}
-div.pixelconAccountPage div.accountHeaderBottom md-select {
+div.pixelconAccountPage div.accountHeader md-select {
 	display: inline-block;
 	margin: 0px;
 }
-div.pixelconAccountPage div.accountHeaderBottom .marketButton {
-	padding: 0px 8px;
-	min-width: 0px;
-	margin-left: 0px;
-}
-div.pixelconAccountPage div.accountHeaderBottom .marketButton .icon {
+div.pixelconAccountPage div.accountHeader div.buttonContainer {
 	display: inline-block;
-	vertical-align: middle;
-	width: 26px;
-	height: 26px;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: 24px;
-	opacity: 0.7;
-	filter: alpha(opacity=70);
-	background-image: url("/img/icon_tag.svg");
+	margin-top: 5px;
+}
+div.pixelconAccountPage div.accountHeader div.actionButtons {
+	display: inline-block;
+	border: #c4c4c4 solid 0px;
+	border-left-width: 1px;
+	padding-left: 5px;
+}
+div.pixelconAccountPage .iconButton {
+	margin: 0px;
 }
 div.pixelconAccountPage .sortDesc {
 	background-image: url("/img/icon_down.svg");
@@ -119,19 +95,11 @@ div.pixelconAccountPage .sortDesc {
 div.pixelconAccountPage .sortAsc {
 	background-image: url("/img/icon_up.svg");
 }
-div.pixelconAccountPage div.headerPlainText {
-	display: inline-block;
-	vertical-align: middle;
-	padding: 5px;
+div.pixelconAccountPage .market {
+	background-image: url("/img/icon_tag.svg");
 }
-div.pixelconAccountPage div.groupIcon {
-	background-image: url("/img/icon_group.svg");
-	background-size: contain;
-	display: inline-block;
-	height: 24px;
-	max-width: 24px;
-	min-width: 24px;
-	vertical-align: middle;
+div.pixelconAccountPage .more {
+	background-image: url("/img/icon_more.svg");
 }
 div.pixelconAccountPage.sm .sortBy .md-select-icon {
 	width: 5px;
@@ -142,7 +110,7 @@ div.pixelconAccountPage div.displayWindow {
 	position: relative;
 	width: 100%;
 	border-radius: 15px;
-	min-height: 200px;
+	min-height: 300px;
 }
 div.pixelconAccountPage div.error {
 	position: absolute;
@@ -151,7 +119,8 @@ div.pixelconAccountPage div.error {
 	top: 50%;
 	margin: -50px -153px;
 	width: 276px;
-	height: 42px;
+	min-height: 42px;
+	max-height: 100px;
 	padding: 15px;
 	border-radius: 15px;
 }
@@ -159,7 +128,7 @@ div.pixelconAccountPage div.loading {
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	margin: -45px -45px;
+	margin: -50px -50px;
 	width: 80px;
 	height: 80px;
 	padding: 10px;
@@ -170,6 +139,7 @@ div.pixelconAccountPage div.displayTable {
 	width: 100%;
 	text-align: center;
 	padding: 20px;
+	font-size: 0px;
 }
 div.pixelconAccountPage.md div.displayTable {
 	padding: 15px;
@@ -179,32 +149,17 @@ div.pixelconAccountPage.sm div.displayTable {
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
-div.pixelconAccountPage div.pixelconCard {
+div.pixelconAccountPage .pixelconCard {
 	display: inline-block;
 	position: relative;
 	margin: 12px;
 	margin-bottom: 20px;
 }
-div.pixelconAccountPage.md div.pixelconCard {
+div.pixelconAccountPage.md .pixelconCard {
 	margin: 9px;
 	margin-bottom: 18px;
 }
-div.pixelconAccountPage.sm div.pixelconCard {
+div.pixelconAccountPage.sm .pixelconCard {
 	margin: 6px;
 	margin-bottom: 16px;
-}
-div.pixelconAccountPage div.pixelconCardCheck {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 20px;
-	height: 20px;
-	padding: 6px;
-}
-div.pixelconAccountPage div.pixelconCardCheckCover {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	height: 100%;
 }

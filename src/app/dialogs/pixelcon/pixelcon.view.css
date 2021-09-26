@@ -17,6 +17,7 @@
 .pixelconDialog div.infoText {
 	text-align: center;
 	margin: 10px;
+	min-height: 5px;
 }
 .pixelconDialog div.actionButtons {
 	position: absolute;
@@ -86,8 +87,8 @@
 	margin-top: 80px;
 }
 .pixelconDialog .nameInput {
-	width: 150px;
-	margin-left: 58px;
+	width: 180px;
+	margin-left: 43px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }

@@ -23,17 +23,18 @@ div.pixelconDetailsPage .detailsPageTransition .ng-hide-remove {
 }
 div.pixelconDetailsPage .ng-hide {
 	opacity: 0;
+	filter: alpha(opacity=0);
 }
 
 /* Details Card Container */
 div.pixelconDetailsPage div.detailsCard {
-	width: 400px;
+	width: 380px;
 	border-radius: 15px;
 	min-height: 540px;
 	margin: 0 auto;
 }
 div.pixelconDetailsPage.sm div.detailsCard {
-	width: 325px;
+	width: 300px;
 	min-height: 450px;
 }
 
@@ -41,117 +42,46 @@ div.pixelconDetailsPage.sm div.detailsCard {
 div.pixelconDetailsPage div.viewWindow {
 	position: relative;
 	width: 100%;
-	height: 375px;
+	height: 360px;
 	border-radius: 15px;
 }
 div.pixelconDetailsPage.sm div.viewWindow {
-	height: 280px;
-}
-div.pixelconDetailsPage div.viewWindowGroupContainer {
-	position: absolute;
-	bottom: 10px;
-	left: 10px;
-	font-size: 0px;
-	cursor: pointer;
-}
-div.pixelconDetailsPage
-	div.viewWindowGroupContainer:hover
-	div.viewWindowGroupCover {
-	opacity: 1;
-}
-div.pixelconDetailsPage div.viewWindowGroup {
-	display: inline-block;
-	position: relative;
-	max-width: 48px;
-	padding: 1px;
-}
-div.pixelconDetailsPage div.viewWindowGroup.onlyThree {
-	border-top-right-radius: 55%;
-}
-div.pixelconDetailsPage.sm div.viewWindowGroup {
-	max-width: 40px;
-}
-div.pixelconDetailsPage div.viewWindowGroupCover {
-	position: absolute;
-	width: calc(100% - 4px);
-	height: calc(100% - 4px);
-	top: 2px;
-	left: 2px;
-	background-color: rgba(51, 51, 51, 0.4);
-	transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.05s;
-	opacity: 0;
-}
-div.pixelconDetailsPage div.viewWindowGroup.onlyThree div.viewWindowGroupCover {
-	border-top-right-radius: 55%;
-}
-div.pixelconDetailsPage div.viewWindowGroupCoverIcon {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-image: url("/img/icon_goto_w.svg");
-	background-size: 24px;
-	opacity: 0.8;
-}
-div.pixelconDetailsPage.sm div.viewWindowGroupCoverIcon {
-	background-size: 20px;
-}
-div.pixelconDetailsPage div.viewWindowGroupElement {
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-	margin: 2px;
-}
-div.pixelconDetailsPage.sm div.viewWindowGroupElement {
-	width: 16px;
-	height: 16px;
-}
-div.pixelconDetailsPage div.viewWindowGroupElementSpacer {
-	display: inline-block;
-	width: 15px;
-}
-div.pixelconDetailsPage div.viewWindowGroupName {
-	display: inline-block;
-	vertical-align: bottom;
-	padding: 3px;
-}
-div.pixelconDetailsPage.sm div.viewWindowGroupName {
-	padding: 2px;
+	height: 282px;
 }
 div.pixelconDetailsPage div.pixelconInvalid {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 256px;
-	height: 256px;
-	line-height: 256px;
-	margin-left: -128px;
-	margin-top: -128px;
+	width: 272px;
+	height: 272px;
+	line-height: 272px;
+	margin-left: -136px;
+	margin-top: -136px;
 	background-color: #000000;
 	text-align: center;
 }
 div.pixelconDetailsPage.sm div.pixelconInvalid {
-	width: 192px;
-	height: 192px;
-	line-height: 192px;
-	margin-left: -96px;
-	margin-top: -96px;
+	width: 216px;
+	height: 216px;
+	line-height: 216px;
+	margin-left: -108px;
+	margin-top: -108px;
 }
 div.pixelconDetailsPage div.pixelconImage {
 	position: absolute;
+	box-shadow: 0px 0px 8px #33333387;
 	top: 50%;
 	left: 50%;
-	width: 256px;
-	height: 256px;
-	margin-left: -128px;
-	margin-top: -128px;
+	width: 272px;
+	height: 272px;
+	margin-left: -136px;
+	margin-top: -136px;
 }
 div.pixelconDetailsPage.sm div.pixelconImage {
-	width: 192px;
-	height: 192px;
-	margin-left: -96px;
-	margin-top: -96px;
+	width: 216px;
+	height: 216px;
+	margin-left: -108px;
+	margin-top: -108px;
 }
 
 /* Card Details */
@@ -169,18 +99,19 @@ div.pixelconDetailsPage div.detailsSectionId {
 	font-weight: bold;
 }
 div.pixelconDetailsPage.sm div.detailsSectionId {
-	font-size: 8px;
+	font-size: 7px;
 }
 div.pixelconDetailsPage div.detailsSectionMenuBar {
 	position: relative;
 	width: 100%;
-	height: 48px;
-	line-height: 45px;
+}
+div.pixelconDetailsPage div.detailsSectionMenuBar div.subText {
+	margin-top: -3px;
 }
 div.pixelconDetailsPage div.detailsSectionMoreButton {
 	position: absolute;
 	right: 0px;
-	top: 5px;
+	top: 0px;
 	width: 36px;
 	line-height: 0px;
 }
@@ -206,6 +137,82 @@ div.pixelconDetailsPage.sm div.detailsSectionLineItems {
 div.pixelconDetailsPage div.detailsSectionFooter {
 	width: 100%;
 	text-align: right;
+	margin-top: -10px;
+}
+div.pixelconDetailsPage div.groupContainer {
+	font-size: 0px;
+	cursor: pointer;
+	margin-top: 4px;
+	display: inline-block;
+	min-width: 50%;
+}
+div.pixelconDetailsPage div.groupContainer div.groupIconContainer {
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+	width: 36px;
+	height: 36px;
+	background-color: #c0c0c0;
+	border-radius: 4px;
+	padding: 1px;
+}
+div.pixelconDetailsPage.sm div.groupContainer div.groupIconContainer {
+	width: 32px;
+	height: 32px;
+}
+div.pixelconDetailsPage div.groupContainer div.groupTextStack {
+	display: inline-block;
+	vertical-align: middle;
+	margin-left: 2px;
+	font-size: 0px;
+}
+div.pixelconDetailsPage div.groupContainer div.groupText {
+	display: inline-block;
+	vertical-align: bottom;
+}
+div.pixelconDetailsPage div.groupContainer div.groupText.sm {
+	font-size: 12px;
+	margin-top: 2px;
+}
+div.pixelconDetailsPage div.groupContainer div.groupElement {
+	display: inline-block;
+	vertical-align: middle;
+	width: 16px;
+	height: 16px;
+	margin: 1px;
+}
+div.pixelconDetailsPage.sm div.groupContainer div.groupElement {
+	width: 14px;
+	height: 14px;
+}
+div.pixelconDetailsPage div.groupContainer div.iconGotoCover {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 0px;
+    height: 0px;
+	background-color: rgba(51, 51, 51, 0.4);
+}
+div.pixelconDetailsPage div.groupContainer:hover div.iconGotoCover {
+	width: 34px;
+    height: 34px;
+}
+div.pixelconDetailsPage.sm div.groupContainer:hover div.iconGotoCover {
+	width: 30px;
+    height: 30px;
+}
+div.pixelconDetailsPage div.groupContainer div.gotoIcon {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-image: url("/img/icon_goto_w.svg");
+	background-size: 22px;
+	opacity: 0.8;
+	filter: alpha(opacity=80);
 }
 
 /* Share links */
@@ -254,18 +261,19 @@ div.pixelconDetailsPage div.detailsSectionFooter {
 div.pixelconDetailsPage div.error {
 	text-align: center;
 	line-height: 24px;
-	margin-top: 30px;
+	margin-top: 25px;
+	padding: 0px 20px;
 }
 div.pixelconDetailsPage div.loading {
 	margin: 0 auto;
 	width: 80px;
 	height: 80px;
-	padding-bottom: 100px;
-	padding-top: 46px;
+	padding-top: 50px;
+	padding-bottom: 60px;
 }
 div.pixelconDetailsPage.sm div.loading {
-	padding-bottom: 88px;
-	padding-top: 35px;
+	padding-top: 40px;
+	padding-bottom: 50px;
 }
 div.pixelconDetailsPage div.unclaimed {
 	text-align: center;

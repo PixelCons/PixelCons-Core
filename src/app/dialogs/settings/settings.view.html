@@ -1,0 +1,20 @@
+<md-dialog class="settingsDialog colorLight" ng-class="ctrl.screenSize" aria-label="Settings">
+	
+	<!-- Header -->
+	<div class="dialogTitle">Settings<div class="settingsIcon"></div></div>
+	
+	<!-- Inputs -->
+	<md-content layout-padding>
+		<md-input-container class="md-block" flex>
+			<label class="dialogInputLabel">{{ctrl.networkName}}</label>
+			<input ng-model="ctrl.networkRPC">
+		</md-input-container>
+	</md-content>
+	
+	<!-- Buttons -->
+	<div class="actionButtons">
+		<md-button ng-click="ctrl.apply()">Apply</md-button>
+	</div>
+	
+	<div class="dialogCloseButton" ng-click="ctrl.closeDialog()"></div>
+</md-dialog>

@@ -4,46 +4,32 @@
 	<div class="accountCard colorLight">
 		
 		<!-- Header -->
-		<div class="accountHeaderTop">
-			<accounticon address="ctrl.accountAddress" text="{{ctrl.filter.viewMode=='created'?'Creator':'My Wallet'}}" max-chars="{{ctrl.screenSize.sm?'16':''}}" size="md"></accounticon>
-			<div class="toggleButtons md-whiteframe-2dp">
-				<md-button class="left" ng-disabled="!ctrl.accountAddress || ctrl.loading" 
-					md-colors="{background: ctrl.filter.viewMode=='owned'?'primary':'background'}" ng-click="ctrl.setQueryMode('owned')">Wallet</md-button>
-				<md-button class="right" ng-disabled="!ctrl.accountAddress || ctrl.loading" 
-					md-colors="{background: ctrl.filter.viewMode=='created'?'primary':'background'}" ng-click="ctrl.setQueryMode('created')">Creations</md-button>
-			</div>
-		</div>
-		<div class="accountHeaderDivider colorGray"></div>
-		<div class="accountHeaderBottom" layout="row" layout-align="space-between none">
-			
-			<!-- Actions -->
-			<div class="fontMedium" layout="row">
-				<div ng-show="!ctrl.accountAddress" class="headerPlainText textLight">No Account</div>
-				<div ng-show="ctrl.accountAddress && ctrl.filter.viewMode=='owned' && !ctrl.marketEnabled" class="headerPlainText textLight">Your Account</div>
-				<md-button class="marketButton textSmall textDark" aria-label="Sell" ng-if="ctrl.marketEnabled && ctrl.filter.viewMode=='owned'">
-					<div class="icon"></div>
-					<span>Sell</span>
-					<a class="plain buttonLink" ng-href="{{ctrl.marketAccountLink}}" target="_blank"></a>
-				</md-button>
-				<div ng-show="ctrl.filter.viewMode=='created' && ctrl.accountAddress">
-					<md-button class="createButton md-raised" ng-show="!ctrl.groupMode" ng-disabled="ctrl.pixelconsCount<2" ng-click="ctrl.setGroupMode(true)">
-						<div ng-if="!ctrl.screenSize.sm" class="iconButton groupIcon"></div>
-						Create Collection
-					</md-button>
-					<md-button ng-show="ctrl.groupMode" class="createButton" ng-click="ctrl.setGroupMode(false)">Cancel</md-button>
-					<md-button ng-show="ctrl.groupMode" class="createButton md-raised md-primary" ng-disabled="ctrl.groupSelection.length<2" ng-click="ctrl.createCollection($event)">Create</md-button>
-					<div ng-show="ctrl.groupMode && !ctrl.screenSize.sm" class="headerPlainText textLight"><b>{{ctrl.groupSelection.length}}</b> Selected</div>
-				</div>
-			</div>
-			
-			<!-- Sorting -->
-			<div class="fontMedium" layout="row">
-				<md-select class="sortBy md-no-underline" ng-disabled="!ctrl.accountAddress || ctrl.loading" ng-model="ctrl.filter.sortBy" ng-change="ctrl.checkUpdateData()" placeholder="Sort By">
+		<div class="accountHeader">
+			<accounticon address="ctrl.accountAddress" text="{{ctrl.screenSize.sm?'':'Account Wallet'}}" max-chars="{{ctrl.screenSize.sm?'1':(ctrl.screenSize.md?'24':'')}}" size="md"></accounticon>
+			<div class="buttonContainer">
+				<md-select class="sortBy md-no-underline" ng-disabled="!ctrl.accountAddress || !ctrl.pixelcons.length" ng-model="ctrl.filter.sortBy" ng-change="ctrl.checkUpdateData()" placeholder="Sort By">
 					<md-option value="dateCreated">Date Created</md-option>
 					<md-option value="name">Name</md-option>
 				</md-select>
-				<md-button class="iconButton" ng-class="{'sortDesc': ctrl.filter.sortDesc, 'sortAsc': !ctrl.filter.sortDesc}" ng-disabled="!ctrl.accountAddress || ctrl.loading" 
+				<md-button class="iconButton" ng-class="{'sortDesc': ctrl.filter.sortDesc, 'sortAsc': !ctrl.filter.sortDesc}" ng-disabled="!ctrl.accountAddress || !ctrl.pixelcons.length" 
 						ng-click="ctrl.setSortOrder(!ctrl.filter.sortDesc)" aria-label="Sort Order"></md-button>
+				<div class="actionButtons" ng-show="ctrl.accountAddress && ctrl.pixelcons.length > 0">
+					<md-menu md-position-mode="target-right target">
+						<md-button class="iconButton more" ng-click="$mdOpenMenu()" aria-label="More">
+						</md-button>
+						<md-menu-content>
+							<md-menu-item>
+								<md-button ng-click="ctrl.setSelectionMode('send')">Send To</md-button>
+							</md-menu-item>
+							<md-menu-item ng-if="ctrl.marketEnabled">
+								<md-button ng-click="">
+									<span>Buy/Sell</span>
+									<a class="plain buttonLink" ng-href="{{ctrl.marketAccountLink}}" target="_blank"></a>
+								</md-button>
+							</md-menu-item>
+						</md-menu-content>
+					</md-menu>
+				</div>
 			</div>
 		</div>
 		
@@ -51,12 +37,10 @@
 		<div class="displayWindow colorDark">
 		
 			<!-- Error -->
-			<div class="error colorLight" ng-show="ctrl.error">
-				<b>Ethereum Network Error:</b><br/>{{ctrl.error}}
-			</div>
+			<div class="error colorLight textSelectable" ng-show="ctrl.error" ng-bind-html="ctrl.error"></div>
 		
 			<!-- Empty -->
-			<div class="error colorLight" ng-show="!ctrl.error && !ctrl.loading && ctrl.pixelconsCount==0">
+			<div class="error colorLight textSelectable" ng-show="!ctrl.error && !ctrl.loading && ctrl.pixelcons.length==0">
 				No PixelCons
 			</div>
 		
@@ -66,23 +50,24 @@
 			</div>
 		
 			<!-- PixelCons -->
-			<div class="displayTable">
-				<div class="pixelconCard" ng-repeat="pixelcon in ctrl.pixelcons track by $index">
-					<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-click="{{ctrl.groupMode}}" no-account="true" 
-							disabled="{{ctrl.groupMode&&ctrl.filter.viewMode=='created'&&(ctrl.accountAddress!=pixelcon.owner||pixelcon.collection)?'true':'false'}}" 
-							no-selling="{{ctrl.filter.viewMode=='created'?'true':'false'}}" size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}"></pixelconcard>
-					<div class="pixelconCardCheck colorDarkOverlay" ng-show="ctrl.groupMode && !pixelcon.collection && pixelcon.created && pixelcon.owned">
-						<md-checkbox ng-model="pixelcon.selected" aria-label="pixelcon"></md-checkbox>
-					</div>
-					<div class="pixelconCardCheckCover clickable" ng-show="ctrl.groupMode && !pixelcon.collection && pixelcon.created && pixelcon.owned" ng-click="ctrl.pixelconSelect($index, pixelcon)"></div>
-				</div>
+			<div class="displayTable" ng-show="!ctrl.loading">
+				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='send'">Select the PixelCons you want to send</div>
+				<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-account="true" selectable="{{!!ctrl.selectionMode}}" disabled="{{ctrl.checkDisabled(pixelcon)}}" 
+					size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" ng-repeat="pixelcon in ctrl.pixelcons track by $index"></pixelconcard>
 			</div>
 		</div>
-
 		
-		<!-- Paging -->
-		<div class="accountPaging textLight textMedium">
-			<b>{{ctrl.pixelconsCount}}</b> {{ctrl.pixelconsCount==1?'PixelCon':'PixelCons'}}
+		<!-- Selection Buttons -->
+		<div class="selectionButtonContainer" layout="row" layout-align="space-between center"> 
+			<md-button class="actionButton" ng-click="ctrl.setSelectionMode(null)" ng-show="ctrl.selectionMode">Cancel</md-button>
+			<span ng-show="ctrl.selectionMode">
+				<div class="selectionText textLight textMedium"><b>{{ctrl.getNumSelected()}}</b> Selected</div>
+				<md-button class="actionButton md-raised md-primary" ng-click="ctrl.send($event)" 
+					ng-disabled="ctrl.checkActionDisabled()" ng-show="ctrl.selectionMode=='send'">Send</md-button>
+			</span>
+			<div class="countText textLight textMedium" ng-show="!ctrl.selectionMode">
+				<b>{{ctrl.pixelcons.length}}</b> {{ctrl.pixelcons.length?'PixelCon':'PixelCons'}}
+			</div>
 		</div>
 	</div>
 	
