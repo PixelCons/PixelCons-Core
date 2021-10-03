@@ -123,7 +123,9 @@
 				}
 			}
 
-			return canvas.toDataURL('image/png');
+			let data = canvas.toDataURL('image/png');
+			canvas.remove();
+			return data;
 		}
 		
 		//Creates a PNG image from the given pixelcon ids
@@ -167,7 +169,9 @@
 			}
 
 			if(n < 7) canvas = shiftCanvas(canvas, Math.round(scale*2), Math.round(scale*2));
-			return canvas.toDataURL('image/png');
+			let data = canvas.toDataURL('image/png');
+			canvas.remove();
+			return data;
 		}
 		
 		//Updates the background image
