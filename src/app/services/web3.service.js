@@ -49,6 +49,7 @@
 		const _unknownError = 'Unknown Error';
 		const _invalidAddressError = 'Invalid Address';
 		const _messageSettingsButton = '<div class="messageSettingsLink" onclick="web3ServiceOpenSettings();">settings</div>';
+		const _messageStartButton = '<a class="textDark" href="/start">start</a>';
 		const _localStorage = window.localStorage;
 		
 		var _state = "not_enabled";
@@ -464,6 +465,10 @@
 			//determine the provider and create the contract
 			let provider = getWeb3Provider(chainId);
 			if(!provider) {
+				//check that web3 is enabled
+				if(!_chainId) throw new UserActionNeededError('Web3 not connected', 'Get started by visiting the ' + _messageStartButton + ' page or update the fallback RPCs in ' + _messageSettingsButton);
+
+				//try to add network
 				switchNetwork(chainId);
 				throw new UserActionNeededError('Failed to find network provider', 'Please switch your account network from <b>' + currNetworkName + '</b> to <b>' + networkName + '</b> or update the fallback RPCs in ' + _messageSettingsButton);
 			}
