@@ -919,7 +919,7 @@
 			for (let i = 0; i < basicDataRaw.length; i++) {
 				pixelcons.push({
 					id: web3Service.to256Hex(basicDataRaw[i][0]),
-					index: indexes[i],
+					index: indexes[i].toNumber ? indexes[i].toNumber() : indexes[i],
 					name: web3Service.toUtf8(basicDataRaw[i][1]),
 					owner: web3Service.formatAddress(basicDataRaw[i][2].toString()),
 					collection: basicDataRaw[i][3].toNumber() ? basicDataRaw[i][3].toNumber() : null
