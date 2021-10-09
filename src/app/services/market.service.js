@@ -4,7 +4,7 @@
 
 	market.$inject = ['web3Service'];
 	function market(web3Service) {
-		const _enabled = false;
+		const _enabled = true;
 		const _accountLink = 'https://opensea.io/account';
 		const _storeLink = 'https://opensea.io/assets/pixelcons?collectionSlug=pixelcons&search[sortAscending]=false&search[sortBy]=LAST_SALE_PRICE';
 		const _itemLink = 'https://opensea.io/assets/0x5536b6aadd29eaf0db112bb28046a5fad3761bd4/<id>';

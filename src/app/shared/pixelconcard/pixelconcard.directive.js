@@ -36,6 +36,11 @@
 			_this.noCollection = (_this.noCollection === true || _this.noCollection == 'true');
 		});
 
+		// Standardize disable match [boolean]
+		$scope.$watch('ctrl.noMatch', function () {
+			_this.noMatch = (_this.noMatch === true || _this.noMatch == 'true');
+		});
+
 		// Standardize disable account [boolean]
 		$scope.$watch('ctrl.noAccount', function () {
 			_this.noAccount = (_this.noAccount === true || _this.noAccount == 'true');
@@ -135,6 +140,7 @@
 				pixelcon: '=',
 				size: '@',
 				noCollection: '@',
+				noMatch: '@',
 				noAccount: '@',
 				selectable: '@',
 				disabled: '@'

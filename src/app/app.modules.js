@@ -133,6 +133,7 @@
 			$http.get(HTMLTemplates['dialog.pixelcon'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.send'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.settings'], { cache: $templateCache });
+			$http.get(HTMLTemplates['dialog.similarities'], { cache: $templateCache });
 		}]);
 
 

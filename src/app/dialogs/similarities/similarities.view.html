@@ -1,0 +1,65 @@
+<md-dialog class="similaritiesDialog colorLight" ng-class="ctrl.screenSize" aria-label="Find Similar">
+	
+	<!-- Header -->
+	<div class="dialogTitle">{{ctrl.title}}<div class="similarSearchIcon"></div></div>
+	
+	<!-- Error View -->
+	<div class="view" ng-show="ctrl.currView=='error'" ng-cloak>
+		<div class="infoText errorTitle textSelectable" ng-bind-html="ctrl.error"></div>
+	</div>
+	
+	<!-- Loading View -->
+	<div class="view" ng-show="ctrl.currView=='loading'" ng-cloak>
+		<div class="loadingIcon">
+			<img class="crispImage" src="img/loading.gif" alt="Loading.." height="100%" width="100%"/>
+		</div>
+		<div class="infoText">Searching...</div>
+	</div>
+	
+	<!-- Results View -->
+	<div class="view resultView textCenter" ng-if="ctrl.currView=='results'" ng-cloak>
+		<div ng-if="ctrl.pixelcon" class="resultContainer">
+			<div class="containerTitle textBold textMedium">PixelCon #{{ctrl.pixelcon.index}}</div>
+			<div class="containerPixelcon large"><pixelcon id="ctrl.pixelcon.id"/></div>
+		</div>
+		<div ng-if="ctrl.closeMatch" class="resultContainer">
+			<div class="containerTitle textLeft textBold textSmall">
+				<div class="resultTitleCopyIcon"></div>
+				<div class="resultTitleCopyText">Earlier Close Match #{{ctrl.closeMatch.index}} (different creator)</div>
+			</div>
+			<div class="containerPixelcon">
+				<a class="plain" ng-href="{{'/details/' + ctrl.closeMatch.id}}">
+					<div class="containerPixelconShade">#{{ctrl.closeMatch.index}}</div>
+					<pixelcon id="ctrl.closeMatch.id"/>
+				</a>
+			</div>
+		</div>
+		<div ng-if="ctrl.similarCreator && ctrl.similarCreator.length" class="resultContainer full">
+			<div class="containerTitle textBold textMedium">Similar (same creator)</div>
+			<div class="containerPixelconScroll">
+				<div class="containerPixelcon small" ng-repeat="pixelcon in ctrl.similarCreator track by $index">
+					<a class="plain" ng-href="{{'/details/' + pixelcon.id}}">
+						<div class="containerPixelconShade">#{{pixelcon.index}}</div>
+						<pixelcon id="pixelcon.id"/>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div ng-if="ctrl.similarOther && ctrl.similarOther.length" class="resultContainer full">
+			<div class="containerTitle textBold textMedium">Similar (different creator)</div>
+			<div class="containerPixelconScroll">
+				<div class="containerPixelcon extrasmall" ng-repeat="pixelcon in ctrl.similarOther track by $index">
+					<a class="plain" ng-href="{{'/details/' + pixelcon.id}}">
+						<div class="containerPixelconShade">#{{pixelcon.index}}</div>
+						<pixelcon id="pixelcon.id"/>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div ng-if="!(ctrl.similarCreator && ctrl.similarCreator.length) && !(ctrl.similarOther && ctrl.similarOther.length)" class="resultContainer full">
+			<div class="containerTitle textBold textMedium">No similar PixelCons found...</div>
+		</div>
+	</div>
+	
+	<div class="dialogCloseButton" ng-click="ctrl.closeDialog()"></div>
+</md-dialog>

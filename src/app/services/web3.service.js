@@ -18,11 +18,27 @@
 			transactionLU: '/tx/<txHash>',
 			accountLU: '/address/<address>'
 		},{
-			name: 'Ropsten',
-			chainId: '3'
+			name: 'Rinkeby',
+			chainId: '4',
+			nativeCurrency: {
+				name: 'ETH',
+				symbol: 'ETH',
+				decimals: 18
+			},
+			icon: '/img/network_rinkeby.png',
+			fallbackRPCs: [],
+			blockExplorer: 'https://rinkeby.etherscan.io/',
+			transactionLU: '/tx/<txHash>',
+			accountLU: '/address/<address>'
+		},{
+			name: 'Mainnet',
+			chainId: '1'
 		},{
 			name: 'Rinkeby',
 			chainId: '4'
+		},{
+			name: 'Ropsten',
+			chainId: '3'
 		},{
 			name: 'Goerli',
 			chainId: '5'
@@ -485,7 +501,7 @@
 					try {
 						return await queryFilter_unsafe.call(contract, filter, fromBlock, toBlock);
 					} catch(err) {
-						if(toBlock === 'latest') toBlock = await this.provider.getBlockNumber();
+						if(toBlock === 'latest') toBlock = await contract.provider.getBlockNumber();
 						if(depth < maxRecursionDepth && (toBlock - fromBlock) > 1) {
 							let halfway = fromBlock + Math.floor((toBlock - fromBlock) / 2);
 							let firstHalf = await queryFilterRec(filter, fromBlock, halfway, depth + 1);
@@ -733,6 +749,8 @@
 		
 		// Returns a repeatable scrambled version of the given list
 		function scrambleList(list, seed) {
+			if(!list) return [];
+			
 			//generate a seed integer
 			let seedStr = ''+seed;
 			seed = 123456789;

@@ -4,12 +4,18 @@
 
 	decoder.$inject = ['$q', '$timeout'];
 	function decoder($q, $timeout) {
+		
+		//Setup functions
 		this.decodePNG = decodePNG;
 		this.encodePNG = encodePNG;
 		this.backgroundPNG = backgroundPNG;
 		this.updateBackground = updateBackground;
 		
+		//Data
+		var imageCache = [];
+		
 		//Configuration
+		const maxCacheImages = 500;
 		const frameColorDist = 0.05;
 		const maxColorDist = 0.1;
 		const colorPalette = {
@@ -103,28 +109,58 @@
 		}
 		
 		//Creates a PNG image from the given pixelcon id
-		function encodePNG(id) {
-			const scale = 3;
+		function encodePNG(id, large) {
+			let cacheKey = 'encodePNG(' + id + ',' + large + ')';
+			let cached = getFromCache(imageCache, cacheKey);
+			if(cached) return cached;
+			
 			let canvas = document.createElement('canvas');
-			canvas.width = (8 * scale);
-			canvas.height = (8 * scale);
-			let ctx = canvas.getContext("2d");
-			ctx.fillStyle = "#000000";
-			ctx.fillRect(0, 0, 8 * scale, 8 * scale);
+			if(large) {
+				const scale = 2;
+				const pixelconScale = 15 * scale;
+				canvas.width = (265 * scale);
+				canvas.height = (175 * scale);
+				let ctx = canvas.getContext("2d");
+				ctx.fillStyle = "#000000";
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-			id = formatId(id);
-			if (id) {
-				for (let y = 0; y < 8; y++) {
-					for (let x = 0; x < 8; x++) {
-						let index = y * 8 + x;
-						ctx.fillStyle = getPaletteColorInHex(id[index]);
-						ctx.fillRect(x * scale, y * scale, scale, scale);
+				id = formatId(id);
+				if (id) {
+					const offsetX = Math.round((canvas.width-(pixelconScale*8))/2);
+					const offsetY = Math.round((canvas.height-(pixelconScale*8))/2);
+					for (let y = 0; y < 8; y++) {
+						for (let x = 0; x < 8; x++) {
+							let index = y * 8 + x;
+							ctx.fillStyle = getPaletteColorInHex(id[index]);
+							ctx.fillRect(offsetX + (x * pixelconScale), offsetY + (y * pixelconScale), pixelconScale, pixelconScale);
+						}
+					}
+				}
+			
+			} else {
+				const scale = 3;
+				canvas.width = (8 * scale);
+				canvas.height = (8 * scale);
+				let ctx = canvas.getContext("2d");
+				ctx.fillStyle = "#000000";
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+				id = formatId(id);
+				if (id) {
+					for (let y = 0; y < 8; y++) {
+						for (let x = 0; x < 8; x++) {
+							let index = y * 8 + x;
+							ctx.fillStyle = getPaletteColorInHex(id[index]);
+							ctx.fillRect(x * scale, y * scale, scale, scale);
+						}
 					}
 				}
 			}
 
 			let data = canvas.toDataURL('image/png');
 			canvas.remove();
+			
+			addToCache(imageCache, cacheKey, data, maxCacheImages);
 			return data;
 		}
 		
@@ -421,6 +457,44 @@
 				return v1-v2;
 			});
 			return list;
+		}
+		
+		//Cache manipulation
+		function addToCache(cache, key, value, maxEntries) {
+			let entryIndex = null;
+			if(cache.length < maxEntries) {
+				
+				//new entry
+				entryIndex = cache.length;
+				cache.push({});
+			} else {
+				
+				//replace oldest entry
+				entryIndex = 0;
+				let oldestTime = cache[0].timestamp;
+				for(let i=0; i<cache.length; i++) {
+					if(cache[i].timestamp < oldestTime) {
+						entryIndex = i;
+						oldestTime = cache[i].timestamp;
+					}
+				}
+			}
+			if(entryIndex !== null) {
+				cache[entryIndex] = {
+					timestamp: (new Date()).getTime(),
+					key: key,
+					value: value
+				}
+			}
+		}
+		function getFromCache(cache, key) {
+			for(let i=0; i<cache.length; i++) {
+				if(cache[i].key == key) {
+					cache[i].timestamp = (new Date()).getTime();
+					return cache[i].value;
+				}
+			}
+			return null;
 		}
 
 	}

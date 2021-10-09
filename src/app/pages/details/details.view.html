@@ -7,8 +7,10 @@
 		<div class="viewWindow colorDark">
 			<div ng-hide="ctrl.pixelconId" class="pixelconInvalid textWhite textExxLarge">{{ctrl.pixelconIndex !== null ? '#' + ctrl.pixelconIndex : 'Invalid ID'}}</div>
 			<div ng-show="ctrl.pixelconId" class="pixelconImage">
-				<pixelcon id="ctrl.pixelconId"/>
+				<pixelcon id="ctrl.pixelconId" large="true"/>
 			</div>
+			<div class="windowIcon similarSearchIcon" ng-if="!ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.searchSimilar()"></div>
+			<div class="windowIcon derivativeIcon" ng-class="{'ex': !ctrl.matchCreator}" ng-if="ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.searchSimilar()"></div>
 		</div>
 		
 		<!-- Details -->

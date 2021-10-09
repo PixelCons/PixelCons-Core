@@ -9,6 +9,7 @@
 		_this.rename = rename;
 		_this.create = create;
 		_this.send = send;
+		_this.searchSimilar = searchSimilar;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
 		_this.shareOnFacebook = shareOnFacebook;
@@ -94,7 +95,8 @@
 				name: pixelcon.name,
 				number: 'Number ' + pixelcon.index,
 				date: 'Created ' + (new Date(pixelcon.date)).toLocaleDateString(),
-				collection: pixelcon.collection
+				collection: pixelcon.collection,
+				match: pixelcon.match
 			}
 			
 			//scramble the collection pixelconIds
@@ -112,9 +114,11 @@
 			let account = web3Service.getActiveAccount();
 			_this.isOwner = false;
 			_this.isCreator = false;
+			_this.matchCreator = false;
 			if (_this.details && account) {
 				_this.isOwner = (account == _this.details.owner);
 				_this.isCreator = (account == _this.details.creator);
+				_this.matchCreator = _this.details.match ? (account == _this.details.match.creator) : false;
 			}
 		}
 
@@ -150,6 +154,19 @@
 				controller: 'SendDialogCtrl',
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.send'],
+				parent: angular.element(document.body),
+				locals: { pixelconId: _this.pixelconId },
+				bindToController: true,
+				clickOutsideToClose: true
+			});
+		}
+
+		// Search for similar pixelcons
+		function searchSimilar() {
+			$mdDialog.show({
+				controller: 'SimilaritiesDialogCtrl',
+				controllerAs: 'ctrl',
+				templateUrl: HTMLTemplates['dialog.similarities'],
 				parent: angular.element(document.body),
 				locals: { pixelconId: _this.pixelconId },
 				bindToController: true,

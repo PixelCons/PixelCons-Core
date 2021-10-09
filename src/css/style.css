@@ -177,9 +177,6 @@
 .buttonIcon.account {
 	background-image: url("/img/icon_wallet.svg");
 }
-.buttonIcon.migrate {
-	background-image: url("/img/icon_migrate.svg");
-}
 .buttonIcon.create {
 	background-image: url("/img/icon_create.svg");
 }

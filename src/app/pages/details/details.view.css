@@ -83,6 +83,50 @@ div.pixelconDetailsPage.sm div.pixelconImage {
 	margin-left: -108px;
 	margin-top: -108px;
 }
+div.pixelconDetailsPage div.viewWindow div.windowIcon {
+	position: absolute;
+	left: 0px;
+	bottom: 0px;
+	width: 60px;
+	height: 60px;
+	background-repeat: no-repeat;
+	background-size: 24px;
+	background-position: 16px 20px;
+	transition: cubic-bezier(0.35, 0, 0.25, 1) 0.05s;
+}
+div.pixelconDetailsPage.sm div.viewWindow div.windowIcon {
+    width: 50px;
+    height: 50px;
+    background-position: 11px 15px;
+}
+div.pixelconDetailsPage div.viewWindow div.windowIcon.similarSearchIcon {
+	background-image: url(/img/icon_similar_w.svg);
+	opacity: 0.0;
+	filter: alpha(opacity=0);
+}
+div.pixelconDetailsPage div.viewWindow:hover div.windowIcon.similarSearchIcon {
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+}
+div.pixelconDetailsPage div.viewWindow div.windowIcon.similarSearchIcon:hover {
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+	cursor: pointer;
+}
+div.pixelconDetailsPage div.viewWindow div.windowIcon.derivativeIcon {
+	background-image: url(/img/icon_copy_w.svg);
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+}
+div.pixelconDetailsPage div.viewWindow div.windowIcon.derivativeIcon.ex {
+	background-image: url(/img/icon_copyex_w.svg);
+}
+div.pixelconDetailsPage div.viewWindow div.windowIcon.derivativeIcon:hover {
+	background-image: url(/img/icon_similar_w.svg);
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+	cursor: pointer;
+}
 
 /* Card Details */
 div.pixelconDetailsPage div.detailsSection {

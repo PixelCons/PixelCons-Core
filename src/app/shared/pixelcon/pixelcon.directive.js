@@ -9,15 +9,27 @@
 
 		// Watch for id changes to keep pixel data up to date
 		$scope.$watch('ctrl.id', function(id) {
-			_this.pixelconImage = decoder.encodePNG(id);
+			generateImage();
 		});
+
+		// Standardize large flag [boolean]
+		$scope.$watch('ctrl.large', function () {
+			generateImage();
+		});
+		
+		// Generates the image
+		function generateImage() {
+			_this.large = (_this.large === true || _this.large == 'true');
+			_this.pixelconImage = decoder.encodePNG(_this.id, _this.large);
+		}
 	}
 
 	function pixelcon() {
 		return {
 			restrict: 'E',
 			scope: {
-				id: '='
+				id: '=',
+				large: '@'
 			},
 			bindToController: true,
 			controller: 'PixelConCtrl',

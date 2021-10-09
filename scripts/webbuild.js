@@ -24,6 +24,7 @@ const appScripts = [
 	resolvePath("src/app/services/coreContract.service.js"),
 	resolvePath("src/app/services/market.service.js"),
 	resolvePath("src/app/services/decoder.service.js"),
+	resolvePath("src/app/services/similarities.service.js"),
 	resolvePath("src/app/pages/details/details.controller.js"),
 	resolvePath("src/app/pages/create/create.controller.js"),
 	resolvePath("src/app/pages/account/account.controller.js"),
@@ -41,6 +42,7 @@ const appScripts = [
 	resolvePath("src/app/dialogs/pixelcon/pixelcon.controller.js"),
 	resolvePath("src/app/dialogs/collection/collection.controller.js"),
 	resolvePath("src/app/dialogs/send/send.controller.js"),
+	resolvePath("src/app/dialogs/similarities/similarities.controller.js"),
 	resolvePath("src/app/dialogs/settings/settings.controller.js")
 ];
 const appStyleSheetsBuildPath = resolvePath("build/style.min.css");
@@ -63,6 +65,7 @@ const appStyleSheets = [
 	resolvePath("src/app/dialogs/pixelcon/pixelcon.view.css"),
 	resolvePath("src/app/dialogs/collection/collection.view.css"),
 	resolvePath("src/app/dialogs/send/send.view.css"),
+	resolvePath("src/app/dialogs/similarities/similarities.view.css"),
 	resolvePath("src/app/dialogs/settings/settings.view.css")
 ];
 const appHTMLBuildPath = resolvePath("build/templates");
@@ -84,6 +87,7 @@ const appHTML = [
 	resolvePath("src/app/dialogs/collection/collection.view.html"),
 	resolvePath("src/app/dialogs/pixelcon/pixelcon.view.html"),
 	resolvePath("src/app/dialogs/send/send.view.html"),
+	resolvePath("src/app/dialogs/similarities/similarities.view.html"),
 	resolvePath("src/app/dialogs/settings/settings.view.html")
 ];
 const appContractsBuildPath = resolvePath("build/contracts");
