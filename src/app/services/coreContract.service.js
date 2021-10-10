@@ -974,7 +974,7 @@
 				});
 			}
 			
-			//fill in collection data
+			//fill in additional data
 			await addCollectionData(contract, pixelcons);
 			similarities.appendMatch(pixelcons, await getAllPixelcons());
 			

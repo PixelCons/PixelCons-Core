@@ -13,6 +13,7 @@ const getTokenDataFunctionSelector = '0xb09afec1';
 const getBasicDataFunctionSelector = '0xe2b31903';
 const getCollectionDataFunctionSelector = '0x6bb2a9a8';
 const getForCreatorFunctionSelector = '0xd4aa25cc';
+const getLogsCreateTopic = '0x5ada7cc76c691909522f79b403dee86482e43a5064fb2d5849c685ab7d40be20';
 const getBasicDataMaxSearchSize = 20;
 const rpcCallCacheSeconds = 60;
 
@@ -23,6 +24,14 @@ async function getPixelcon(id) {
 	if(tokenData == null) return null;
 	
 	return tokenData;
+}
+
+// Gets basic data about all pixelcons
+async function getAllPixelcons() {
+	let allPixelcons = await getLogsCreate();
+	if(allPixelcons == null) return null;
+	
+	return allPixelcons;
 }
 
 //Get collection details
@@ -192,6 +201,35 @@ async function getBasicData(indexes) {
 		return null;
 	}, rpcCallCacheSeconds);
 }
+async function getLogsCreate() {
+	return await cachedata.cacheData('ethdata_getLogsCreate()', async function() {
+		try {
+			if(contractAddress && jsonRpc) {
+				let payload = {
+					id: 1,
+					jsonrpc: "2.0",
+					method: "eth_getLogs",
+					params:[{ fromBlock:"earliest", toBlock:"latest", address:contractAddress, topics:[getLogsCreateTopic]}]
+				};
+				let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
+				let results = JSON.parse(data).result;
+
+				var pixelconList = [];
+				for(let i=0; i<results.length; i++) {
+					let index = parseInt(results[i].data.substr(64*0 + 2, 64), 16);
+					pixelconList[index] = {
+						id: results[i].topics[1],
+						creator: '0x' + formatAddress(results[i].topics[2])
+					}
+				}
+				return pixelconList;
+			}
+		} catch (err) {
+			console.log(err);
+		}
+		return null;
+	}, rpcCallCacheSeconds);
+}
 function formatAddress(address) {
 	const empty = '0000000000000000000000000000000000000000';
 	address = address.toLowerCase();
@@ -251,6 +289,7 @@ function toUtf8(hex) {
 // Export
 module.exports = {
     getPixelcon: getPixelcon,
+	getAllPixelcons: getAllPixelcons,
 	getCollection: getCollection,
 	getCreator: getCreator
 }

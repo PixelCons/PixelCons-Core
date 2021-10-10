@@ -3,6 +3,7 @@
  * Provides functions for reporting the metadata of PixelCons
  ***********************************************************************/
 const settings = require('./settings.js');
+const matchdata = require('./matchdata.js');
 const ethdata = require('./ethdata.js');
 
 // Settings
@@ -65,15 +66,22 @@ async function getMetadata(pixelconId, params) {
 		});
 	}
 				
-	//add collection details
-	if(collection && detailedMetadataEnabled) {
-		let collectionData = await ethdata.getCollection(collection);
-		if(collectionData) {
-			metadata["description"] = getDescription(params.name, params.index, params.collection, collectionData.name, params.creator, params.created);
-			metadata["attributes"].push({
-				"trait_type": "Collection",
-				"value": "Collection " + collection + (collectionData.name ? " [" + collectionData.name + "]": "")
-			});
+	//add additional details
+	if(detailedMetadataEnabled) {
+		if(collection) {
+			let collectionData = await ethdata.getCollection(collection);
+			if(collectionData) {
+				metadata["description"] = getDescription(params.name, params.index, params.collection, collectionData.name, params.creator, params.created);
+				metadata["attributes"].push({
+					"trait_type": "Collection",
+					"value": "Collection " + collection + (collectionData.name ? " [" + collectionData.name + "]": "")
+				});
+			}
+		}
+		
+		let match = await matchdata.findCloseMatch('0x' + id);
+		if(match) {
+			metadata["description"] += " - !!**Attention**!! This PixelCon is a very close match to a PixelCon created earlier by a different creator [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
 		}
 	}
 				
