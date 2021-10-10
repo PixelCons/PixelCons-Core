@@ -114,11 +114,9 @@
 			let account = web3Service.getActiveAccount();
 			_this.isOwner = false;
 			_this.isCreator = false;
-			_this.matchCreator = false;
 			if (_this.details && account) {
 				_this.isOwner = (account == _this.details.owner);
 				_this.isCreator = (account == _this.details.creator);
-				_this.matchCreator = _this.details.match ? (account == _this.details.match.creator) : false;
 			}
 		}
 

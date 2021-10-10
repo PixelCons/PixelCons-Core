@@ -40,8 +40,7 @@
 	<div class="pixelconCardDirectiveInfo pixelconCardDirectiveFont textBold textDark colorLight" ng-click="ctrl.pixelconClick($event)" ng-class="{'pixelconCardDirectiveTransition':ctrl.loaded}">
 		<div ng-cloak>{{ctrl.pixelcon.name!==''?ctrl.pixelcon.name:'#'+ctrl.pixelcon.index}}</div>
 		<div class="pixelconCardDirectiveGroupNotification" ng-if="!ctrl.reloading && !ctrl.noCollection && !ctrl.pixelcon.match && ctrl.pixelcon.collection"></div>
-		<div class="pixelconCardDirectiveSimilarNotification" ng-class="{'ex': (ctrl.pixelcon.match.creator != ctrl.pixelcon.creator && ctrl.account != ctrl.pixelcon.match.creator)}" 
-			ng-if="!ctrl.reloading && !ctrl.noMatch && ctrl.pixelcon.match"></div>
+		<div class="pixelconCardDirectiveSimilarNotification" ng-class="{'replica': (ctrl.pixelcon.match.creator == ctrl.pixelcon.creator)}" ng-if="!ctrl.reloading && !ctrl.noMatch && ctrl.pixelcon.match"></div>
 		<div class="pixelconCardDirectiveAccountNotification" ng-if="!ctrl.reloading && !ctrl.noAccount && ctrl.pixelcon.owner==ctrl.account"></div>
 	</div>
 	

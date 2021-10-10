@@ -110,7 +110,7 @@
 .similaritiesDialog div.resultTitleCopyIcon {
 	display: inline-block;
 	vertical-align: middle;
-    background: url(/img/icon_copyex.svg);
+    background: url(/img/icon_copy.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 30px;
@@ -118,6 +118,9 @@
     height: 30px;
 	opacity: 0.8;
 	filter: alpha(opacity=80);
+}
+.similaritiesDialog div.resultTitleCopyIcon.replica {
+    background: url(/img/icon_replica.svg);
 }
 .similaritiesDialog div.resultTitleCopyText {
 	display: inline-block;
@@ -135,7 +138,6 @@
 	width: 100px;
 	height: 100px;
 	margin: 5px;
-	box-shadow: 1px 1px 8px #000000;
 }
 .similaritiesDialog div.containerPixelcon.large {
 	width: 120px;
@@ -144,12 +146,10 @@
 .similaritiesDialog div.containerPixelcon.small {
 	width: 80px;
 	height: 80px;
-	box-shadow: 1px 1px 5px #000000;
 }
 .similaritiesDialog div.containerPixelcon.extrasmall {
 	width: 60px;
 	height: 60px;
-	box-shadow: 1px 1px 5px #000000;
 }
 .similaritiesDialog div.containerPixelcon div.containerPixelconShade {
 	display: none;

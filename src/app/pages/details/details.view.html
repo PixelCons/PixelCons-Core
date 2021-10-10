@@ -10,7 +10,13 @@
 				<pixelcon id="ctrl.pixelconId" large="true"/>
 			</div>
 			<div class="windowIcon similarSearchIcon" ng-if="!ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.searchSimilar()"></div>
-			<div class="windowIcon derivativeIcon" ng-class="{'ex': !ctrl.matchCreator}" ng-if="ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.searchSimilar()"></div>
+			<div class="windowIcon similarIcon" ng-class="{'replica': !ctrl.details.creator == ctrl.details.match.creator}" 
+				ng-if="ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.searchSimilar()"></div>
+			<div class="similarPixelcon" ng-if="ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed">
+				<a ng-href="/details/{{ctrl.details.match.id}}">
+					<pixelcon id="ctrl.details.match.id"/>
+				</a>
+			</div>
 		</div>
 		
 		<!-- Details -->

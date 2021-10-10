@@ -20,14 +20,14 @@
 	<div class="view resultView textCenter" ng-if="ctrl.currView=='results'" ng-cloak>
 		<div ng-if="ctrl.pixelcon" class="resultContainer">
 			<div class="containerTitle textBold textMedium">PixelCon #{{ctrl.pixelcon.index}}</div>
-			<div class="containerPixelcon large"><pixelcon id="ctrl.pixelcon.id"/></div>
+			<div class="containerPixelcon large md-whiteframe-3dp"><pixelcon id="ctrl.pixelcon.id"/></div>
 		</div>
 		<div ng-if="ctrl.closeMatch" class="resultContainer">
 			<div class="containerTitle textLeft textBold textSmall">
-				<div class="resultTitleCopyIcon"></div>
-				<div class="resultTitleCopyText">Earlier Close Match #{{ctrl.closeMatch.index}} (different creator)</div>
+				<div class="resultTitleCopyIcon" ng-class="{'replica': ctrl.closeMatch.creator == ctrl.pixelcon.creator}"></div>
+				<div class="resultTitleCopyText">Older Close Match #{{ctrl.closeMatch.index}} (different creator)</div>
 			</div>
-			<div class="containerPixelcon">
+			<div class="containerPixelcon md-whiteframe-2dp">
 				<a class="plain" ng-href="{{'/details/' + ctrl.closeMatch.id}}">
 					<div class="containerPixelconShade">#{{ctrl.closeMatch.index}}</div>
 					<pixelcon id="ctrl.closeMatch.id"/>
@@ -37,7 +37,7 @@
 		<div ng-if="ctrl.similarCreator && ctrl.similarCreator.length" class="resultContainer full">
 			<div class="containerTitle textBold textMedium">Similar (same creator)</div>
 			<div class="containerPixelconScroll">
-				<div class="containerPixelcon small" ng-repeat="pixelcon in ctrl.similarCreator track by $index">
+				<div class="containerPixelcon small md-whiteframe-1dp" ng-repeat="pixelcon in ctrl.similarCreator track by $index">
 					<a class="plain" ng-href="{{'/details/' + pixelcon.id}}">
 						<div class="containerPixelconShade">#{{pixelcon.index}}</div>
 						<pixelcon id="pixelcon.id"/>
@@ -48,7 +48,7 @@
 		<div ng-if="ctrl.similarOther && ctrl.similarOther.length" class="resultContainer full">
 			<div class="containerTitle textBold textMedium">Similar (different creator)</div>
 			<div class="containerPixelconScroll">
-				<div class="containerPixelcon extrasmall" ng-repeat="pixelcon in ctrl.similarOther track by $index">
+				<div class="containerPixelcon extrasmall md-whiteframe-1dp" ng-repeat="pixelcon in ctrl.similarOther track by $index">
 					<a class="plain" ng-href="{{'/details/' + pixelcon.id}}">
 						<div class="containerPixelconShade">#{{pixelcon.index}}</div>
 						<pixelcon id="pixelcon.id"/>

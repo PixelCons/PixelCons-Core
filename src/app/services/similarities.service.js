@@ -22,10 +22,14 @@
 			if(!_enabled) return null;
 			
 			//search
+			let pixelconIndex = null;
+			let pixelconCreator = null;
 			let pixelcon = findPixelcon(pixelconId, allPixelcons);
-			if(pixelcon) return findEarliesetCloseMatch(pixelcon, allPixelcons);
-			
-			return null;
+			if(pixelcon) {
+				pixelconIndex = pixelcon.index;
+				pixelconCreator = pixelcon.creator;
+			}
+			return findEarliesetCloseMatch(pixelconId, pixelconIndex, pixelconCreator, allPixelcons);
 		}
 		
 		// Appends match data to the given pixelcons
@@ -45,8 +49,8 @@
 			//search
 			let pixelcon = findPixelcon(pixelconId, allPixelcons);
 			if(pixelcon) {
-				let closeMatch = findEarliesetCloseMatch(pixelcon, allPixelcons);
-				let similar = findSimilar(pixelcon, allPixelcons);
+				let closeMatch = findEarliesetCloseMatch(pixelcon.id, pixelcon.index, pixelcon.creator, allPixelcons);
+				let similar = findSimilar(pixelcon.id, allPixelcons);
 				
 				let similarCreator = [];
 				let similarOther = [];
@@ -74,10 +78,10 @@
 		
 		
 		//Returns all pixelcons that are similar to the given pixelcon
-		function findSimilar(pixelcon, allPixelcons) {
+		function findSimilar(pixelconId, allPixelcons) {
 			let similar = [];
 			for(let i=0; i<allPixelcons.length; i++) {
-				if(checkSimilar(pixelcon.id, allPixelcons[i].id)) {
+				if(checkSimilar(pixelconId, allPixelcons[i].id)) {
 					similar.push({
 						id: allPixelcons[i].id,
 						index: i,
@@ -89,10 +93,12 @@
 		}
 		
 		//Returns the earliest close match to the given pixelcon
-		function findEarliesetCloseMatch(pixelcon, allPixelcons) {
-			let ids = rotateMirrorTranslate(pixelcon.id);
-			for(let i=0; i<pixelcon.index; i++) {
-				if(checkCloseMatch(ids, allPixelcons[i].id) && pixelcon.creator != allPixelcons[i].creator) {
+		function findEarliesetCloseMatch(pixelconId, pixelconIndex, pixelconCreator, allPixelcons) {
+			if(pixelconIndex === null) pixelconIndex = allPixelcons.length;
+			
+			let ids = rotateMirrorTranslate(pixelconId);
+			for(let i=0; i<pixelconIndex; i++) {
+				if(checkCloseMatch(ids, allPixelcons[i].id) && (!pixelconCreator || pixelconCreator != allPixelcons[i].creator)) {
 					return {
 						id: allPixelcons[i].id,
 						index: i,
@@ -185,6 +191,12 @@
 			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
 			translateId = translate(id, 1, 0);
 			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
+			translateId = translate(id, 0, -1);
+			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
+			translateId = translate(id, -1, -1);
+			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
+			translateId = translate(id, -1, 0);
+			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
 			
 			return ids;
 		}
@@ -245,7 +257,6 @@
 		}
 		
 		//Gets the distance [0-1.0] between two color hex values
-		var distanceMap = null;
 		const colorPalette = {
 			'0': [0,0,0],		//#000000
 			'1': [29,43,83],	//#1D2B53
@@ -265,19 +276,8 @@
 			'f': [255,204,170],	//#FFCCAA
 		}
 		function getColorDistance(c1, c2) {
-			if(!distanceMap) {
-				distanceMap = {};
-				const hexChars = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
-				for(let i=0; i<16; i++) {
-					for(let j=0; j<16; j++) {
-						let h1 = hexChars[i];
-						let h2 = hexChars[j];	
-						let distance = Math.abs(colorPalette[h1][0] - colorPalette[h2][0]) + Math.abs(colorPalette[h1][1] - colorPalette[h2][1]) + Math.abs(colorPalette[h1][2] - colorPalette[h2][2]);
-						distanceMap[h1+h2] = distance/(255*3);
-					}
-				}
-			}
-			return distanceMap[c1+c2];
+			let distance = Math.abs(colorPalette[c1][0] - colorPalette[c2][0]) + Math.abs(colorPalette[c1][1] - colorPalette[c2][1]) + Math.abs(colorPalette[c1][2] - colorPalette[c2][2]);
+			return distance/(255*3);
 		}
 
 	}

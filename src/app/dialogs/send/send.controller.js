@@ -29,7 +29,6 @@
 				if (activeAccount) {
 					web3Service.verifySendEth(_this.toAddress).then(function (data) {
 						_this.currView = 'sendEth';
-						_this.cost = data.estCost;
 					}, function (reason) {
 						_this.currView = 'sendEthError';
 					});
@@ -40,7 +39,6 @@
 				_this.title = 'Send PixelCon';
 				coreContract.verifyTransferPixelcon(_this.pixelconId).then(function (data) {
 					_this.currView = 'sendPixelcon';
-					_this.cost = data.estCost;
 				}, function (reason) {
 					_this.currView = 'error';
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
