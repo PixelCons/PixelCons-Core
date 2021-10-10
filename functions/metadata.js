@@ -20,7 +20,7 @@ async function getMetadata(pixelconId, params) {
 	
 	//calculate data
 	let name = getName(params.name, params.index);
-	let description = getDescription(params.name, params.index, params.collection, null, params.creator, params.created);
+	let description = getDescription(params.name, params.index, params.collection, null, params.creator, params.created, null);
 	let creator = formatAddress(params.creator);
 	let created = parseInt(params.created, 16);
 	let index = parseInt(params.index, 16);
@@ -68,21 +68,19 @@ async function getMetadata(pixelconId, params) {
 				
 	//add additional details
 	if(detailedMetadataEnabled) {
+		let match = await matchdata.findCloseMatch('0x' + id);
+		let collectionName = null;
 		if(collection) {
 			let collectionData = await ethdata.getCollection(collection);
 			if(collectionData) {
-				metadata["description"] = getDescription(params.name, params.index, params.collection, collectionData.name, params.creator, params.created);
+				collectionName = collectionData.name;
 				metadata["attributes"].push({
 					"trait_type": "Collection",
-					"value": "Collection " + collection + (collectionData.name ? " [" + collectionData.name + "]": "")
+					"value": "Collection " + collection + (collectionName ? " [" + collectionName + "]": "")
 				});
 			}
 		}
-		
-		let match = await matchdata.findCloseMatch('0x' + id);
-		if(match) {
-			metadata["description"] += " - !!**Attention**!! This PixelCon is a very close match to a PixelCon created earlier by a different creator [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
-		}
+		metadata["description"] = getDescription(params.name, params.index, params.collection, collectionName, params.creator, params.created, match);
 	}
 				
 	return metadata;
@@ -168,7 +166,7 @@ function getName(name, index) {
 	result += '#' + index + (index < genesisCount ? '✨' : '');
 	return result;
 }
-function getDescription(name, index, collection, collectionName, creator, created) {
+function getDescription(name, index, collection, collectionName, creator, created, match) {
 	index = toInt(index);
 	collection = toInt(collection);
 	creator = formatAddress(creator);
@@ -177,11 +175,18 @@ function getDescription(name, index, collection, collectionName, creator, create
 	
 	if(index) result += "PixelCon #" + index;
 	if(index < genesisCount) result += " - ✨Genesis";
-	if(collection > 0) {
+	if(!match && collection > 0) {
 		result += " - Collection " + collection;
 		if(collectionName) result += " [" + collectionName + "]";
 	}
 	if(created) result += " - " + created;
+	if(match) {
+		result += " - ⚠️Very similar to older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")"
+		if(collection > 0) {
+			result += " - Collection " + collection;
+			if(collectionName) result += " [" + collectionName + "]";
+		}
+	}
 	if(creator) result += " - Creator 0x" + creator;
 	return result;
 }
