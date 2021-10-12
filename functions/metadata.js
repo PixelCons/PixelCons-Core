@@ -126,32 +126,8 @@ function toUtf8(hex) {
 	if(hex.substr(0,2) == '0x') hex = hex.substr(2,hex.length);
 	if(hex.length%2 == 1) hex = '0' + hex;
 	
-	let array = new Uint8Array(hex.length/2);
-	for(let i=0; i<hex.length/2; i++) array[i] = parseInt(hex.substr(i*2,2), 16);
-					
-	let utf8 = "";
-	let i = 0;
-	while(i < array.length) {
-		let char1 = array[i++];
-		if(char1 == 0) break;
-		switch(char1 >> 4) { 
-			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-				// 0xxxxxxx
-				utf8 += String.fromCharCode(char1);
-				break;
-			case 12: case 13:
-				// 110x xxxx   10xx xxxx
-				char2 = array[i++];
-				utf8 += String.fromCharCode(((char1 & 0x1F) << 6) | (char2 & 0x3F));
-				break;
-			case 14:
-				// 1110 xxxx  10xx xxxx  10xx xxxx
-				char2 = array[i++];
-				char3 = array[i++];
-				utf8 += String.fromCharCode(((char1 & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0));
-				break;
-		}
-	}    
+	let utf8 = decodeURIComponent(hex.replace(/\s+/g, '').replace(/[0-9a-f]{2}/g, '%$&'));
+	if(utf8.indexOf('\x00') > -1) utf8 = utf8.substring(0, utf8.indexOf('\x00'));
 	return utf8;
 }
 function toInt(hex) {
