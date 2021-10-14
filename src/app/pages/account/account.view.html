@@ -15,6 +15,25 @@
 						ng-click="ctrl.setSortOrder(!ctrl.filter.sortDesc)" aria-label="Sort Order"></md-button>
 				<div class="actionButtons" ng-show="ctrl.accountAddress && ctrl.pixelcons.length > 0">
 					<md-menu md-position-mode="target-right target">
+						<md-button class="iconButton share" ng-click="$mdOpenMenu()" aria-label="Share">
+						</md-button>
+						<md-menu-content class="shareLinksContextMenu">
+							<md-menu-item>
+								<md-button ng-click="ctrl.copyLink()"><div class="shareLinkIcon url"></div>Copy URL</md-button>
+							</md-menu-item>
+							<md-menu-item>
+								<a ng-href="{{ctrl.shareOnFacebook()}}" target="_blank" class="textDark">
+									<md-button><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
+								</a>
+							</md-menu-item>
+							<md-menu-item>
+								<a ng-href="{{ctrl.shareOnTwitter()}}" target="_blank" class="textDark">
+									<md-button><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
+								</a>
+							</md-menu-item>
+						</md-menu-content>
+					</md-menu>
+					<md-menu md-position-mode="target-right target">
 						<md-button class="iconButton more" ng-click="$mdOpenMenu()" aria-label="More">
 						</md-button>
 						<md-menu-content>

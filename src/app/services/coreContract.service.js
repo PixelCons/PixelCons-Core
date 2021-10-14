@@ -158,7 +158,7 @@
 									if (!_maxNameFetch || total <= _maxNameFetch) {
 
 										//get all at once
-										let names = await contract.getAllNames();
+										let names = await contract.call.getAllNames();
 										for (let i = 0; i < names.length; i++) pixelconNames[i] = web3Service.toUtf8(names[i]);
 									} else {
 
@@ -168,7 +168,7 @@
 										while (index < total) {
 											let rangeEnd = index + _maxNameFetch;
 											if (rangeEnd > total) rangeEnd = total;
-											let names = await contract.getNamesInRange(index, rangeEnd);
+											let names = await contract.call.getNamesInRange(index, rangeEnd);
 											for (let i = 0; i < names.length; i++) pixelconNames[pixelconNamesIndex++] = web3Service.toUtf8(names[i]);
 											index = rangeEnd;
 										}
@@ -214,11 +214,11 @@
 							} else {
 
 								//get details
-								pixelconRaw = await contract.getTokenDataByIndex(index);
+								pixelconRaw = await contract.call.getTokenDataByIndex(index);
 							}
 							
 						} else if(id !== null) {
-							let exists = await contract.exists(id);
+							let exists = await contract.call.exists(id);
 							if (!exists) {
 
 								//not found
@@ -226,7 +226,7 @@
 							} else {
 
 								//get details
-								pixelconRaw = await contract.getTokenData(id);
+								pixelconRaw = await contract.call.getTokenData(id);
 							}
 						}
 						
@@ -270,7 +270,7 @@
 					try {
 						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let contract = await web3Service.getContract(_contractPath, chainId);
-						let exists = await contract.collectionExists(index);
+						let exists = await contract.call.collectionExists(index);
 						if (!exists) {
 
 							//not found
@@ -304,7 +304,7 @@
 						let contract = await web3Service.getContract(_contractPath, chainId);
 
 						//get all for owner
-						let ownerPixelconIndexes = await contract.getForOwner(address);
+						let ownerPixelconIndexes = await contract.call.getForOwner(address);
 						let pixelcons = await getPixelconsByIndexes(contract, ownerPixelconIndexes);
 						resolve(pixelcons);
 						
@@ -330,7 +330,7 @@
 						let contract = await web3Service.getContract(_contractPath, chainId);
 
 						//get all for creator
-						let creatorPixelconIndexes = await contract.getForCreator(address);
+						let creatorPixelconIndexes = await contract.call.getForCreator(address);
 						let pixelcons = await getPixelconsByIndexes(contract, creatorPixelconIndexes);
 						resolve(pixelcons);
 						
@@ -411,7 +411,7 @@
 					try {
 						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let contract = await web3Service.getContractWithSigner(_contractPath, chainId);
-						let exists = await contract.exists(id);
+						let exists = await contract.call.exists(id);
 						if(exists) reject('PixelCon already exists');
 						else resolve({ });
 					} catch (err) {
@@ -439,7 +439,7 @@
 						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let address = web3Service.getActiveAccount();
 						let contract = await web3Service.getContractWithSigner(_contractPath, chainId);
-						let owner = web3Service.formatAddress(await contract.ownerOf(id));
+						let owner = web3Service.formatAddress(await contract.call.ownerOf(id));
 						if (owner == address) resolve({ owner: owner });
 						else reject('Account does not own this PixelCon');
 					} catch (err) {
@@ -471,7 +471,7 @@
 						
 						//get pixelcon data
 						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
-						let creatorIndexes = await contract.getForCreator(address);
+						let creatorIndexes = await contract.call.getForCreator(address);
 						let creatorPixelconIndexes = [];
 						for(let i=0; i<creatorIndexes.length; i++) creatorPixelconIndexes[i] = creatorIndexes[i].toNumber();
 						
@@ -527,7 +527,7 @@
 						
 						//get pixelcon data
 						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
-						let creatorIndexes = await contract.getForCreator(address);
+						let creatorIndexes = await contract.call.getForCreator(address);
 						let creatorPixelconIndexes = [];
 						for(let i=0; i<creatorIndexes.length; i++) creatorPixelconIndexes[i] = creatorIndexes[i].toNumber();
 						
@@ -583,7 +583,7 @@
 						
 						//get pixelcon data
 						let pixelcons = await getPixelconsByIds(contract, pixelconIds);
-						let creatorIndexes = await contract.getForCreator(address);
+						let creatorIndexes = await contract.call.getForCreator(address);
 						let creatorPixelconIndexes = [];
 						for(let i=0; i<creatorIndexes.length; i++) creatorPixelconIndexes[i] = creatorIndexes[i].toNumber();
 						
@@ -634,7 +634,7 @@
 						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let address = web3Service.getActiveAccount();
 						let contract = await web3Service.getContractWithSigner(_contractPath, chainId);
-						let owner = web3Service.formatAddress(await contract.ownerOf(id));
+						let owner = web3Service.formatAddress(await contract.call.ownerOf(id));
 						if (owner == address) resolve({ owner: owner });
 						else reject('Account does not own this PixelCon');
 					} catch (err) {
@@ -941,7 +941,7 @@
 			if(!indexes || !indexes.length) return [];
 			
 			let basicDataRaw = await breakUpQuery(indexes, async function(indexes_subset) {
-				let tokenData = await contract.getBasicData(indexes_subset);
+				let tokenData = await contract.call.getBasicData(indexes_subset);
 				let dataByToken = [];
 				for(let i=0; i<tokenData[0].length; i++) dataByToken.push([tokenData[0][i], tokenData[1][i], tokenData[2][i], tokenData[3][i]]);
 				return dataByToken;
@@ -957,7 +957,7 @@
 			if(!indexes || !indexes.length) return [];
 			
 			let basicDataRaw = await breakUpQuery(indexes, async function(indexes_subset) {
-				let tokenData = await contract.getBasicData(indexes_subset);
+				let tokenData = await contract.call.getBasicData(indexes_subset);
 				let dataByToken = [];
 				for(let i=0; i<tokenData[0].length; i++) dataByToken.push([tokenData[0][i], tokenData[1][i], tokenData[2][i], tokenData[3][i]]);
 				return dataByToken;
@@ -991,7 +991,7 @@
 		
 		// Gets collection from the given index
 		async function getCollectionByIndex(contract, index) {
-			let collectionRaw = await contract.getCollectionData(index);
+			let collectionRaw = await contract.call.getCollectionData(index);
 			let collectionName = web3Service.toUtf8(collectionRaw[0]);
 			let collectionPixelconIds = await getPixelconIdsByIndexes(contract, collectionRaw[1]);
 			let createCollectionEvent = await contract.queryFilter(contract.filters.CreateCollection(null, index));
@@ -1037,7 +1037,7 @@
 			let currTime = (new Date()).getTime();
 			if(currTime - lastTotalsFetchTime < _cacheTotalsFetchTime) return lastTotalsValue;
 			
-			lastTotalsValue = (await contract.totalSupply()).toNumber();
+			lastTotalsValue = (await contract.call.totalSupply()).toNumber();
 			lastTotalsFetchTime = (new Date()).getTime();
 			return lastTotalsValue;
 		}

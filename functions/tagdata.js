@@ -65,6 +65,21 @@ async function getTagDataHTML(path, plainHTMLPath) {
 				return tagHTML;
 			}
 		}
+	} else if(path.indexOf('/owner/') === 0) {
+		let owner = formatAddress(path.substring(path.lastIndexOf('/') + 1, (path.indexOf('?') > -1) ? path.indexOf('?') : path.length));
+		if(owner) {
+			//get owner details
+			let ownerData = await ethdata.getOwner(owner);
+			if(ownerData) {
+				let type = 'summary_large_image';
+				let name = 'PixelCon Wallet';
+				let description = owner;
+				let imageUrl = appWebDomain + 'meta/image_multi/' + getIdsList(ownerData.pixelcons);
+	
+				let tagHTML = insertTagData(htmlData, type, name, description, imageUrl);
+				return tagHTML;
+			}
+		}
 	}
 	
 	return htmlData.plainHTML;

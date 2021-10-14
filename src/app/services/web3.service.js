@@ -490,6 +490,33 @@
 			}
 			let contract = new ethers.Contract(contractDetails.address, contractData.abi, provider);
 			
+			//wrap contract calls to handle errors that require a retry
+			let retryHandler = function(f) {
+				return async function() {
+					try {
+						return await f.apply(this, arguments);
+					} catch(err) {
+						//retry after common error
+						if(err && err.message === 'header not found') {
+							return await f.apply(this, arguments);
+						} else {
+							throw err;
+						}
+					}
+				}
+			}
+			contract.call = {};
+			for(let f in contract) {
+				if (typeof contract[f] === 'function') {
+					for(let i=0; i<contractData.abi.length; i++) {
+						if(contractData.abi[i].name && f.indexOf(contractData.abi[i].name) > -1) {
+							contract.call[f] = retryHandler(contract[f]);
+							break;
+						}
+					}
+				}
+			}
+			
 			//wrap the queryFilter function to handle larger datasets
 			let queryFilter_unsafe = contract.queryFilter;
 			contract.queryFilter = async function(filter, fromBlock, toBlock) {

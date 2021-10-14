@@ -125,10 +125,12 @@ function formatDate(dateHex) {
 function toUtf8(hex) {
 	if(hex.substr(0,2) == '0x') hex = hex.substr(2,hex.length);
 	if(hex.length%2 == 1) hex = '0' + hex;
-	
-	let utf8 = decodeURIComponent(hex.replace(/\s+/g, '').replace(/[0-9a-f]{2}/g, '%$&'));
-	if(utf8.indexOf('\x00') > -1) utf8 = utf8.substring(0, utf8.indexOf('\x00'));
-	return utf8;
+	try {
+		let utf8 = decodeURIComponent(hex.replace(/\s+/g, '').replace(/[0-9a-f]{2}/g, '%$&'));
+		if(utf8.indexOf('\x00') > -1) utf8 = utf8.substring(0, utf8.indexOf('\x00'));
+		return utf8;
+	} catch(err) {}
+	return '';
 }
 function toInt(hex) {
 	return "" + parseInt(hex,16);

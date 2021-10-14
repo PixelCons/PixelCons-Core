@@ -20,6 +20,9 @@
 		_this.checkDisabled = checkDisabled;
 		_this.checkSelectModeActionable = checkSelectModeActionable;
 		_this.send = send;
+		_this.copyLink = copyLink;
+		_this.shareOnTwitter = shareOnTwitter;
+		_this.shareOnFacebook = shareOnFacebook;
 		_this.marketEnabled = market.isEnabled();
 		_this.marketAccountLink = market.getAccountLink();
 
@@ -244,6 +247,29 @@
 			}).then(function(result) {
 				setSelectionMode(null);
 			});
+		}
+
+		// Copies share link to the clipboard
+		function copyLink() {
+			let copyText = document.getElementById("copyToClipboard");
+			copyText.value = document.location.origin + '/owner/' + _this.accountAddress;
+			copyText.select();
+			document.execCommand("copy");
+		}
+
+		// Share this page on twitter
+		function shareOnTwitter() {
+			let url = "https://twitter.com/intent/tweet?url=";
+			url += encodeURI(document.location.origin + '/owner/' + _this.accountAddress);
+			url += '&text=' + encodeURI("Check out these PixelCons!");
+			return url;
+		}
+
+		// Share this page on facebook
+		function shareOnFacebook() {
+			let url = "https://www.facebook.com/sharer/sharer.php?u="
+			url += encodeURI(document.location.origin + '/owner/' + _this.accountAddress);
+			return url;
 		}
 
 		// Set flag the directive as loaded

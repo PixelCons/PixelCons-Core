@@ -287,48 +287,6 @@ div.pixelconDetailsPage div.groupContainer div.gotoIcon {
 	filter: alpha(opacity=80);
 }
 
-/* Share links */
-.shareLinksContextMenu a:link,
-.shareLinksContextMenu a:visited,
-.shareLinksContextMenu a:hover,
-.shareLinksContextMenu a:active {
-	margin: 0px;
-	padding: 0px;
-}
-.shareLinksContextMenu button.md-button {
-	text-transform: none;
-	margin: 0px;
-	padding: 0px 16px;
-	width: 100%;
-	text-align: left;
-}
-.shareLinksContextMenu md-menu-item {
-	min-height: 36px;
-	height: 36px;
-}
-.shareLinksContextMenu button {
-	height: 36px;
-}
-.shareLinksContextMenu div.shareLinkIcon {
-	width: 18px;
-	height: 18px;
-	display: inline-block;
-	vertical-align: sub;
-	background-size: 18px;
-	margin-right: 8px;
-	opacity: 0.6;
-	filter: alpha(opacity=60);
-}
-.shareLinksContextMenu div.shareLinkIcon.url {
-	background-image: url(/img/icon_link.svg);
-}
-.shareLinksContextMenu div.shareLinkIcon.facebook {
-	background-image: url(/img/icon_facebook.svg);
-}
-.shareLinksContextMenu div.shareLinkIcon.twitter {
-	background-image: url(/img/icon_twitter.svg);
-}
-
 /* Error/Loading/Unclaimed */
 div.pixelconDetailsPage div.error {
 	text-align: center;

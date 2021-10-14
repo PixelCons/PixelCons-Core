@@ -29,6 +29,11 @@
 				controller: 'CreatorPageCtrl',
 				controllerAs: 'ctrl'
 			})
+			.when("/owner/:address", {
+				templateUrl: HTMLTemplates['page.owner'],
+				controller: 'OwnerPageCtrl',
+				controllerAs: 'ctrl'
+			})
 			.when("/search", {
 				templateUrl: HTMLTemplates['page.search'],
 				controller: 'SearchPageCtrl',
@@ -44,7 +49,8 @@
 			.when("/create", {
 				templateUrl: HTMLTemplates['page.create'],
 				controller: 'CreatePageCtrl',
-				controllerAs: 'ctrl'
+				controllerAs: 'ctrl',
+				reloadOnSearch: false
 			})
 			.when("/start", {
 				templateUrl: HTMLTemplates['page.start'],

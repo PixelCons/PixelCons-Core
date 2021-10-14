@@ -10,6 +10,7 @@
 		const _itemLink = 'https://opensea.io/assets/0x5536b6aadd29eaf0db112bb28046a5fad3761bd4/<id>';
 		const _collectionLink = 'https://opensea.io/collection/pixelcons?collectionSlug=pixelcons&search[sortAscending]=true&search[sortBy]=PRICE&search[stringTraits][0][name]=Collection&search[stringTraits][0][values][0]=<collectionProperty>';
 		const _creatorLink = 'https://opensea.io/collection/pixelcons?collectionSlug=pixelcons&search[sortAscending]=true&search[sortBy]=PRICE&search[stringTraits][0][name]=Creator&search[stringTraits][0][values][0]=<creatorProperty>';
+		const _ownerLink = 'https://opensea.io/<ownerProperty>';
 
 		// Setup functions
 		this.isEnabled = isEnabled;
@@ -18,6 +19,7 @@
 		this.getItemLink = getItemLink;
 		this.getCollectionLink = getCollectionLink;
 		this.getCreatorLink = getCreatorLink;
+		this.getOwnerLink = getOwnerLink;
 
 
 		///////////
@@ -64,6 +66,16 @@
 
 			let creatorProperty = '' + address;
 			let l = _creatorLink.split('<creatorProperty>').join(encodeURIComponent(creatorProperty));
+			return l;
+		}
+
+		// Gets link to owner for the market
+		function getOwnerLink(address) {
+			address = formatAddress(address);
+			if (!address) return _storeLink;
+
+			let ownerProperty = '0x' + address;
+			let l = _ownerLink.split('<ownerProperty>').join(encodeURIComponent(ownerProperty));
 			return l;
 		}
 		

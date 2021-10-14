@@ -150,7 +150,7 @@
 		///////////
 		
 		
-		//Determines details of an image frame
+		//Returns matching pixelcon
 		function findPixelcon(pixelconId, allPixelcons) {
 			for(let i=0; i<allPixelcons.length; i++) {
 				if(allPixelcons[i].id == pixelconId) {
@@ -203,9 +203,8 @@
 		
 		//Rotates the id clockwise
 		function rotate(id) {
-			let rId = '0000000000000000000000000000000000000000000000000000000000000000';
 			id = id.split('');
-			rId = rId.split('');
+			let rId = '0000000000000000000000000000000000000000000000000000000000000000'.split('');
 			for(let x=0; x<8; x++) {
 				for(let y=0; y<8; y++) {
 					rId[x*8 + (7-y)] = id[y*8 + x];
@@ -216,9 +215,8 @@
 		
 		//Mirrors the id on the given axis
 		function mirror(id, xAxis) {
-			let rId = '0000000000000000000000000000000000000000000000000000000000000000';
 			id = id.split('');
-			rId = rId.split('');
+			let rId = '0000000000000000000000000000000000000000000000000000000000000000'.split('');
 			for(let x=0; x<8; x++) {
 				for(let y=0; y<8; y++) {
 					if(xAxis) rId[x*8 + y] = id[(7-x)*8 + y];
@@ -230,9 +228,8 @@
 		
 		//Translates the id by the given vaues
 		function translate(id, tx, ty) {
-			let rId = '0000000000000000000000000000000000000000000000000000000000000000';
 			id = id.split('');
-			rId = rId.split('');
+			let rId = '0000000000000000000000000000000000000000000000000000000000000000'.split('');
 			for(let x=0; x<8; x++) {
 				for(let y=0; y<8; y++) {
 					let nx = (x + 8 + tx) % 8;
