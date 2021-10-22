@@ -11,6 +11,11 @@
 		this.appendMatch = appendMatch;
 		this.searchSimilar = searchSimilar;
 		
+		// Data
+		var data_allPixelconIds = null;
+		var data_allPixelconCreators = null;
+		var data_creatorsList = null;
+		
 		
 		///////////////
 		// Functions //
@@ -20,21 +25,35 @@
 		// Searches for a close match to the given pixelconId
 		function getMatch(pixelconId, allPixelcons) {
 			if(!_enabled) return null;
+			updateAllPixelconData(allPixelcons);
 			
-			//search
-			let pixelconIndex = null;
-			let pixelconCreator = null;
+			//get search parameters
+			let pixelconIdArray = new Uint8Array(64);
+			let pixelconIndex = allPixelcons.length;
+			let pixelconCreator = -1;
 			let pixelcon = findPixelcon(pixelconId, allPixelcons);
 			if(pixelcon) {
+				for(let i=0; i<64; i++) pixelconIdArray[i] = convertHexCode(pixelconId.charCodeAt(i+2));
 				pixelconIndex = pixelcon.index;
-				pixelconCreator = pixelcon.creator;
+				pixelconCreator = data_creatorsList.indexOf(pixelcon.creator);
 			}
-			return findEarliesetCloseMatch(pixelconId, pixelconIndex, pixelconCreator, allPixelcons);
+			
+			//search
+			let match = findCloseMatch(pixelconIdArray, pixelconIndex, pixelconCreator, data_allPixelconIds, data_allPixelconCreators);
+			if(match > -1) {
+				return {
+					id: allPixelcons[match].id,
+					index: match,
+					creator: allPixelcons[match].creator
+				}
+			}
+			return null;
 		}
 		
 		// Appends match data to the given pixelcons
 		function appendMatch(pixelcons, allPixelcons) {
 			if(!_enabled) return;
+			updateAllPixelconData(allPixelcons);
 			
 			//search
 			for(let i=0; i<pixelcons.length; i++) {
@@ -45,19 +64,34 @@
 		// Searches for similar pixelcons
 		function searchSimilar(pixelconId, allPixelcons) {
 			if(!_enabled) return null;
+			updateAllPixelconData(allPixelcons);
 			
 			//search
 			let pixelcon = findPixelcon(pixelconId, allPixelcons);
 			if(pixelcon) {
-				let closeMatch = findEarliesetCloseMatch(pixelcon.id, pixelcon.index, pixelcon.creator, allPixelcons);
-				let similar = findSimilar(pixelcon.id, allPixelcons);
+				let closeMatch = getMatch(pixelconId, allPixelcons);
 				
+				//search similar
+				const maxResults = 50;
+				let resultsArray = new Int32Array(maxResults);
+				let pixelconIdArray = new Uint8Array(64);
+				for(let i=0; i<64; i++) pixelconIdArray[i] = convertHexCode(pixelconId.charCodeAt(i+2));
+				findSimilar(pixelconIdArray, data_allPixelconIds, allPixelcons.length, resultsArray, maxResults);
+				
+				//parse results
 				let similarCreator = [];
 				let similarOther = [];
-				for(let i=0; i<similar.length; i++) {
-					if(similar[i].id != pixelconId) {
-						if(pixelcon.creator == similar[i].creator) similarCreator.push(similar[i]);
-						else similarOther.push(similar[i]);
+				for(let i=0; i<maxResults; i++) {
+					if(resultsArray[i] > -1) {
+						let similar = {
+							id: allPixelcons[resultsArray[i]].id,
+							index: resultsArray[i],
+							creator: allPixelcons[resultsArray[i]].creator
+						}
+						if(similar.id != pixelconId) {
+							if(pixelcon.creator == similar.creator) similarCreator.push(similar);
+							else similarOther.push(similar);
+						}
 					}
 				}
 				
@@ -70,85 +104,6 @@
 			}
 			return null;
 		}
-		
-		
-		////////////////
-		// Algorithms //
-		////////////////
-		
-		
-		//Returns all pixelcons that are similar to the given pixelcon
-		function findSimilar(pixelconId, allPixelcons) {
-			let similar = [];
-			for(let i=0; i<allPixelcons.length; i++) {
-				if(checkSimilar(pixelconId, allPixelcons[i].id)) {
-					similar.push({
-						id: allPixelcons[i].id,
-						index: i,
-						creator: allPixelcons[i].creator
-					});
-				}
-			}
-			return similar;
-		}
-		
-		//Returns the earliest close match to the given pixelcon
-		function findEarliesetCloseMatch(pixelconId, pixelconIndex, pixelconCreator, allPixelcons) {
-			if(pixelconIndex === null) pixelconIndex = allPixelcons.length;
-			
-			let ids = rotateMirrorTranslate(pixelconId);
-			for(let i=0; i<pixelconIndex; i++) {
-				if(checkCloseMatch(ids, allPixelcons[i].id) && (!pixelconCreator || pixelconCreator != allPixelcons[i].creator)) {
-					return {
-						id: allPixelcons[i].id,
-						index: i,
-						creator: allPixelcons[i].creator
-					}
-				}
-			}
-			return null;
-		}
-		
-		//Checks if the given ids are similar
-		function checkSimilar(id1, id2) {
-			let ids = rotateMirrorTranslate(id1);
-			for(let i=0; i<ids.length; i++) {
-				let tolerance = 8;
-				if(i != 0) tolerance = tolerance/2;
-				
-				let delta = 0;
-				for(let j=2; j<ids[i].length; j++) {
-					delta += getColorDistance(ids[i][j], id2[j]);
-				}
-				if(delta <= tolerance) return true;
-			}
-			return false;
-		}
-		
-		//Checks if the given ids are a close match
-		function checkCloseMatch(ids, otherId) {
-			for(let i=0; i<ids.length; i++) {
-				let colorsCount = Math.max(countColors(ids[i]), countColors(otherId));
-				
-				let tolerance = colorsCount*0.6;
-				if(i != 0) tolerance = tolerance/2;
-				if(colorsCount < 4) tolerance = tolerance/2;
-				if(colorsCount < 3) tolerance = tolerance/3;
-				
-				let delta = 0;
-				for(let j=2; j<ids[i].length; j++) {
-					delta += getColorDistance(ids[i][j], otherId[j]);
-				}
-				if(delta <= tolerance) return true;
-			}
-			return false;
-		}
-		
-		
-		///////////
-		// Utils //
-		///////////
-		
 		
 		//Returns matching pixelcon
 		function findPixelcon(pixelconId, allPixelcons) {
@@ -164,80 +119,169 @@
 			return null;
 		}
 		
+		//Returns subarray based on length
+		function subId(array, index) {
+			return array.subarray(index, index+64);
+		}
+		
+		//Updates stored data based on given pixelcon data
+		function updateAllPixelconData(allPixelcons) {
+			if(!data_allPixelconIds || !data_allPixelconCreators || (allPixelcons.length*64) > data_allPixelconIds.byteLength) {
+				data_allPixelconIds = new Uint8Array(allPixelcons.length*64);
+				for(let i=0; i<allPixelcons.length; i++) {
+					for(let j=0; j<64; j++) {
+						data_allPixelconIds[i*64 + j] = convertHexCode(allPixelcons[i].id.charCodeAt(j+2));
+					}
+				}
+				
+				data_creatorsList = [];
+				data_allPixelconCreators = new Uint16Array(allPixelcons.length);
+				for(let i=0; i<allPixelcons.length; i++) {
+					let index = data_creatorsList.indexOf(allPixelcons[i].creator);
+					if(index < 0) {
+						index = data_creatorsList.length;
+						data_creatorsList.push(allPixelcons[i].creator);
+					}
+					data_allPixelconCreators[i] = index;
+				}
+			}
+		}
+		
+		//Converts the hex code to a simple number
+		function convertHexCode(code) {
+			if(code >= 48 && code < 58) return code - 48;
+			if(code >= 97 && code < 103) return code - 87;
+			return 0;
+		}
+		
+		
+		////////////////
+		// Algorithms //
+		////////////////
+		
+		
+		//Returns all pixelcons that are similar to the given pixelcon
+		function findSimilar(pixelconId, allPixelconIds, pixelconMax, out, outMax) {
+			for(let i=0; i<outMax; i++) out[i] = -1;
+			let ids = new Uint8Array(15*64);
+			rotateMirrorTranslate(ids, pixelconId);
+			
+			let outIndex = 0;
+			for(let i=0; i<pixelconMax && outIndex<outMax; i++) {
+				if(checkSimilar(ids, subId(allPixelconIds,i*64))) {
+					out[outIndex] = i;
+					outIndex++;
+				}
+			}
+		}
+		
+		//Returns the earliest close match to the given pixelcon
+		function findCloseMatch(pixelconId, pixelconIndex, pixelconCreator, allPixelconIds, allPixelconCreators) {
+			let ids = new Uint8Array(15*64);
+			rotateMirrorTranslate(ids, pixelconId);
+			
+			for(let i=0; i<pixelconIndex; i++) {
+				let otherId = subId(allPixelconIds,i*64);
+				if(pixelconCreator != allPixelconCreators[i] && checkCloseMatch(ids, otherId)) {
+					return i;
+				}
+			}
+			return -1;
+		}
+		
+		//Checks if the given ids are similar
+		function checkSimilar(ids, otherId) {
+			for(let i=0; i<15; i++) {
+				let tolerance = 8;
+				if(i != 0) tolerance = tolerance/2;
+				
+				let delta = 0;
+				for(let j=0; j<64; j++) {
+					delta += getColorDistance(ids[i*64 + j], otherId[j]);
+				}
+				if(delta <= tolerance) return true;
+			}
+			return false;
+		}
+		
+		//Checks if the given ids are a close match
+		function checkCloseMatch(ids, otherId) {
+			for(let i=0; i<15; i++) {
+				let colorsCount = Math.max(countColors(subId(ids,i*64)), countColors(otherId));
+				
+				let tolerance = colorsCount*0.6;
+				if(i != 0) tolerance = tolerance/2;
+				if(colorsCount < 4) tolerance = tolerance/2;
+				if(colorsCount < 3) tolerance = tolerance/3;
+				
+				let delta = 0;
+				for(let j=0; j<64; j++) {
+					delta += getColorDistance(ids[i*64 + j], otherId[j]);
+				}
+				if(delta <= tolerance) return true;
+			}
+			return false;
+		}
+		
+		
+		///////////
+		// Utils //
+		///////////
+		
+		
 		//Returns a list of similar ids that were 
-		function rotateMirrorTranslate(pixelconId) {
-			let id = pixelconId.substr(2,64);
-			let ids = ['0x' + id];
+		function rotateMirrorTranslate(out, id) {
+			for(let i=0; i<64; i++) out[i] = id[i];
 			
 			//rotate
-			let rotatedId = id;
-			for(let i=0; i<4; i++) {
-				rotatedId = rotate(rotatedId);
-				if(ids.indexOf('0x' + rotatedId) < 0) ids.push('0x' + rotatedId);
-			}
+			rotate(subId(out,64*1), subId(out,64*0));
+			rotate(subId(out,64*2), subId(out,64*1));
+			rotate(subId(out,64*3), subId(out,64*2));
+			rotate(subId(out,64*4), subId(out,64*3));
 			
 			//mirror
-			let mirrorId = id;
-			mirrorId = mirror(id, true);
-			if(ids.indexOf('0x' + mirrorId) < 0) ids.push('0x' + mirrorId);
-			mirrorId = mirror(id, false);
-			if(ids.indexOf('0x' + mirrorId) < 0) ids.push('0x' + mirrorId);
+			mirror(subId(out,64*5), id, true);
+			mirror(subId(out,64*6), id, false);
 			
 			//translate
-			let translateId = id;
-			translateId = translate(id, 0, 1);
-			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
-			translateId = translate(id, 1, 1);
-			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
-			translateId = translate(id, 1, 0);
-			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
-			translateId = translate(id, 0, -1);
-			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
-			translateId = translate(id, -1, -1);
-			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
-			translateId = translate(id, -1, 0);
-			if(ids.indexOf('0x' + translateId) < 0) ids.push('0x' + translateId);
-			
-			return ids;
+			translate(subId(out,64*7), id, -1, -1);
+			translate(subId(out,64*8), id, -1, 0);
+			translate(subId(out,64*9), id, -1, 1);
+			translate(subId(out,64*10), id, 0, -1);
+			translate(subId(out,64*11), id, 0, 1);
+			translate(subId(out,64*12), id, 1, -1);
+			translate(subId(out,64*13), id, 1, 0);
+			translate(subId(out,64*14), id, 1, 1);
 		}
 		
 		//Rotates the id clockwise
-		function rotate(id) {
-			id = id.split('');
-			let rId = '0000000000000000000000000000000000000000000000000000000000000000'.split('');
+		function rotate(out, id) {
 			for(let x=0; x<8; x++) {
 				for(let y=0; y<8; y++) {
-					rId[x*8 + (7-y)] = id[y*8 + x];
+					out[x*8 + (7-y)] = id[y*8 + x];
 				}
 			}
-			return rId.join('');
 		}
 		
 		//Mirrors the id on the given axis
-		function mirror(id, xAxis) {
-			id = id.split('');
-			let rId = '0000000000000000000000000000000000000000000000000000000000000000'.split('');
+		function mirror(out, id, xAxis) {
 			for(let x=0; x<8; x++) {
 				for(let y=0; y<8; y++) {
-					if(xAxis) rId[x*8 + y] = id[(7-x)*8 + y];
-					else rId[x*8 + y] = id[x*8 + (7-y)];
+					if(xAxis) out[x*8 + y] = id[(7-x)*8 + y];
+					else out[x*8 + y] = id[x*8 + (7-y)];
 				}
 			}
-			return rId.join('');
 		}
 		
 		//Translates the id by the given vaues
-		function translate(id, tx, ty) {
-			id = id.split('');
-			let rId = '0000000000000000000000000000000000000000000000000000000000000000'.split('');
+		function translate(out, id, tx, ty) {
 			for(let x=0; x<8; x++) {
 				for(let y=0; y<8; y++) {
 					let nx = (x + 8 + tx) % 8;
 					let ny = (y + 8 + ty) % 8;
-					rId[nx*8 + ny] = id[x*8 + y];
+					out[nx*8 + ny] = id[x*8 + y];
 				}
 			}
-			return rId.join('');
 		}
 		
 		//Returns the number of colors
@@ -245,8 +289,8 @@
 			let count = 0;
 			let found = [];
 			for(let i=0; i<id.length; i++) {
-				if(id[i] != '0' && id[i] != 'x' && found.indexOf(id[i]) < 0) {
-					found.push(id[i]);
+				if(id[i] != 0 && !found[id[i]]) {
+					found[id[i]] = true;
 					count++;
 				}
 			}
@@ -254,24 +298,24 @@
 		}
 		
 		//Gets the distance [0-1.0] between two color hex values
-		const colorPalette = {
-			'0': [0,0,0],		//#000000
-			'1': [29,43,83],	//#1D2B53
-			'2': [126,37,83],	//#7E2553
-			'3': [0,135,81],	//#008751
-			'4': [171,82,54],	//#AB5236
-			'5': [95,87,79],	//#5F574F
-			'6': [194,195,195],	//#C2C3C7
-			'7': [255,241,232],	//#FFF1E8
-			'8': [255,0,77],	//#FF004D
-			'9': [255,163,0],	//#FFA300
-			'a': [255,255,39],	//#FFFF27
-			'b': [0,231,86],	//#00E756
-			'c': [41,173,255],	//#29ADFF
-			'd': [131,118,156],	//#83769C
-			'e': [255,119,168],	//#FF77A8
-			'f': [255,204,170],	//#FFCCAA
-		}
+		const colorPalette = [
+			[0,0,0],		//#000000
+			[29,43,83],		//#1D2B53
+			[126,37,83],	//#7E2553
+			[0,135,81],		//#008751
+			[171,82,54],	//#AB5236
+			[95,87,79],		//#5F574F
+			[194,195,195],	//#C2C3C7
+			[255,241,232],	//#FFF1E8
+			[255,0,77],		//#FF004D
+			[255,163,0],	//#FFA300
+			[255,255,39],	//#FFFF27
+			[0,231,86],		//#00E756
+			[41,173,255],	//#29ADFF
+			[131,118,156],	//#83769C
+			[255,119,168],	//#FF77A8
+			[255,204,170],	//#FFCCAA
+		];
 		function getColorDistance(c1, c2) {
 			let distance = Math.abs(colorPalette[c1][0] - colorPalette[c2][0]) + Math.abs(colorPalette[c1][1] - colorPalette[c2][1]) + Math.abs(colorPalette[c1][2] - colorPalette[c2][2]);
 			return distance/(255*3);

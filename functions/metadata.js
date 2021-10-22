@@ -68,7 +68,7 @@ async function getMetadata(pixelconId, params) {
 				
 	//add additional details
 	if(detailedMetadataEnabled) {
-		let match = await matchdata.findCloseMatch('0x' + id);
+		let match = await matchdata.getCloseMatch('0x' + id);
 		let collectionName = null;
 		if(collection) {
 			let collectionData = await ethdata.getCollection(collection);
