@@ -29,7 +29,7 @@ async function getTagDataHTML(path, plainHTMLPath) {
 				let type = 'summary';
 				let name = 'PixelCon' + (pixelconData.name ? (' [' + pixelconData.name + ']') : '');
 				let description = getDescription(pixelconData.name, pixelconData.index, pixelconData.collection, pixelconData.creator, pixelconData.date);
-				let imageUrl = appWebDomain + 'meta/image/' + id;
+				let imageUrl = appWebDomain + 'meta/image/' + id + getColorModifier([id]);
 	
 				let tagHTML = insertTagData(htmlData, type, name, description, imageUrl);
 				return tagHTML;
@@ -44,7 +44,7 @@ async function getTagDataHTML(path, plainHTMLPath) {
 				let type = 'summary_large_image';
 				let name = 'PixelCon Collection' + (collectionData.name ? (' [' + collectionData.name + ']') : '');
 				let description = 'Collection ' + index;
-				let imageUrl = appWebDomain + 'meta/image_multi/' + getIdsList(collectionData.pixelcons);
+				let imageUrl = appWebDomain + 'meta/image_multi/' + getIdsList(collectionData.pixelcons) + getColorModifier(collectionData.pixelcons);
 	
 				let tagHTML = insertTagData(htmlData, type, name, description, imageUrl);
 				return tagHTML;
@@ -59,7 +59,7 @@ async function getTagDataHTML(path, plainHTMLPath) {
 				let type = 'summary_large_image';
 				let name = 'PixelCon Creator';
 				let description = creator;
-				let imageUrl = appWebDomain + 'meta/image_multi/' + getIdsList(creatorData.pixelcons);
+				let imageUrl = appWebDomain + 'meta/image_multi/' + getIdsList(creatorData.pixelcons) + getColorModifier(creatorData.pixelcons);
 	
 				let tagHTML = insertTagData(htmlData, type, name, description, imageUrl);
 				return tagHTML;
@@ -202,6 +202,19 @@ function getIdsList(list) {
 	list = scrambleList(list);
 	for(let i=0; i<list.length && i<6; i++) ids += list[i].id.substring(2, 66);
 	return ids;
+}
+function getColorModifier(ids) {
+	if(settings.defaultGrayBackground && settings.defaultGrayBackground.indexOf) {
+		let allGrayBackground = true;
+		for(let i=0; i<ids.length; i++) {
+			if(settings.defaultGrayBackground.indexOf(ids[i]) == -1) {
+				allGrayBackground = false;
+				break;
+			}
+		}
+		if(allGrayBackground) return '?color=5F574F';
+	}
+	return '';
 }
 
 // Export

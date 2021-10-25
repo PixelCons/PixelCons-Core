@@ -51,7 +51,7 @@ function start(debugMode) {
 		}
 	});
 	app.get('/meta/image/:id', async function(req, res) {
-		let imageData = await webFunctions.getStandardImage(req.params.id, req.query.index);
+		let imageData = await webFunctions.getStandardImage(req.params.id, req.query.index, req.query.color);
 		if(!imageData.errorText) {
 			res.contentType('image/png');
 			res.end(imageData, 'binary');
@@ -60,7 +60,7 @@ function start(debugMode) {
 		}
 	});
 	app.get('/meta/image_multi/:ids', async function(req, res) {
-		let imageData = await webFunctions.getMultiImage(req.params.ids.split(','));
+		let imageData = await webFunctions.getMultiImage(req.params.ids.split(','), req.query.color);
 		if(!imageData.errorText) {
 			res.contentType('image/png');
 			res.end(imageData, 'binary');

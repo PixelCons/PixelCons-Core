@@ -30,12 +30,12 @@ async function getMetadata(pixelconId, params) {
 	let metadata = {
 		"name": name,
 		"description": description, 
-		"image": appWebDomain + "meta/image/" + id,
-		"image_url": appWebDomain + "meta/image/" + id,
+		"image": appWebDomain + "meta/image/" + id + getColorModifier('0x' + id),
+		"image_url": appWebDomain + "meta/image/" + id + getColorModifier('0x' + id),
 		"external_url": appWebDomain + "details/" + id,
 		"home_url": appWebDomain + "details/" + id,
-		"background_color": "000000",
-		"color": "000000",
+		"background_color": getColor('0x' + id),
+		"color": getColor('0x' + id),
 		"attributes": [{
 			"display_type": "date", 
 			"trait_type": "Created", 
@@ -167,6 +167,14 @@ function getDescription(name, index, collection, collectionName, creator, create
 	}
 	if(creator) result += " - Creator 0x" + creator;
 	return result;
+}
+function getColorModifier(id) {
+	if(settings.defaultGrayBackground && settings.defaultGrayBackground.indexOf && settings.defaultGrayBackground.indexOf(id) > -1) return '?color=5F574F';
+	return '';
+}
+function getColor(id) {
+	if(settings.defaultGrayBackground && settings.defaultGrayBackground.indexOf && settings.defaultGrayBackground.indexOf(id) > -1) return '5F574F';
+	return '000000';
 }
 
 // Export

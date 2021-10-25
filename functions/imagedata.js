@@ -12,24 +12,24 @@ const standardImageScaleMultiplier = 2;
 const multiImageScaleMultiplier = 8;
 
 // Gets the standard PNG for the given pixelcon id
-async function getStandardImage(pixelconId, pixelconIndex) {
+async function getStandardImage(pixelconId, index, color) {
 	const width = 265 * standardImageScaleMultiplier;
 	const height = 175 * standardImageScaleMultiplier;
 	const pixelconScale = 15 * standardImageScaleMultiplier;
 	const qrCodeMargin = 5 * standardImageScaleMultiplier;
-	const backgroundColor = [0,0,0];
 	let dataArray = new Uint8Array(width*height*3);
 	
 	let id = formatId(pixelconId);
 	if(!id) throw "Invalid ID";
 	
 	//draw the background
+	let backgroundColor = formatColor(color);
 	drawSquare(dataArray, width, height, 0, 0, width, height, backgroundColor);
 	
 	//draw the qr code
-	pixelconIndex = Number.isInteger(parseInt(pixelconIndex)) ? parseInt(pixelconIndex) : null;
-	if(pixelconIndex !== null && pixelconIndex !== undefined) {
-		let linkStr = qrCodeImageLink + ModifiedBase64.fromInt(pixelconIndex).padStart(4, '0');
+	index = Number.isInteger(parseInt(index)) ? parseInt(index) : null;
+	if(index !== null && index !== undefined) {
+		let linkStr = qrCodeImageLink + ModifiedBase64.fromInt(index).padStart(4, '0');
 		drawQrCode_b(dataArray, width, height, qrCodeMargin, qrCodeMargin, standardImageScaleMultiplier, linkStr, [250,250,250]);
 	}
 	
@@ -42,18 +42,18 @@ async function getStandardImage(pixelconId, pixelconIndex) {
 }
 
 // Gets a multi pixelcon PNG for the given pixelcon ids
-async function getMultiImage(pixelconIds) {
+async function getMultiImage(pixelconIds, color) {
 	const width = 82 * multiImageScaleMultiplier;
 	const height = 42 * multiImageScaleMultiplier;
 	const pixelconScale = 2 * multiImageScaleMultiplier;
 	const positionMap = [[[33,13]],  [[20,13],[46,13]],  [[8,13],[33,13],[58,13]],  [[20,3],[46,3],[20,23],[46,23]],  [[8,3],[33,3],[58,3],[20,23],[46,23]],  [[8,3],[33,3],[58,3],[8,23],[33,23],[58,23]]];
-	const backgroundColor = [0,0,0];
 	let dataArray = new Uint8Array(width*height*3);
 	
 	let ids = formatIds(pixelconIds);
 	if(!ids) throw "Invalid ID";
 	
 	//draw the background
+	let backgroundColor = formatColor(color);
 	drawSquare(dataArray, width, height, 0, 0, width, height, backgroundColor);
 	
 	//draw the pixelcons
@@ -85,11 +85,20 @@ function formatIds(ids) {
 	}
 	return allIds;
 }
+function formatColor(colorHex) {
+	const defaultBackground = [0,0,0];
+	if(!colorHex || !colorHex.length) return defaultBackground;
+	colorHex = colorHex.toLowerCase();
+	if(colorHex.indexOf('#') == 0) colorHex = colorHex.substr(1,colorHex.length);
+	if(colorHex.length != 6) return defaultBackground;
+	for(let i=0; i<6; i++) if(hexCharacters.indexOf(colorHex[i]) == -1) return defaultBackground;
+	return [parseInt(colorHex.substr(0,2), 16), parseInt(colorHex.substr(2,2), 16), parseInt(colorHex.substr(4,2), 16)];
+}
 function drawSquare(dataArray, arrayW, arrayH, x, y, w, h, color) {
-	let xStart = Math.min(x, arrayW);
-	let xEnd = Math.min(x+w, arrayW);
-	let yStart = Math.min(y, arrayH);
-	let yEnd = Math.min(y+h, arrayH);
+	let xStart = Math.max(Math.min(x, arrayW),0);
+	let xEnd = Math.max(Math.min(x+w, arrayW),0);
+	let yStart = Math.max(Math.min(y, arrayH),0);
+	let yEnd = Math.max(Math.min(y+h, arrayH),0);
 	for(let x2=xStart; x2<xEnd; x2++) {
 		for(let y2=yStart; y2<yEnd; y2++) {
 			let index = (y2*arrayW + x2)*3;
