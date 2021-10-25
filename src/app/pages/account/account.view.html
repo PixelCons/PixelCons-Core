@@ -70,7 +70,7 @@
 		
 			<!-- PixelCons -->
 			<div class="displayTable" ng-show="!ctrl.loading">
-				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='send'">Select the PixelCons you want to send</div>
+				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='send'">Select the PixelCon you want to send</div>
 				<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-account="true" selectable="{{!!ctrl.selectionMode}}" disabled="{{ctrl.checkDisabled(pixelcon)}}" 
 					size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" ng-repeat="pixelcon in ctrl.pixelcons track by $index"></pixelconcard>
 			</div>
