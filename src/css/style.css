@@ -180,6 +180,9 @@
 .buttonIcon.create {
 	background-image: url("/img/icon_create.svg");
 }
+.buttonIcon.download {
+	background-image: url("/img/icon_download.svg");
+}
 
 /* App Layout */
 div.appContainer {
@@ -280,4 +283,59 @@ a.buttonLink {
 	left: 0px;
 	width: 100%;
 	height: 100%;
+}
+
+/* Image expand */
+.imageExpandContainer {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: #000000c4;
+	z-index: 100;
+}
+.imageExpandContainer .imageExpandMessageDiv {
+	position: absolute;
+	width: 300px;
+	height: 80px;
+	line-height: 80px;
+	left: calc(50% - 150px);
+	top: calc(50% - 40px);
+	border-radius: 10px;
+	font-size: 24px;
+	text-align: center;
+	background-color: #eeeeee;
+}
+.imageExpandContainer .imageExpandImageDiv {
+	position: absolute;
+	left: 5%;
+	top: 5%;
+	width: 90%;
+	height: 90%;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center; 
+}
+.imageExpandContainer .imageExpandImage {
+	width: 100%;
+	height: 100%;
+	opacity: 0.0;
+	filter: alpha(opacity=0);
+}
+.imageExpandContainer .imageExpandClose {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	width: 20%;
+	height: 20%;
+	background-size: 35px;
+	background-repeat: no-repeat;
+	background-position: top right;
+	background-image: url(/img/icon_close_w.svg);
+	opacity: 0.6;
+	cursor: pointer;
+}
+.imageExpandContainer .imageExpandClose:hover {
+	opacity: 0.9;
 }

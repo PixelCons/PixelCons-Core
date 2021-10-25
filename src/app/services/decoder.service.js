@@ -9,12 +9,15 @@
 		this.decodePNG = decodePNG;
 		this.encodePNG = encodePNG;
 		this.backgroundPNG = backgroundPNG;
+		this.generateDisplayImage = generateDisplayImage;
 		this.updateBackground = updateBackground;
 		
 		//Data
-		var imageCache = [];
+		var loadImage_cache = {};
+		var image_cache = [];
 		
 		//Configuration
+		const qrCodeImageLink = document.location.origin + '/_'
 		const maxCacheImages = 500;
 		const frameColorDist = 0.05;
 		const maxColorDist = 0.1;
@@ -111,7 +114,7 @@
 		//Creates a PNG image from the given pixelcon id
 		function encodePNG(id, large) {
 			let cacheKey = 'encodePNG(' + id + ',' + large + ')';
-			let cached = getFromCache(imageCache, cacheKey);
+			let cached = getFromCache(image_cache, cacheKey);
 			if(cached) return cached;
 			
 			let canvas = document.createElement('canvas');
@@ -160,7 +163,7 @@
 			let data = canvas.toDataURL('image/png');
 			canvas.remove();
 			
-			addToCache(imageCache, cacheKey, data, maxCacheImages);
+			addToCache(image_cache, cacheKey, data, maxCacheImages);
 			return data;
 		}
 		
@@ -206,6 +209,114 @@
 
 			if(n < 7) canvas = shiftCanvas(canvas, Math.round(scale*2), Math.round(scale*2));
 			let data = canvas.toDataURL('image/png');
+			canvas.remove();
+			return data;
+		}
+		
+		//Generates a display image with the given parameters
+		async function generateDisplayImage(pixelcon, orientation, ratio, color, margin, includeQr, includeDetails, detailsSize, texture, intensity, fullRender, imageType) {
+			if(!margin) margin = 0;
+			let isHorizontal = (orientation != 'vertical');
+			
+			//determine sizes
+			const shortestSideMin = fullRender ? 3000 : 1000;
+			const marginW = Math.round((isHorizontal ? margin : margin/ratio) * (fullRender ? 1.0 : 0.333));
+			const marginH = Math.round((isHorizontal ? margin/ratio : margin) * (fullRender ? 1.0 : 0.333));
+			const width = (isHorizontal ? Math.round(shortestSideMin*ratio) : shortestSideMin) + marginW*2;
+			const height = (isHorizontal ? shortestSideMin : Math.round(shortestSideMin*ratio)) + marginH*2;
+			const pixelconScale = Math.round(shortestSideMin*0.085);
+			
+			//build canvas for drawing
+			let canvas = document.createElement('canvas');
+			canvas.width = width;
+			canvas.height = height;
+			let ctx = canvas.getContext("2d");
+			ctx.fillStyle = color;
+			ctx.fillRect(0, 0, width, height);
+			
+			//draw pixelcon
+			let id = formatId(pixelcon.id);
+			if (id) {
+				const offsetX = Math.round((width - pixelconScale * 8) / 2);
+				const offsetY = Math.round((height - pixelconScale * 8) / 2);
+				for (let y = 0; y < 8; y++) {
+					for (let x = 0; x < 8; x++) {
+						let index = y * 8 + x;
+						ctx.fillStyle = getPaletteColorInHex(id[index]);
+						ctx.fillRect(offsetX + (x * pixelconScale), offsetY + (y * pixelconScale), pixelconScale, pixelconScale);
+					}
+				}
+			}
+			
+			//details size
+			const sizeMult = detailsSize != 'large' ? (detailsSize == 'small' ? 0.6 : 1) : 1.8;
+			const qrOffset = Math.round(shortestSideMin*0.015);
+			const qrScale = Math.round(shortestSideMin*0.003*sizeMult);
+			const fontSize = Math.round(shortestSideMin*0.018*sizeMult);
+			if(color == '#C2C3C7' || color == '#FFF1E8' || color == '#FFFF27') ctx.fillStyle = '#444444';
+			else ctx.fillStyle = '#FFFFFF';
+			
+			//draw qr code
+			let qrGridSize = 0;
+			if(includeQr) {
+				let linkStr = qrCodeImageLink.length > 22 ? qrCodeImageLink : (qrCodeImageLink + ModifiedBase64.fromInt(pixelcon.index).padStart(4, '0'));
+				let qr = QRCode.makeCode(linkStr);
+				if(qr) {
+					qrGridSize = qr.length;
+					const offsetX = qrOffset + marginW;
+					const offsetY = height - ((qrScale * qrGridSize) + qrOffset + marginH);
+					for (let y = 0; y < qrGridSize; y++) {
+						for (let x = 0; x < qrGridSize; x++) {
+							if(qr[x][y]) {
+								ctx.fillRect(offsetX + (x * qrScale), offsetY + (y * qrScale), qrScale, qrScale);
+							}
+						}
+					}
+				}
+			}
+			
+			//draw details
+			if(includeDetails) {
+				const offsetX = qrOffset + marginW + (qrGridSize > 0 ? qrScale * (qrGridSize + 3) : 0);
+				const offsetY = height - (qrOffset + marginH);
+				
+				ctx.font = 'bold ' + fontSize + 'px Roboto, "Helvetica Neue", sans-serif';
+				ctx.fillText('#' + pixelcon.index, offsetX, offsetY - Math.round(fontSize*1.2));
+				ctx.fillText(getDateStr(pixelcon.date), offsetX, offsetY);
+			}
+			
+			//render texture
+			if(texture != 'none') {
+				try {
+					let img = null;
+					if(texture == 'film') img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_film.png', !fullRender);
+					else if(texture == 'wood') img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_wood.png', !fullRender);
+					else if(texture == 'fabric') img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_fabric.png', !fullRender);
+					else if(texture == 'stone') img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_stone.png', !fullRender);
+					else img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_metal.png', !fullRender);
+					
+					ctx.globalAlpha = intensity/100;
+					if(isHorizontal) {
+						const adjWidth = Math.round(shortestSideMin*2 + marginW*2);
+						const adjHeight = Math.round(shortestSideMin + marginH*2);
+						const offsetX = Math.round((width - adjWidth) / 2);
+						ctx.drawImage(img, offsetX, 0, adjWidth, adjHeight);
+					} else {
+						const adjWidth = Math.round(shortestSideMin + marginW*2);
+						const adjHeight = Math.round(shortestSideMin*2 + marginH*2);
+						const offsetY = Math.round((height - adjHeight) / 2);
+						ctx.rotate(isHorizontal ? 0 : 1.57079632679);
+						ctx.drawImage(img, offsetY, 0, adjHeight, -adjWidth);
+						ctx.rotate(isHorizontal ? 0 : -1.57079632679);
+					}
+					ctx.globalAlpha = 1.0;
+				} catch(err) { }
+			}
+			
+			//encode canvas as image
+			let data = null;
+			if(imageType == 'jpeg') data = canvas.toDataURL('image/jpeg');
+			else data = canvas.toDataURL('image/png');
 			canvas.remove();
 			return data;
 		}
@@ -445,6 +556,12 @@
 			return null;
 		}
 		
+		//Gets a date string from the given millis
+		function getDateStr(millis) {
+			let d = new Date(millis);
+			return (''+(d.getMonth()+1)).padStart(2,'0') + '/' + d.getFullYear();
+		}
+		
 		//Scrambles the given list in a repeatable way
 		function scrambleList(list) {
 			list = JSON.parse(JSON.stringify(list));
@@ -458,6 +575,53 @@
 			});
 			return list;
 		}
+		
+		//Loads the given image
+		function loadImage(src, cache) {
+			return $q(function (resolve, reject) {
+				if(loadImage_cache[src]) resolve(loadImage_cache[src]);
+				
+				let img = new Image();
+				img.onload = function() {
+					if(cache) loadImage_cache[src] = img;
+					resolve(img);
+				}
+				img.onerror = function() {
+					reject();
+				}
+				img.src = src;
+			});
+		}
+		
+		//Base64 converter
+		const ModifiedBase64 = (function () {
+			var digitsStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";
+			var digits = digitsStr.split('');
+			var digitsMap = {};
+			for (let i = 0; i < digits.length; i++) digitsMap[digits[i]] = i;
+			return {
+				fromInt: function(int32) {
+					if(!Number.isInteger(int32)) return null;
+					let result = '';
+					while (true) {
+						result = digits[int32 & 0x3f] + result;
+						int32 >>>= 6;
+						if (int32 === 0) break;
+					}
+					return result;
+				},
+				toInt: function(digitsStr) {
+					let result = 0;
+					let digitsArr = digitsStr.split('');
+					for (let i = 0; i < digitsArr.length; i++) {
+						let digitVal = digitsMap[digitsArr[i]];
+						if(digitVal === undefined) return null;
+						result = (result << 6) + digitVal;
+					}
+					return result;
+				}
+			};
+		})();
 		
 		//Cache manipulation
 		function addToCache(cache, key, value, maxEntries) {

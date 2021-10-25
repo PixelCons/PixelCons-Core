@@ -9,6 +9,7 @@
 		_this.rename = rename;
 		_this.create = create;
 		_this.send = send;
+		_this.generatePrint = generatePrint;
 		_this.searchSimilar = searchSimilar;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
@@ -154,6 +155,19 @@
 				templateUrl: HTMLTemplates['dialog.send'],
 				parent: angular.element(document.body),
 				locals: { pixelconId: _this.pixelconId },
+				bindToController: true,
+				clickOutsideToClose: true
+			});
+		}
+
+		// Search for similar pixelcons
+		function generatePrint() {
+			$mdDialog.show({
+				controller: 'PrintsDialogCtrl',
+				controllerAs: 'ctrl',
+				templateUrl: HTMLTemplates['dialog.prints'],
+				parent: angular.element(document.body),
+				locals: { pixelcon: _this.details },
 				bindToController: true,
 				clickOutsideToClose: true
 			});

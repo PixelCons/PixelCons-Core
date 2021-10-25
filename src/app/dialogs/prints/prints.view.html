@@ -1,0 +1,107 @@
+<md-dialog class="printsDialog colorLight" ng-class="ctrl.screenSize" aria-label="Image Generator">
+	
+	<!-- Header -->
+	<div class="dialogTitle">Image Generator<div class="printsIcon wallpaper"></div></div>
+	
+	<!-- Layout -->
+	<div class="generatorContent">
+		<div class="generatorPreview" ng-style="{'background-image': ctrl.previewImage ? ('url(' + ctrl.previewImage + ')') : 'none'}" ng-click="ctrl.expandPreview()">
+			<img class="previewImage" ng-if="ctrl.previewImage" ng-src="{{ctrl.previewImage}}"/>
+			<md-progress-circular class="spinner" ng-if="!ctrl.previewImage" md-mode="indeterminate"></md-progress-circular>
+		</div>
+		<div class="generatorButtons textNotSelectable">
+			<div class="generatorButtonsSectionLabel textMedium textLight">Layout</div>
+			<div class="generatorButtonsSection">
+				<md-input-container style="width:110px;">
+					<label>Orientation</label>
+					<md-select ng-model="ctrl.imageConfig.orientation" ng-change="ctrl.updatePreview()">
+						<md-option value="horizontal">Horizontal</md-option>
+						<md-option value="vertical">Vertical</md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container style="width:85px;">
+					<label>Ratio</label>
+					<md-select ng-model="ctrl.imageConfig.ratio" ng-change="ctrl.updatePreview()">
+						<md-option value="1.0">1:1</md-option>
+						<md-option value="1.25">1:1.25</md-option>
+						<md-option value="1.4">1:1.4</md-option>
+						<md-option value="1.5">1:1.5</md-option>
+						<md-option value="2">1:2</md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container style="width:70px;">
+					<label>Color</label>
+					<md-select ng-model="ctrl.imageConfig.backgroundColor" ng-change="ctrl.updatePreview()">
+						<md-option value="#000000"><div class="selectOptionColorBlock" style="background-color:#000000"></div></md-option>
+						<md-option value="#1D2B53"><div class="selectOptionColorBlock" style="background-color:#1D2B53"></div></md-option>
+						<md-option value="#7E2553"><div class="selectOptionColorBlock" style="background-color:#7E2553"></div></md-option>
+						<md-option value="#008751"><div class="selectOptionColorBlock" style="background-color:#008751"></div></md-option>
+						<md-option value="#AB5236"><div class="selectOptionColorBlock" style="background-color:#AB5236"></div></md-option>
+						<md-option value="#5F574F"><div class="selectOptionColorBlock" style="background-color:#5F574F"></div></md-option>
+						<md-option value="#C2C3C7"><div class="selectOptionColorBlock" style="background-color:#C2C3C7"></div></md-option>
+						<md-option value="#FFF1E8"><div class="selectOptionColorBlock" style="background-color:#FFF1E8"></div></md-option>
+						<md-option value="#FF004D"><div class="selectOptionColorBlock" style="background-color:#FF004D"></div></md-option>
+						<md-option value="#FFA300"><div class="selectOptionColorBlock" style="background-color:#FFA300"></div></md-option>
+						<md-option value="#FFFF27"><div class="selectOptionColorBlock" style="background-color:#FFFF27"></div></md-option>
+						<md-option value="#00E756"><div class="selectOptionColorBlock" style="background-color:#00E756"></div></md-option>
+						<md-option value="#29ADFF"><div class="selectOptionColorBlock" style="background-color:#29ADFF"></div></md-option>
+						<md-option value="#83769C"><div class="selectOptionColorBlock" style="background-color:#83769C"></div></md-option>
+						<md-option value="#FF77A8"><div class="selectOptionColorBlock" style="background-color:#FF77A8"></div></md-option>
+						<md-option value="#FFCCAA"><div class="selectOptionColorBlock" style="background-color:#FFCCAA"></div></md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container style="width:65px;">
+					<label>Margin</label>
+					<input type="number" step="any" ng-model="ctrl.imageConfig.margin" min="0" max="2000" ng-change="ctrl.updatePreview()"/>
+				</md-input-container>
+			</div>
+			
+			<div class="generatorButtonsSectionLabel textMedium textLight">Details</div>
+			<div class="generatorButtonsSection">
+				<md-input-container style="width:70px" class="md-input-has-value">
+					<label>QR Code</label>
+					<md-switch class="md-primary" ng-model="ctrl.imageConfig.includeQr" aria-label="include qr" ng-change="ctrl.updatePreview()"></md-switch>
+				</md-input-container>
+				<md-input-container style="width:70px" class="md-input-has-value">
+					<label>Num/Date</label>
+					<md-switch class="md-primary" ng-model="ctrl.imageConfig.includeDetails" aria-label="include number and date" ng-change="ctrl.updatePreview()"></md-switch>
+				</md-input-container>
+				<md-input-container style="width:70px">
+					<label>Size</label>
+					<md-select ng-model="ctrl.imageConfig.detailsSize" ng-change="ctrl.updatePreview()">
+						<md-option value="small">Sm</md-option>
+						<md-option value="medium">Md</md-option>
+						<md-option value="large">Lg</md-option>
+					</md-select>
+				</md-input-container>
+			</div>
+			
+			<div class="generatorButtonsSectionLabel textMedium textLight">Filters</div>
+			<div class="generatorButtonsSection">
+				<md-input-container style="width:81px">
+					<label>Texture</label>
+					<md-select ng-model="ctrl.imageConfig.texture" ng-change="ctrl.updatePreview()">
+						<md-option value="none">None</md-option>
+						<md-option value="stone">Stone</md-option>
+						<md-option value="metal">Metal</md-option>
+						<md-option value="film">Film</md-option>
+						<md-option value="wood">Wood</md-option>
+						<md-option value="fabric">Fabric</md-option>
+					</md-select>
+				</md-input-container>
+				<md-input-container style="width:150px" class="md-input-has-value">
+					<label>Intensity</label>
+					<md-slider ng-model="ctrl.imageConfig.intensity" ng-disabled="ctrl.imageConfig.texture == 'none'" ng-change="ctrl.updatePreview()" min="10" max="100" aria-label="intensity" class="md-primary"></md-slider>
+				</md-input-container>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Buttons -->
+	<div class="actionButtons">
+		<md-button ng-click="ctrl.downloadImage('png')"><div class="buttonIcon download ng-scope"></div>PNG</md-button>
+		<md-button ng-click="ctrl.downloadImage('jpeg')"><div class="buttonIcon download ng-scope"></div>JPEG</md-button>
+	</div>
+	
+	<div class="dialogCloseButton" ng-click="ctrl.closeDialog()"></div>
+</md-dialog>

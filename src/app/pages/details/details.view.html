@@ -9,6 +9,7 @@
 			<div ng-show="ctrl.pixelconId" class="pixelconImage">
 				<pixelcon id="ctrl.pixelconId" large="true"/>
 			</div>
+			<div class="windowIconTop wallpaperIcon" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.generatePrint()"></div>
 			<div class="windowIcon similarSearchIcon" ng-if="!ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.searchSimilar()"></div>
 			<div class="windowIcon similarIcon" ng-class="{'replica': ctrl.details.creator == ctrl.details.match.creator}" 
 				ng-if="ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.searchSimilar()"></div>
