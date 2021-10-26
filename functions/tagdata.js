@@ -9,7 +9,7 @@ const webdata = require('./webdata.js');
 // Settings
 const customizedHTMLTagsEnabled = settings.customizedHTMLTagsEnabled;
 const appWebDomain = settings.appWebDomain;
-const genesisCount = 651;
+const genesisCount = settings.genesisCount;
 const tagEntryPoint = '<!-- Tag Inserts -->';
 
 // Data

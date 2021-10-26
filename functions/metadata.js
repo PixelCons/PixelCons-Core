@@ -9,8 +9,9 @@ const ethdata = require('./ethdata.js');
 // Settings
 const appWebDomain = settings.appWebDomain;
 const detailedMetadataEnabled = settings.detailedMetadataEnabled;
-const genesisCount = 651;
-const genesisArtists = ['9f2fedfff291314e5a86661e5ed5e6f12e36dd37', '3bf64000788a356d9d7c38a332adbce539fff13d', '0507873482d57637e8d975640316b0a6b2ebbfc1', 'f88e77f202db096e75596b468eef7c16282156b1', '4ff81761e0e8d3d311163b1b17607165c2d4955f'];
+const genesisCount = settings.genesisCount;
+const genesisArtists = settings.genesisArtists;
+const defaultGrayBackground = settings.defaultGrayBackground;
 
 // Gets the metadata JSON for the given pixelcon id
 async function getMetadata(pixelconId, params) {
@@ -59,7 +60,7 @@ async function getMetadata(pixelconId, params) {
 			"value": "2018 Genesis"
 		});
 	}
-	if(genesisArtists.indexOf(creator) > -1) {
+	if(genesisArtists.indexOf('0x' + creator) > -1) {
 		metadata["attributes"].push({
 			"trait_type": "Genesis", 
 			"value": "Genesis Artist"
@@ -169,11 +170,11 @@ function getDescription(name, index, collection, collectionName, creator, create
 	return result;
 }
 function getColorModifier(id) {
-	if(settings.defaultGrayBackground && settings.defaultGrayBackground.indexOf && settings.defaultGrayBackground.indexOf(id) > -1) return '?color=5F574F';
+	if(defaultGrayBackground && defaultGrayBackground.indexOf && defaultGrayBackground.indexOf(id) > -1) return '?color=5F574F';
 	return '';
 }
 function getColor(id) {
-	if(settings.defaultGrayBackground && settings.defaultGrayBackground.indexOf && settings.defaultGrayBackground.indexOf(id) > -1) return '5F574F';
+	if(defaultGrayBackground && defaultGrayBackground.indexOf && defaultGrayBackground.indexOf(id) > -1) return '5F574F';
 	return '000000';
 }
 
