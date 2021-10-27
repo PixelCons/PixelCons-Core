@@ -467,7 +467,8 @@
 				throw new UserActionNeededError('Connected to wrong network', 'Please switch your account network from <b>' + currNetworkName + '</b> to <b>' + networkName + '</b>');
 			}
 			let contract = await getContract(contractPath, chainId);
-			return contract.connect(_web3Provider.getSigner(0));
+			let signerContract = contract.connect(_web3Provider.getSigner(0));
+			return wrapContractWithErrorHandling(signerContract, contract.abi, contract.blockNumber);
 		}
 
 		// Gets contract object based on given path to ABI
@@ -489,58 +490,9 @@
 				throw new UserActionNeededError('Failed to find network provider', 'Please switch your account network from <b>' + currNetworkName + '</b> to <b>' + networkName + '</b> or update the fallback RPCs in ' + _messageSettingsButton);
 			}
 			let contract = new ethers.Contract(contractDetails.address, contractData.abi, provider);
-			
-			//wrap contract calls to handle errors that require a retry
-			let retryHandler = function(f) {
-				return async function() {
-					try {
-						return await f.apply(this, arguments);
-					} catch(err) {
-						//retry after common error
-						if(err && err.message === 'header not found') {
-							return await f.apply(this, arguments);
-						} else {
-							throw err;
-						}
-					}
-				}
-			}
-			contract.call = {};
-			for(let f in contract) {
-				if (typeof contract[f] === 'function') {
-					for(let i=0; i<contractData.abi.length; i++) {
-						if(contractData.abi[i].name && f.indexOf(contractData.abi[i].name) > -1) {
-							contract.call[f] = retryHandler(contract[f]);
-							break;
-						}
-					}
-				}
-			}
-			
-			//wrap the queryFilter function to handle larger datasets
-			let queryFilter_unsafe = contract.queryFilter;
-			contract.queryFilter = async function(filter, fromBlock, toBlock) {
-				if(!fromBlock) fromBlock = parseInt('' + contractDetails.blockNumber);
-				if(!toBlock) toBlock = 'latest';
-				//recursively searches smaller and smaller block chunks until we get success or hit a set depth
-				const maxRecursionDepth = 15;
-				async function queryFilterRec(filter, fromBlock, toBlock, depth) {
-					try {
-						return await queryFilter_unsafe.call(contract, filter, fromBlock, toBlock);
-					} catch(err) {
-						if(toBlock === 'latest') toBlock = await contract.provider.getBlockNumber();
-						if(depth < maxRecursionDepth && (toBlock - fromBlock) > 1) {
-							let halfway = fromBlock + Math.floor((toBlock - fromBlock) / 2);
-							let firstHalf = await queryFilterRec(filter, fromBlock, halfway, depth + 1);
-							let secondHalf = await queryFilterRec(filter, halfway + 1, toBlock, depth + 1);
-							return firstHalf.concat(secondHalf);
-						} else throw err;
-					}
-				}
-				return queryFilterRec(filter, fromBlock, toBlock, 0);
-			}
-			
-			return contract;
+			contract.abi = contractData.abi;
+			contract.blockNumber = contractDetails.blockNumber;
+			return wrapContractWithErrorHandling(contract);
 		}
 
 		// Gets the contract details on the current network
@@ -600,6 +552,65 @@
 					}
 				}
 			});
+		}
+		
+		// Wraps the given contract with better error handling
+		function wrapContractWithErrorHandling(contract, abi, blockNumber) {
+			if(!abi) abi = contract.abi;
+			if(!blockNumber) blockNumber = contract.blockNumber;
+			
+			//wrap contract calls to handle errors that require a retry
+			const maxNumRetries = 5;
+			let retryHandler = function(f) {
+				return async function() {
+					for(let i=0; i<maxNumRetries; i++){
+						try {
+							return await f.apply(this, arguments);
+						} catch(err) {
+							//only allow retry after common error
+							if(!err || err.message !== 'header not found' || i >= maxNumRetries-1) {
+								throw err;
+							}
+						}
+					}
+				}
+			}
+			contract.errRetry = {};
+			for(let f in contract) {
+				if (typeof contract[f] === 'function') {
+					for(let i=0; i<abi.length; i++) {
+						if(abi[i].name && f.indexOf(abi[i].name) > -1) {
+							contract.errRetry[f] = retryHandler(contract[f]);
+							break;
+						}
+					}
+				}
+			}
+			
+			//wrap the queryFilter function to handle larger datasets
+			let queryFilter_unsafe = contract.queryFilter;
+			contract.queryFilter = async function(filter, fromBlock, toBlock) {
+				if(!fromBlock) fromBlock = parseInt('' + blockNumber);
+				if(!toBlock) toBlock = 'latest';
+				//recursively searches smaller and smaller block chunks until we get success or hit a set depth
+				const maxRecursionDepth = 15;
+				async function queryFilterRec(filter, fromBlock, toBlock, depth) {
+					try {
+						return await queryFilter_unsafe.call(contract, filter, fromBlock, toBlock);
+					} catch(err) {
+						if(toBlock === 'latest') toBlock = await contract.provider.getBlockNumber();
+						if(depth < maxRecursionDepth && (toBlock - fromBlock) > 1) {
+							let halfway = fromBlock + Math.floor((toBlock - fromBlock) / 2);
+							let firstHalf = await queryFilterRec(filter, fromBlock, halfway, depth + 1);
+							let secondHalf = await queryFilterRec(filter, halfway + 1, toBlock, depth + 1);
+							return firstHalf.concat(secondHalf);
+						} else throw err;
+					}
+				}
+				return queryFilterRec(filter, fromBlock, toBlock, 0);
+			}
+			
+			return contract;
 		}
 
 		// Registers a contract service
