@@ -148,7 +148,7 @@ div.pixelconDetailsPage div.viewWindow div.windowIcon.similarIcon {
 	opacity: 0.6;
 	filter: alpha(opacity=60);
 }
-div.pixelconDetailsPage div.viewWindow div.windowIcon.similarIcon.replica {
+div.pixelconDetailsPage div.viewWindow div.windowIcon.similarIcon.verified {
 	background-image: url(/img/icon_replica_w.svg);
 }
 div.pixelconDetailsPage div.viewWindow:hover div.windowIcon.similarIcon {

@@ -74,7 +74,7 @@ pixelconcard .pixelconCardDirectiveSimilarNotification {
 	opacity: 0.9;
 	filter: alpha(opacity=90);
 }
-pixelconcard .pixelconCardDirectiveSimilarNotification.replica {
+pixelconcard .pixelconCardDirectiveSimilarNotification.verified {
     background-image: url(/img/icon_replica.svg);
 }
 pixelconcard .pixelconCardDirectiveAccountNotification {

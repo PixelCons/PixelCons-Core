@@ -21,7 +21,7 @@
 	<div class="view" ng-if="ctrl.currView=='similarityAcknowledge'" ng-cloak>
 		<div class="infoText approveTitle"><b>Similar PixelCon</b></div>
 		<div class="textCenter">
-			<div class="similarPixelconIcon" ng-class="{'replica': (ctrl.match.creator == ctrl.account)}"></div>
+			<div class="similarPixelconIcon" ng-class="{'verified': ctrl.match.verified}"></div>
 			<a ng-href="/details/{{ctrl.match.id}}" class="plain textDark" target="_blank">
 				<div class="similarPixelcon md-whiteframe-1dp">
 					<div class="similarPixelconShade">#{{ctrl.match.index}}</div>
@@ -29,10 +29,12 @@
 				</div>
 			</a>
 		</div>
-		<div class="infoText">Your creation is very similar to this already created PixelCon. Are you sure you want to continue?</div>
+		<div class="infoText" ng-if="!ctrl.match.verified && ctrl.match.level > 2">Your creation is too similar to this already created PixelCon. Try making it more unique</div>
+		<div class="infoText" ng-if="!ctrl.match.verified && ctrl.match.level <= 2">Your creation is very similar to this already created PixelCon. Are you sure you want to continue?</div>
+		<div class="infoText" ng-if="ctrl.match.verified">Your creation is a near replica of your previous work. Are you sure you want to continue?</div>
 		<div class="actionButtons">
 			<div class="note textLight">1 <span class="textSmall">PixelCon</span></div>
-			<md-button ng-click="ctrl.currView='create'">Acknowledge</md-button>
+			<md-button ng-click="ctrl.currView='create'" ng-if="ctrl.match.verified || ctrl.match.level <= 2">Acknowledge</md-button>
 		</div>
 	</div>
 	
@@ -65,7 +67,7 @@
 	<!-- Duplicate View  -->
 	<div class="view textCenter" ng-show="ctrl.currView=='duplicate'" ng-cloak>
 		<div class="infoText duplicateTitle">PixelCon already exists</div>
-		<a ng-href="/details/{{ctrl.pixelconId}}" class="plain textDark">
+		<a ng-href="/details/{{ctrl.pixelconId}}" class="plain textDark" target="_blank">
 			<md-button class="md-raised">View</md-button>
 		</a>
 	</div>

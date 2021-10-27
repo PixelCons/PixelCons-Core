@@ -18,7 +18,7 @@
 
 /* Header */
 .settingsDialog div.settingsIcon {
-    background: url(/img/icon_settings.svg);
+    background-image: url(/img/icon_settings.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 30px;

@@ -10,8 +10,8 @@
 			</a>
 			<!-- Collection Link -->
 			<a ng-href="{{(ctrl.selectable || ctrl.disabled)?'':'/collection/'+ctrl.pixelcon.collection.index}}" class="plain textDark">
-				<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveGroupContainer colorDarkOverlay clickable" 
-						ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-if="!ctrl.noCollection && !ctrl.pixelcon.match && ctrl.pixelcon.collection" ng-click="ctrl.infoItemClick($event)">
+				<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveGroupContainer colorDarkOverlay clickable" ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" 
+						ng-if="!ctrl.noCollection && (!ctrl.pixelcon.match || ctrl.noMatch || ctrl.pixelcon.match.verified) && ctrl.pixelcon.collection" ng-click="ctrl.infoItemClick($event)">
 					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.scrambledCollectionPixelconIds[0]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[0]"></pixelcon></div>
 					<div class="pixelconCardDirectiveGroupElementSpacer" ng-if="!ctrl.scrambledCollectionPixelconIds[3] && ctrl.scrambledCollectionPixelconIds[2]"></div>
 					<div class="pixelconCardDirectiveGroupElement" ng-if="ctrl.scrambledCollectionPixelconIds[1]"><pixelcon id="ctrl.scrambledCollectionPixelconIds[1]"></pixelcon></div>
@@ -21,8 +21,8 @@
 			</a>
 			<!-- Similar Match Link -->
 			<a ng-href="{{(ctrl.selectable || ctrl.disabled)?'':'/details/'+ctrl.pixelcon.match.id}}" class="plain textDark">
-				<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveGroupContainer colorDarkOverlay clickable" 
-						ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-if="!ctrl.noMatch && ctrl.pixelcon.match" ng-click="ctrl.infoItemClick($event)">
+				<div class="pixelconCardDirectiveDetailContainer pixelconCardDirectiveGroupContainer colorDarkOverlay clickable" ng-click="ctrl.infoItemClick($event)"
+						ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-if="!ctrl.noMatch && ctrl.pixelcon.match  && (!ctrl.pixelcon.match.verified || !ctrl.pixelcon.collection || ctrl.noCollection)">
 					<div class="pixelconCardDirectiveMatchElement"><pixelcon id="ctrl.pixelcon.match.id"></pixelcon></div>
 				</div>
 			</a>
@@ -39,8 +39,9 @@
 	<!-- Bottom Info -->
 	<div class="pixelconCardDirectiveInfo pixelconCardDirectiveFont textBold textDark colorLight" ng-click="ctrl.pixelconClick($event)" ng-class="{'pixelconCardDirectiveTransition':ctrl.loaded}">
 		<div ng-cloak>{{ctrl.pixelcon.name!==''?ctrl.pixelcon.name:'#'+ctrl.pixelcon.index}}</div>
-		<div class="pixelconCardDirectiveGroupNotification" ng-if="!ctrl.reloading && !ctrl.noCollection && !ctrl.pixelcon.match && ctrl.pixelcon.collection"></div>
-		<div class="pixelconCardDirectiveSimilarNotification" ng-class="{'replica': (ctrl.pixelcon.match.creator == ctrl.pixelcon.creator)}" ng-if="!ctrl.reloading && !ctrl.noMatch && ctrl.pixelcon.match"></div>
+		<div class="pixelconCardDirectiveGroupNotification" ng-if="!ctrl.reloading && !ctrl.noCollection && (!ctrl.pixelcon.match || ctrl.noMatch || ctrl.pixelcon.match.verified) && ctrl.pixelcon.collection"></div>
+		<div class="pixelconCardDirectiveSimilarNotification" ng-class="{'verified': (ctrl.pixelcon.match.verified)}" 
+			ng-if="!ctrl.reloading && !ctrl.noMatch && ctrl.pixelcon.match && (!ctrl.pixelcon.match.verified || !ctrl.pixelcon.collection || ctrl.noCollection)"></div>
 		<div class="pixelconCardDirectiveAccountNotification" ng-if="!ctrl.reloading && !ctrl.noAccount && ctrl.pixelcon.owner==ctrl.account"></div>
 	</div>
 	

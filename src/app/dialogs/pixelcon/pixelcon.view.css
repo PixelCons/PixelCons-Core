@@ -97,7 +97,7 @@
 	width: 40px;
 	height: 40px;
 }
-.pixelconDialog div.similarPixelconIcon.replica {
+.pixelconDialog div.similarPixelconIcon.verified {
 	background-image: url("/img/icon_replica.svg");
 }
 .pixelconDialog div.similarPixelcon {

@@ -33,7 +33,8 @@ function getMatch(pixelcon) {
 		return {
 			id: allPixelconData[match].id,
 			index: match,
-			creator: allPixelconData[match].creator
+			creator: allPixelconData[match].creator,
+			verified: (allPixelconData[match].creator == pixelcon.creator)
 		}
 	}
 	return null;
@@ -46,8 +47,10 @@ function findCloseMatch(pixelconId, pixelconIndex, pixelconCreator, allPixelconI
 	
 	for(let i=0; i<pixelconIndex; i++) {
 		let otherId = subId(allPixelconIds,i*64);
-		if(pixelconCreator != allPixelconCreators[i] && checkCloseMatch(ids, otherId)) {
-			return i;
+		if(pixelconCreator == allPixelconCreators[i]) {
+			if(checkVeryCloseMatch(ids, otherId)) return i;
+		} else {
+			if(checkCloseMatch(ids, otherId)) return i;
 		}
 	}
 	return -1;
@@ -66,6 +69,22 @@ function checkCloseMatch(ids, otherId) {
 			delta += getColorDistance(ids[i*64 + j], otherId[j]);
 		}
 		if(delta <= tolerance) return true;
+	}
+	return false;
+}
+function checkVeryCloseMatch(ids, otherId) {
+	let delta = 0;
+	for(let j=0; j<64; j++) {
+		if(ids[j] != otherId[j]) delta++;
+	}
+	if(delta <= 1) return true;
+		
+	for(let i=1; i<15; i++) {
+		let delta2 = 0;
+		for(let j=0; j<64; j++) {
+			if(ids[i*64 + j] != otherId[j]) delta2++;
+		}
+		if(delta2 == 0) return true;
 	}
 	return false;
 }

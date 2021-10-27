@@ -29,7 +29,7 @@
 
 /* Header */
 .similaritiesDialog div.similarSearchIcon {
-    background: url(/img/icon_similar.svg);
+    background-image: url(/img/icon_similar.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 30px;
@@ -110,7 +110,7 @@
 .similaritiesDialog div.resultTitleCopyIcon {
 	display: inline-block;
 	vertical-align: middle;
-    background: url(/img/icon_copy.svg);
+    background-image: url(/img/icon_copy.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 30px;
@@ -119,8 +119,8 @@
 	opacity: 0.8;
 	filter: alpha(opacity=80);
 }
-.similaritiesDialog div.resultTitleCopyIcon.replica {
-    background: url(/img/icon_replica.svg);
+.similaritiesDialog div.resultTitleCopyIcon.verified {
+    background-image: url(/img/icon_replica.svg);
 }
 .similaritiesDialog div.resultTitleCopyText {
 	display: inline-block;

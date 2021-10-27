@@ -21,7 +21,7 @@
     right: 0px;
 }
 .printsDialog div.printsIcon.wallpaper {
-    background: url(/img/icon_wallpaper.svg);
+    background-image: url(/img/icon_wallpaper.svg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: 30px;

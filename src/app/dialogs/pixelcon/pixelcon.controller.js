@@ -35,9 +35,10 @@
 					return coreContract.getAllPixelcons();
 					
 				}).then(function (allPixelcons) {
-					_this.match = similarities.getMatch(_this.pixelconId, allPixelcons);
-					_this.currView = _this.match ? 'similarityAcknowledge' : 'create';
 					_this.account = web3Service.getActiveAccount();
+					_this.match = similarities.getMatch(_this.pixelconId, allPixelcons);
+					if(_this.match) _this.match.verified = (_this.match.creator == _this.account);
+					_this.currView = _this.match ? 'similarityAcknowledge' : 'create';
 					_this.pixelconName = '';
 					
 				}, function (reason) {
