@@ -2,9 +2,10 @@
 	angular.module('App')
 		.controller('HomePageCtrl', HomePageCtrl);
 
-	HomePageCtrl.$inject = ['$scope', '$mdMedia'];
-	function HomePageCtrl($scope, $mdMedia) {
+	HomePageCtrl.$inject = ['$scope', '$mdMedia', '$window', '$timeout'];
+	function HomePageCtrl($scope, $mdMedia, $window, $timeout) {
 		var _this = this;
+		_this.sliderDotClick = sliderDotClick;
 
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -12,7 +13,7 @@
 		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function (md) { _this.screenSize['md'] = md; });
 		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
 
-		//curated collections
+		// Curated collections
 		_this.facesCollection = [
 			'0x9a4994999499994999999999920990299cc99cc99cc77cc99cc00cc99cc9acc9',
 			'0x9a99999994099049990990999999999992eeee29992882999997e99999999999',
@@ -24,6 +25,65 @@
 			'0xcc1cc1ccc1cccc1cc77cc77c97099079977997799990099999900999999aa999',
 			'0x9a99999999999999944994499999999994000049903bb30994bbbb4999bbbb99'
 		];
+		_this.showcaseList = [{
+			name: 'Developers',
+		},{
+			name: 'Dev2',
+		},{
+			name: 'AndHeGames',
+		},{
+			name: 'Pico8',
+		},{
+			name: 'Inaki Diaz',
+		},{
+			name: 'Anonymous',
+		},{
+			name: 'Anonymous',
+		},{
+			name: 'Anonymous',
+		}];
+		
+		// Slider Logic
+		const slideScroller = document.querySelector('.slides');
+		function recalcSliderDotHighlight() {
+			const slideWidth = 380;
+			let highlightIndex = Math.floor((slideScroller.scrollLeft+(slideWidth/2))/slideWidth);
+			if(_this.sliderDotHighlight != highlightIndex) {
+				_this.sliderDotHighlight = highlightIndex;
+				$timeout(function() { $scope.$apply(); });
+			}
+		}
+		function recalcSliderSize(innerWidth) {
+			if(innerWidth < 800) {
+				_this.sliderClass = { "single": true };
+				_this.sliderDots = [];
+				for(let i=0; i<_this.showcaseList.length-0; i++) _this.sliderDots.push(i);
+				
+			} else if(innerWidth < 1180) {
+				_this.sliderClass = { "double": true };
+				_this.sliderDots = [];
+				for(let i=0; i<_this.showcaseList.length-1; i++) _this.sliderDots.push(i);
+				
+			} else {
+				_this.sliderClass = { "triple": true };
+				_this.sliderDots = [];
+				for(let i=0; i<_this.showcaseList.length-2; i++) _this.sliderDots.push(i);
+				
+			}
+			recalcSliderDotHighlight();
+		}
+		function sliderDotClick(index) {
+			if(index > -1 && index < _this.sliderDots.length) {
+				document.querySelector('#slide-' + index).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+			}
+		}
+		$scope.$watch(function () { return $window.innerWidth }, recalcSliderSize);
+		angular.element(slideScroller).bind('scroll', recalcSliderDotHighlight);
+		
+		recalcSliderSize($window.innerWidth);
+		
+		
+		/*
 		_this.curationList = [{
 			name: 'Genesis Collection',
 			width: 5,
@@ -185,6 +245,7 @@
 				width: columns * itemWidth + 'px'
 			};
 		}
+		*/
 
 	}
 }());

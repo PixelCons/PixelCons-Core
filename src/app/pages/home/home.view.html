@@ -10,7 +10,7 @@
 			</div>
 			<div class="textBox textSelectable">
 				<div class="textBold textDark textCenter" ng-class="{'textTitleExLarge':!ctrl.screenSize.sm, 'textTitleLarge':ctrl.screenSize.sm}">PixelCons</div>
-				Collectible Minimalist <br/> Pixel Art NFTs 
+				Tiny On-Chain Pixel Art <br/> NFTs Since 2018
 				<br/><br/>
 				<a ng-href="/start" class="plain textDark">
 					<md-button class="md-raised md-primary">Start</md-button>
@@ -21,22 +21,38 @@
 	
 	<div class="bottomSpacer"></div>
 	
-	<div class="textCenter">
-		<div class="homeContainer homeCard colorLight">
-			<div class="textBox textMedium textLight textCenter textSelectable">
-				<div class="textExLarge textBold textDark">What Is It?</div><br/>
-				PixelCons are collectible NFTs featuring minimalist pixel art. This open platform was started in 2018 to allow any artist to easily make digital collectibles within a shared ecosystem. Every PixelCon is unique and it's ownership is secured on the Ethereum blockchain.
-			</div>
-			<div class="ethereumImage crispImage" ng-class="{'small':ctrl.screenSize.sm}"><img src="/img/large/ethereum.png" alt="Ethereum"></div>
-		</div>
-	</div>
-	
-	<div class="bottomSpacer"></div>
-	
 	<div class="homeContainer textCenter colorLight">
 		<div class="textBox textMedium textLight textCenter textSelectable">
-			<div class="textExLarge textBold textDark">Check Out What's Being Created!</div><br/>
+			<div class="textExLarge textBold textDark">Genesis Series (#0 - #650)</div>
+			<div class="textMedium textLight">Minted December 2018</div><br/>
 		</div>
+		<br/>
+		
+		
+		<div class="slider" ng-class="ctrl.sliderClass">
+			<div class="slides">
+				<div ng-attr-id="{{'slide-'+$index}}" ng-repeat="show in ctrl.showcaseList">
+					<div class="content">{{show.name}}</div>
+				</div>
+			</div>
+			<div class="slideDots">
+				<div ng-repeat="dot in ctrl.sliderDots" class="slideDotContainer" ng-click="ctrl.sliderDotClick($index);"><div class="dot" ng-class="{'highlight': ctrl.sliderDotHighlight == $index}"></div></div>
+			</div>
+			<div class="arrow left" ng-if="ctrl.sliderDots.length < ctrl.showcaseList.length" ng-class="{'visible': ctrl.sliderDotHighlight > 0}" ng-click="ctrl.sliderDotClick(ctrl.sliderDotHighlight-1);"></div>
+			<div class="arrow right" ng-if="ctrl.sliderDots.length < ctrl.showcaseList.length" ng-class="{'visible': ctrl.sliderDotHighlight < ctrl.sliderDots.length-1}" 
+				ng-click="ctrl.sliderDotClick(ctrl.sliderDotHighlight+1);"></div>
+		</div>
+		
+		
+		<!--
+		<md-content>
+			<md-tabs md-selected="selectedIndex" md-border-bottom md-autoselect md-swipe-content>
+				<md-tab ng-repeat="tab in ctrl.curationList" ng-disabled="tab.disabled" label="{{tab.name}}">
+					<div style="width:1000px; height:300px; background-color:#000;">
+					</div>
+				</md-tab>
+			</md-tabs>
+		</md-content>
 		<br/>
 		<div class="showcaseContainer textLeft" ng-class="{'small':ctrl.screenSize.sm}" 
 				ng-style="ctrl.calcShowcaseStyle(curation)" ng-repeat="curation in ctrl.curationList">
@@ -46,6 +62,7 @@
 			</a>
 			<div class="showcaseName textMedium textBold textLight textCenter">{{curation.name}}</div>
 		</div>
+		-->
 	</div>
 	
 	<div class="bottomSpacer"></div>

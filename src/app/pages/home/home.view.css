@@ -168,3 +168,133 @@ div.pixelconHomePage div.showcaseContainer.small a.showcaseItem:hover {
 	height: 52px;
 	margin: 2px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Slider showcase */
+.slider {
+	position: relative;
+	display: inline-block;
+	width: 400px;
+	max-width: calc(100vw - 20px);
+	text-align: center;
+	overflow: hidden;
+}
+.slider.double {
+	width: 780px;
+}
+.slider.triple {
+	width: 1160px;
+}
+.slider.quadruple {
+	width: 1540px;
+}
+.slider .slides {
+	display: flex;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+	-webkit-overflow-scrolling: touch;
+	width: calc(100% - 20px);
+	margin: 0px 10px;
+}
+.slider .slides::-webkit-scrollbar {
+	width: 0px;
+	height: 0px;
+}
+.slider .slides::-webkit-scrollbar-thumb,
+.slider .slides::-webkit-scrollbar-track {
+	background: transparent;
+}
+.slider .slides > div {
+	scroll-snap-align: start;
+	flex-shrink: 0;
+	width: 380px;
+	max-width: calc(100vw - 40px);
+	height: 560px;
+	position: relative;
+	display: flex;
+}
+.slider .slides > div .content {
+	width: 350px;
+	max-width: calc(100vw - 40px);
+	height: 560px;
+	margin: 0px 15px;
+	border-radius: 10px;
+	background: #eee;
+	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.slider .slideDots {
+	display: inline-block;
+	width: 250px;
+	height: 20px;
+}
+.slider .slideDots .slideDotContainer {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	margin: 0px 2px;
+	cursor: pointer;
+}
+.slider .slideDots .slideDotContainer .dot {
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 3px;
+	background-color: #d0d0d0;
+	transition: background-color cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+}
+.slider .slideDots .slideDotContainer .dot.highlight {
+	background-color: #717171;
+}
+.slider .arrow {
+	position: absolute;
+    background-repeat: no-repeat;
+    background-size: 60px;
+	width: 40px;
+	height: 40px;
+	top: calc(50% - 20px);
+	border-radius: 20px;
+	transition: cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+	opacity: 0.0;
+	filter: alpha(opacity=0);
+}
+.slider .arrow.visible {
+	opacity: 0.4;
+	filter: alpha(opacity=40);
+	cursor: pointer;
+}
+.slider .arrow:hover {
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+}
+.slider .arrow.left {
+	background-position: -20px center;
+	background-image: url('/img/icon_back.svg');
+	left: 0px;
+}
+.slider .arrow.right {	
+	background-position: 0px center;
+	background-image: url('/img/icon_forward.svg');
+	right: 0px;
+}
