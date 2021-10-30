@@ -284,7 +284,7 @@ div.pixelconHomePage div.showcaseContainer.small a.showcaseItem:hover {
 	filter: alpha(opacity=40);
 	cursor: pointer;
 }
-.slider .arrow:hover {
+.slider .arrow.visible:hover {
 	opacity: 0.6;
 	filter: alpha(opacity=60);
 }
