@@ -223,7 +223,7 @@ div.pixelconHomePage div.showcaseContainer.small a.showcaseItem:hover {
 .slider .slides::-webkit-scrollbar-track {
 	background: transparent;
 }
-.slider .slides > div {
+.slider .slides .slide {
 	scroll-snap-align: start;
 	flex-shrink: 0;
 	width: 380px;
@@ -232,7 +232,7 @@ div.pixelconHomePage div.showcaseContainer.small a.showcaseItem:hover {
 	position: relative;
 	display: flex;
 }
-.slider .slides > div .content {
+.slider .slides .slide .content {
 	width: 350px;
 	max-width: calc(100vw - 40px);
 	height: 560px;

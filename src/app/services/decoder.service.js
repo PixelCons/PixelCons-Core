@@ -8,9 +8,8 @@
 		//Setup functions
 		this.decodePNG = decodePNG;
 		this.encodePNG = encodePNG;
-		this.backgroundPNG = backgroundPNG;
+		this.generateTiledImage = generateTiledImage;
 		this.generateDisplayImage = generateDisplayImage;
-		this.updateBackground = updateBackground;
 		
 		//Data
 		var loadImage_cache = {};
@@ -168,9 +167,9 @@
 		}
 		
 		//Creates a PNG image from the given pixelcon ids
-		function backgroundPNG(ids, mixedMode) {
+		function generateTiledImage(ids, rows, columns, scale, background, padIds, useFaded, offsetImage) {
 			ids = scrambleList(ids);
-			if(mixedMode) {
+			if(padIds) {
 				let mixOrder = [];
 				let mixedIds = defaultBackgroundIds.concat([]);
 				for(let i=0; i<mixedIds.length; i++) mixOrder.push(i);
@@ -178,18 +177,14 @@
 				for(let i=0; i<ids.length && i<mixedIds.length; i++) mixedIds[mixOrder[i]] = ids[i];
 				ids = mixedIds;
 			}
-			const n = Math.min(Math.max(Math.ceil(Math.sqrt(ids.length)),3),7);
-			const rows = n;
-			const columns = n;
-			const scale = Math.round(56 / n);
+			
 			let canvas = document.createElement('canvas');
 			canvas.width = (columns * 10 * scale);
 			canvas.height = (rows * 10 * scale);
 			let ctx = canvas.getContext("2d");
-			ctx.fillStyle = "#B1B1B1";
+			ctx.fillStyle = background ? background : (useFaded ? "#B1B1B1" : "#000000");
 			ctx.fillRect(0, 0, columns * 10 * scale, rows * 10 * scale);
 			
-
 			for (let i = 0; i < rows*columns; i++) {
 				let y = Math.floor(i / columns);
 				let x = i - (y * columns);
@@ -200,14 +195,14 @@
 					for (let py = 0; py < 8; py++) {
 						for (let px = 0; px < 8; px++) {
 							let index = py * 8 + px;
-							ctx.fillStyle = getPaletteColorInHex(id[index], true);
+							ctx.fillStyle = getPaletteColorInHex(id[index], useFaded);
 							ctx.fillRect((px + x + 1) * scale, (py + y + 1) * scale, scale, scale);
 						}
 					}
 				}
 			}
 
-			if(n < 7) canvas = shiftCanvas(canvas, Math.round(scale*2), Math.round(scale*2));
+			if(offsetImage) canvas = shiftCanvas(canvas, Math.round(scale*2), Math.round(scale*2));
 			let data = canvas.toDataURL('image/png');
 			canvas.remove();
 			return data;
@@ -321,21 +316,6 @@
 			return data;
 		}
 		
-		//Updates the background image
-		var backgroundUpdateTimeout = null;
-		function updateBackground(backgroundImage, delay) {
-			if(backgroundUpdateTimeout) $timeout.cancel(backgroundUpdateTimeout);
-			backgroundUpdateTimeout = null;
-			if(delay) {
-				backgroundUpdateTimeout = $timeout(function() {
-					backgroundUpdateTimeout = null;
-					updateBackgroundImage(backgroundImage);
-				}, delay);
-			} else {
-				updateBackgroundImage(backgroundImage);
-			}
-		}
-		
 		///////////
 		// Utils //
 		///////////
@@ -402,40 +382,6 @@
 			ctx.drawImage(canvas, canvas.width - x, canvas.height - y, x, y, 0, 0, x, y);
 			
 			return canvas2;
-		}
-		
-		//Updates the background image
-		function updateBackgroundImage(backgroundImage) {
-			if(backgroundImage) {
-				//find the style rule
-				let styleRule = null;
-				for(let i = 0; i < document.styleSheets.length; i++) {
-					if(document.styleSheets[i].href && (document.styleSheets[i].href.indexOf('/style.css') > -1 || document.styleSheets[i].href.indexOf('/style.min.css') > -1)) {
-						for(let j = 0; j < document.styleSheets[i].cssRules.length; j++) {
-							if(document.styleSheets[i].cssRules[j].selectorText.indexOf('div.pageContentBackground.groupOverride') > -1) {
-								styleRule = document.styleSheets[i].cssRules[j];
-								break;
-							}
-						}
-						if(styleRule) break;
-					}
-				}
-				if(styleRule) {
-					//update and add background class list
-					styleRule.style['background-image'] = 'url(' + backgroundImage + ')';
-					let background = document.getElementById('contentBackground');
-					if(background) background.classList.add('groupOverride');
-					
-				} else {
-					//remove background class list
-					let background = document.getElementById('contentBackground');
-					if(background) background.classList.remove('groupOverride');
-				}
-			} else {
-				//remove background class list
-				let background = document.getElementById('contentBackground');
-				if(background) background.classList.remove('groupOverride');
-			}
 		}
 		
 		//Verifies if the given color goes all the way along the vertical

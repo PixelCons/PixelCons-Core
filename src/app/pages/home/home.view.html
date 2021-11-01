@@ -31,8 +31,8 @@
 		
 		<div class="slider" ng-class="ctrl.sliderClass">
 			<div class="slides">
-				<div ng-attr-id="{{'slide-'+$index}}" ng-repeat="show in ctrl.showcaseList">
-					<div class="content">{{show.name}}</div>
+				<div class="slide" ng-attr-id="{{'slide-'+$index}}" ng-repeat="show in ctrl.showcaseList">
+					<div class="content md-whiteframe-1dp" ng-style="{'background-image': 'url('+show.image+')'}">{{show.name}}</div>
 				</div>
 			</div>
 			<div class="slideDots">

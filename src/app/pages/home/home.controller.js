@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('HomePageCtrl', HomePageCtrl);
 
-	HomePageCtrl.$inject = ['$scope', '$mdMedia', '$window', '$timeout'];
-	function HomePageCtrl($scope, $mdMedia, $window, $timeout) {
+	HomePageCtrl.$inject = ['$scope', '$mdMedia', '$window', '$timeout', 'decoder'];
+	function HomePageCtrl($scope, $mdMedia, $window, $timeout, decoder) {
 		var _this = this;
 		_this.sliderDotClick = sliderDotClick;
 
@@ -78,6 +78,7 @@
 				'0x5055550501011010001001000111111007111170000000000000000050000005','0x511151111cc11c111fffff1f27eeee722eeffee2affffffa9ff88ff95ffffff5','0x5888888588882285001cc00804f11f4117ffff711ffffff11ffeeff15cffffc5','0x50000500000000000111111011cccc111a0cc0a1c001100c5c0770c55cc11cc5','0x5667766567777776786776877887788776855867656666566050050656000065',
 				'0x5888eee52888887e288888820444404007fff0700ffff0f00ff88ff005ffff50','0x5544445554477945944444949224422997f44f799f4444f9944ff44944422444','0x5333333533bbbb333b0053333066760335576553306776033065560353333335','0x5444444544444444404ccc100f4ffff0080ff0811ffffff116f77f61516ff615','0x5011110501a11a10001aa100880aa088870880780866668084f77f485ffffff5'
 			],
+			imageBackground: '#5F574F',
 			startIndex: 225,
 			count: 100
 		},{
@@ -114,6 +115,9 @@
 			startIndex: 451,
 			count: 200
 		}];
+		for(let i=0; i<_this.showcaseList.length; i++) {
+			_this.showcaseList[i].image = decoder.generateTiledImage(_this.showcaseList[i].pixelconIds, 5, 4, 8, _this.showcaseList[i].imageBackground, false, false, false);
+		}
 		
 		// Slider Logic
 		const slideScroller = document.querySelector('.slides');
