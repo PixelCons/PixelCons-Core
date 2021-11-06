@@ -133,7 +133,7 @@
 			</div>
 			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.browse.forSale}">
 				<div class="expandContainerText textMedium textLight">
-					You can search for PixelCons that are for sale on <a class="light textDark textBold" href="https://opensea.io/assets/pixelcons?toggle%5Bon_sale%5D=true">OpenSea</a>. Any other market that supports ERC-721 NFTs should allow for buying/selling/trading as well.
+					You can search for PixelCons that are for sale on <a class="light textDark textBold" ng-href="{{ctrl.marketLink}}">{{ctrl.marketName}}</a>. Any other market that supports ERC-721 NFTs should allow for buying/selling/trading as well.
 				</div>
 				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen2.png" alt="Search for PixelCons" ng-click="">
 			</div>
@@ -306,7 +306,7 @@
 			</div>
 			<div class="expandContainerContent" ng-class="{'hidden':ctrl.hideHowTo.account.sellPixelcons}">
 				<div class="expandContainerText textMedium textLight">
-				You can list PixelCons for sale through OpenSea. Visit your <a class="light textDark textBold" href="https://opensea.io/account">OpenSea</a> account page to make listings from there or manage existing ones and potential offers.
+				You can list PixelCons for sale through {{ctrl.marketName}}. Visit your <a class="light textDark textBold" ng-href="{{ctrl.marketAccountLink}}">{{ctrl.marketName}}</a> account page to make listings from there or manage existing ones and potential offers.
 				</div>
 				<img class="screenLink md-whiteframe-3dp" src="/img/large/screen2.png" alt="Your Account" ng-click="">
 			</div>

@@ -97,15 +97,44 @@ div.pixelconHomePage div.ethereumImage img {
 div.pixelconHomePage div.sourceImage {
 	display: inline-block;
 	vertical-align: middle;
-	width: 220px;
+	width: 400px;
 	font-size: 0px;
 }
 div.pixelconHomePage div.sourceImage.small {
-	width: 200px;
+	width: 320px;
 }
-div.pixelconHomePage div.sourceImage img {
-	width: 100%;
-	height: 100%;
+div.pixelconHomePage div.sourceImage .socialLink {
+	transition: all cubic-bezier(0.35, 0, 0.25, 1) 0.05s;
+	width: 80px;
+	height: 80px;
+	margin: 10px;
+	display: inline-block;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	cursor: pointer;
+	opacity: 0.45;
+	filter: alpha(opacity=45);
+}
+div.pixelconHomePage div.sourceImage.small .socialLink {
+	width: 60px;
+	height: 60px;
+}
+div.pixelconHomePage div.sourceImage .socialLink:hover {
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+}
+div.pixelconHomePage div.sourceImage .socialLink.github {
+	background-image: url("/img/icon_github.svg");
+}
+div.pixelconHomePage div.sourceImage .socialLink.twitter {
+	background-image: url("/img/icon_twitter.svg");
+}
+div.pixelconHomePage div.sourceImage .socialLink.discord {
+	background-image: url("/img/icon_discord.svg");
+}
+div.pixelconHomePage div.sourceImage .socialLink.opensea {
+	background-image: url("/img/icon_opensea.svg");
 }
 div.pixelconHomePage .textBox {
 	display: inline-block;
@@ -116,77 +145,6 @@ div.pixelconHomePage .textBox {
 div.pixelconHomePage .textBox ul {
 	margin: 5px 0px 0px 0px;
 }
-
-/* Showcase */
-div.pixelconHomePage div.showcaseContainer {
-	display: inline-block;
-	vertical-align: middle;
-	font-size: 0px;
-	margin: 0px 10px 10px 10px;
-	padding: 10px;
-}
-div.pixelconHomePage div.showcaseContainer div.showcaseName {
-	margin-top: 5px;
-}
-div.pixelconHomePage div.showcaseContainer a.showcaseItem {
-	display: inline-block;
-	vertical-align: middle;
-	width: 72px;
-	height: 72px;
-	margin: 4px;
-}
-div.pixelconHomePage a.showcaseItem .shadow {
-	box-shadow: 1px 1px 8px #000000;
-}
-div.pixelconHomePage div.showcaseContainer div.showcaseLink {
-	width: 100%;
-	height: 100%;
-	box-sizing: border-box;
-	padding: 19px 0px;
-	font-size: 14px;
-	box-shadow: 0px 0px 5px #bbbbbb;
-}
-div.pixelconHomePage div.showcaseContainer div.showcaseLink:hover {
-	padding: 21px 0px;
-	box-shadow: unset;
-}
-div.pixelconHomePage div.showcaseContainer.small div.showcaseLink {
-	font-size: 9px;
-	font-weight: 600;
-}
-div.pixelconHomePage div.showcaseContainer.small a.showcaseItem {
-	width: 48px;
-	height: 48px;
-}
-div.pixelconHomePage div.showcaseContainer a.showcaseItem:hover {
-	width: 76px;
-	height: 76px;
-	margin: 2px;
-}
-div.pixelconHomePage div.showcaseContainer.small a.showcaseItem:hover {
-	width: 52px;
-	height: 52px;
-	margin: 2px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Slider showcase */
 .slider {
@@ -231,18 +189,82 @@ div.pixelconHomePage div.showcaseContainer.small a.showcaseItem:hover {
 	height: 560px;
 	position: relative;
 	display: flex;
+	padding: 10px 0px;
 }
 .slider .slides .slide .content {
+	position: relative;
 	width: 350px;
 	max-width: calc(100vw - 40px);
 	height: 560px;
 	margin: 0px 15px;
 	border-radius: 10px;
-	background: #eee;
-	
-	display: flex;
-	justify-content: center;
-	align-items: center;
+	background-color: #eee;
+	background-position: 0px 0px;
+	transition: none;
+}
+.slider .slides .slide .content:hover {
+	background-position: 10000px 7000px;
+	transition: linear 60s;
+}
+.slider .slides .slide .content .contentSpread {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	cursor: pointer;
+}
+.slider .slides .slide .content .contentSpread.disabled {
+	background-color: #484848b8;
+}
+.slider .slides .slide .content .contentTitle {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	text-align: left;
+	font-size: 20px;
+	margin: 20px;
+	background-color: #ffffffde;
+	border-radius: 4px;
+	padding: 0px 5px;
+	box-shadow: 0px 0px 5px 5px #ffffffde;
+}
+.slider .slides .slide .content .contentShade {
+	position: absolute;
+	width: 100%;
+	height: 140px;
+	bottom: 0px;
+	left: 0px;
+	background-color: #eee;
+	transition: height cubic-bezier(0.35, 0, 0.25, 1) 0.2s;
+}
+.slider .slides .slide .content:hover .contentShade {
+	height: 160px;
+}
+.slider .slides .slide .content .contentText {
+	padding: 10px 10px 4px 10px;
+}
+.slider .slides .slide .content .contentAccount {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	margin: 10px;
+	font-size: 0px;
+	width: 40px;
+	height: 40px;
+}
+.slider .slides .slide .content .contentButton {
+	border: 2px solid #000;
+	display: inline-block;
+	border-radius: 5px;
+	padding: 8px 15px;
+	margin: 10px;
+	cursor: pointer;
+	background-color: #f7f7f7;
+	transition: background-color cubic-bezier(0.35, 0, 0.25, 1) 0.2s;
+}
+.slider .slides .slide .content .contentButton:hover {
+	background-color: #e0e0e0;
 }
 .slider .slideDots {
 	display: inline-block;

@@ -2,12 +2,15 @@
 	angular.module('App')
 		.controller('StartPageCtrl', StartPageCtrl);
 
-	StartPageCtrl.$inject = ['$scope', '$mdMedia', '$timeout', 'web3Service'];
-	function StartPageCtrl($scope, $mdMedia, $timeout, web3Service) {
+	StartPageCtrl.$inject = ['$scope', '$mdMedia', '$timeout', 'web3Service', 'market'];
+	function StartPageCtrl($scope, $mdMedia, $timeout, web3Service, market) {
 		var _this = this;
 		_this.setStepTab = setStepTab;
 		_this.checkHowToSectionExpanded = checkHowToSectionExpanded;
 		_this.toggleHowToSection = toggleHowToSection;
+		_this.marketName = market.getMarketName();
+		_this.marketLink = market.getMarketLink();
+		_this.marketAccountLink = market.getAccountLink();
 		_this.hideHowTo = {
 			browse: {
 				byName: true,
@@ -52,6 +55,7 @@
 					scale: 6
 				}).toDataURL();
 			}
+			_this.marketAccountLink = market.getAccountLink(activeAccount);
 
 			let hasWeb3 = state != "not_enabled" && !web3Service.isReadOnly();
 			let isMobileOrTablet = checkMobileOrTablet();
