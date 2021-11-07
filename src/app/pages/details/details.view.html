@@ -4,7 +4,7 @@
 	<div class="detailsCard colorLight">
 	
 		<!-- Image window -->
-		<div class="viewWindow colorDark">
+		<div class="viewWindow colorDark" ng-class="{'hovering': ctrl.hovering}" ng-mousemove="ctrl.hoverMouseMove($event)" ng-mouseleave="ctrl.hoverMouseLeave($event)" ng-click="ctrl.hoverMouseClick($event)">
 			<div ng-hide="ctrl.pixelconId" class="pixelconInvalid textWhite textExxLarge">{{ctrl.pixelconIndex !== null ? '#' + ctrl.pixelconIndex : 'Invalid ID'}}</div>
 			<div ng-show="ctrl.pixelconId" class="pixelconImage">
 				<pixelcon id="ctrl.pixelconId" large="true"/>

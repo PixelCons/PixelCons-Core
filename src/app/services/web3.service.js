@@ -58,6 +58,7 @@
 		const _transactionWaitConfirmations = 1;
 		const _transactionWaitTimeout = 2 * 60 * 60 * 1000;
 		const _transactionWaitPoll = 1 * 1000;
+		const _contractCallMaxRetries = 5;
 		const _noAccountError = 'No Account';
 		const _notEnabledError = 'No Network Connection';
 		const _notConnectedError = 'Network Provider Not Connected';
@@ -560,15 +561,14 @@
 			if(!blockNumber) blockNumber = contract.blockNumber;
 			
 			//wrap contract calls to handle errors that require a retry
-			const maxNumRetries = 5;
 			let retryHandler = function(f) {
 				return async function() {
-					for(let i=0; i<maxNumRetries; i++){
+					for(let i=0; i<_contractCallMaxRetries; i++){
 						try {
 							return await f.apply(this, arguments);
 						} catch(err) {
 							//only allow retry after common error
-							if(!err || err.message !== 'header not found' || i >= maxNumRetries-1) {
+							if(!err || err.message !== 'header not found' || i >= _contractCallMaxRetries-1) {
 								throw err;
 							}
 						}

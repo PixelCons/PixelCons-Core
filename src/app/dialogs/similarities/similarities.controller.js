@@ -13,6 +13,9 @@
 		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
 		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-md'); }, function (md) { _this.screenSize['md'] = md; });
 		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
+		_this.screenSize['lg'] = $mdMedia('gt-md');
+		_this.screenSize['md'] = $mdMedia('gt-xs') && !$mdMedia('gt-md');
+		_this.screenSize['sm'] = $mdMedia('xs');
 
 		// Search fro similarities
 		search();

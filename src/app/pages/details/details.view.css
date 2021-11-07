@@ -120,7 +120,7 @@ div.pixelconDetailsPage div.viewWindow div.windowIconTop.wallpaperIcon {
 	opacity: 0.0;
 	filter: alpha(opacity=0);
 }
-div.pixelconDetailsPage div.viewWindow:hover div.windowIconTop.wallpaperIcon {
+div.pixelconDetailsPage div.viewWindow.hovering div.windowIconTop.wallpaperIcon {
 	opacity: 0.6;
 	filter: alpha(opacity=60);
 }
@@ -134,7 +134,7 @@ div.pixelconDetailsPage div.viewWindow div.windowIcon.similarSearchIcon {
 	opacity: 0.0;
 	filter: alpha(opacity=0);
 }
-div.pixelconDetailsPage div.viewWindow:hover div.windowIcon.similarSearchIcon {
+div.pixelconDetailsPage div.viewWindow.hovering div.windowIcon.similarSearchIcon {
 	opacity: 0.6;
 	filter: alpha(opacity=60);
 }
@@ -151,7 +151,7 @@ div.pixelconDetailsPage div.viewWindow div.windowIcon.similarIcon {
 div.pixelconDetailsPage div.viewWindow div.windowIcon.similarIcon.verified {
 	background-image: url(/img/icon_replica_w.svg);
 }
-div.pixelconDetailsPage div.viewWindow:hover div.windowIcon.similarIcon {
+div.pixelconDetailsPage div.viewWindow.hovering div.windowIcon.similarIcon {
 	background-image: url(/img/icon_similar_w.svg);
 }
 div.pixelconDetailsPage div.viewWindow div.windowIcon.similarIcon:hover {

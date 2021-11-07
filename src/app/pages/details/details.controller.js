@@ -16,7 +16,19 @@
 		_this.shareOnFacebook = shareOnFacebook;
 		_this.marketEnabled = market.isEnabled();
 		_this.marketLink = market.getItemLink();
-
+		
+		// Handle hovering manually for added tapping functionality
+		_this.hovering = false;
+		_this.hoverMouseMove = function(ev) {
+			if(ev.movementX != 0 || ev.movementY != 0) _this.hovering = true;
+		}
+		_this.hoverMouseLeave = function(ev) {
+			_this.hovering = false;
+		}
+		_this.hoverMouseClick = function(ev) {
+			_this.hovering = !_this.hovering;
+		}
+		
 		// Watch for screen size changes
 		_this.screenSize = {};
 		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
