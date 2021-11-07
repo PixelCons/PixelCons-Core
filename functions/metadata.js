@@ -71,6 +71,8 @@ async function getMetadata(pixelconId, params) {
 	if(detailedMetadataEnabled) {
 		let match = await matchdata.getCloseMatch('0x' + id);
 		let collectionName = null;
+		
+		//collection data
 		if(collection) {
 			let collectionData = await ethdata.getCollection(collection);
 			if(collectionData) {
@@ -81,7 +83,16 @@ async function getMetadata(pixelconId, params) {
 				});
 			}
 		}
+		
+		//better description with collection and match data
 		metadata["description"] = getDescription(params.name, params.index, params.collection, collectionName, params.creator, params.created, match);
+		
+		//similarity properties
+		let similarity = match ? (match.verified ? 'Similar to Same Creator' : 'Similar to Different Creator') : 'Unique';
+		metadata["attributes"].push({
+			"trait_type": "Similarity", 
+			"value": similarity
+		});
 	}
 				
 	return metadata;
@@ -160,13 +171,14 @@ function getDescription(name, index, collection, collectionName, creator, create
 	}
 	if(created) result += " - " + created;
 	if(match) {
-		result += " - ⚠️Very similar to older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")"
+		if(match.verified) result += " - ✔️Similar to creator's older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
+		else result += " - ⚠️Very similar to older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
 		if(collection > 0) {
 			result += " - Collection " + collection;
 			if(collectionName) result += " [" + collectionName + "]";
 		}
 	}
-	if(creator) result += " - Creator 0x" + creator;
+	if(creator) result += " - Creator 0x" + creator.substr(0,4) + "…" + creator.substr(36,4);
 	return result;
 }
 function getColorModifier(id) {
