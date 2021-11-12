@@ -244,6 +244,8 @@ div.md-open-menu-container {
 	display: inline-block;
 	vertical-align: sub;
 	background-size: 18px;
+	background-position: center;
+	background-repeat: no-repeat;
 	margin-right: 8px;
 	opacity: 0.6;
 	filter: alpha(opacity=60);

@@ -71,8 +71,9 @@
 			<!-- PixelCons -->
 			<div class="displayTable" ng-show="!ctrl.loading">
 				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='send'">Select the PixelCon you want to send</div>
-				<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-account="true" selectable="{{!!ctrl.selectionMode}}" disabled="{{ctrl.checkDisabled(pixelcon)}}" 
-					size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" ng-repeat="pixelcon in ctrl.pixelcons track by $index"></pixelconcard>
+				<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-account="true" selectable="{{!!ctrl.selectionMode}}" disabled="{{ctrl.checkDisabled(pixelcon)}}"
+					size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" ng-repeat="pixelcon in ctrl.displayPixelcons track by $index" ng-init="ctrl.displayLoaded = !!$last"></pixelconcard>
+				<div ng-if="ctrl.displayLoaded && ctrl.pixelcons.length > ctrl.displayPixelcons.length" ng-click="ctrl.loadMore()" class="loadMoreButton textWhite">Load More</div>
 			</div>
 		</div>
 		

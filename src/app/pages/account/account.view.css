@@ -157,6 +157,7 @@ div.pixelconAccountPage .pixelconCard {
 	position: relative;
 	margin: 12px;
 	margin-bottom: 20px;
+	vertical-align: middle;
 }
 div.pixelconAccountPage.md .pixelconCard {
 	margin: 9px;
@@ -165,4 +166,27 @@ div.pixelconAccountPage.md .pixelconCard {
 div.pixelconAccountPage.sm .pixelconCard {
 	margin: 6px;
 	margin-bottom: 16px;
+}
+div.pixelconAccountPage .loadMoreButton {
+	display: inline-block;
+	margin: 12px;
+	width: 96px;
+	height: 60px;
+	line-height: 60px;
+	font-size: 16px;
+	vertical-align: middle;
+	text-align: center;
+	cursor: pointer;
+}
+div.pixelconAccountPage .loadMoreButton:hover {
+	text-decoration: underline;
+}
+div.pixelconAccountPage.md .loadMoreButton {
+	margin: 9px;
+	width: 88px;
+}
+div.pixelconAccountPage.sm .loadMoreButton {
+	margin: 6px;
+	width: 72px;
+	font-size: 14px;
 }

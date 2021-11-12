@@ -77,6 +77,14 @@ pixelconcard .pixelconCardDirectiveSimilarNotification {
 pixelconcard .pixelconCardDirectiveSimilarNotification.verified {
     background-image: url(/img/icon_replica.svg);
 }
+pixelconcard .pixelconCardDirectiveLoadingNotification {
+	position: absolute;
+    top: 1px;
+    left: 1px;
+}
+pixelconcard md-progress-circular.pixelconCardDirectiveLoadingNotification svg path {
+	stroke: #333333;
+}
 pixelconcard .pixelconCardDirectiveAccountNotification {
     background-image: url(/img/icon_wallet.svg);
 	position: absolute;

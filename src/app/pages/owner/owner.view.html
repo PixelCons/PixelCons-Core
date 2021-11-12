@@ -29,7 +29,9 @@
 			
 				<!-- PixelCon -->
 				<div class="displayTable">
-					<pixelconcard class="pixelconCard" pixelcon="pixelcon" size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" ng-repeat="pixelcon in ctrl.pixelcons track by $index"></pixelconcard>
+					<pixelconcard class="pixelconCard" pixelcon="pixelcon" size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" 
+						ng-repeat="pixelcon in ctrl.displayPixelcons track by $index" ng-init="ctrl.displayLoaded = !!$last"></pixelconcard>
+					<div ng-if="ctrl.displayLoaded && ctrl.pixelcons.length > ctrl.displayPixelcons.length" ng-click="ctrl.loadMore()" class="loadMoreButton textWhite">Load More</div>
 				</div>
 			</div>
 
@@ -42,7 +44,6 @@
 						<div class="detailsSectionMoreButton textNotSelectable" ng-hide="ctrl.error || ctrl.loading">
 							<md-button class="iconButton buy" aria-label="Buy/Sell" ng-if="ctrl.marketEnabled">
 								<a class="plain buttonLink" ng-href="{{ctrl.marketLink}}" target="_blank"></a>
-								<md-tooltip md-direction="left">Buy/Sell</md-tooltip>
 							</md-button>
 							<md-menu md-position-mode="target-right target">
 								<md-button class="iconButton share" ng-click="$mdOpenMenu()" aria-label="Share">

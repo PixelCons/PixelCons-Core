@@ -7,8 +7,8 @@
 		const _enabled = true;
 		
 		// Setup functions
+		this.isEnabled = isEnabled;
 		this.getMatch = getMatch;
-		this.appendMatch = appendMatch;
 		this.searchSimilar = searchSimilar;
 		
 		// Data
@@ -21,6 +21,11 @@
 		// Functions //
 		///////////////
 		
+		
+		// Gets if the similarity checks are enabled
+		function isEnabled() {
+			return _enabled;
+		}
 		
 		// Searches for a close match to the given pixelconId
 		function getMatch(pixelconId, allPixelcons) {
@@ -53,17 +58,6 @@
 				}
 			}
 			return null;
-		}
-		
-		// Appends match data to the given pixelcons
-		function appendMatch(pixelcons, allPixelcons) {
-			if(!_enabled) return;
-			updateAllPixelconData(allPixelcons);
-			
-			//search
-			for(let i=0; i<pixelcons.length; i++) {
-				pixelcons[i].match = getMatch(pixelcons[i].id, allPixelcons);
-			}
 		}
 		
 		// Searches for similar pixelcons

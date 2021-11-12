@@ -240,12 +240,12 @@
 								owner: web3Service.formatAddress(pixelconRaw[3]),
 								creator: web3Service.formatAddress(pixelconRaw[4]),
 								date: pixelconRaw[6] * 1000,
-								collection: pixelconRaw[2].toNumber() ? pixelconRaw[2].toNumber() : null
+								collection: pixelconRaw[2].toNumber() ? { index:  pixelconRaw[2].toNumber() } : null
 							};
 							
 							//fill in additional data
 							await addCollectionData(contract, pixelcon);
-							similarities.appendMatch([pixelcon], await getAllPixelcons());
+							await addMatchData(pixelcon);
 							
 							resolve(pixelcon);
 						}
@@ -291,7 +291,7 @@
 		}
 
 		// Gets all pixelcons owned by the given address
-		function fetchPixelconsByAccount(address) {
+		function fetchPixelconsByAccount(address, options) {
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
 				if (state == "not_enabled") reject(_notEnabledError);
@@ -305,7 +305,7 @@
 
 						//get all for owner
 						let ownerPixelconIndexes = await contract.errRetry.getForOwner(address);
-						let pixelcons = await getPixelconsByIndexes(contract, ownerPixelconIndexes);
+						let pixelcons = await getPixelconsByIndexes(contract, ownerPixelconIndexes, options);
 						resolve(pixelcons);
 						
 					} catch (err) {
@@ -317,7 +317,7 @@
 		}
 
 		// Gets all pixelcons created by the given address
-		function fetchPixelconsByCreator(address) {
+		function fetchPixelconsByCreator(address, options) {
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
 				if (state == "not_enabled") reject(_notEnabledError);
@@ -329,9 +329,8 @@
 						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let contract = await web3Service.getContract(_contractPath, chainId);
 
-						//get all for creator
 						let creatorPixelconIndexes = await contract.errRetry.getForCreator(address);
-						let pixelcons = await getPixelconsByIndexes(contract, creatorPixelconIndexes);
+						let pixelcons = await getPixelconsByIndexes(contract, creatorPixelconIndexes, options);
 						resolve(pixelcons);
 						
 					} catch (err) {
@@ -343,7 +342,7 @@
 		}
 
 		// Gets all pixelcons with the given indexes
-		function fetchPixelconsByIndexes(indexes) {
+		function fetchPixelconsByIndexes(indexes, options) {
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
 				if (state == "not_enabled") reject(_notEnabledError);
@@ -354,7 +353,7 @@
 					try {
 						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let contract = await web3Service.getContract(_contractPath, chainId);
-						let pixelcons = await getPixelconsByIndexes(contract, indexes);
+						let pixelcons = await getPixelconsByIndexes(contract, indexes, options);
 						resolve(pixelcons);
 
 					} catch (err) {
@@ -366,7 +365,7 @@
 		}
 
 		// Gets all pixelcons with the given ids
-		function fetchPixelconsByIds(ids) {
+		function fetchPixelconsByIds(ids, options) {
 			ids = formatPixelconIds(ids);
 			return $q(async function (resolve, reject) {
 				let state = web3Service.getState();
@@ -378,7 +377,7 @@
 					try {
 						let chainId = web3Service.getMainNetwork(_networkIndex).chainId;
 						let contract = await web3Service.getContract(_contractPath, chainId);
-						let pixelcons = await getPixelconsByIds(contract, ids);
+						let pixelcons = await getPixelconsByIds(contract, ids, options);
 						resolve(pixelcons);
 
 					} catch (err) {
@@ -953,9 +952,8 @@
 		}
 		
 		// Gets pixelcons from the given indexes
-		async function getPixelconsByIndexes(contract, indexes) {
+		async function getPixelconsByIndexes(contract, indexes, options) {
 			if(!indexes || !indexes.length) return [];
-			
 			let basicDataRaw = await breakUpQuery(indexes, async function(indexes_subset) {
 				let tokenData = await contract.errRetry.getBasicData(indexes_subset);
 				let dataByToken = [];
@@ -970,23 +968,26 @@
 					index: indexes[i].toNumber ? indexes[i].toNumber() : indexes[i],
 					name: web3Service.toUtf8(basicDataRaw[i][1]),
 					owner: web3Service.formatAddress(basicDataRaw[i][2].toString()),
-					collection: basicDataRaw[i][3].toNumber() ? basicDataRaw[i][3].toNumber() : null
+					collection: basicDataRaw[i][3].toNumber() ? { index: basicDataRaw[i][3].toNumber() } : null
 				});
 			}
 			
 			//fill in additional data
-			await addCollectionData(contract, pixelcons);
-			similarities.appendMatch(pixelcons, await getAllPixelcons());
+			if(!options || !options.simpleFetch) {
+				let isAsynchronous = (options && options.asynchronousLoad);
+				await addCollectionData(contract, pixelcons, isAsynchronous);
+				await addMatchData(pixelcons, isAsynchronous);
+			}
 			
 			return pixelcons;
 		}
 		
 		// Gets pixelcons from the given indexes
-		async function getPixelconsByIds(contract, ids) {
+		async function getPixelconsByIds(contract, ids, options) {
 			if(!ids || !ids.length) return [];
 			
 			let indexes = await getPixelconIndexesByIds(contract, ids);
-			return await getPixelconsByIndexes(contract, indexes);
+			return await getPixelconsByIndexes(contract, indexes, options);
 		}
 		
 		// Gets collection from the given index
@@ -1006,28 +1007,76 @@
 		}
 		
 		// Adds collection details to the given pixelcons
-		async function addCollectionData(contract, pixelcons) {
+		async function addCollectionData(contract, pixelcons, isAsynchronous) {
 			let isArray = true;
 			if (pixelcons.length === undefined && pixelcons.id) {
 				isArray = false;
 				pixelcons = [pixelcons];
 			}
 			try {
-				let cache = {};
+				let collectionCache = {};
+				let collectionPromiseCache = {};
 				for (let i = 0; i < pixelcons.length; i++) {
-					if (pixelcons[i].collection && !isNaN(pixelcons[i].collection)) {
+					if (pixelcons[i].collection && !isNaN(pixelcons[i].collection.index)) {
 						
 						//fetch collection details (possible already in cache)
-						let collectionIndex = pixelcons[i].collection;
-						let collection = cache[collectionIndex] ? cache[collectionIndex] : (await getCollectionByIndex(contract, collectionIndex));
-						pixelcons[i].collection = collection;
-						cache[collectionIndex] = collection;
+						let collectionIndex = pixelcons[i].collection.index;
+						if(isAsynchronous) {
+							if(!collectionPromiseCache[collectionIndex]) collectionPromiseCache[collectionIndex] = getCollectionByIndex(contract, collectionIndex);
+							extendPixelconLoadPromise(pixelcons[i], collectionPromiseCache[collectionIndex], function(pixelcon, collection) {
+								pixelcon.collection = collection;
+								return pixelcon;
+							});
+							
+						} else {
+							let collection = collectionCache[collectionIndex] ? collectionCache[collectionIndex] : (await getCollectionByIndex(contract, collectionIndex));
+							pixelcons[i].collection = collection;
+							collectionCache[collectionIndex] = collection;
+						}
 					}
 				}
 			} catch (err) {
 				console.log(err);
 			}
 			return isArray ? pixelcons : pixelcons[0];
+		}
+		
+		// Adds match details to the given pixelcons
+		async function addMatchData(pixelcons, isAsynchronous) {
+			let isArray = true;
+			if (pixelcons.length === undefined && pixelcons.id) {
+				isArray = false;
+				pixelcons = [pixelcons];
+			}
+			try {
+				if(similarities.isEnabled()) {
+					if(isAsynchronous) {
+						let allPixelconsPromise = getAllPixelcons();
+						for (let i = 0; i < pixelcons.length; i++) {
+							extendPixelconLoadPromise(pixelcons[i], allPixelconsPromise, function(pixelcon, allPixelcons) {
+								pixelcon.match = similarities.getMatch(pixelcons[i].id, allPixelcons);
+								return pixelcon;
+							});
+						}
+						
+					} else {
+						let allPixelcons = await getAllPixelcons();
+						for (let i = 0; i < pixelcons.length; i++) pixelcons[i].match = similarities.getMatch(pixelcons[i].id, allPixelcons);
+					}
+				}
+			} catch (err) {
+				console.log(err);
+			}
+			return isArray ? pixelcons : pixelcons[0];
+		}
+		
+		// Extends the load promise on a pixelcon
+		function extendPixelconLoadPromise(pixelcon, newPromise, resolveCallback) {
+			let currPromise = pixelcon.loadPromise ? pixelcon.loadPromise : pixelcon;
+			pixelcon.loadPromise = Promise.all([currPromise, newPromise]).then(function(values) {
+				values[0].loadPromise = null;
+				return resolveCallback(values[0], values[1]);
+			});
 		}
 		
 		// Gets the current total pixelcons

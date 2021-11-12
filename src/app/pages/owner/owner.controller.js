@@ -5,13 +5,16 @@
 	OwnerPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$sce', 'web3Service', 'coreContract', 'market'];
 	function OwnerPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $sce, web3Service, coreContract, market) {
 		var _this = this;
-		_this.owner = $routeParams.address;
+		const loadStep = 80;
+		const loadStepThreshold = 100;
+		_this.owner = web3Service.formatAddress($routeParams.address);
 		_this.getMaxWidth = getMaxWidth;
+		_this.loadMore = loadMore;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
 		_this.shareOnFacebook = shareOnFacebook;
 		_this.marketEnabled = market.isEnabled();
-		_this.marketLink = market.getOwnerLink($routeParams.address);
+		_this.marketLink = market.getOwnerLink(_this.owner);
 
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -24,14 +27,41 @@
 		function loadOwnerDetails() {
 			_this.loading = true;
 			_this.error = null;
-			coreContract.fetchPixelconsByAccount($routeParams.address)
+			coreContract.fetchPixelconsByAccount(_this.owner, {asynchronousLoad: true})
 				.then(function (pixelcons) {
 					_this.loading = false;
 					_this.pixelcons = pixelcons;
+					_this.displayPixelcons = pixelcons.slice(0, pixelcons.length < loadStepThreshold ? pixelcons.length : loadStep);
 				}, function (reason) {
 					_this.loading = false;
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
 				});
+		}
+
+		// Updates data from transactions
+		function updateFromTransaction(transactionData) {
+			if (transactionData && transactionData.success && transactionData.pixelcons) {
+				for (let i = 0; i < transactionData.pixelcons.length; i++) {
+					let pixelcon = transactionData.pixelcons[i];
+
+					let found = false;
+					for (let j = 0; j < _this.pixelcons.length; j++) {
+						if (_this.pixelcons[j].id == pixelcon.id) {
+							if (pixelcon.owner == _this.owner) { //update
+								_this.pixelcons[j] = pixelcon;
+							} else { //delete
+								_this.pixelcons.splice(j, 1);
+								j--;
+							}
+							found = true;
+							break;
+						}
+					}
+					if (!found && pixelcon.owner == _this.owner) { //insert
+						_this.pixelcons.push(pixelcon);
+					}
+				}
+			}
 		}
 		
 		// Determines the max width given the number of pixelcons
@@ -53,6 +83,14 @@
 				}
 			}
 			return '1400px';
+		}
+
+		// Loads more pixelcons on the display
+		function loadMore() {
+			if(_this.pixelcons.length > _this.displayPixelcons.length) {
+				let size = Math.min(_this.displayPixelcons.length + loadStep, _this.pixelcons.length);
+				_this.displayPixelcons = _this.pixelcons.slice(0, size);
+			}
 		}
 
 		// Copies share link to the clipboard
@@ -82,5 +120,8 @@
 		web3Service.onNetworkChange(function () {
 			if(_this.error) loadOwnerDetails();
 		}, $scope);
+
+		// Listen for transactions
+		web3Service.onWaitingTransactionsChange(updateFromTransaction, $scope);
 	}
 }());

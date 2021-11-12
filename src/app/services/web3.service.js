@@ -769,7 +769,16 @@
 		// Formats the given hex address
 		function formatAddress(address) {
 			try {
-				if (address) return address.toLowerCase();
+				const hexCharacters = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
+				if(address) {
+					address = address.toLowerCase();
+					if(address.indexOf('0x') == 0) address = address.substr(2,address.length);
+					if(address.length < 40) return null;
+					if(address.length > 40) address = address.substring(address.length-40, address.length);
+					for(let i=0; i<40; i++) if(hexCharacters.indexOf(address[i]) == -1) return null;
+					return '0x' + address;
+				}
+				return null;
 			} catch (err) { }
 			return null;
 		}

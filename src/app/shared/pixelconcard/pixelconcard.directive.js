@@ -23,7 +23,7 @@
 					_this.loaded = true;
 				});
 			}
-			scramblePixelconCollection();
+			refreshPixelconData(_this.pixelcon);
 		});
 
 		// Standardize the size [xs, sm, md, lg, xl]
@@ -66,6 +66,8 @@
 		// Refresh pixelcon data
 		function refreshPixelconData(pixelcon) {
 			if (pixelcon) {
+				if(pixelcon.loadPromise) pixelcon.loadPromise.then(refreshPixelconData);
+				_this.loading = !!pixelcon.loadPromise;
 				_this.pixelcon = angular.extend(_this.pixelcon, _this.pixelcon, pixelcon);
 				scramblePixelconCollection();
 			} else {

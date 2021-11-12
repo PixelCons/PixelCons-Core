@@ -1,7 +1,7 @@
 <!-- PixelCon Card Directive -->
 <div class="pixelconCardDirectiveContainer" ng-class="{'xs':ctrl.size=='xs', 'sm':ctrl.size=='sm', 'md':ctrl.size=='md', 'lg':ctrl.size=='lg', 'xl':ctrl.size=='xl', 'disabled':ctrl.disabled, 'clickable':!ctrl.disabled}" 
-		ng-mouseenter="ctrl.dirHover=true" ng-mouseleave="ctrl.dirHover=false">
-	<div class="pixelconCardDirectiveImage" ng-mouseenter="ctrl.dirHover=true" ng-click="ctrl.pixelconClick($event)">
+		ng-mousemove="ctrl.dirHover=!ctrl.loading" ng-mouseleave="ctrl.dirHover=false">
+	<div class="pixelconCardDirectiveImage" ng-mousemove="ctrl.dirHover=!ctrl.loading" ng-click="ctrl.pixelconClick($event)">
 		<pixelcon id="ctrl.pixelcon.id"></pixelcon>
 		<div class="pixelconCardDirectiveImageCover" ng-class="{'pixelconCardDirectiveTransition': ctrl.loaded}" ng-show="(ctrl.dirHover && !ctrl.selectable && !ctrl.disabled) || ctrl.coverAlwaysOn" ng-cloak>
 			<!-- Goto Link -->
@@ -39,9 +39,11 @@
 	<!-- Bottom Info -->
 	<div class="pixelconCardDirectiveInfo pixelconCardDirectiveFont textBold textDark colorLight" ng-click="ctrl.pixelconClick($event)" ng-class="{'pixelconCardDirectiveTransition':ctrl.loaded}">
 		<div ng-cloak>{{ctrl.pixelcon.name!==''?ctrl.pixelcon.name:'#'+ctrl.pixelcon.index}}</div>
-		<div class="pixelconCardDirectiveGroupNotification" ng-if="!ctrl.reloading && !ctrl.noCollection && (!ctrl.pixelcon.match || ctrl.noMatch || ctrl.pixelcon.match.verified) && ctrl.pixelcon.collection"></div>
+		<div class="pixelconCardDirectiveGroupNotification" 
+			ng-if="!ctrl.loading && !ctrl.reloading && !ctrl.noCollection && (!ctrl.pixelcon.match || ctrl.noMatch || ctrl.pixelcon.match.verified) && ctrl.pixelcon.collection"></div>
 		<div class="pixelconCardDirectiveSimilarNotification" ng-class="{'verified': (ctrl.pixelcon.match.verified)}" 
-			ng-if="!ctrl.reloading && !ctrl.noMatch && ctrl.pixelcon.match && (!ctrl.pixelcon.match.verified || !ctrl.pixelcon.collection || ctrl.noCollection)"></div>
+			ng-if="!ctrl.loading && !ctrl.reloading && !ctrl.noMatch && ctrl.pixelcon.match && (!ctrl.pixelcon.match.verified || !ctrl.pixelcon.collection || ctrl.noCollection)"></div>
+		<md-progress-circular class="pixelconCardDirectiveLoadingNotification" ng-if="ctrl.loading" md-diameter="10px" md-mode="indeterminate"></md-progress-circular>
 		<div class="pixelconCardDirectiveAccountNotification" ng-if="!ctrl.reloading && !ctrl.noAccount && ctrl.pixelcon.owner==ctrl.account"></div>
 	</div>
 	

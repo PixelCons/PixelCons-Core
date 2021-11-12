@@ -5,6 +5,8 @@
 	AccountPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$mdToast', '$routeParams', '$timeout', '$location', '$sce', 'web3Service', 'coreContract', 'market'];
 	function AccountPageCtrl($scope, $mdMedia, $mdDialog, $mdToast, $routeParams, $timeout, $location, $sce, web3Service, coreContract, market) {
 		var _this = this;
+		const loadStep = 80;
+		const loadStepThreshold = 100;
 		_this.pixelcons = [];
 		_this.accountAddress;
 		_this.filter = {
@@ -20,6 +22,7 @@
 		_this.checkDisabled = checkDisabled;
 		_this.checkSelectModeActionable = checkSelectModeActionable;
 		_this.send = send;
+		_this.loadMore = loadMore;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
 		_this.shareOnFacebook = shareOnFacebook;
@@ -95,8 +98,12 @@
 				_this.error = null;
 				
 				//get pixelcons for account
-				coreContract.fetchPixelconsByAccount(_this.accountAddress).then(function (data) {
-					_this.pixelcons = data;
+				coreContract.fetchPixelconsByAccount(_this.accountAddress, {asynchronousLoad: true}).then(function (pixelcons) {
+					//_this.pixelcons = data;
+					
+					_this.pixelcons = pixelcons;
+					_this.displayPixelcons = pixelcons.slice(0, pixelcons.length < loadStepThreshold ? pixelcons.length : loadStep);
+					
 					_this.loading = false;
 					sortData();
 				}, function (reason) {
@@ -159,6 +166,11 @@
 				}
 				return 0;
 			});
+			
+			//reset displayed pixelcons
+			if(_this.displayPixelcons) {
+				_this.displayPixelcons = _this.pixelcons.slice(0, _this.displayPixelcons.length);
+			}
 		}
 
 		// Set the sort order
@@ -247,6 +259,14 @@
 			}).then(function(result) {
 				setSelectionMode(null);
 			});
+		}
+
+		// Loads more pixelcons on the display
+		function loadMore() {
+			if(_this.pixelcons.length > _this.displayPixelcons.length) {
+				let size = Math.min(_this.displayPixelcons.length + loadStep, _this.pixelcons.length);
+				_this.displayPixelcons = _this.pixelcons.slice(0, size);
+			}
 		}
 
 		// Copies share link to the clipboard

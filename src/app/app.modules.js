@@ -116,7 +116,7 @@
 					if(backgroundAccount != loadedAccount) {
 						backgroundAccount = loadedAccount;
 						if(backgroundAccount) {
-							let pixelcons = await coreContract.fetchPixelconsByAccount(backgroundAccount);
+							let pixelcons = await coreContract.fetchPixelconsByAccount(backgroundAccount, {simpleFetch: true});
 							if(pixelcons && pixelcons.length) {
 								let pixelconIds = [];
 								for(let i=0; i<pixelcons.length; i++) pixelconIds.push(pixelcons[i].id);

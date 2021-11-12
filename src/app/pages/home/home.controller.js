@@ -75,7 +75,7 @@
 			count: 25,
 			disabled: false
 		},{
-			name: 'Pico8',
+			name: 'Crypto8',
 			title: '100 Characters',
 			address: '0xf88e77f202db096e75596b468eef7c16282156b1',
 			pixelconIds: [

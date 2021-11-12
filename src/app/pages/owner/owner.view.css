@@ -83,6 +83,7 @@ div.pixelconOwnerPage .pixelconCard {
 	display: inline-block;
 	margin: 12px;
 	margin-bottom: 20px;
+	vertical-align: middle;
 }
 div.pixelconOwnerPage.md .pixelconCard {
 	margin: 9px;
@@ -91,6 +92,29 @@ div.pixelconOwnerPage.md .pixelconCard {
 div.pixelconOwnerPage.sm .pixelconCard {
 	margin: 6px;
 	margin-bottom: 16px;
+}
+div.pixelconOwnerPage .loadMoreButton {
+	display: inline-block;
+	margin: 12px;
+	width: 96px;
+	height: 60px;
+	line-height: 60px;
+	font-size: 16px;
+	vertical-align: middle;
+	text-align: center;
+	cursor: pointer;
+}
+div.pixelconOwnerPage .loadMoreButton:hover {
+	text-decoration: underline;
+}
+div.pixelconOwnerPage.md .loadMoreButton {
+	margin: 9px;
+	width: 88px;
+}
+div.pixelconOwnerPage.sm .loadMoreButton {
+	margin: 6px;
+	width: 72px;
+	font-size: 14px;
 }
 div.pixelconOwnerPage div.error {
 	position: absolute;
