@@ -15,12 +15,14 @@
 			browse: {
 				byName: true,
 				forSale: true,
+				similar: true,
 				results: true
 			},
 			details: {
 				pixelcon: true,
 				collection: true,
-				creator: true
+				creator: true,
+				image: true
 			},
 			create: {
 				pixelcon: true,
