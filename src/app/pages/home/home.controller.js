@@ -2,9 +2,11 @@
 	angular.module('App')
 		.controller('HomePageCtrl', HomePageCtrl);
 
-	HomePageCtrl.$inject = ['$scope', '$mdMedia', '$window', '$timeout', 'decoder', 'market'];
-	function HomePageCtrl($scope, $mdMedia, $window, $timeout, decoder, market) {
+	HomePageCtrl.$inject = ['$scope', '$mdMedia', '$window', '$location', '$timeout', '$interval', 'decoder', 'market'];
+	function HomePageCtrl($scope, $mdMedia, $window, $location, $timeout, $interval, decoder, market) {
 		var _this = this;
+		const slideWidth = 380;
+		const slideAutoScrollDelay = 5000;
 		_this.marketName = market.getMarketName();
 		_this.sliderDotClick = sliderDotClick;
 
@@ -166,9 +168,16 @@
 		}
 		
 		// Slider Logic
+		const slideScrollerContainer = document.querySelector('.slider');
 		const slideScroller = document.querySelector('.slides');
+		var slideShowCount = 1;
+		var slideMoved = false;
+		var slideMoveDistance = 0;
+		var slideMoveProcessTimeout = null;
+		var slideAutoScrollDelayInterval = $interval(sliderAutoScroll, slideAutoScrollDelay);
+		var slidesGrabbing = false;
+		var slidesHovering = false;
 		function recalcSliderDotHighlight() {
-			const slideWidth = 380;
 			let highlightIndex = Math.floor((slideScroller.scrollLeft+(slideWidth/2))/slideWidth);
 			if(_this.sliderDotHighlight != highlightIndex) {
 				_this.sliderDotHighlight = highlightIndex;
@@ -176,24 +185,28 @@
 			}
 		}
 		function recalcSliderSize(innerWidth) {
-			if(innerWidth < 800) {
+			if(innerWidth < 800 || _this.showcaseList.length <= 1) {
 				_this.sliderClass = { "single": true };
 				_this.sliderDots = [];
+				slideShowCount = 1;
 				for(let i=0; i<_this.showcaseList.length-0; i++) _this.sliderDots.push(i);
 				
-			} else if(innerWidth < 1180) {
+			} else if(innerWidth < 1180 || _this.showcaseList.length <= 2) {
 				_this.sliderClass = { "double": true };
 				_this.sliderDots = [];
+				slideShowCount = 2;
 				for(let i=0; i<_this.showcaseList.length-1; i++) _this.sliderDots.push(i);
 				
-			} else if(innerWidth < 1580) {
+			} else if(innerWidth < 1580 || _this.showcaseList.length <= 3) {
 				_this.sliderClass = { "triple": true };
 				_this.sliderDots = [];
+				slideShowCount = 3;
 				for(let i=0; i<_this.showcaseList.length-2; i++) _this.sliderDots.push(i);
 				
 			} else {
 				_this.sliderClass = { "quadruple": true };
 				_this.sliderDots = [];
+				slideShowCount = 4;
 				for(let i=0; i<_this.showcaseList.length-3; i++) _this.sliderDots.push(i);
 				
 			}
@@ -201,11 +214,98 @@
 		}
 		function sliderDotClick(index) {
 			if(index > -1 && index < _this.sliderDots.length) {
-				document.querySelector('#slide-' + index).scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+				slideScroller.scrollLeft = index*slideWidth;
 			}
 		}
+		function sliderAutoScroll() {
+			let nonDisabledCount = 0;
+			for(let i=0; i<_this.showcaseList.length; i++) if(!_this.showcaseList[i].disabled) nonDisabledCount++;
+			let maxAutoPaging = (nonDisabledCount - slideShowCount) + Math.floor((_this.showcaseList.length - nonDisabledCount)/2) + 1;
+			if(maxAutoPaging > 0) {
+				let highlightIndex = Math.floor((slideScroller.scrollLeft+(slideWidth/2))/slideWidth);
+				sliderDotClick((highlightIndex + 1) % maxAutoPaging);
+			}
+		}
+		function sliderMouseEnter(ev) {
+			if(slideAutoScrollDelayInterval) $interval.cancel(slideAutoScrollDelayInterval);
+			slideAutoScrollDelayInterval = null;
+			slidesHovering = true;
+		}
+		function sliderMouseDown(ev) {
+			slidesGrabbing = true;
+		}
+		function sliderMouseMove(ev) {
+			if(slidesGrabbing) {
+				slideMoveDistance += ev.movementX;
+				if(Math.abs(slideMoveDistance) > 10) slideMoved = true;
+				
+				if(slideMoveProcessTimeout) $timeout.cancel(slideMoveProcessTimeout);
+				slideMoveProcessTimeout = $timeout(function() {
+					let steps = 0;
+					while(slideMoveDistance > slideWidth) {
+						steps--;
+						slideMoveDistance -= slideWidth;
+					}
+					while(slideMoveDistance < -(slideWidth)) {
+						steps++;
+						slideMoveDistance += slideWidth;
+					}
+					while(slideMoveDistance > slideWidth/2) {
+						steps--;
+						slideMoveDistance -= slideWidth/2;
+					}
+					while(slideMoveDistance < -(slideWidth/2)) {
+						steps++;
+						slideMoveDistance += slideWidth/2;
+					}
+					if(steps < 0) {
+						let highlightIndex = Math.floor((slideScroller.scrollLeft+(slideWidth/2))/slideWidth);
+						sliderDotClick(Math.max(highlightIndex + steps, 0));
+					}
+					if(steps > 0) {
+						let highlightIndex = Math.floor((slideScroller.scrollLeft+(slideWidth/2))/slideWidth);
+						sliderDotClick(Math.min(highlightIndex + steps, _this.sliderDots.length - 1));
+					}
+					slideMoveProcessTimeout = null;
+				}, 30);
+			}
+		}
+		function sliderMouseUp(ev) {
+			if(!slideMoved) {
+				let link = null;
+				let el = ev.srcElement;
+				while(el) {
+					if(el.attributes && el.attributes.index && el.attributes.index.value) {
+						link = _this.showcaseList[parseInt(el.attributes.index.value)].link;
+						break;
+					}
+					el = el.parentElement;
+				}
+				if(link) $location.path(link);
+			}
+			slideMoved = false;
+			slideMoveDistance = 0;
+			slidesGrabbing = false;
+		}
+		function sliderMouseLeave(ev) {
+			if(slideAutoScrollDelayInterval) $interval.cancel(slideAutoScrollDelayInterval);
+			slideAutoScrollDelayInterval = $interval(sliderAutoScroll, slideAutoScrollDelay);
+			slideMoved = false;
+			slideMoveDistance = 0;
+			slidesGrabbing = false;
+			slidesHovering = false;
+		}
+				
 		$scope.$watch(function () { return $window.innerWidth }, recalcSliderSize);
 		angular.element(slideScroller).bind('scroll', recalcSliderDotHighlight);
+		angular.element(slideScrollerContainer).bind('mouseenter', sliderMouseEnter);
+		angular.element(slideScrollerContainer).bind('touchstart', sliderMouseEnter);
+		angular.element(slideScroller).bind('mousedown', sliderMouseDown);
+		angular.element(slideScroller).bind('mousemove', sliderMouseMove);
+		angular.element(slideScroller).bind('mouseup', sliderMouseUp);
+		angular.element(slideScrollerContainer).bind('mouseleave', sliderMouseLeave);
+		angular.element(slideScrollerContainer).bind('touchend', sliderMouseLeave);
+		angular.element(slideScrollerContainer).bind('touchcancel', sliderMouseLeave);
 		
 		recalcSliderSize($window.innerWidth);
 	}

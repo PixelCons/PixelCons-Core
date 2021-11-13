@@ -167,19 +167,17 @@ div.pixelconHomePage .textBox ul {
 .slider .slides {
 	display: flex;
 	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	scroll-behavior: smooth;
-	-webkit-overflow-scrolling: touch;
 	width: calc(100% - 20px);
 	margin: 0px 10px;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
+}
+.slider .slides.snap {
 }
 .slider .slides::-webkit-scrollbar {
-	width: 0px;
-	height: 0px;
-}
-.slider .slides::-webkit-scrollbar-thumb,
-.slider .slides::-webkit-scrollbar-track {
-	background: transparent;
+	display: none;
 }
 .slider .slides .slide {
 	scroll-snap-align: start;
@@ -201,6 +199,7 @@ div.pixelconHomePage .textBox ul {
 	background-color: #eee;
 	background-position: 0px 0px;
 	transition: none;
+	overflow: hidden;
 }
 .slider .slides .slide .content:hover {
 	background-position: 10000px 7000px;
