@@ -50,30 +50,32 @@
 		// Check if create is supported
 		checkCreateSupported();
 		function checkCreateSupported() {
-			let web3state = web3Service.getState();
-			if (web3state == "ready") {
-				if (web3Service.getActiveAccount()) {
-					_this.showButtons = true;
-				} else {
-					if (web3Service.isReadOnly()) {
-						_this.infoText = 'You need an Account to create PixelCons';
-						_this.showStartButton = true;
-					} else if (web3Service.isPrivacyMode()) {
-						_this.infoText = 'Please connect your Account';
+			web3Service.awaitState(function () {
+				let web3state = web3Service.getState();
+				if (web3state == "ready") {
+					if (web3Service.getActiveAccount()) {
+						_this.showButtons = true;
 					} else {
-						_this.infoText = 'Please log into ' + web3Service.getProviderName();
+						if (web3Service.isReadOnly()) {
+							_this.infoText = 'You need an Account to create PixelCons';
+							_this.showStartButton = true;
+						} else if (web3Service.isPrivacyMode()) {
+							_this.infoText = 'Please connect your Account';
+						} else {
+							_this.infoText = 'Please log into ' + web3Service.getProviderName();
+						}
+						_this.showButtons = false;
 					}
+				} else if (web3state == "not_enabled") {
+					_this.infoText = 'You need an Account to create PixelCons';
+					_this.showStartButton = true;
+					_this.showButtons = false;
+				} else {
+					_this.infoText = 'Unkown Network Error';
 					_this.showButtons = false;
 				}
-			} else if (web3state == "not_enabled") {
-				_this.infoText = 'You need an Account to create PixelCons';
-				_this.showStartButton = true;
-				_this.showButtons = false;
-			} else {
-				_this.infoText = 'Unkown Network Error';
-				_this.showButtons = false;
-			}
-			fetchForCollection();
+				fetchForCollection();
+			}, true);
 		}
 
 		// Set pixel to the selected color
@@ -178,6 +180,7 @@
 				if (($routeParams.view === undefined && _this.tabSelection != 'canvas') || ($routeParams.view !== undefined && _this.tabSelection != $routeParams.view)) {
 					$location.search('view', (_this.tabSelection == 'advanced') ? 'advanced' : (_this.tabSelection == 'collection') ? 'collection' : undefined).replace();
 				}
+				fetchForCollection();
 			}
 		}
 		
@@ -340,7 +343,7 @@
 		// Listen for account data changes
 		web3Service.onAccountDataChange(function () {
 			checkCreateSupported();
-		}, $scope);
+		}, $scope, true);
 
 		// Listen for transactions
 		web3Service.onWaitingTransactionsChange(checkReload, $scope);

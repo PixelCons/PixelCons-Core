@@ -31,7 +31,7 @@
 				.then(function (pixelcons) {
 					_this.loading = false;
 					_this.pixelcons = pixelcons;
-					_this.displayPixelcons = pixelcons.slice(0, pixelcons.length < loadStepThreshold ? pixelcons.length : loadStep);
+					_this.displayPixelcons = _this.pixelcons.slice(0, _this.pixelcons.length < loadStepThreshold ? _this.pixelcons.length : loadStep);
 				}, function (reason) {
 					_this.loading = false;
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
@@ -61,6 +61,7 @@
 						_this.pixelcons.push(pixelcon);
 					}
 				}
+				_this.displayPixelcons = _this.pixelcons.slice(0, _this.pixelcons.length < loadStepThreshold ? _this.pixelcons.length : loadStep);
 			}
 		}
 		
