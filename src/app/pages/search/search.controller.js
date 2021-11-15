@@ -5,8 +5,8 @@
 	SearchPageCtrl.$inject = ['$scope', '$mdMedia', '$routeParams', '$route', '$location', '$window', '$sce', 'web3Service', 'coreContract'];
 	function SearchPageCtrl($scope, $mdMedia, $routeParams, $route, $location, $window, $sce, web3Service, coreContract) {
 		var _this = this;
-		var maxInPage = 50;
-		var minGrade = 8;
+		const maxInPage = 50;
+		const minGrade = 8;
 		_this.pixelcons = [];
 		_this.filter = {
 			searchText: $routeParams.search ? $routeParams.search : '',
@@ -184,7 +184,7 @@
 			_this.error = null;
 			_this.currPage = page;
 			_this.maxPage = Math.ceil(pixelconFilterCount / maxInPage);
-			coreContract.fetchPixelconsByIndexes(indexes).then(function (data) {
+			coreContract.fetchPixelconsByIndexes(indexes, {asynchronousLoad: true}).then(function (data) {
 				_this.loading = false;
 				_this.pixelcons = data;
 				_this.displayHeight = '';

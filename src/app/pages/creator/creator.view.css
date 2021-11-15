@@ -83,6 +83,7 @@ div.pixelconCreatorPage .pixelconCard {
 	display: inline-block;
 	margin: 12px;
 	margin-bottom: 20px;
+	vertical-align: middle;
 }
 div.pixelconCreatorPage.md .pixelconCard {
 	margin: 9px;
@@ -91,6 +92,29 @@ div.pixelconCreatorPage.md .pixelconCard {
 div.pixelconCreatorPage.sm .pixelconCard {
 	margin: 6px;
 	margin-bottom: 16px;
+}
+div.pixelconCreatorPage .loadMoreButton {
+	display: inline-block;
+	margin: 12px;
+	width: 96px;
+	height: 60px;
+	line-height: 60px;
+	font-size: 16px;
+	vertical-align: middle;
+	text-align: center;
+	cursor: pointer;
+}
+div.pixelconCreatorPage .loadMoreButton:hover {
+	text-decoration: underline;
+}
+div.pixelconCreatorPage.md .loadMoreButton {
+	margin: 9px;
+	width: 88px;
+}
+div.pixelconCreatorPage.sm .loadMoreButton {
+	margin: 6px;
+	width: 72px;
+	font-size: 14px;
 }
 div.pixelconCreatorPage div.error {
 	position: absolute;

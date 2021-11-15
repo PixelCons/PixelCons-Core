@@ -97,15 +97,44 @@ div.pixelconHomePage div.ethereumImage img {
 div.pixelconHomePage div.sourceImage {
 	display: inline-block;
 	vertical-align: middle;
-	width: 220px;
+	width: 400px;
 	font-size: 0px;
 }
 div.pixelconHomePage div.sourceImage.small {
-	width: 200px;
+	width: 320px;
 }
-div.pixelconHomePage div.sourceImage img {
-	width: 100%;
-	height: 100%;
+div.pixelconHomePage div.sourceImage .socialLink {
+	transition: all cubic-bezier(0.35, 0, 0.25, 1) 0.05s;
+	width: 80px;
+	height: 80px;
+	margin: 10px;
+	display: inline-block;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	cursor: pointer;
+	opacity: 0.45;
+	filter: alpha(opacity=45);
+}
+div.pixelconHomePage div.sourceImage.small .socialLink {
+	width: 60px;
+	height: 60px;
+}
+div.pixelconHomePage div.sourceImage .socialLink:hover {
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+}
+div.pixelconHomePage div.sourceImage .socialLink.github {
+	background-image: url("/img/icon_github.svg");
+}
+div.pixelconHomePage div.sourceImage .socialLink.twitter {
+	background-image: url("/img/icon_twitter.svg");
+}
+div.pixelconHomePage div.sourceImage .socialLink.discord {
+	background-image: url("/img/icon_discord.svg");
+}
+div.pixelconHomePage div.sourceImage .socialLink.opensea {
+	background-image: url("/img/icon_opensea.svg");
 }
 div.pixelconHomePage .textBox {
 	display: inline-block;
@@ -117,54 +146,176 @@ div.pixelconHomePage .textBox ul {
 	margin: 5px 0px 0px 0px;
 }
 
-/* Showcase */
-div.pixelconHomePage div.showcaseContainer {
+/* Slider showcase */
+.slider {
+	position: relative;
 	display: inline-block;
-	vertical-align: middle;
-	font-size: 0px;
-	margin: 0px 10px 10px 10px;
-	padding: 10px;
+	width: 400px;
+	max-width: calc(100vw - 20px);
+	text-align: center;
+	overflow: hidden;
 }
-div.pixelconHomePage div.showcaseContainer div.showcaseName {
-	margin-top: 5px;
+.slider.double {
+	width: 780px;
 }
-div.pixelconHomePage div.showcaseContainer a.showcaseItem {
-	display: inline-block;
-	vertical-align: middle;
-	width: 72px;
-	height: 72px;
-	margin: 4px;
+.slider.triple {
+	width: 1160px;
 }
-div.pixelconHomePage a.showcaseItem .shadow {
-	box-shadow: 1px 1px 8px #000000;
+.slider.quadruple {
+	width: 1540px;
 }
-div.pixelconHomePage div.showcaseContainer div.showcaseLink {
+.slider .slides {
+	display: flex;
+	overflow-x: auto;
+	width: calc(100% - 20px);
+	margin: 0px 10px;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	scroll-behavior: smooth;
+	scroll-snap-type: x mandatory;
+}
+.slider .slides.snap {
+}
+.slider .slides::-webkit-scrollbar {
+	display: none;
+}
+.slider .slides .slide {
+	scroll-snap-align: start;
+	flex-shrink: 0;
+	width: 380px;
+	max-width: calc(100vw - 40px);
+	height: 560px;
+	position: relative;
+	display: flex;
+	padding: 10px 0px;
+}
+.slider .slides .slide .content {
+	position: relative;
+	width: 350px;
+	max-width: calc(100vw - 40px);
+	height: 560px;
+	margin: 0px 15px;
+	border-radius: 10px;
+	background-color: #eee;
+	background-position: 0px 0px;
+	transition: none;
+	overflow: hidden;
+}
+.slider .slides .slide .content:hover {
+	background-position: 10000px 7000px;
+	transition: linear 60s;
+}
+.slider .slides .slide .content .contentSpread {
+	position: absolute;
 	width: 100%;
 	height: 100%;
-	box-sizing: border-box;
-	padding: 19px 0px;
-	font-size: 14px;
-	box-shadow: 0px 0px 5px #bbbbbb;
+	top: 0px;
+	left: 0px;
+	cursor: pointer;
 }
-div.pixelconHomePage div.showcaseContainer div.showcaseLink:hover {
-	padding: 21px 0px;
-	box-shadow: unset;
+.slider .slides .slide .content .contentSpread.disabled {
+	background-color: #484848b8;
 }
-div.pixelconHomePage div.showcaseContainer.small div.showcaseLink {
-	font-size: 9px;
-	font-weight: 600;
+.slider .slides .slide .content .contentTitle {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	text-align: left;
+	font-size: 20px;
+	margin: 20px;
+	background-color: #ffffffde;
+	border-radius: 4px;
+	padding: 0px 5px;
+	box-shadow: 0px 0px 5px 5px #ffffffde;
 }
-div.pixelconHomePage div.showcaseContainer.small a.showcaseItem {
-	width: 48px;
-	height: 48px;
+.slider .slides .slide .content .contentShade {
+	position: absolute;
+	width: 100%;
+	height: 140px;
+	bottom: 0px;
+	left: 0px;
+	background-color: #eee;
+	transition: height cubic-bezier(0.35, 0, 0.25, 1) 0.2s;
 }
-div.pixelconHomePage div.showcaseContainer a.showcaseItem:hover {
-	width: 76px;
-	height: 76px;
-	margin: 2px;
+.slider .slides .slide .content:hover .contentShade {
+	height: 160px;
 }
-div.pixelconHomePage div.showcaseContainer.small a.showcaseItem:hover {
-	width: 52px;
-	height: 52px;
-	margin: 2px;
+.slider .slides .slide .content .contentText {
+	padding: 10px 10px 4px 10px;
+}
+.slider .slides .slide .content .contentAccount {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	margin: 10px;
+	font-size: 0px;
+	width: 40px;
+	height: 40px;
+}
+.slider .slides .slide .content .contentButton {
+	border: 2px solid #000;
+	display: inline-block;
+	border-radius: 5px;
+	padding: 8px 15px;
+	margin: 10px;
+	cursor: pointer;
+	background-color: #f7f7f7;
+	transition: background-color cubic-bezier(0.35, 0, 0.25, 1) 0.2s;
+}
+.slider .slides .slide .content .contentButton:hover {
+	background-color: #e0e0e0;
+}
+.slider .slideDots {
+	display: inline-block;
+	width: 250px;
+	height: 20px;
+}
+.slider .slideDots .slideDotContainer {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	margin: 0px 2px;
+	cursor: pointer;
+}
+.slider .slideDots .slideDotContainer .dot {
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 3px;
+	background-color: #d0d0d0;
+	transition: background-color cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+}
+.slider .slideDots .slideDotContainer .dot.highlight {
+	background-color: #717171;
+}
+.slider .arrow {
+	position: absolute;
+    background-repeat: no-repeat;
+    background-size: 60px;
+	width: 40px;
+	height: 40px;
+	top: calc(50% - 20px);
+	border-radius: 20px;
+	transition: cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+	opacity: 0.0;
+	filter: alpha(opacity=0);
+}
+.slider .arrow.visible {
+	opacity: 0.4;
+	filter: alpha(opacity=40);
+	cursor: pointer;
+}
+.slider .arrow.visible:hover {
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+}
+.slider .arrow.left {
+	background-position: -20px center;
+	background-image: url('/img/icon_back.svg');
+	left: 0px;
+}
+.slider .arrow.right {	
+	background-position: 0px center;
+	background-image: url('/img/icon_forward.svg');
+	right: 0px;
 }

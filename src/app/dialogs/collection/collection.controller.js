@@ -26,7 +26,6 @@
 				_this.title = 'Clear Collection';
 				coreContract.verifyClearCollection(_this.index, _this.pixelconIds).then(function (data) {
 					_this.currView = 'clear';
-					_this.cost = data.estCost;
 				}, function (reason) {
 					_this.currView = 'error';
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
@@ -36,7 +35,6 @@
 				coreContract.verifyUpdateCollection(_this.index, _this.pixelconIds).then(function (data) {
 					_this.currView = 'rename';
 					_this.collectionName = '';
-					_this.cost = data.estCost;
 				}, function (reason) {
 					_this.currView = 'error';
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
@@ -46,7 +44,6 @@
 				coreContract.verifyCreateCollection(_this.pixelconIds).then(function (data) {
 					_this.currView = 'create';
 					_this.collectionName = '';
-					_this.cost = data.estCost;
 				}, function (reason) {
 					_this.currView = 'error';
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);

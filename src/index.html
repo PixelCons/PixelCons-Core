@@ -25,6 +25,7 @@
 	<link rel="stylesheet" href="app/pages/account/account.view.css">
 	<link rel="stylesheet" href="app/pages/collection/collection.view.css">
 	<link rel="stylesheet" href="app/pages/creator/creator.view.css">
+	<link rel="stylesheet" href="app/pages/owner/owner.view.css">
 	<link rel="stylesheet" href="app/pages/search/search.view.css">
 	<link rel="stylesheet" href="app/pages/home/home.view.css">
 	<link rel="stylesheet" href="app/pages/start/start.view.css">
@@ -37,6 +38,8 @@
 	<link rel="stylesheet" href="app/dialogs/pixelcon/pixelcon.view.css">
 	<link rel="stylesheet" href="app/dialogs/collection/collection.view.css">
 	<link rel="stylesheet" href="app/dialogs/send/send.view.css">
+	<link rel="stylesheet" href="app/dialogs/similarities/similarities.view.css">
+	<link rel="stylesheet" href="app/dialogs/prints/prints.view.css">
 	<link rel="stylesheet" href="app/dialogs/settings/settings.view.css">
 
 </head>
@@ -63,6 +66,7 @@
 			'page.details': 'app/pages/details/details.view.html',
 			'page.collection': 'app/pages/collection/collection.view.html',
 			'page.creator': 'app/pages/creator/creator.view.html',
+			'page.owner': 'app/pages/owner/owner.view.html',
 			'page.search': 'app/pages/search/search.view.html',
 			'page.account': 'app/pages/account/account.view.html',
 			'page.create': 'app/pages/create/create.view.html',
@@ -76,6 +80,8 @@
 			'dialog.collection': 'app/dialogs/collection/collection.view.html',
 			'dialog.pixelcon': 'app/dialogs/pixelcon/pixelcon.view.html',
 			'dialog.send': 'app/dialogs/send/send.view.html',
+			'dialog.similarities': 'app/dialogs/similarities/similarities.view.html',
+			'dialog.prints': 'app/dialogs/prints/prints.view.html',
 			'dialog.settings': 'app/dialogs/settings/settings.view.html'
 		}
 	</script>
@@ -92,6 +98,7 @@
 	<script src="lib/aes.min.js"></script>
 	<script src="lib/upng.min.js"></script>
 	<script src="lib/blockies.min.js"></script>
+	<script src="lib/qrcode.min.js"></script>
 	<script src="lib/ethers-5.0.umd.min.js"></script>
 
 	<!-- App services -->
@@ -101,6 +108,7 @@
 	<script src="app/services/market.service.js"></script>
 	<script src="app/services/coreContract.service.js"></script>
 	<script src="app/services/decoder.service.js"></script>
+	<script src="app/services/similarities.service.js"></script>
 
 	<!-- App components -->
 	<script src="app/pages/details/details.controller.js"></script>
@@ -108,6 +116,7 @@
 	<script src="app/pages/account/account.controller.js"></script>
 	<script src="app/pages/collection/collection.controller.js"></script>
 	<script src="app/pages/creator/creator.controller.js"></script>
+	<script src="app/pages/owner/owner.controller.js"></script>
 	<script src="app/pages/search/search.controller.js"></script>
 	<script src="app/pages/home/home.controller.js"></script>
 	<script src="app/pages/start/start.controller.js"></script>
@@ -120,6 +129,8 @@
 	<script src="app/dialogs/pixelcon/pixelcon.controller.js"></script>
 	<script src="app/dialogs/collection/collection.controller.js"></script>
 	<script src="app/dialogs/send/send.controller.js"></script>
+	<script src="app/dialogs/similarities/similarities.controller.js"></script>
+	<script src="app/dialogs/prints/prints.controller.js"></script>
 	<script src="app/dialogs/settings/settings.controller.js"></script>
 
 </body>

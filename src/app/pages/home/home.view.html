@@ -10,7 +10,7 @@
 			</div>
 			<div class="textBox textSelectable">
 				<div class="textBold textDark textCenter" ng-class="{'textTitleExLarge':!ctrl.screenSize.sm, 'textTitleLarge':ctrl.screenSize.sm}">PixelCons</div>
-				Collectible Minimalist <br/> Pixel Art NFTs 
+				Tiny On-Chain Pixel Art <br/> NFTs Since 2018
 				<br/><br/>
 				<a ng-href="/start" class="plain textDark">
 					<md-button class="md-raised md-primary">Start</md-button>
@@ -21,30 +21,38 @@
 	
 	<div class="bottomSpacer"></div>
 	
-	<div class="textCenter">
-		<div class="homeContainer homeCard colorLight">
-			<div class="textBox textMedium textLight textCenter textSelectable">
-				<div class="textExLarge textBold textDark">What Is It?</div><br/>
-				PixelCons are collectible NFTs featuring minimalist pixel art. This open platform was started in 2018 to allow any artist to easily make digital collectibles within a shared ecosystem. Every PixelCon is unique and it's ownership is secured on the Ethereum blockchain.
-			</div>
-			<div class="ethereumImage crispImage" ng-class="{'small':ctrl.screenSize.sm}"><img src="/img/large/ethereum.png" alt="Ethereum"></div>
-		</div>
-	</div>
-	
-	<div class="bottomSpacer"></div>
-	
 	<div class="homeContainer textCenter colorLight">
 		<div class="textBox textMedium textLight textCenter textSelectable">
-			<div class="textExLarge textBold textDark">Check Out What's Being Created!</div><br/>
+			<div class="textExLarge textBold textDark">✨ Genesis Series ✨</div>
+			<div class="textMedium textLight">First PixelCons Minted (December 2018)</div><br/>
 		</div>
 		<br/>
-		<div class="showcaseContainer textLeft" ng-class="{'small':ctrl.screenSize.sm}" 
-				ng-style="ctrl.calcShowcaseStyle(curation)" ng-repeat="curation in ctrl.curationList">
-			<a class="showcaseItem plain" ng-href="{{item.link + item.id}}" ng-repeat="item in curation.items">
-				<pixelcon class="shadow" id="item.id" ng-if="item.type=='pxcn'"></pixelcon>
-				<div class="showcaseLink textLight textCenter" ng-if="item.type=='link'">{{item.text}}</div>
-			</a>
-			<div class="showcaseName textMedium textBold textLight textCenter">{{curation.name}}</div>
+		
+		<div class="slider" ng-class="ctrl.sliderClass">
+			<div class="slides">
+				<div class="slide" ng-attr-index="{{$index}}" ng-repeat="show in ctrl.showcaseList">
+					<div class="content md-whiteframe-1dp" ng-style="{'background-image': 'url('+show.image+')'}">
+						<div class="contentSpread" ng-class="{'disabled':show.disabled}"></div>
+						<div class="contentTitle">#{{show.startIndex}} - #{{show.startIndex + show.count}}</div>
+						<div class="contentShade">
+							<div class="contentAccount">
+								<img class="crispImage" style="width:100%; height:100%" ng-src="{{show.addressIcon}}"/>
+							</div>
+							<div class="contentText textLarge textBold textDark">{{show.name}}</div>
+							<div class="contentText">{{show.title}}</div>
+							<a class="plain textDark" ng-href="{{show.marketLink}}" target="_blank">
+								<div class="contentButton" ng-if="!show.disabled">{{ctrl.marketName}}</div>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="slideDots">
+				<div ng-repeat="dot in ctrl.sliderDots" class="slideDotContainer" ng-click="ctrl.sliderDotClick($index);"><div class="dot" ng-class="{'highlight': ctrl.sliderDotHighlight == $index}"></div></div>
+			</div>
+			<div class="arrow left" ng-if="ctrl.sliderDots.length < ctrl.showcaseList.length" ng-class="{'visible': ctrl.sliderDotHighlight > 0}" ng-click="ctrl.sliderDotClick(ctrl.sliderDotHighlight-1);"></div>
+			<div class="arrow right" ng-if="ctrl.sliderDots.length < ctrl.showcaseList.length" ng-class="{'visible': ctrl.sliderDotHighlight < ctrl.sliderDots.length-1}" 
+				ng-click="ctrl.sliderDotClick(ctrl.sliderDotHighlight+1);"></div>
 		</div>
 	</div>
 	
@@ -58,11 +66,15 @@
 				<li>No developer fees (just pay for gas)</li>
 				<li>No hidden admin restrictions</li>
 				<li>Simple static website</li>
-				<li>Completely open source!</li>
+				<li>Completely open source</li>
 			</ul>
 		</div>
 		<div class="sourceImage textLight textSmall" ng-class="{'small':ctrl.screenSize.sm}">
-			<a href="https://github.com/PixelCons" target="_blank" class="light"><img ng-hide="ctrl.verticalMode" src="/img/large/github_logo.svg"></a>
+			<a class="plain light socialLink github" target="_blank" href="https://github.com/PixelCons"></a>
+			<a class="plain light socialLink twitter" target="_blank" href="https://twitter.com/PixelConsToken"></a>
+			<a class="plain light socialLink opensea" target="_blank" href="https://opensea.io/category/pixelcons"></a>
+			<a class="plain light socialLink discord" target="_blank" href="https://discord.gg/E2WQa8sTk3"></a>
+			
 		</div>
 	</div>
 	

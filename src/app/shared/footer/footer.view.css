@@ -76,8 +76,8 @@ div.footer .socialLink.github {
 div.footer .socialLink.twitter {
 	background-image: url("/img/icon_twitter.svg");
 }
-div.footer .socialLink.medium {
-	background-image: url("/img/icon_medium.svg");
+div.footer .socialLink.discord {
+	background-image: url("/img/icon_discord.svg");
 }
 div.footer .socialLink.opensea {
 	background-image: url("/img/icon_opensea.svg");
@@ -100,7 +100,7 @@ div.footer .settingsButton {
 div.footer .settingsButton .settingsButtonIcon {
 	width: 100%;
 	height: 25px;
-    background: url(/img/icon_settings.svg);
+    background-image: url(/img/icon_settings.svg);
     background-position: center;
     background-repeat: no-repeat;
 	opacity: 0.65;

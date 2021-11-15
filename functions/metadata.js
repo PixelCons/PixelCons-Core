@@ -3,13 +3,15 @@
  * Provides functions for reporting the metadata of PixelCons
  ***********************************************************************/
 const settings = require('./settings.js');
+const matchdata = require('./matchdata.js');
 const ethdata = require('./ethdata.js');
 
 // Settings
 const appWebDomain = settings.appWebDomain;
 const detailedMetadataEnabled = settings.detailedMetadataEnabled;
-const genesisCount = 651;
-const genesisArtists = ['9f2fedfff291314e5a86661e5ed5e6f12e36dd37', '3bf64000788a356d9d7c38a332adbce539fff13d', '0507873482d57637e8d975640316b0a6b2ebbfc1', 'f88e77f202db096e75596b468eef7c16282156b1', '4ff81761e0e8d3d311163b1b17607165c2d4955f'];
+const genesisCount = settings.genesisCount;
+const genesisArtists = settings.genesisArtists;
+const defaultGrayBackground = settings.defaultGrayBackground;
 
 // Gets the metadata JSON for the given pixelcon id
 async function getMetadata(pixelconId, params) {
@@ -19,7 +21,7 @@ async function getMetadata(pixelconId, params) {
 	
 	//calculate data
 	let name = getName(params.name, params.index);
-	let description = getDescription(params.name, params.index, params.collection, null, params.creator, params.created);
+	let description = getDescription(params.name, params.index, params.collection, null, params.creator, params.created, null);
 	let creator = formatAddress(params.creator);
 	let created = parseInt(params.created, 16);
 	let index = parseInt(params.index, 16);
@@ -29,12 +31,12 @@ async function getMetadata(pixelconId, params) {
 	let metadata = {
 		"name": name,
 		"description": description, 
-		"image": appWebDomain + "meta/image/" + id,
-		"image_url": appWebDomain + "meta/image/" + id,
+		"image": appWebDomain + "meta/image/" + id + getColorModifier('0x' + id),
+		"image_url": appWebDomain + "meta/image/" + id + getColorModifier('0x' + id),
 		"external_url": appWebDomain + "details/" + id,
 		"home_url": appWebDomain + "details/" + id,
-		"background_color": "000000",
-		"color": "000000",
+		"background_color": getColor('0x' + id),
+		"color": getColor('0x' + id),
 		"attributes": [{
 			"display_type": "date", 
 			"trait_type": "Created", 
@@ -58,23 +60,39 @@ async function getMetadata(pixelconId, params) {
 			"value": "2018 Genesis"
 		});
 	}
-	if(genesisArtists.indexOf(creator) > -1) {
+	if(genesisArtists.indexOf('0x' + creator) > -1) {
 		metadata["attributes"].push({
 			"trait_type": "Genesis", 
 			"value": "Genesis Artist"
 		});
 	}
 				
-	//add collection details
-	if(collection && detailedMetadataEnabled) {
-		let collectionData = await ethdata.getCollection(collection);
-		if(collectionData) {
-			metadata["description"] = getDescription(params.name, params.index, params.collection, collectionData.name, params.creator, params.created);
-			metadata["attributes"].push({
-				"trait_type": "Collection",
-				"value": "Collection " + collection + (collectionData.name ? " [" + collectionData.name + "]": "")
-			});
+	//add additional details
+	if(detailedMetadataEnabled) {
+		let match = await matchdata.getCloseMatch('0x' + id);
+		let collectionName = null;
+		
+		//collection data
+		if(collection) {
+			let collectionData = await ethdata.getCollection(collection);
+			if(collectionData) {
+				collectionName = collectionData.name;
+				metadata["attributes"].push({
+					"trait_type": "Collection",
+					"value": "Collection " + collection + (collectionName ? " [" + collectionName + "]": "")
+				});
+			}
 		}
+		
+		//better description with collection and match data
+		metadata["description"] = getDescription(params.name, params.index, params.collection, collectionName, params.creator, params.created, match);
+		
+		//similarity properties
+		let similarity = match ? (match.verified ? 'Similar to Same Creator' : 'Similar to Different Creator') : 'Unique';
+		metadata["attributes"].push({
+			"trait_type": "Similarity", 
+			"value": similarity
+		});
 	}
 				
 	return metadata;
@@ -119,34 +137,12 @@ function formatDate(dateHex) {
 function toUtf8(hex) {
 	if(hex.substr(0,2) == '0x') hex = hex.substr(2,hex.length);
 	if(hex.length%2 == 1) hex = '0' + hex;
-	
-	let array = new Uint8Array(hex.length/2);
-	for(let i=0; i<hex.length/2; i++) array[i] = parseInt(hex.substr(i*2,2), 16);
-					
-	let utf8 = "";
-	let i = 0;
-	while(i < array.length) {
-		let char1 = array[i++];
-		if(char1 == 0) break;
-		switch(char1 >> 4) { 
-			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-				// 0xxxxxxx
-				utf8 += String.fromCharCode(char1);
-				break;
-			case 12: case 13:
-				// 110x xxxx   10xx xxxx
-				char2 = array[i++];
-				utf8 += String.fromCharCode(((char1 & 0x1F) << 6) | (char2 & 0x3F));
-				break;
-			case 14:
-				// 1110 xxxx  10xx xxxx  10xx xxxx
-				char2 = array[i++];
-				char3 = array[i++];
-				utf8 += String.fromCharCode(((char1 & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0));
-				break;
-		}
-	}    
-	return utf8;
+	try {
+		let utf8 = decodeURIComponent(hex.replace(/\s+/g, '').replace(/[0-9a-f]{2}/g, '%$&'));
+		if(utf8.indexOf('\x00') > -1) utf8 = utf8.substring(0, utf8.indexOf('\x00'));
+		return utf8;
+	} catch(err) {}
+	return '';
 }
 function toInt(hex) {
 	return "" + parseInt(hex,16);
@@ -160,7 +156,7 @@ function getName(name, index) {
 	result += '#' + index + (index < genesisCount ? '✨' : '');
 	return result;
 }
-function getDescription(name, index, collection, collectionName, creator, created) {
+function getDescription(name, index, collection, collectionName, creator, created, match) {
 	index = toInt(index);
 	collection = toInt(collection);
 	creator = formatAddress(creator);
@@ -169,13 +165,29 @@ function getDescription(name, index, collection, collectionName, creator, create
 	
 	if(index) result += "PixelCon #" + index;
 	if(index < genesisCount) result += " - ✨Genesis";
-	if(collection > 0) {
+	if(!match && collection > 0) {
 		result += " - Collection " + collection;
 		if(collectionName) result += " [" + collectionName + "]";
 	}
 	if(created) result += " - " + created;
-	if(creator) result += " - Creator 0x" + creator;
+	if(match) {
+		if(match.verified) result += " - ✔️Similar to creator's older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
+		else result += " - ⚠️Very similar to older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
+		if(collection > 0) {
+			result += " - Collection " + collection;
+			if(collectionName) result += " [" + collectionName + "]";
+		}
+	}
+	if(creator) result += " - Creator 0x" + creator.substr(0,4) + "…" + creator.substr(36,4);
 	return result;
+}
+function getColorModifier(id) {
+	if(defaultGrayBackground && defaultGrayBackground.indexOf && defaultGrayBackground.indexOf(id) > -1) return '?color=5F574F';
+	return '';
+}
+function getColor(id) {
+	if(defaultGrayBackground && defaultGrayBackground.indexOf && defaultGrayBackground.indexOf(id) > -1) return '5F574F';
+	return '000000';
 }
 
 // Export

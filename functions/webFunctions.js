@@ -17,9 +17,9 @@ async function getMetadata(pixelconId, params) {
 }
 
 // Gets the standard PNG for the given pixelcon id
-async function getStandardImage(pixelconId, pixelconIndex) {
+async function getStandardImage(pixelconId, index, color) {
 	try {
-		return await imagedata.getStandardImage(pixelconId, pixelconIndex);
+		return await imagedata.getStandardImage(pixelconId, index, color);
 	} catch (err) {
 		if (!err) err = 'Error';
 		return { errorText: err.message ? err.message : err }
@@ -27,9 +27,9 @@ async function getStandardImage(pixelconId, pixelconIndex) {
 }
 
 // Gets a multi pixelcon PNG for the given pixelcon ids
-async function getMultiImage(pixelconIds) {
+async function getMultiImage(pixelconIds, color) {
 	try {
-		return await imagedata.getMultiImage(pixelconIds);
+		return await imagedata.getMultiImage(pixelconIds, color);
 	} catch (err) {
 		if (!err) err = 'Error';
 		return { errorText: err.message ? err.message : err }

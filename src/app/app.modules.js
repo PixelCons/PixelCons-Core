@@ -29,6 +29,11 @@
 				controller: 'CreatorPageCtrl',
 				controllerAs: 'ctrl'
 			})
+			.when("/owner/:address", {
+				templateUrl: HTMLTemplates['page.owner'],
+				controller: 'OwnerPageCtrl',
+				controllerAs: 'ctrl'
+			})
 			.when("/search", {
 				templateUrl: HTMLTemplates['page.search'],
 				controller: 'SearchPageCtrl',
@@ -44,7 +49,8 @@
 			.when("/create", {
 				templateUrl: HTMLTemplates['page.create'],
 				controller: 'CreatePageCtrl',
-				controllerAs: 'ctrl'
+				controllerAs: 'ctrl',
+				reloadOnSearch: false
 			})
 			.when("/start", {
 				templateUrl: HTMLTemplates['page.start'],
@@ -104,34 +110,38 @@
 			
 			// update background according to account data
 			var backgroundAccount = null;
-			function updateBackground() {
+			function updateBackgroundForAccount() {
 				web3Service.awaitState(async function() {
-					let loadedAccount = web3Service.getActiveAccount();
-					if(backgroundAccount != loadedAccount) {
-						backgroundAccount = loadedAccount;
-						if(backgroundAccount) {
-							let pixelcons = await coreContract.fetchPixelconsByAccount(backgroundAccount);
-							if(pixelcons && pixelcons.length) {
-								let pixelconIds = [];
-								for(let i=0; i<pixelcons.length; i++) pixelconIds.push(pixelcons[i].id);
-								let backgroundImage = decoder.backgroundPNG(pixelconIds, true);
-								decoder.updateBackground(backgroundImage, 500);
-								
-							} else {
-								let backgroundImage = decoder.backgroundPNG([], true);
-								decoder.updateBackground(backgroundImage, 500);
+					try {
+						let loadedAccount = web3Service.getActiveAccount();
+						if(backgroundAccount != loadedAccount) {
+							backgroundAccount = loadedAccount;
+							if(backgroundAccount) {
+								let pixelcons = await coreContract.fetchPixelconsByAccount(backgroundAccount, {simpleFetch: true});
+								if(pixelcons && pixelcons.length) {
+									let pixelconIds = [];
+									for(let i=0; i<pixelcons.length; i++) pixelconIds.push(pixelcons[i].id);
+									let backgroundImage = decoder.generateTiledImage(pixelconIds, 7, 7, 8, null, true, true, false);
+									updateBackground(backgroundImage, 500);
+									
+								} else {
+									let backgroundImage = decoder.generateTiledImage([], 7, 7, 8, null, true, true, false);
+									updateBackground(backgroundImage, 500);
+								}
 							}
 						}
-					}
+					} catch(err) { }
 				}, true);
 			}
-			web3Service.onAccountDataChange(updateBackground, null, true);
-			updateBackground();
+			web3Service.onAccountDataChange(updateBackgroundForAccount, null, true);
+			updateBackgroundForAccount();
 
 			// pre-load dialogs
 			$http.get(HTMLTemplates['dialog.collection'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.pixelcon'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.send'], { cache: $templateCache });
+			$http.get(HTMLTemplates['dialog.similarities'], { cache: $templateCache });
+			$http.get(HTMLTemplates['dialog.prints'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.settings'], { cache: $templateCache });
 		}]);
 
@@ -142,9 +152,61 @@
 	AppCtrl.$inject = ['$scope', 'decoder'];
 	function AppCtrl($scope, decoder) {
 		$scope.$on('$routeChangeStart', function($event, next, current) {
-			//clear out custom backgrounds
-			//if(!ignoreReload) decoder.updateBackground(null);
 			ignoreReload = false;
 		});
+	}
+	
+	
+	///////////
+	// Utils //
+	///////////
+	
+	//Updates the background image
+	var backgroundUpdateTimeout = null;
+	function updateBackground(backgroundImage, delay) {
+		if(backgroundUpdateTimeout) clearTimeout(backgroundUpdateTimeout);
+		backgroundUpdateTimeout = null;
+		if(delay) {
+			backgroundUpdateTimeout = setTimeout(function() {
+				backgroundUpdateTimeout = null;
+				updateBackgroundImage(backgroundImage);
+			}, delay);
+		} else {
+			updateBackgroundImage(backgroundImage);
+		}
+	}
+		
+	//Updates the background image
+	function updateBackgroundImage(backgroundImage) {
+		if(backgroundImage) {
+			//find the style rule
+			let styleRule = null;
+			for(let i = 0; i < document.styleSheets.length; i++) {
+				if(document.styleSheets[i].href && (document.styleSheets[i].href.indexOf('/style.css') > -1 || document.styleSheets[i].href.indexOf('/style.min.css') > -1)) {
+					for(let j = 0; j < document.styleSheets[i].cssRules.length; j++) {
+						if(document.styleSheets[i].cssRules[j].selectorText.indexOf('div.pageContentBackground.groupOverride') > -1) {
+							styleRule = document.styleSheets[i].cssRules[j];
+							break;
+						}
+					}
+					if(styleRule) break;
+				}
+			}
+			if(styleRule) {
+				//update and add background class list
+				styleRule.style['background-image'] = 'url(' + backgroundImage + ')';
+				let background = document.getElementById('contentBackground');
+				if(background) background.classList.add('groupOverride');
+				
+			} else {
+				//remove background class list
+				let background = document.getElementById('contentBackground');
+				if(background) background.classList.remove('groupOverride');
+			}
+		} else {
+			//remove background class list
+			let background = document.getElementById('contentBackground');
+			if(background) background.classList.remove('groupOverride');
+		}
 	}
 }());

@@ -2,8 +2,8 @@
 	angular.module('App')
 		.controller('PixelconDialogCtrl', PixelconDialogCtrl);
 
-	PixelconDialogCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$sce', 'web3Service', 'coreContract'];
-	function PixelconDialogCtrl($scope, $mdMedia, $mdDialog, $sce, web3Service, coreContract) {
+	PixelconDialogCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$sce', 'web3Service', 'coreContract', 'similarities'];
+	function PixelconDialogCtrl($scope, $mdMedia, $mdDialog, $sce, web3Service, coreContract, similarities) {
 		var _this = this;
 		_this.filterPixelconName = filterPixelconName;
 		_this.closeDialog = closeDialog;
@@ -25,7 +25,6 @@
 				coreContract.verifyUpdatePixelcon(_this.pixelconId).then(function (data) {
 					_this.currView = 'rename';
 					_this.pixelconName = '';
-					_this.cost = data.estCost;
 				}, function (reason) {
 					_this.currView = 'error';
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
@@ -33,9 +32,15 @@
 			} else {
 				_this.title = 'Create PixelCon';
 				coreContract.verifyCreatePixelcon(_this.pixelconId).then(function (data) {
-					_this.currView = 'create';
+					return coreContract.getAllPixelcons();
+					
+				}).then(function (allPixelcons) {
+					_this.account = web3Service.getActiveAccount();
+					_this.match = similarities.getMatch(_this.pixelconId, allPixelcons);
+					if(_this.match) _this.match.verified = (_this.match.creator == _this.account);
+					_this.currView = _this.match ? 'similarityAcknowledge' : 'create';
 					_this.pixelconName = '';
-					_this.cost = data.estCost;
+					
 				}, function (reason) {
 					if(reason.indexOf('already exists') > -1) {
 						_this.currView = 'duplicate';

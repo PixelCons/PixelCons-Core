@@ -13,6 +13,8 @@ const getTokenDataFunctionSelector = '0xb09afec1';
 const getBasicDataFunctionSelector = '0xe2b31903';
 const getCollectionDataFunctionSelector = '0x6bb2a9a8';
 const getForCreatorFunctionSelector = '0xd4aa25cc';
+const getForOwnerFunctionSelector = '0x57643118';
+const getLogsCreateTopic = '0x5ada7cc76c691909522f79b403dee86482e43a5064fb2d5849c685ab7d40be20';
 const getBasicDataMaxSearchSize = 20;
 const rpcCallCacheSeconds = 60;
 
@@ -23,6 +25,14 @@ async function getPixelcon(id) {
 	if(tokenData == null) return null;
 	
 	return tokenData;
+}
+
+// Gets basic data about all pixelcons
+async function getAllPixelcons() {
+	let allPixelcons = await getLogsCreate();
+	if(allPixelcons == null) return null;
+	
+	return allPixelcons;
 }
 
 //Get collection details
@@ -53,6 +63,21 @@ async function getCreator(address) {
 	creator.pixelcons = pixelcons;
 	delete creator.pixelconIndexes;
 	return creator;
+}
+
+//Get owner details
+async function getOwner(address) {
+	address = formatAddress(address);
+	let owner = await getForOwner(address);
+	if(owner == null) return null;
+	
+	let pixelcons = await getBasicData(owner.pixelconIndexes);
+	if(pixelcons == null) return null;
+	
+	owner.address = address;
+	owner.pixelcons = pixelcons;
+	delete owner.pixelconIndexes;
+	return owner;
 }
 
 // Utils
@@ -142,6 +167,33 @@ async function getForCreator(address) {
 		return null;
 	}, rpcCallCacheSeconds);
 }
+async function getForOwner(address) {
+	return await cachedata.cacheData('ethdata_getForOwner(' + address + ')', async function() {
+		try {
+			if(contractAddress && jsonRpc) {
+				let payload = {
+					id: 1,
+					jsonrpc: "2.0",
+					method: "eth_call",
+					params:[{ to:contractAddress, data:(getForOwnerFunctionSelector + address.padStart(64,'0'))}, "latest"]
+				};
+				let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
+				let result = JSON.parse(data).result;
+				if(!result) return null;
+				
+				let size = parseInt(result.substr(1*64 + 2, 64), 16);
+				let indexes = [];
+				for(let i=0; i<size; i++) indexes.push(parseInt(result.substr((i+2)*64 + 2, 64), 16));
+				return {
+					pixelconIndexes: indexes
+				}
+			}
+		} catch (err) {
+			console.log(err);
+		}
+		return null;
+	}, rpcCallCacheSeconds);
+}
 async function getBasicData(indexes) {
 	return await cachedata.cacheData('ethdata_getBasicData([' + indexes + '])', async function() {
 		try {
@@ -192,6 +244,35 @@ async function getBasicData(indexes) {
 		return null;
 	}, rpcCallCacheSeconds);
 }
+async function getLogsCreate() {
+	return await cachedata.cacheData('ethdata_getLogsCreate()', async function() {
+		try {
+			if(contractAddress && jsonRpc) {
+				let payload = {
+					id: 1,
+					jsonrpc: "2.0",
+					method: "eth_getLogs",
+					params:[{ fromBlock:"earliest", toBlock:"latest", address:contractAddress, topics:[getLogsCreateTopic]}]
+				};
+				let data = await webdata.doPOST(jsonRpc, JSON.stringify(payload));
+				let results = JSON.parse(data).result;
+
+				var pixelconList = [];
+				for(let i=0; i<results.length; i++) {
+					let index = parseInt(results[i].data.substr(64*0 + 2, 64), 16);
+					pixelconList[index] = {
+						id: results[i].topics[1],
+						creator: '0x' + formatAddress(results[i].topics[2])
+					}
+				}
+				return pixelconList;
+			}
+		} catch (err) {
+			console.log(err);
+		}
+		return null;
+	}, rpcCallCacheSeconds);
+}
 function formatAddress(address) {
 	const empty = '0000000000000000000000000000000000000000';
 	address = address.toLowerCase();
@@ -218,39 +299,19 @@ function formatIndex(index) {
 function toUtf8(hex) {
 	if(hex.substr(0,2) == '0x') hex = hex.substr(2,hex.length);
 	if(hex.length%2 == 1) hex = '0' + hex;
-	
-	let array = new Uint8Array(hex.length/2);
-	for(let i=0; i<hex.length/2; i++) array[i] = parseInt(hex.substr(i*2,2), 16);
-					
-	let utf8 = "";
-	let i = 0;
-	while(i < array.length) {
-		let char1 = array[i++];
-		if(char1 == 0) break;
-		switch(char1 >> 4) { 
-			case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-				// 0xxxxxxx
-				utf8 += String.fromCharCode(char1);
-				break;
-			case 12: case 13:
-				// 110x xxxx   10xx xxxx
-				char2 = array[i++];
-				utf8 += String.fromCharCode(((char1 & 0x1F) << 6) | (char2 & 0x3F));
-				break;
-			case 14:
-				// 1110 xxxx  10xx xxxx  10xx xxxx
-				char2 = array[i++];
-				char3 = array[i++];
-				utf8 += String.fromCharCode(((char1 & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0));
-				break;
-		}
-	}    
-	return utf8;
+	try {
+		let utf8 = decodeURIComponent(hex.replace(/\s+/g, '').replace(/[0-9a-f]{2}/g, '%$&'));
+		if(utf8.indexOf('\x00') > -1) utf8 = utf8.substring(0, utf8.indexOf('\x00'));
+		return utf8;
+	} catch(err) {}
+	return '';
 }
 
 // Export
 module.exports = {
     getPixelcon: getPixelcon,
+	getAllPixelcons: getAllPixelcons,
 	getCollection: getCollection,
-	getCreator: getCreator
+	getCreator: getCreator,
+	getOwner: getOwner
 }

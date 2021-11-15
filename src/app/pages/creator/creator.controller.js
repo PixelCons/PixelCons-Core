@@ -5,13 +5,16 @@
 	CreatorPageCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$routeParams', '$sce', 'web3Service', 'coreContract', 'market'];
 	function CreatorPageCtrl($scope, $mdMedia, $mdDialog, $routeParams, $sce, web3Service, coreContract, market) {
 		var _this = this;
-		_this.creator = $routeParams.address;
+		const loadStep = 80;
+		const loadStepThreshold = 100;
+		_this.creator = web3Service.formatAddress($routeParams.address);
 		_this.getMaxWidth = getMaxWidth;
+		_this.loadMore = loadMore;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
 		_this.shareOnFacebook = shareOnFacebook;
 		_this.marketEnabled = market.isEnabled();
-		_this.marketLink = market.getCreatorLink($routeParams.address);
+		_this.marketLink = market.getCreatorLink(_this.creator);
 
 		// Watch for screen size changes
 		_this.screenSize = {};
@@ -24,14 +27,37 @@
 		function loadCreatorDetails() {
 			_this.loading = true;
 			_this.error = null;
-			coreContract.fetchPixelconsByCreator($routeParams.address)
+			coreContract.fetchPixelconsByCreator(_this.creator, {asynchronousLoad: true})
 				.then(function (pixelcons) {
 					_this.loading = false;
 					_this.pixelcons = pixelcons;
+					_this.displayPixelcons = _this.pixelcons.slice(0, _this.pixelcons.length < loadStepThreshold ? _this.pixelcons.length : loadStep);
 				}, function (reason) {
 					_this.loading = false;
 					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
 				});
+		}
+
+		// Updates data from transactions
+		function updateFromTransaction(transactionData) {
+			if (transactionData && transactionData.success && transactionData.pixelcons) {
+				for (let i = 0; i < transactionData.pixelcons.length; i++) {
+					let pixelcon = transactionData.pixelcons[i];
+
+					let found = false;
+					for (let j = 0; j < _this.pixelcons.length; j++) {
+						if (_this.pixelcons[j].id == pixelcon.id) { //update
+							_this.pixelcons[j] = pixelcon;
+							found = true;
+							break;
+						}
+					}
+					if (!found && pixelcon.creator == _this.creator) { //insert
+						_this.pixelcons.push(pixelcon);
+					}
+				}
+				_this.displayPixelcons = _this.pixelcons.slice(0, _this.pixelcons.length < loadStepThreshold ? _this.pixelcons.length : loadStep);
+			}
 		}
 		
 		// Determines the max width given the number of pixelcons
@@ -53,6 +79,14 @@
 				}
 			}
 			return '1400px';
+		}
+
+		// Loads more pixelcons on the display
+		function loadMore() {
+			if(_this.pixelcons.length > _this.displayPixelcons.length) {
+				let size = Math.min(_this.displayPixelcons.length + loadStep, _this.pixelcons.length);
+				_this.displayPixelcons = _this.pixelcons.slice(0, size);
+			}
 		}
 
 		// Copies share link to the clipboard
@@ -82,5 +116,8 @@
 		web3Service.onNetworkChange(function () {
 			if(_this.error) loadCreatorDetails();
 		}, $scope);
+
+		// Listen for transactions
+		web3Service.onWaitingTransactionsChange(updateFromTransaction, $scope);
 	}
 }());

@@ -15,6 +15,25 @@
 						ng-click="ctrl.setSortOrder(!ctrl.filter.sortDesc)" aria-label="Sort Order"></md-button>
 				<div class="actionButtons" ng-show="ctrl.accountAddress && ctrl.pixelcons.length > 0">
 					<md-menu md-position-mode="target-right target">
+						<md-button class="iconButton share" ng-click="$mdOpenMenu()" aria-label="Share">
+						</md-button>
+						<md-menu-content class="shareLinksContextMenu">
+							<md-menu-item>
+								<md-button ng-click="ctrl.copyLink()"><div class="shareLinkIcon url"></div>Copy URL</md-button>
+							</md-menu-item>
+							<md-menu-item>
+								<a ng-href="{{ctrl.shareOnFacebook()}}" target="_blank" class="textDark">
+									<md-button><div class="shareLinkIcon facebook"></div>Share on Facebook</md-button>
+								</a>
+							</md-menu-item>
+							<md-menu-item>
+								<a ng-href="{{ctrl.shareOnTwitter()}}" target="_blank" class="textDark">
+									<md-button><div class="shareLinkIcon twitter"></div>Share on Twitter</md-button>
+								</a>
+							</md-menu-item>
+						</md-menu-content>
+					</md-menu>
+					<md-menu md-position-mode="target-right target">
 						<md-button class="iconButton more" ng-click="$mdOpenMenu()" aria-label="More">
 						</md-button>
 						<md-menu-content>
@@ -51,9 +70,10 @@
 		
 			<!-- PixelCons -->
 			<div class="displayTable" ng-show="!ctrl.loading">
-				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='send'">Select the PixelCons you want to send</div>
-				<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-account="true" selectable="{{!!ctrl.selectionMode}}" disabled="{{ctrl.checkDisabled(pixelcon)}}" 
-					size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" ng-repeat="pixelcon in ctrl.pixelcons track by $index"></pixelconcard>
+				<div class="helpText textMedium" ng-show="ctrl.selectionMode=='send'">Select the PixelCon you want to send</div>
+				<pixelconcard class="pixelconCard" pixelcon="pixelcon" no-account="true" selectable="{{!!ctrl.selectionMode}}" disabled="{{ctrl.checkDisabled(pixelcon)}}"
+					size="{{(ctrl.screenSize.sm)?'xs':(ctrl.screenSize.md?'sm':'md')}}" ng-repeat="pixelcon in ctrl.displayPixelcons track by $index" ng-init="ctrl.displayLoaded = !!$last"></pixelconcard>
+				<div ng-if="ctrl.displayLoaded && ctrl.pixelcons.length > ctrl.displayPixelcons.length" ng-click="ctrl.loadMore()" class="loadMoreButton textWhite">Load More</div>
 			</div>
 		</div>
 		

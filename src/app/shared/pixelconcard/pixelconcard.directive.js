@@ -23,7 +23,7 @@
 					_this.loaded = true;
 				});
 			}
-			scramblePixelconCollection();
+			refreshPixelconData(_this.pixelcon);
 		});
 
 		// Standardize the size [xs, sm, md, lg, xl]
@@ -34,6 +34,11 @@
 		// Standardize disable collection [boolean]
 		$scope.$watch('ctrl.noCollection', function () {
 			_this.noCollection = (_this.noCollection === true || _this.noCollection == 'true');
+		});
+
+		// Standardize disable match [boolean]
+		$scope.$watch('ctrl.noMatch', function () {
+			_this.noMatch = (_this.noMatch === true || _this.noMatch == 'true');
 		});
 
 		// Standardize disable account [boolean]
@@ -61,6 +66,8 @@
 		// Refresh pixelcon data
 		function refreshPixelconData(pixelcon) {
 			if (pixelcon) {
+				if(pixelcon.loadPromise) pixelcon.loadPromise.then(refreshPixelconData);
+				_this.loading = !!pixelcon.loadPromise;
 				_this.pixelcon = angular.extend(_this.pixelcon, _this.pixelcon, pixelcon);
 				scramblePixelconCollection();
 			} else {
@@ -135,6 +142,7 @@
 				pixelcon: '=',
 				size: '@',
 				noCollection: '@',
+				noMatch: '@',
 				noAccount: '@',
 				selectable: '@',
 				disabled: '@'

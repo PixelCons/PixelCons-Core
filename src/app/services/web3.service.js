@@ -18,11 +18,27 @@
 			transactionLU: '/tx/<txHash>',
 			accountLU: '/address/<address>'
 		},{
-			name: 'Ropsten',
-			chainId: '3'
+			name: 'Rinkeby',
+			chainId: '4',
+			nativeCurrency: {
+				name: 'ETH',
+				symbol: 'ETH',
+				decimals: 18
+			},
+			icon: '/img/network_rinkeby.png',
+			fallbackRPCs: [],
+			blockExplorer: 'https://rinkeby.etherscan.io/',
+			transactionLU: '/tx/<txHash>',
+			accountLU: '/address/<address>'
+		},{
+			name: 'Mainnet',
+			chainId: '1'
 		},{
 			name: 'Rinkeby',
 			chainId: '4'
+		},{
+			name: 'Ropsten',
+			chainId: '3'
 		},{
 			name: 'Goerli',
 			chainId: '5'
@@ -42,6 +58,7 @@
 		const _transactionWaitConfirmations = 1;
 		const _transactionWaitTimeout = 2 * 60 * 60 * 1000;
 		const _transactionWaitPoll = 1 * 1000;
+		const _contractCallMaxRetries = 5;
 		const _noAccountError = 'No Account';
 		const _notEnabledError = 'No Network Connection';
 		const _notConnectedError = 'Network Provider Not Connected';
@@ -451,7 +468,8 @@
 				throw new UserActionNeededError('Connected to wrong network', 'Please switch your account network from <b>' + currNetworkName + '</b> to <b>' + networkName + '</b>');
 			}
 			let contract = await getContract(contractPath, chainId);
-			return contract.connect(_web3Provider.getSigner(0));
+			let signerContract = contract.connect(_web3Provider.getSigner(0));
+			return wrapContractWithErrorHandling(signerContract, contract.abi, contract.blockNumber);
 		}
 
 		// Gets contract object based on given path to ABI
@@ -473,31 +491,9 @@
 				throw new UserActionNeededError('Failed to find network provider', 'Please switch your account network from <b>' + currNetworkName + '</b> to <b>' + networkName + '</b> or update the fallback RPCs in ' + _messageSettingsButton);
 			}
 			let contract = new ethers.Contract(contractDetails.address, contractData.abi, provider);
-			
-			//wrap the queryFilter function to handle larger datasets
-			let queryFilter_unsafe = contract.queryFilter;
-			contract.queryFilter = async function(filter, fromBlock, toBlock) {
-				if(!fromBlock) fromBlock = parseInt('' + contractDetails.blockNumber);
-				if(!toBlock) toBlock = 'latest';
-				//recursively searches smaller and smaller block chunks until we get success or hit a set depth
-				const maxRecursionDepth = 15;
-				async function queryFilterRec(filter, fromBlock, toBlock, depth) {
-					try {
-						return await queryFilter_unsafe.call(contract, filter, fromBlock, toBlock);
-					} catch(err) {
-						if(toBlock === 'latest') toBlock = await this.provider.getBlockNumber();
-						if(depth < maxRecursionDepth && (toBlock - fromBlock) > 1) {
-							let halfway = fromBlock + Math.floor((toBlock - fromBlock) / 2);
-							let firstHalf = await queryFilterRec(filter, fromBlock, halfway, depth + 1);
-							let secondHalf = await queryFilterRec(filter, halfway + 1, toBlock, depth + 1);
-							return firstHalf.concat(secondHalf);
-						} else throw err;
-					}
-				}
-				return queryFilterRec(filter, fromBlock, toBlock, 0);
-			}
-			
-			return contract;
+			contract.abi = contractData.abi;
+			contract.blockNumber = contractDetails.blockNumber;
+			return wrapContractWithErrorHandling(contract);
 		}
 
 		// Gets the contract details on the current network
@@ -557,6 +553,64 @@
 					}
 				}
 			});
+		}
+		
+		// Wraps the given contract with better error handling
+		function wrapContractWithErrorHandling(contract, abi, blockNumber) {
+			if(!abi) abi = contract.abi;
+			if(!blockNumber) blockNumber = contract.blockNumber;
+			
+			//wrap contract calls to handle errors that require a retry
+			let retryHandler = function(f) {
+				return async function() {
+					for(let i=0; i<_contractCallMaxRetries; i++){
+						try {
+							return await f.apply(this, arguments);
+						} catch(err) {
+							//only allow retry after common error
+							if(!err || err.message !== 'header not found' || i >= _contractCallMaxRetries-1) {
+								throw err;
+							}
+						}
+					}
+				}
+			}
+			contract.errRetry = {};
+			for(let f in contract) {
+				if (typeof contract[f] === 'function') {
+					for(let i=0; i<abi.length; i++) {
+						if(abi[i].name && f.indexOf(abi[i].name) > -1) {
+							contract.errRetry[f] = retryHandler(contract[f]);
+							break;
+						}
+					}
+				}
+			}
+			
+			//wrap the queryFilter function to handle larger datasets
+			let queryFilter_unsafe = contract.queryFilter;
+			contract.queryFilter = async function(filter, fromBlock, toBlock) {
+				if(!fromBlock) fromBlock = parseInt('' + blockNumber);
+				if(!toBlock) toBlock = 'latest';
+				//recursively searches smaller and smaller block chunks until we get success or hit a set depth
+				const maxRecursionDepth = 15;
+				async function queryFilterRec(filter, fromBlock, toBlock, depth) {
+					try {
+						return await queryFilter_unsafe.call(contract, filter, fromBlock, toBlock);
+					} catch(err) {
+						if(toBlock === 'latest') toBlock = await contract.provider.getBlockNumber();
+						if(depth < maxRecursionDepth && (toBlock - fromBlock) > 1) {
+							let halfway = fromBlock + Math.floor((toBlock - fromBlock) / 2);
+							let firstHalf = await queryFilterRec(filter, fromBlock, halfway, depth + 1);
+							let secondHalf = await queryFilterRec(filter, halfway + 1, toBlock, depth + 1);
+							return firstHalf.concat(secondHalf);
+						} else throw err;
+					}
+				}
+				return queryFilterRec(filter, fromBlock, toBlock, 0);
+			}
+			
+			return contract;
 		}
 
 		// Registers a contract service
@@ -715,7 +769,16 @@
 		// Formats the given hex address
 		function formatAddress(address) {
 			try {
-				if (address) return address.toLowerCase();
+				const hexCharacters = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
+				if(address) {
+					address = address.toLowerCase();
+					if(address.indexOf('0x') == 0) address = address.substr(2,address.length);
+					if(address.length < 40) return null;
+					if(address.length > 40) address = address.substring(address.length-40, address.length);
+					for(let i=0; i<40; i++) if(hexCharacters.indexOf(address[i]) == -1) return null;
+					return '0x' + address;
+				}
+				return null;
 			} catch (err) { }
 			return null;
 		}
@@ -733,6 +796,8 @@
 		
 		// Returns a repeatable scrambled version of the given list
 		function scrambleList(list, seed) {
+			if(!list) return [];
+			
 			//generate a seed integer
 			let seedStr = ''+seed;
 			seed = 123456789;

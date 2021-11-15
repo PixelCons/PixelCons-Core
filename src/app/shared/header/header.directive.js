@@ -20,6 +20,7 @@
 		_this.cancelActivityMenu = cancelActivityMenu;
 		_this.hideActivityMenu = hideActivityMenu;
 		_this.connect = connect;
+		_this.marketName = market.getMarketName();
 		_this.marketEnabled = market.isEnabled();
 		_this.marketLink = market.getMarketLink();
 		var showMenuPromise = null;

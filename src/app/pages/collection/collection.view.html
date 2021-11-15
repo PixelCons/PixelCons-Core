@@ -45,7 +45,6 @@
 					<div class="detailsSectionMoreButton textNotSelectable" ng-hide="ctrl.error || ctrl.loading || ctrl.cleared">
 						<md-button class="iconButton buy" aria-label="Buy/Sell" ng-if="ctrl.marketEnabled">
 							<a class="plain buttonLink" ng-href="{{ctrl.marketLink}}" target="_blank"></a>
-							<md-tooltip md-direction="left">Buy/Sell</md-tooltip>
 						</md-button>
 						<md-menu md-position-mode="target-right target">
 							<md-button class="iconButton share" ng-click="$mdOpenMenu()" aria-label="Share">
@@ -84,7 +83,7 @@
 							<div class="detailsSectionBottomText textBold">{{ctrl.collection.pixelcons.length}}</div> 
 							{{ctrl.collection.pixelcons.length==1?'PixelCon':'PixelCons'}}
 						</span>
-						<accounticon class="textLight" address="ctrl.collectionOwner" mode="signature" size="sm" text="Owned By" ng-if="ctrl.collectionOwner"></accounticon>
+						<accounticon class="textLight" address="ctrl.collectionOwner" mode="signature" size="sm" text="Owned By" ng-if="ctrl.collectionOwner" clickable="true"></accounticon>
 					</div>
 				</div>
 			</div>

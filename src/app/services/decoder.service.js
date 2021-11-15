@@ -4,12 +4,20 @@
 
 	decoder.$inject = ['$q', '$timeout'];
 	function decoder($q, $timeout) {
+		
+		//Setup functions
 		this.decodePNG = decodePNG;
 		this.encodePNG = encodePNG;
-		this.backgroundPNG = backgroundPNG;
-		this.updateBackground = updateBackground;
+		this.generateTiledImage = generateTiledImage;
+		this.generateDisplayImage = generateDisplayImage;
+		
+		//Data
+		var loadImage_cache = {};
+		var image_cache = [];
 		
 		//Configuration
+		const qrCodeImageLink = document.location.origin + '/_'
+		const maxCacheImages = 500;
 		const frameColorDist = 0.05;
 		const maxColorDist = 0.1;
 		const colorPalette = {
@@ -103,35 +111,65 @@
 		}
 		
 		//Creates a PNG image from the given pixelcon id
-		function encodePNG(id) {
-			const scale = 3;
+		function encodePNG(id, large) {
+			let cacheKey = 'encodePNG(' + id + ',' + large + ')';
+			let cached = getFromCache(image_cache, cacheKey);
+			if(cached) return cached;
+			
 			let canvas = document.createElement('canvas');
-			canvas.width = (8 * scale);
-			canvas.height = (8 * scale);
-			let ctx = canvas.getContext("2d");
-			ctx.fillStyle = "#000000";
-			ctx.fillRect(0, 0, 8 * scale, 8 * scale);
+			if(large) {
+				const scale = 2;
+				const pixelconScale = 15 * scale;
+				canvas.width = (265 * scale);
+				canvas.height = (175 * scale);
+				let ctx = canvas.getContext("2d");
+				ctx.fillStyle = "#000000";
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-			id = formatId(id);
-			if (id) {
-				for (let y = 0; y < 8; y++) {
-					for (let x = 0; x < 8; x++) {
-						let index = y * 8 + x;
-						ctx.fillStyle = getPaletteColorInHex(id[index]);
-						ctx.fillRect(x * scale, y * scale, scale, scale);
+				id = formatId(id);
+				if (id) {
+					const offsetX = Math.round((canvas.width-(pixelconScale*8))/2);
+					const offsetY = Math.round((canvas.height-(pixelconScale*8))/2);
+					for (let y = 0; y < 8; y++) {
+						for (let x = 0; x < 8; x++) {
+							let index = y * 8 + x;
+							ctx.fillStyle = getPaletteColorInHex(id[index]);
+							ctx.fillRect(offsetX + (x * pixelconScale), offsetY + (y * pixelconScale), pixelconScale, pixelconScale);
+						}
+					}
+				}
+			
+			} else {
+				const scale = 3;
+				canvas.width = (8 * scale);
+				canvas.height = (8 * scale);
+				let ctx = canvas.getContext("2d");
+				ctx.fillStyle = "#000000";
+				ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+				id = formatId(id);
+				if (id) {
+					for (let y = 0; y < 8; y++) {
+						for (let x = 0; x < 8; x++) {
+							let index = y * 8 + x;
+							ctx.fillStyle = getPaletteColorInHex(id[index]);
+							ctx.fillRect(x * scale, y * scale, scale, scale);
+						}
 					}
 				}
 			}
 
 			let data = canvas.toDataURL('image/png');
 			canvas.remove();
+			
+			addToCache(image_cache, cacheKey, data, maxCacheImages);
 			return data;
 		}
 		
 		//Creates a PNG image from the given pixelcon ids
-		function backgroundPNG(ids, mixedMode) {
+		function generateTiledImage(ids, rows, columns, scale, background, padIds, useFaded, offsetImage) {
 			ids = scrambleList(ids);
-			if(mixedMode) {
+			if(padIds) {
 				let mixOrder = [];
 				let mixedIds = defaultBackgroundIds.concat([]);
 				for(let i=0; i<mixedIds.length; i++) mixOrder.push(i);
@@ -139,18 +177,14 @@
 				for(let i=0; i<ids.length && i<mixedIds.length; i++) mixedIds[mixOrder[i]] = ids[i];
 				ids = mixedIds;
 			}
-			const n = Math.min(Math.max(Math.ceil(Math.sqrt(ids.length)),3),7);
-			const rows = n;
-			const columns = n;
-			const scale = Math.round(56 / n);
+			
 			let canvas = document.createElement('canvas');
 			canvas.width = (columns * 10 * scale);
 			canvas.height = (rows * 10 * scale);
 			let ctx = canvas.getContext("2d");
-			ctx.fillStyle = "#B1B1B1";
+			ctx.fillStyle = background ? background : (useFaded ? "#B1B1B1" : "#000000");
 			ctx.fillRect(0, 0, columns * 10 * scale, rows * 10 * scale);
 			
-
 			for (let i = 0; i < rows*columns; i++) {
 				let y = Math.floor(i / columns);
 				let x = i - (y * columns);
@@ -161,32 +195,125 @@
 					for (let py = 0; py < 8; py++) {
 						for (let px = 0; px < 8; px++) {
 							let index = py * 8 + px;
-							ctx.fillStyle = getPaletteColorInHex(id[index], true);
+							ctx.fillStyle = getPaletteColorInHex(id[index], useFaded);
 							ctx.fillRect((px + x + 1) * scale, (py + y + 1) * scale, scale, scale);
 						}
 					}
 				}
 			}
 
-			if(n < 7) canvas = shiftCanvas(canvas, Math.round(scale*2), Math.round(scale*2));
+			if(offsetImage) canvas = shiftCanvas(canvas, Math.round(scale*2), Math.round(scale*2));
 			let data = canvas.toDataURL('image/png');
 			canvas.remove();
 			return data;
 		}
 		
-		//Updates the background image
-		var backgroundUpdateTimeout = null;
-		function updateBackground(backgroundImage, delay) {
-			if(backgroundUpdateTimeout) $timeout.cancel(backgroundUpdateTimeout);
-			backgroundUpdateTimeout = null;
-			if(delay) {
-				backgroundUpdateTimeout = $timeout(function() {
-					backgroundUpdateTimeout = null;
-					updateBackgroundImage(backgroundImage);
-				}, delay);
-			} else {
-				updateBackgroundImage(backgroundImage);
+		//Generates a display image with the given parameters
+		async function generateDisplayImage(pixelcon, orientation, ratio, color, margin, includeQr, includeDetails, detailsSize, texture, intensity, fullRender, imageType) {
+			if(!margin) margin = 0;
+			let isHorizontal = (orientation != 'vertical');
+			
+			//determine sizes
+			const shortestSideMin = fullRender ? 3000 : 1000;
+			const marginW = Math.round((isHorizontal ? margin : margin/ratio) * (fullRender ? 1.0 : 0.333));
+			const marginH = Math.round((isHorizontal ? margin/ratio : margin) * (fullRender ? 1.0 : 0.333));
+			const width = (isHorizontal ? Math.round(shortestSideMin*ratio) : shortestSideMin) + marginW*2;
+			const height = (isHorizontal ? shortestSideMin : Math.round(shortestSideMin*ratio)) + marginH*2;
+			const pixelconScale = Math.round(shortestSideMin*0.085);
+			
+			//build canvas for drawing
+			let canvas = document.createElement('canvas');
+			canvas.width = width;
+			canvas.height = height;
+			let ctx = canvas.getContext("2d");
+			ctx.fillStyle = color;
+			ctx.fillRect(0, 0, width, height);
+			
+			//draw pixelcon
+			let id = formatId(pixelcon.id);
+			if (id) {
+				const offsetX = Math.round((width - pixelconScale * 8) / 2);
+				const offsetY = Math.round((height - pixelconScale * 8) / 2);
+				for (let y = 0; y < 8; y++) {
+					for (let x = 0; x < 8; x++) {
+						let index = y * 8 + x;
+						ctx.fillStyle = getPaletteColorInHex(id[index]);
+						ctx.fillRect(offsetX + (x * pixelconScale), offsetY + (y * pixelconScale), pixelconScale, pixelconScale);
+					}
+				}
 			}
+			
+			//details size
+			const sizeMult = detailsSize != 'large' ? (detailsSize == 'small' ? 0.6 : 1) : 1.8;
+			const qrOffset = Math.round(shortestSideMin*0.015);
+			const qrScale = Math.round(shortestSideMin*0.003*sizeMult);
+			const fontSize = Math.round(shortestSideMin*0.018*sizeMult);
+			if(color == '#C2C3C7' || color == '#FFF1E8' || color == '#FFFF27') ctx.fillStyle = '#444444';
+			else ctx.fillStyle = '#FFFFFF';
+			
+			//draw qr code
+			let qrGridSize = 0;
+			if(includeQr) {
+				let linkStr = qrCodeImageLink.length > 22 ? qrCodeImageLink : (qrCodeImageLink + ModifiedBase64.fromInt(pixelcon.index).padStart(4, '0'));
+				let qr = QRCode.makeCode(linkStr);
+				if(qr) {
+					qrGridSize = qr.length;
+					const offsetX = qrOffset + marginW;
+					const offsetY = height - ((qrScale * qrGridSize) + qrOffset + marginH);
+					for (let y = 0; y < qrGridSize; y++) {
+						for (let x = 0; x < qrGridSize; x++) {
+							if(qr[x][y]) {
+								ctx.fillRect(offsetX + (x * qrScale), offsetY + (y * qrScale), qrScale, qrScale);
+							}
+						}
+					}
+				}
+			}
+			
+			//draw details
+			if(includeDetails) {
+				const offsetX = qrOffset + marginW + (qrGridSize > 0 ? qrScale * (qrGridSize + 3) : 0);
+				const offsetY = height - (qrOffset + marginH);
+				
+				ctx.font = 'bold ' + fontSize + 'px Roboto, "Helvetica Neue", sans-serif';
+				ctx.fillText('#' + pixelcon.index, offsetX, offsetY - Math.round(fontSize*1.2));
+				ctx.fillText(getDateStr(pixelcon.date), offsetX, offsetY);
+			}
+			
+			//render texture
+			if(texture != 'none') {
+				try {
+					let img = null;
+					if(texture == 'film') img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_film.png', !fullRender);
+					else if(texture == 'wood') img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_wood.png', !fullRender);
+					else if(texture == 'fabric') img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_fabric.png', !fullRender);
+					else if(texture == 'stone') img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_stone.png', !fullRender);
+					else img = await loadImage('/img/large/texture' + (fullRender ? '' : '_preview') + '_metal.png', !fullRender);
+					
+					ctx.globalAlpha = intensity/100;
+					if(isHorizontal) {
+						const adjWidth = Math.round(shortestSideMin*2 + marginW*2);
+						const adjHeight = Math.round(shortestSideMin + marginH*2);
+						const offsetX = Math.round((width - adjWidth) / 2);
+						ctx.drawImage(img, offsetX, 0, adjWidth, adjHeight);
+					} else {
+						const adjWidth = Math.round(shortestSideMin + marginW*2);
+						const adjHeight = Math.round(shortestSideMin*2 + marginH*2);
+						const offsetY = Math.round((height - adjHeight) / 2);
+						ctx.rotate(isHorizontal ? 0 : 1.57079632679);
+						ctx.drawImage(img, offsetY, 0, adjHeight, -adjWidth);
+						ctx.rotate(isHorizontal ? 0 : -1.57079632679);
+					}
+					ctx.globalAlpha = 1.0;
+				} catch(err) { }
+			}
+			
+			//encode canvas as image
+			let data = null;
+			if(imageType == 'jpeg') data = canvas.toDataURL('image/jpeg');
+			else data = canvas.toDataURL('image/png');
+			canvas.remove();
+			return data;
 		}
 		
 		///////////
@@ -255,40 +382,6 @@
 			ctx.drawImage(canvas, canvas.width - x, canvas.height - y, x, y, 0, 0, x, y);
 			
 			return canvas2;
-		}
-		
-		//Updates the background image
-		function updateBackgroundImage(backgroundImage) {
-			if(backgroundImage) {
-				//find the style rule
-				let styleRule = null;
-				for(let i = 0; i < document.styleSheets.length; i++) {
-					if(document.styleSheets[i].href && (document.styleSheets[i].href.indexOf('/style.css') > -1 || document.styleSheets[i].href.indexOf('/style.min.css') > -1)) {
-						for(let j = 0; j < document.styleSheets[i].cssRules.length; j++) {
-							if(document.styleSheets[i].cssRules[j].selectorText.indexOf('div.pageContentBackground.groupOverride') > -1) {
-								styleRule = document.styleSheets[i].cssRules[j];
-								break;
-							}
-						}
-						if(styleRule) break;
-					}
-				}
-				if(styleRule) {
-					//update and add background class list
-					styleRule.style['background-image'] = 'url(' + backgroundImage + ')';
-					let background = document.getElementById('contentBackground');
-					if(background) background.classList.add('groupOverride');
-					
-				} else {
-					//remove background class list
-					let background = document.getElementById('contentBackground');
-					if(background) background.classList.remove('groupOverride');
-				}
-			} else {
-				//remove background class list
-				let background = document.getElementById('contentBackground');
-				if(background) background.classList.remove('groupOverride');
-			}
 		}
 		
 		//Verifies if the given color goes all the way along the vertical
@@ -409,6 +502,12 @@
 			return null;
 		}
 		
+		//Gets a date string from the given millis
+		function getDateStr(millis) {
+			let d = new Date(millis);
+			return (''+(d.getMonth()+1)).padStart(2,'0') + '/' + d.getFullYear();
+		}
+		
 		//Scrambles the given list in a repeatable way
 		function scrambleList(list) {
 			list = JSON.parse(JSON.stringify(list));
@@ -421,6 +520,91 @@
 				return v1-v2;
 			});
 			return list;
+		}
+		
+		//Loads the given image
+		function loadImage(src, cache) {
+			return $q(function (resolve, reject) {
+				if(loadImage_cache[src]) resolve(loadImage_cache[src]);
+				
+				let img = new Image();
+				img.onload = function() {
+					if(cache) loadImage_cache[src] = img;
+					resolve(img);
+				}
+				img.onerror = function() {
+					reject();
+				}
+				img.src = src;
+			});
+		}
+		
+		//Base64 converter
+		const ModifiedBase64 = (function () {
+			var digitsStr = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";
+			var digits = digitsStr.split('');
+			var digitsMap = {};
+			for (let i = 0; i < digits.length; i++) digitsMap[digits[i]] = i;
+			return {
+				fromInt: function(int32) {
+					if(!Number.isInteger(int32)) return null;
+					let result = '';
+					while (true) {
+						result = digits[int32 & 0x3f] + result;
+						int32 >>>= 6;
+						if (int32 === 0) break;
+					}
+					return result;
+				},
+				toInt: function(digitsStr) {
+					let result = 0;
+					let digitsArr = digitsStr.split('');
+					for (let i = 0; i < digitsArr.length; i++) {
+						let digitVal = digitsMap[digitsArr[i]];
+						if(digitVal === undefined) return null;
+						result = (result << 6) + digitVal;
+					}
+					return result;
+				}
+			};
+		})();
+		
+		//Cache manipulation
+		function addToCache(cache, key, value, maxEntries) {
+			let entryIndex = null;
+			if(cache.length < maxEntries) {
+				
+				//new entry
+				entryIndex = cache.length;
+				cache.push({});
+			} else {
+				
+				//replace oldest entry
+				entryIndex = 0;
+				let oldestTime = cache[0].timestamp;
+				for(let i=0; i<cache.length; i++) {
+					if(cache[i].timestamp < oldestTime) {
+						entryIndex = i;
+						oldestTime = cache[i].timestamp;
+					}
+				}
+			}
+			if(entryIndex !== null) {
+				cache[entryIndex] = {
+					timestamp: (new Date()).getTime(),
+					key: key,
+					value: value
+				}
+			}
+		}
+		function getFromCache(cache, key) {
+			for(let i=0; i<cache.length; i++) {
+				if(cache[i].key == key) {
+					cache[i].timestamp = (new Date()).getTime();
+					return cache[i].value;
+				}
+			}
+			return null;
 		}
 
 	}

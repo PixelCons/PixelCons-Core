@@ -51,6 +51,7 @@ pixelconcard .pixelconCardDirectiveInfo {
 	text-align: center;
 }
 pixelconcard .pixelconCardDirectiveGroupNotification {
+    background-image: url(/img/icon_group.svg);
 	position: absolute;
     top: 0px;
     left: 0px;
@@ -61,10 +62,31 @@ pixelconcard .pixelconCardDirectiveGroupNotification {
 	opacity: 0.6;
 	filter: alpha(opacity=60);
 }
-pixelconcard .pixelconCardDirectiveInfo .pixelconCardDirectiveGroupNotification {
-    background-image: url(/img/icon_group.svg);
+pixelconcard .pixelconCardDirectiveSimilarNotification {
+    background-image: url(/img/icon_copy.svg);
+	position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 11px;
+    height: 11px;
+    background-repeat: no-repeat;
+    background-size: contain;
+	opacity: 0.9;
+	filter: alpha(opacity=90);
+}
+pixelconcard .pixelconCardDirectiveSimilarNotification.verified {
+    background-image: url(/img/icon_replica.svg);
+}
+pixelconcard .pixelconCardDirectiveLoadingNotification {
+	position: absolute;
+    top: 1px;
+    left: 1px;
+}
+pixelconcard md-progress-circular.pixelconCardDirectiveLoadingNotification svg path {
+	stroke: #333333;
 }
 pixelconcard .pixelconCardDirectiveAccountNotification {
+    background-image: url(/img/icon_wallet.svg);
 	position: absolute;
     top: 0px;
     right: 0px;
@@ -74,9 +96,6 @@ pixelconcard .pixelconCardDirectiveAccountNotification {
     background-size: contain;
 	opacity: 0.8;
 	filter: alpha(opacity=80);
-}
-pixelconcard .pixelconCardDirectiveInfo .pixelconCardDirectiveAccountNotification {
-    background-image: url(/img/icon_wallet.svg);
 }
 
 /* Hover Details */
@@ -111,6 +130,10 @@ pixelconcard .pixelconCardDirectiveGroupContainer {
 	text-align: left;
 }
 pixelconcard .pixelconCardDirectiveGroupElement {
+	display: inline-block;
+	background-color: #000000;
+}
+pixelconcard .pixelconCardDirectiveMatchElement {
 	display: inline-block;
 	background-color: #000000;
 }
@@ -167,6 +190,13 @@ pixelconcard
 	height: 14px;
 	margin: 1px;
 }
+pixelconcard
+	.pixelconCardDirectiveContainer.xs
+	.pixelconCardDirectiveMatchElement {
+	width: 21px;
+	height: 21px;
+	margin: 1px;
+}
 pixelconcard .pixelconCardDirectiveContainer.xs .pixelconCardDirectiveGotoIcon {
 	width: 36px;
 	height: 36px;
@@ -212,6 +242,13 @@ pixelconcard
 	.pixelconCardDirectiveGroupElement {
 	width: 16px;
 	height: 16px;
+	margin: 1px;
+}
+pixelconcard
+	.pixelconCardDirectiveContainer.sm
+	.pixelconCardDirectiveMatchElement {
+	width: 24px;
+	height: 24px;
 	margin: 1px;
 }
 pixelconcard .pixelconCardDirectiveContainer.sm .pixelconCardDirectiveGotoIcon {
@@ -261,6 +298,13 @@ pixelconcard
 	height: 16px;
 	margin: 1px;
 }
+pixelconcard
+	.pixelconCardDirectiveContainer.md
+	.pixelconCardDirectiveMatchElement {
+	width: 24px;
+	height: 24px;
+	margin: 1px;
+}
 pixelconcard .pixelconCardDirectiveContainer.md .pixelconCardDirectiveGotoIcon {
 	width: 36px;
 	height: 36px;
@@ -306,6 +350,13 @@ pixelconcard
 	.pixelconCardDirectiveGroupElement {
 	width: 16px;
 	height: 16px;
+	margin: 1px;
+}
+pixelconcard
+	.pixelconCardDirectiveContainer.lg
+	.pixelconCardDirectiveMatchElement {
+	width: 24px;
+	height: 24px;
 	margin: 1px;
 }
 pixelconcard .pixelconCardDirectiveContainer.lg .pixelconCardDirectiveGotoIcon {
@@ -354,6 +405,13 @@ pixelconcard
 	width: 20px;
 	height: 20px;
 	margin: 2px;
+}
+pixelconcard
+	.pixelconCardDirectiveContainer.xl
+	.pixelconCardDirectiveMatchElement {
+	width: 30px;
+	height: 30px;
+	margin: 1px;
 }
 pixelconcard .pixelconCardDirectiveContainer.xl .pixelconCardDirectiveGotoIcon {
 	width: 36px;

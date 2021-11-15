@@ -9,12 +9,26 @@
 		_this.rename = rename;
 		_this.create = create;
 		_this.send = send;
+		_this.generatePrint = generatePrint;
+		_this.searchSimilar = searchSimilar;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
 		_this.shareOnFacebook = shareOnFacebook;
 		_this.marketEnabled = market.isEnabled();
 		_this.marketLink = market.getItemLink();
-
+		
+		// Handle hovering manually for added tapping functionality
+		_this.hovering = false;
+		_this.hoverMouseMove = function(ev) {
+			if(ev.movementX != 0 || ev.movementY != 0) _this.hovering = true;
+		}
+		_this.hoverMouseLeave = function(ev) {
+			_this.hovering = false;
+		}
+		_this.hoverMouseClick = function(ev) {
+			_this.hovering = !_this.hovering;
+		}
+		
 		// Watch for screen size changes
 		_this.screenSize = {};
 		$scope.$watch(function () { return $mdMedia('gt-md'); }, function (lg) { _this.screenSize['lg'] = lg; });
@@ -94,7 +108,8 @@
 				name: pixelcon.name,
 				number: 'Number ' + pixelcon.index,
 				date: 'Created ' + (new Date(pixelcon.date)).toLocaleDateString(),
-				collection: pixelcon.collection
+				collection: pixelcon.collection,
+				match: pixelcon.match
 			}
 			
 			//scramble the collection pixelconIds
@@ -150,6 +165,32 @@
 				controller: 'SendDialogCtrl',
 				controllerAs: 'ctrl',
 				templateUrl: HTMLTemplates['dialog.send'],
+				parent: angular.element(document.body),
+				locals: { pixelconId: _this.pixelconId },
+				bindToController: true,
+				clickOutsideToClose: true
+			});
+		}
+
+		// Search for similar pixelcons
+		function generatePrint() {
+			$mdDialog.show({
+				controller: 'PrintsDialogCtrl',
+				controllerAs: 'ctrl',
+				templateUrl: HTMLTemplates['dialog.prints'],
+				parent: angular.element(document.body),
+				locals: { pixelcon: _this.details },
+				bindToController: true,
+				clickOutsideToClose: true
+			});
+		}
+
+		// Search for similar pixelcons
+		function searchSimilar() {
+			$mdDialog.show({
+				controller: 'SimilaritiesDialogCtrl',
+				controllerAs: 'ctrl',
+				templateUrl: HTMLTemplates['dialog.similarities'],
 				parent: angular.element(document.body),
 				locals: { pixelconId: _this.pixelconId },
 				bindToController: true,

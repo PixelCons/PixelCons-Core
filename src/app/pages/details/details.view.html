@@ -4,10 +4,18 @@
 	<div class="detailsCard colorLight">
 	
 		<!-- Image window -->
-		<div class="viewWindow colorDark">
+		<div class="viewWindow colorDark" ng-class="{'hovering': ctrl.hovering}" ng-mousemove="ctrl.hoverMouseMove($event)" ng-mouseleave="ctrl.hoverMouseLeave($event)" ng-click="ctrl.hoverMouseClick($event)">
 			<div ng-hide="ctrl.pixelconId" class="pixelconInvalid textWhite textExxLarge">{{ctrl.pixelconIndex !== null ? '#' + ctrl.pixelconIndex : 'Invalid ID'}}</div>
 			<div ng-show="ctrl.pixelconId" class="pixelconImage">
-				<pixelcon id="ctrl.pixelconId"/>
+				<pixelcon id="ctrl.pixelconId" large="true"/>
+			</div>
+			<div class="windowIconTop wallpaperIcon" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.generatePrint()"></div>
+			<div class="windowIcon similarSearchIcon" ng-if="!ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.searchSimilar()"></div>
+			<div class="windowIcon similarIcon" ng-class="{'verified': ctrl.details.match.verified}" ng-if="ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed" ng-click="ctrl.searchSimilar()"></div>
+			<div class="similarPixelcon" ng-if="ctrl.details.match" ng-hide="ctrl.error || ctrl.loading || ctrl.unclaimed">
+				<a ng-href="/details/{{ctrl.details.match.id}}">
+					<pixelcon id="ctrl.details.match.id"/>
+				</a>
 			</div>
 		</div>
 		
@@ -54,7 +62,6 @@
 						</md-menu>
 						<md-button class="iconButton buy" aria-label="Buy/Sell" ng-if="ctrl.marketEnabled">
 							<a class="plain buttonLink" ng-href="{{ctrl.marketLink}}" target="_blank"></a>
-							<md-tooltip md-direction="left">Buy/Sell</md-tooltip>
 						</md-button>
 					</div>
 				</div>
@@ -81,7 +88,7 @@
 					{{ctrl.details.number}}<br/>
 				</div>
 				<div class="detailsSectionFooter">
-					<accounticon class="textLight" address="ctrl.details.owner" mode="signature" size="{{ctrl.screenSize.sm?'md':'lg'}}" text="Owned By"></accounticon>
+					<accounticon class="textLight" address="ctrl.details.owner" mode="signature" size="{{ctrl.screenSize.sm?'md':'lg'}}" text="Owned By" clickable="true"></accounticon>
 				</div>
 			</div>
 		</div>
