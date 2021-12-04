@@ -8,6 +8,7 @@
 		const loadStep = 80;
 		const loadStepThreshold = 100;
 		_this.creator = web3Service.formatAddress($routeParams.address);
+		_this.creatorName = _this.creator
 		_this.getMaxWidth = getMaxWidth;
 		_this.loadMore = loadMore;
 		_this.copyLink = copyLink;
@@ -27,15 +28,20 @@
 		function loadCreatorDetails() {
 			_this.loading = true;
 			_this.error = null;
-			coreContract.fetchPixelconsByCreator(_this.creator, {asynchronousLoad: true})
-				.then(function (pixelcons) {
-					_this.loading = false;
-					_this.pixelcons = pixelcons;
-					_this.displayPixelcons = _this.pixelcons.slice(0, _this.pixelcons.length < loadStepThreshold ? _this.pixelcons.length : loadStep);
-				}, function (reason) {
-					_this.loading = false;
-					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
+			coreContract.fetchPixelconsByCreator(_this.creator, {asynchronousLoad: true}).then(function(pixelcons) {
+				_this.loading = false;
+				_this.pixelcons = pixelcons;
+				_this.displayPixelcons = _this.pixelcons.slice(0, _this.pixelcons.length < loadStepThreshold ? _this.pixelcons.length : loadStep);
+			}, function (reason) {
+				_this.loading = false;
+				_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
+			});
+			
+			web3Service.awaitState(function() {
+				web3Service.reverseName(_this.creator).then(function(name){
+					if(name) _this.creatorName = name;
 				});
+			}, true);
 		}
 
 		// Updates data from transactions

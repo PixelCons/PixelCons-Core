@@ -8,6 +8,7 @@
 		const loadStep = 80;
 		const loadStepThreshold = 100;
 		_this.owner = web3Service.formatAddress($routeParams.address);
+		_this.ownerName = _this.owner;
 		_this.getMaxWidth = getMaxWidth;
 		_this.loadMore = loadMore;
 		_this.copyLink = copyLink;
@@ -27,15 +28,20 @@
 		function loadOwnerDetails() {
 			_this.loading = true;
 			_this.error = null;
-			coreContract.fetchPixelconsByAccount(_this.owner, {asynchronousLoad: true})
-				.then(function (pixelcons) {
-					_this.loading = false;
-					_this.pixelcons = pixelcons;
-					_this.displayPixelcons = _this.pixelcons.slice(0, _this.pixelcons.length < loadStepThreshold ? _this.pixelcons.length : loadStep);
-				}, function (reason) {
-					_this.loading = false;
-					_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
+			coreContract.fetchPixelconsByAccount(_this.owner, {asynchronousLoad: true}).then(function(pixelcons) {
+				_this.loading = false;
+				_this.pixelcons = pixelcons;
+				_this.displayPixelcons = _this.pixelcons.slice(0, _this.pixelcons.length < loadStepThreshold ? _this.pixelcons.length : loadStep);
+			}, function (reason) {
+				_this.loading = false;
+				_this.error = $sce.trustAsHtml('<b>Network Error:</b><br/>' + reason);
+			});
+			
+			web3Service.awaitState(function() {
+				web3Service.reverseName(_this.owner).then(function(name){
+					if(name) _this.ownerName = name;
 				});
+			}, true);
 		}
 
 		// Updates data from transactions

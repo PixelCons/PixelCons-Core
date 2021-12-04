@@ -177,6 +177,10 @@ div.header .connectButton div {
 	position: absolute;
 	top: 12px;
 	left: 4px;
+	font-size: 12px;
+}
+div.header.sm .connectButton div {
+    font-size: 10px;
 }
 div.header .iconFill {
 	position: relative;

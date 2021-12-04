@@ -36,7 +36,10 @@
 		</md-input-container>
 		<div class="actionButtons">
 			<div class="note textLight">1 <span class="textSmall">PixelCon</span></div>
-			<md-button ng-disabled="!ctrl.canSend" ng-click="ctrl.sendPixelcon()">Send</md-button>
+			<md-button ng-disabled="!ctrl.canSend" ng-click="ctrl.sendPixelcon()">
+				<span>Send</span>
+				<md-progress-circular class="checkingSend" ng-if="ctrl.canSendChecking" md-diameter="14px" md-mode="indeterminate"></md-progress-circular>
+			</md-button>
 		</div>
 		<div class="textNote termsNote">By sending this PixelCon, you agree to the <a class="light link textDark" ng-click="ctrl.closeDialog()" href="/terms">Terms of Use</a></div>
 	</div>

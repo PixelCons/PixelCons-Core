@@ -179,6 +179,8 @@
 		this.hexToInt = hexToInt;
 		this.filterTextToByteSize = filterTextToByteSize;
 		this.formatAddress = formatAddress;
+		this.resolveName = resolveName;
+		this.reverseName = reverseName;
 		this.compressAddressString = compressAddressString;
 		this.scrambleList = scrambleList;
 		this.getNetworkName = getNetworkName;
@@ -779,6 +781,31 @@
 					return '0x' + address;
 				}
 				return null;
+			} catch (err) { }
+			return null;
+		}
+
+		// uses ENS to try and resolve the given name
+		async function resolveName(name) {
+			try {
+				if(isAddress(name)) return name;
+				let mainnetwork = getMainNetwork();
+				let provider = getWeb3Provider(mainnetwork.chainId);
+				if(provider) {
+					return await provider.resolveName(name);
+				}
+			} catch (err) { }
+			return null;
+		}
+
+		// uses ENS to try and resolve the given address
+		async function reverseName(address) {
+			try {
+				let mainnetwork = getMainNetwork();
+				let provider = getWeb3Provider(mainnetwork.chainId);
+				if(provider) {
+					return await provider.lookupAddress(address);
+				}
 			} catch (err) { }
 			return null;
 		}

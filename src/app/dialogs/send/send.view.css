@@ -85,6 +85,14 @@
 	width: 80px;
 	padding-top: 80px;
 }
+.sendDialog .checkingSend {
+	position: absolute;
+	top: calc(50% - 7px);
+	left: calc(50% - 7px);
+}
+.sendDialog md-progress-circular.checkingSend svg path {
+	stroke: #333333;
+}
 
 /* Send PixelCon View */
 .sendDialog div.sendPixelconTitle {
@@ -115,7 +123,7 @@
 	margin-top: 90px;
 }
 .sendDialog div.addressFont {
-	font-size: 10px;
+	font-size: 18px;
 	text-align: center;
 }
 .sendDialog .amountInput {

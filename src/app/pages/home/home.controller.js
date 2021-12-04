@@ -274,12 +274,14 @@
 			if(!slideMoved) {
 				let link = null;
 				let el = ev.srcElement;
-				while(el) {
-					if(el.attributes && el.attributes.index && el.attributes.index.value) {
-						link = _this.showcaseList[parseInt(el.attributes.index.value)].link;
-						break;
+				if(el && !el.classList.contains('contentButton')) {
+					while(el) {
+						if(el.attributes && el.attributes.index && el.attributes.index.value) {
+							link = _this.showcaseList[parseInt(el.attributes.index.value)].link;
+							break;
+						}
+						el = el.parentElement;
 					}
-					el = el.parentElement;
 				}
 				if(link) $location.path(link);
 			}

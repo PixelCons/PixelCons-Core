@@ -33,20 +33,26 @@
 		});
 
 		// Watch for address changes
-		$scope.$watch('ctrl.address', function () {
+		$scope.$watch('ctrl.address', async function () {
 			_this.addressIcon = null;
 			if (_this.address) {
-				_this.address = _this.address;
+				_this.accountName = _this.address;
 				_this.addressIcon = blockies.create({
 					seed: _this.address.toLowerCase(),
 					size: 8,
 					scale: 6
 				}).toDataURL();
+				
+				if(_this.text) {
+					let name = await web3Service.reverseName(_this.address);
+					if(name) _this.accountName = name;
+				}
 			}
 		});
 
 		// Compresses the address string
 		function getCompressedAddressString(address) {
+			if(address && address.length <= _this.maxChars) return address;
 			return web3Service.compressAddressString(address, _this.maxChars);
 		}
 
