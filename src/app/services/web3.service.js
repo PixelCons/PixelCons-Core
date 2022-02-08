@@ -56,7 +56,7 @@
 			chainId: '10'
 		}];
 		const _knownAddresses = [{
-			addr: '0x9f2fedFfF291314E5a86661e5ED5E6f12e36dd37',
+			addr: '',
 			name: 'PixelConInvaders',
 			img: 'img/series/invaders_contract_icon.png'
 		}];
