@@ -36,16 +36,23 @@
 		$scope.$watch('ctrl.address', async function () {
 			_this.addressIcon = null;
 			if (_this.address) {
-				_this.accountName = _this.address;
-				_this.addressIcon = blockies.create({
-					seed: _this.address.toLowerCase(),
-					size: 8,
-					scale: 6
-				}).toDataURL();
-				
-				if(_this.text) {
-					let name = await web3Service.reverseName(_this.address);
-					if(name) _this.accountName = name;
+				let identity = web3Service.identifyAddress(_this.address);
+				if(identity) {
+					_this.accountName = identity.name;
+					_this.addressIcon = identity.img;
+					
+				} else {
+					_this.accountName = _this.address;
+					_this.addressIcon = blockies.create({
+						seed: _this.address.toLowerCase(),
+						size: 8,
+						scale: 6
+					}).toDataURL();
+					
+					if(_this.text) {
+						let name = await web3Service.reverseName(_this.address);
+						if(name) _this.accountName = name;
+					}
 				}
 			}
 		});

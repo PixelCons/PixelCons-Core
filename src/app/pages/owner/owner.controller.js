@@ -38,9 +38,14 @@
 			});
 			
 			web3Service.awaitState(function() {
-				web3Service.reverseName(_this.owner).then(function(name){
-					if(name) _this.ownerName = name;
-				});
+				let identity = web3Service.identifyAddress(_this.owner);
+				if(identity) {
+					_this.ownerName = identity.name;
+				} else {
+					web3Service.reverseName(_this.owner).then(function(name){
+						if(name) _this.ownerName = name;
+					});
+				}
 			}, true);
 		}
 

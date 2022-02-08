@@ -12,6 +12,7 @@ const detailedMetadataEnabled = settings.detailedMetadataEnabled;
 const genesisCount = settings.genesisCount;
 const genesisArtists = settings.genesisArtists;
 const defaultGrayBackground = settings.defaultGrayBackground;
+const invadersContract = formatAddress(settings.invadersContract);
 
 // Gets the metadata JSON for the given pixelcon id
 async function getMetadata(pixelconId, params) {
@@ -20,9 +21,9 @@ async function getMetadata(pixelconId, params) {
 	if(!params.name || !params.index || !params.collection || !params.creator || !params.created) throw "Missing Parameters";
 	
 	//calculate data
-	let name = getName(params.name, params.index);
-	let description = getDescription(params.name, params.index, params.collection, null, params.creator, params.created, null);
 	let creator = formatAddress(params.creator);
+	let name = getName(params.name, params.index, creator);
+	let description = getDescription(params.name, params.index, params.collection, null, params.creator, params.created, null);
 	let created = parseInt(params.created, 16);
 	let index = parseInt(params.index, 16);
 	let collection = parseInt(params.collection, 16);
@@ -99,8 +100,8 @@ async function getMetadata(pixelconId, params) {
 }
 
 // Utils
-const hexCharacters = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
 function formatId(id) {
+	const hexCharacters = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
 	if(id) {
 		id = id.toLowerCase();
 		if(id.indexOf('0x') == 0) id = id.substr(2,id.length);
@@ -111,6 +112,7 @@ function formatId(id) {
 	return null;
 }
 function formatAddress(address) {
+	const hexCharacters = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
 	if(address) {
 		address = address.toLowerCase();
 		if(address.indexOf('0x') == 0) address = address.substr(2,address.length);
@@ -147,13 +149,15 @@ function toUtf8(hex) {
 function toInt(hex) {
 	return "" + parseInt(hex,16);
 }
-function getName(name, index) {
+function getName(name, index, creator) {
 	index = toInt(index);
 	
 	let result = "";
 	if(name) result = toUtf8(name);
 	if(result != "") result += ' ';
-	result += '#' + index + (index < genesisCount ? '✨' : '');
+	result += '#' + index;
+	result += (index < genesisCount ? '✨' : '');
+	result += (creator == invadersContract ? '👾' : '');
 	return result;
 }
 function getDescription(name, index, collection, collectionName, creator, created, match) {
@@ -165,6 +169,7 @@ function getDescription(name, index, collection, collectionName, creator, create
 	
 	if(index) result += "PixelCon #" + index;
 	if(index < genesisCount) result += " - ✨Genesis";
+	if(creator == invadersContract) result += " - 👾Invader";
 	if(!match && collection > 0) {
 		result += " - Collection " + collection;
 		if(collectionName) result += " [" + collectionName + "]";

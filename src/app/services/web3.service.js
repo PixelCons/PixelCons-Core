@@ -55,6 +55,11 @@
 			name: 'Optimism',
 			chainId: '10'
 		}];
+		const _knownAddresses = [{
+			addr: '0x9f2fedFfF291314E5a86661e5ED5E6f12e36dd37',
+			name: 'PixelConInvaders',
+			img: 'img/series/invaders_contract_icon.png'
+		}];
 		const _transactionWaitConfirmations = 1;
 		const _transactionWaitTimeout = 2 * 60 * 60 * 1000;
 		const _transactionWaitPoll = 1 * 1000;
@@ -179,6 +184,7 @@
 		this.hexToInt = hexToInt;
 		this.filterTextToByteSize = filterTextToByteSize;
 		this.formatAddress = formatAddress;
+		this.identifyAddress = identifyAddress;
 		this.resolveName = resolveName;
 		this.reverseName = reverseName;
 		this.compressAddressString = compressAddressString;
@@ -782,6 +788,16 @@
 				}
 				return null;
 			} catch (err) { }
+			return null;
+		}
+		
+		// Try to identify the given address from known addresses
+		function identifyAddress(address) {
+			if(address) {
+				for(let i=0; i<_knownAddresses.length; i++) {
+					if(_knownAddresses[i].addr.toLowerCase() == address.toLowerCase()) return _knownAddresses[i];
+				}
+			}
 			return null;
 		}
 
