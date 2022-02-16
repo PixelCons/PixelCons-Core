@@ -142,6 +142,7 @@
 			$http.get(HTMLTemplates['dialog.send'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.similarities'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.prints'], { cache: $templateCache });
+			$http.get(HTMLTemplates['dialog.verification'], { cache: $templateCache });
 			$http.get(HTMLTemplates['dialog.settings'], { cache: $templateCache });
 		}]);
 

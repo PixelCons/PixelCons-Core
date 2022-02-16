@@ -163,6 +163,7 @@
 		this.onStateChange = onStateChange;
 		this.onNetworkChange = onNetworkChange;
 		this.getActiveAccount = getActiveAccount;
+		this.getSigner = getSigner;
 		this.onAccountDataChange = onAccountDataChange;
 		this.getWaitingTransactions = getWaitingTransactions;
 		this.addWaitingTransaction = addWaitingTransaction;
@@ -380,6 +381,11 @@
 		// Gets the active account
 		function getActiveAccount() {
 			return _account;
+		}
+		
+		// Gets the active account signer
+		function getSigner() {
+			return _web3Provider.getSigner(0);
 		}
 		
 		// Register callback for account data change

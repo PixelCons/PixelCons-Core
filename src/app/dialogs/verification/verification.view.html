@@ -1,0 +1,18 @@
+<md-dialog class="verificationDialog colorLight textCenter" ng-class="ctrl.screenSize" aria-label="Settings">
+	
+	<!-- Header -->
+	<div class="dialogTitle">Account Verification<div class="verificationIcon"></div></div>
+	
+	<!-- Steps -->
+	<div class="verificationStep topPadding textLeft textBold textSmall">1) Sign the account verification message</div>
+	<div class="signButton">
+		<md-button class="md-raised" ng-click="ctrl.signMessage()">Sign Message</md-button>
+	</div>
+	<div class="verificationStep textLeft textBold textSmall">2) Copy/paste the following code to the <a class="light textDark" href="https://discord.gg/E2WQa8sTk3" target="_blank">Discord #Verification Channel</a></div>
+	<div class="codeBox textLeft">
+		<div class="copyIcon" ng-show="ctrl.code" ng-click="ctrl.copyCode()"></div>
+		<span>{{ctrl.code}}</span>
+	</div>
+	
+	<div class="dialogCloseButton" ng-click="ctrl.closeDialog()"></div>
+</md-dialog>
