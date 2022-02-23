@@ -3,15 +3,36 @@
 	<!-- Header -->
 	<div class="dialogTitle">Account Verification<div class="verificationIcon"></div></div>
 	
-	<!-- Steps -->
-	<div class="verificationStep topPadding textLeft textBold textSmall">1) Sign the account verification message</div>
-	<div class="signButton">
-		<md-button class="md-raised" ng-click="ctrl.signMessage()">Sign Message</md-button>
+	<!-- Loading -->
+	<div class="loadingIcon" ng-if="ctrl.view=='loading'">
+		<img class="crispImage" src="img/loading.gif" alt="Loading.." height="100%" width="100%"/>
 	</div>
-	<div class="verificationStep textLeft textBold textSmall">2) Copy/paste the following code to the <a class="light textDark" href="https://discord.gg/VPSm4D5Vnf" target="_blank">Discord #Verification Channel</a></div>
-	<div class="codeBox textLeft">
-		<div class="copyIcon" ng-show="ctrl.code" ng-click="ctrl.copyCode()"></div>
-		<span>{{ctrl.code}}</span>
+	
+	<!-- Wallet connect -->
+	<div ng-if="ctrl.view=='connect'">
+		<div class="infoText textLeft textMedium">Please connect your wallet</div>
+		<md-button class="md-raised" ng-click="ctrl.connect()">Connect</md-button>
+	</div>
+	
+	<!-- No wallet -->
+	<div ng-if="ctrl.view=='start'">
+		<div class="infoText textLeft textMedium">Click here to get started</div>
+		<a href="/start" class="plain textDark">
+			<md-button class="md-raised md-primary" ng-click="ctrl.closeDialog()">Start</md-button>
+		</a>
+	</div>
+	
+	<!-- Validation steps -->
+	<div ng-if="ctrl.view=='validate'">
+		<div class="verificationStep topPadding textLeft textBold textSmall">1) Sign the account verification message</div>
+		<div class="signButton">
+			<md-button class="md-raised" ng-click="ctrl.signMessage()">Sign Message</md-button>
+		</div>
+		<div class="verificationStep textLeft textBold textSmall">2) Copy/paste the following code to the <a class="light textDark" href="https://discord.gg/VPSm4D5Vnf" target="_blank">Discord #Verification Channel</a></div>
+		<div class="codeBox textLeft">
+			<div class="copyIcon" ng-show="ctrl.code" ng-click="ctrl.copyCode()"></div>
+			<span>{{ctrl.code}}</span>
+		</div>
 	</div>
 	
 	<div class="dialogCloseButton" ng-click="ctrl.closeDialog()"></div>

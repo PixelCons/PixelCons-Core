@@ -6,6 +6,7 @@
 	function VerificationDialogCtrl($scope, $route, $mdMedia, $mdDialog, $mdToast, $sce, web3Service) {
 		var _this = this;
 		_this.closeDialog = closeDialog;
+		_this.connect = connect;
 		_this.signMessage = signMessage;
 		_this.copyCode = copyCode;
 
@@ -16,9 +17,27 @@
 		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
 
 		// Load initial data
-		var mainNetwork = web3Service.getMainNetwork();
-		_this.networkName = mainNetwork.name + ' RPC';
-		_this.networkRPC = web3Service.getFallbackRPC(mainNetwork.chainId);
+		function initDialog() {
+			_this.view = 'loading';
+			web3Service.awaitState(function () {
+				let account = web3Service.getActiveAccount();
+				if (account) {
+					_this.view = 'validate';
+					
+				} else if (web3Service.isPrivacyMode()) {
+					_this.view = 'connect';
+					
+				} else if (web3Service.isReadOnly()) {
+					_this.view = 'start';
+					
+				}
+			}, true);
+		}
+
+		// Connect wallet
+		function connect() {
+			web3Service.requestAccess();
+		}
 		
 		// Sign the verification message
 		async function signMessage() {
@@ -64,5 +83,10 @@
 		
 		// Close the dialog if page/account changes
 		$scope.$on("$locationChangeSuccess", $mdDialog.cancel);
+
+		// Listen for account data changes
+		web3Service.onAccountDataChange(initDialog, $scope, true);
+		
+		initDialog();
 	}
 }());

@@ -16,6 +16,11 @@
 	margin-top: 8px;
 	font-size: 22px;
 }
+.verificationDialog div.loadingIcon {
+	margin: 0 auto;
+	width: 60px;
+	padding-top: 40px;
+}
 
 /* Header */
 .verificationDialog div.verificationIcon {
@@ -51,6 +56,10 @@
 }
 
 /* Form */
+.verificationDialog div.infoText {
+	padding: 40px 10px 5px 10px;
+	text-align: center;
+}
 .verificationDialog div.verificationStep {
 	padding: 10px 10px 0px 10px;
 }
