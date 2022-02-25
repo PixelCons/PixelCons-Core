@@ -58,7 +58,7 @@
 		const _knownAddresses = [{
 			addr: '0x81d73f4880894D8ec6A17609D21839620A8FB4Cb',
 			name: 'PixelConInvaders',
-			img: 'img/series/invaders_contract_icon.png'
+			img: 'img/series/invaders_icon.png'
 		}];
 		const _transactionWaitConfirmations = 1;
 		const _transactionWaitTimeout = 2 * 60 * 60 * 1000;

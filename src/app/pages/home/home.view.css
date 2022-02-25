@@ -75,24 +75,23 @@ div.pixelconHomePage
 	margin: 3px;
 	box-shadow: 1px 1px 6px #acacac;
 }
-div.pixelconHomePage div.ethereumImage {
+div.pixelconHomePage div.sectionImage {
 	display: inline-block;
 	vertical-align: middle;
 	box-sizing: border-box;
 	padding: 5px;
 	margin: 0px 10px;
-	width: 130px;
-	height: 130px;
+	width: 290px;
+	height: 160px;
+	overflow: hidden;
 	max-width: 100%;
-	background-color: #fff;
-	border-radius: 150px;
+	background-size: cover;
+	background-position: center;
+	background-image: url(/img/large/card.png);
 }
-div.pixelconHomePage div.ethereumImage.small {
+div.pixelconHomePage div.sectionImage.small {
 	width: 100px;
 	height: 100px;
-}
-div.pixelconHomePage div.ethereumImage img {
-	height: 100%;
 }
 div.pixelconHomePage div.sourceImage {
 	display: inline-block;
@@ -146,176 +145,224 @@ div.pixelconHomePage .textBox ul {
 	margin: 5px 0px 0px 0px;
 }
 
-/* Slider showcase */
-.slider {
+/* Timeline */
+div.pixelconHomePage .colorBlack {
+	background-color: #000;
+}
+div.pixelconHomePage div.timelineContainer {
 	position: relative;
-	display: inline-block;
-	width: 400px;
-	max-width: calc(100vw - 20px);
-	text-align: center;
-	overflow: hidden;
+	height: 50px;
+	width: 800px;
+	max-width: calc(100% - 30px);
+	margin: 0px auto;
+	margin-bottom: -10px;
 }
-.slider.double {
-	width: 780px;
-}
-.slider.triple {
-	width: 1160px;
-}
-.slider.quadruple {
-	width: 1540px;
-}
-.slider .slides {
-	display: flex;
-	overflow-x: auto;
-	width: calc(100% - 20px);
-	margin: 0px 10px;
-	-ms-overflow-style: none;
-	scrollbar-width: none;
-	scroll-behavior: smooth;
-	scroll-snap-type: x mandatory;
-}
-.slider .slides.snap {
-}
-.slider .slides::-webkit-scrollbar {
-	display: none;
-}
-.slider .slides .slide {
-	scroll-snap-align: start;
-	flex-shrink: 0;
-	width: 380px;
-	max-width: calc(100vw - 40px);
-	height: 560px;
-	position: relative;
-	display: flex;
-	padding: 10px 0px;
-}
-.slider .slides .slide .content {
-	position: relative;
-	width: 350px;
-	max-width: calc(100vw - 40px);
-	height: 560px;
-	margin: 0px 15px;
-	border-radius: 10px;
-	background-color: #eee;
-	background-position: 0px 0px;
-	transition: none;
-	overflow: hidden;
-}
-.slider .slides .slide .content:hover {
-	background-position: 10000px 7000px;
-	transition: linear 60s;
-}
-.slider .slides .slide .content .contentSpread {
+div.pixelconHomePage div.timelineContainer div.line {
 	position: absolute;
+	left: 0px;
+	top: calc(50% - 1px);
+	height: 2px;
 	width: 100%;
-	height: 100%;
-	top: 0px;
-	left: 0px;
-	cursor: pointer;
 }
-.slider .slides .slide .content .contentSpread.disabled {
-	background-color: #484848b8;
+div.pixelconHomePage div.timelineContainer div.line.dashed {
+	height: 0px;
+	left: unset;
+	right: 0px;
+	box-sizing: border-box;
+	border: dashed 1px #000;
 }
-.slider .slides .slide .content .contentTitle {
+div.pixelconHomePage div.timelineContainer div.end {
 	position: absolute;
-	top: 0px;
-	left: 0px;
-	text-align: left;
-	font-size: 20px;
-	margin: 20px;
-	background-color: #ffffffde;
-	border-radius: 4px;
-	padding: 0px 5px;
-	box-shadow: 0px 0px 5px 5px #ffffffde;
-}
-.slider .slides .slide .content .contentShade {
-	position: absolute;
-	width: 100%;
-	height: 140px;
-	bottom: 0px;
-	left: 0px;
-	background-color: #eee;
-	transition: height cubic-bezier(0.35, 0, 0.25, 1) 0.2s;
-}
-.slider .slides .slide .content:hover .contentShade {
-	height: 160px;
-}
-.slider .slides .slide .content .contentText {
-	padding: 10px 10px 4px 10px;
-}
-.slider .slides .slide .content .contentAccount {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	margin: 10px;
-	font-size: 0px;
-	width: 40px;
-	height: 40px;
-}
-.slider .slides .slide .content .contentButton {
-	border: 2px solid #000;
-	display: inline-block;
-	border-radius: 5px;
-	padding: 8px 15px;
-	margin: 10px;
-	cursor: pointer;
-	background-color: #f7f7f7;
-	transition: background-color cubic-bezier(0.35, 0, 0.25, 1) 0.2s;
-}
-.slider .slides .slide .content .contentButton:hover {
-	background-color: #e0e0e0;
-}
-.slider .slideDots {
-	display: inline-block;
-	width: 250px;
+	top: calc(50% - 10px);
 	height: 20px;
+	width: 2px;
 }
-.slider .slideDots .slideDotContainer {
+div.pixelconHomePage div.timelineContainer div.end.left {
+	left: 0px;
+}
+div.pixelconHomePage div.timelineContainer div.end.right {
+	right: 0px;
+}
+div.pixelconHomePage div.timelineContainer div.yearmark {
+	position: absolute;
+	top: calc(50% - 6px);
+	height: 12px;
+	width: 2px;
+}
+div.pixelconHomePage div.timelineContainer div.yeartext {
+	position: absolute;
+	top: calc(50% - 24px);
+	margin-left: -14px;
+	font-size: 14px;
+}
+div.pixelconHomePage div.timelineContainer div.mark {
+	position: absolute;
+	top: calc(50% - 10px);
+	height: 20px;
+	width: 20px;
+	cursor: pointer;
+}
+div.pixelconHomePage div.timelineContainer div.mark div.dot {
+	position: absolute;
+	top: calc(50% - 3px);
+	left: calc(50% - 3px);
+	height: 6px;
+	width: 6px;
+	border-radius: 3px;
+}
+div.pixelconHomePage div.timelineContainer div.mark div.dot.hover {
+	position: absolute;
+	top: calc(50% - 4px);
+	left: calc(50% - 4px);
+	height: 8px;
+	width: 8px;
+	border-radius: 4px;
+}
+div.pixelconHomePage div.timelineContainer div.seriesmark {
+	position: absolute;
+	top: calc(50% - 15px);
+	height: 30px;
+	width: 30px;
+	cursor: pointer;
+}
+div.pixelconHomePage div.timelineContainer div.seriesmark div.dot {
+	position: absolute;
+	top: calc(50% - 5px);
+	left: calc(50% - 5px);
+	height: 10px;
+	width: 10px;
+	border-radius: 5px;
+}
+div.pixelconHomePage div.timelineContainer div.seriesmark div.dot.hover {
+	position: absolute;
+	top: calc(50% - 7px);
+	left: calc(50% - 7px);
+	height: 14px;
+	width: 14px;
+	border-radius: 7px;
+}
+div.pixelconHomePage div.timelineContainer div.seriesmark div.dotwip {
+	position: absolute;
+	top: calc(50% - 5px);
+	left: calc(50% - 5px);
+	height: 6px;
+	width: 6px;
+	border: solid 2px #000;
+	border-radius: 5px;
+}
+div.pixelconHomePage div.timelineContainer div.seriesmark div.dotwip.hover {
+	position: absolute;
+	top: calc(50% - 7px);
+	left: calc(50% - 7px);
+	height: 10px;
+	width: 10px;
+	border-radius: 7px;
+}
+div.pixelconHomePage div.timelineCardsContainer {
+	position: relative;
+	height: 90px;
+	width: 800px;
+	max-width: calc(100% - 20px);
+	margin: 0px auto;
+}
+div.pixelconHomePage div.timelineCardsContainer div.timelineCard {
 	display: inline-block;
+	width: 64px;
+    vertical-align: middle;
+	margin: 0px 4%;
+	font-size: 0px;
+	cursor: pointer;
+}
+div.pixelconHomePage div.timelineCardsContainer div.timelineCard div.seriesIcon {
+	display: inline-block;
+	height: 64px;
+	width: 64px;
+	background-size: 64px;
+	border-radius: 4px;
+	box-sizing: border-box;
+	box-shadow: 0px 0px 3px #8e8e8e;
+}
+div.pixelconHomePage div.timelineCardsContainer div.timelineCard div.seriesIcon.wip {
+	border: solid 2px #000;
+	padding: 12px 0px;
+}
+div.pixelconHomePage div.timelineCardsContainer div.timelineCard div.seriesIcon.hover {
+	height: 66px;
+	width: 66px;
+	background-size: 66px;
+	padding: 13px 0px;
+	margin: -1px;
+}
+div.pixelconHomePage.sm div.timelineCardsContainer {
+	height: 80px;
+}
+div.pixelconHomePage.sm div.timelineCardsContainer div.timelineCard {
+	width: 54px;
+	margin: 0px 3%;
+}
+div.pixelconHomePage.sm div.timelineCardsContainer div.timelineCard div.seriesIcon {
+	height: 48px;
+	width: 48px;
+	background-size: 48px;
+}
+div.pixelconHomePage.sm div.timelineCardsContainer div.timelineCard div.seriesIcon.wip {
+	padding: 6px 0px;
+}
+div.pixelconHomePage.sm div.timelineCardsContainer div.timelineCard div.seriesIcon.hover {
+	height: 50px;
+	width: 50px;
+	background-size: 50px;
+	padding: 7px 0px;
+	margin: -1px;
+}
+
+/* Timeline large */
+div.pixelconHomePage div.largeTimelineContainer {
+	width: 1380px;
+	max-width: 100%;
+	margin: 0px auto;
+}
+div.pixelconHomePage div.timelineSegment {
+	display: inline-block;
+	width: 300px;
+	vertical-align: middle;
+	margin: 10px;
+	padding: 10px;
+	transition: all cubic-bezier(0.35, 0, 0.25, 1) 0.1s;
+}
+div.pixelconHomePage div.timelineSegment.hasImage {
+	margin: 10px 10px 0px 10px;
+	padding: 10px 10px 20px 10px;
+}
+div.pixelconHomePage div.timelineSegment.hover {
+	background-color: #0000000f;
+}
+div.pixelconHomePage div.timelineSegment div.dateIcon {
+	display: inline-block;
+	vertical-align: bottom;
 	width: 20px;
 	height: 20px;
-	margin: 0px 2px;
-	cursor: pointer;
+	background-size: 20px;
+	background-image: url(/img/icon_boxcheck.svg);
 }
-.slider .slideDots .slideDotContainer .dot {
-	display: inline-block;
-	width: 6px;
-	height: 6px;
-	border-radius: 3px;
-	background-color: #d0d0d0;
-	transition: background-color cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+div.pixelconHomePage div.timelineSegment div.dateIcon.empty {
+	background-image: url("/img/icon_boxempty.svg");
 }
-.slider .slideDots .slideDotContainer .dot.highlight {
-	background-color: #717171;
+div.pixelconHomePage div.timelineSegment div.date {
+	font-size: 16px;
 }
-.slider .arrow {
-	position: absolute;
-    background-repeat: no-repeat;
-    background-size: 60px;
-	width: 40px;
-	height: 40px;
-	top: calc(50% - 20px);
-	border-radius: 20px;
-	transition: cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
-	opacity: 0.0;
-	filter: alpha(opacity=0);
+div.pixelconHomePage div.timelineSegment div.title {
+	margin-left: 20px;
+	font-size: 14px;
 }
-.slider .arrow.visible {
-	opacity: 0.4;
-	filter: alpha(opacity=40);
-	cursor: pointer;
+div.pixelconHomePage div.timelineSegment div.desc {
+	margin-left: 20px;
+	font-size: 14px;
 }
-.slider .arrow.visible:hover {
-	opacity: 0.6;
-	filter: alpha(opacity=60);
-}
-.slider .arrow.left {
-	background-position: -20px center;
-	background-image: url('/img/icon_back.svg');
-	left: 0px;
-}
-.slider .arrow.right {	
-	background-position: 0px center;
-	background-image: url('/img/icon_forward.svg');
-	right: 0px;
+div.pixelconHomePage div.timelineSegment div.img {
+	width: 250px;
+	height: 130px;
+	background-size: 250px;
+	margin: 5px 0px -15px 20px;
+	box-shadow: 0px 0px 3px #8e8e8e;
 }
