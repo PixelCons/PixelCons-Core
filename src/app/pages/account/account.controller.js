@@ -23,6 +23,7 @@
 		_this.checkSelectModeActionable = checkSelectModeActionable;
 		_this.send = send;
 		_this.loadMore = loadMore;
+		_this.verifyAccount = verifyAccount;
 		_this.copyLink = copyLink;
 		_this.shareOnTwitter = shareOnTwitter;
 		_this.shareOnFacebook = shareOnFacebook;
@@ -37,6 +38,11 @@
 		$scope.$watch(function () { return $mdMedia('gt-sm'); }, function (lg) { _this.screenSize['lg'] = lg; });
 		$scope.$watch(function () { return $mdMedia('gt-xs') && !$mdMedia('gt-sm'); }, function (md) { _this.screenSize['md'] = md; });
 		$scope.$watch(function () { return $mdMedia('xs'); }, function (sm) { _this.screenSize['sm'] = sm; });
+		
+		// Check for loaded params
+		if ($routeParams.verification) {
+			verifyAccount();
+		}
 
 		// Check if data parameters have changed
 		function checkUpdateData(forceDataFetch) {
@@ -99,8 +105,6 @@
 				
 				//get pixelcons for account
 				coreContract.fetchPixelconsByAccount(_this.accountAddress, {asynchronousLoad: true}).then(function (pixelcons) {
-					//_this.pixelcons = data;
-					
 					_this.pixelcons = pixelcons;
 					_this.displayPixelcons = pixelcons.slice(0, pixelcons.length < loadStepThreshold ? pixelcons.length : loadStep);
 					
@@ -267,6 +271,19 @@
 				let size = Math.min(_this.displayPixelcons.length + loadStep, _this.pixelcons.length);
 				_this.displayPixelcons = _this.pixelcons.slice(0, size);
 			}
+		}
+		
+		// Account verification
+		function verifyAccount() {
+			$mdDialog.show({
+				controller: 'VerificationDialogCtrl',
+				controllerAs: 'ctrl',
+				templateUrl: HTMLTemplates['dialog.verification'],
+				parent: angular.element(document.body),
+				locals: { },
+				bindToController: true,
+				clickOutsideToClose: true
+			});
 		}
 
 		// Copies share link to the clipboard

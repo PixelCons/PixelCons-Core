@@ -55,6 +55,11 @@
 			name: 'Optimism',
 			chainId: '10'
 		}];
+		const _knownAddresses = [{
+			addr: '0x81d73f4880894D8ec6A17609D21839620A8FB4Cb',
+			name: 'PixelConInvaders',
+			img: 'img/series/invaders_icon.png'
+		}];
 		const _transactionWaitConfirmations = 1;
 		const _transactionWaitTimeout = 2 * 60 * 60 * 1000;
 		const _transactionWaitPoll = 1 * 1000;
@@ -158,6 +163,7 @@
 		this.onStateChange = onStateChange;
 		this.onNetworkChange = onNetworkChange;
 		this.getActiveAccount = getActiveAccount;
+		this.getSigner = getSigner;
 		this.onAccountDataChange = onAccountDataChange;
 		this.getWaitingTransactions = getWaitingTransactions;
 		this.addWaitingTransaction = addWaitingTransaction;
@@ -179,6 +185,9 @@
 		this.hexToInt = hexToInt;
 		this.filterTextToByteSize = filterTextToByteSize;
 		this.formatAddress = formatAddress;
+		this.identifyAddress = identifyAddress;
+		this.resolveName = resolveName;
+		this.reverseName = reverseName;
 		this.compressAddressString = compressAddressString;
 		this.scrambleList = scrambleList;
 		this.getNetworkName = getNetworkName;
@@ -372,6 +381,11 @@
 		// Gets the active account
 		function getActiveAccount() {
 			return _account;
+		}
+		
+		// Gets the active account signer
+		function getSigner() {
+			return _web3Provider.getSigner(0);
 		}
 		
 		// Register callback for account data change
@@ -779,6 +793,41 @@
 					return '0x' + address;
 				}
 				return null;
+			} catch (err) { }
+			return null;
+		}
+		
+		// Try to identify the given address from known addresses
+		function identifyAddress(address) {
+			if(address) {
+				for(let i=0; i<_knownAddresses.length; i++) {
+					if(_knownAddresses[i].addr.toLowerCase() == address.toLowerCase()) return _knownAddresses[i];
+				}
+			}
+			return null;
+		}
+
+		// uses ENS to try and resolve the given name
+		async function resolveName(name) {
+			try {
+				if(isAddress(name)) return name;
+				let mainnetwork = getMainNetwork();
+				let provider = getWeb3Provider(mainnetwork.chainId);
+				if(provider) {
+					return await provider.resolveName(name);
+				}
+			} catch (err) { }
+			return null;
+		}
+
+		// uses ENS to try and resolve the given address
+		async function reverseName(address) {
+			try {
+				let mainnetwork = getMainNetwork();
+				let provider = getWeb3Provider(mainnetwork.chainId);
+				if(provider) {
+					return await provider.lookupAddress(address);
+				}
 			} catch (err) { }
 			return null;
 		}

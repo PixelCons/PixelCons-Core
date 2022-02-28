@@ -23,37 +23,72 @@
 	
 	<div class="homeContainer textCenter colorLight">
 		<div class="textBox textMedium textLight textCenter textSelectable">
-			<div class="textExLarge textBold textDark">✨ Genesis Series ✨</div>
-			<div class="textMedium textLight">First PixelCons Minted (December 2018)</div><br/>
+			<div class="textExLarge textBold textDark">Roadmap</div>
 		</div>
-		<br/>
 		
-		<div class="slider" ng-class="ctrl.sliderClass">
-			<div class="slides">
-				<div class="slide" ng-attr-index="{{$index}}" ng-repeat="show in ctrl.showcaseList">
-					<div class="content md-whiteframe-1dp" ng-style="{'background-image': 'url('+show.image+')'}">
-						<div class="contentSpread" ng-class="{'disabled':show.disabled}"></div>
-						<div class="contentTitle">#{{show.startIndex}} - #{{show.startIndex + show.count}}</div>
-						<div class="contentShade">
-							<div class="contentAccount">
-								<img class="crispImage" style="width:100%; height:100%" ng-src="{{show.addressIcon}}"/>
-							</div>
-							<div class="contentText textLarge textBold textDark">{{show.name}}</div>
-							<div class="contentText">{{show.title}}</div>
-							<a class="plain textDark" ng-href="{{show.marketLink}}" target="_blank">
-								<div class="contentButton" ng-if="!show.disabled">{{ctrl.marketName}}</div>
-							</a>
-						</div>
-					</div>
+		<!-- mini timeline -->
+		<div class="timelineContainer">
+			<div class="line colorBlack" ng-style="{'width': ctrl.timeline.solidWidth}"></div>
+			<div class="line dashed" ng-style="{'width': ctrl.timeline.dashedWidth}"></div>
+			<div class="end left colorBlack"></div>
+			<div class="yeartext" ng-style="{'left': year.left}" ng-repeat="year in ctrl.timeline.years">{{year.text}}</div>
+			<div class="yearmark colorBlack" ng-style="{'left': year.left}" ng-repeat="year in ctrl.timeline.years"></div>
+			<a class="plain textDark" ng-href="{{marker.link}}" target="_blank" ng-repeat="marker in ctrl.timeline.markers">
+				<div class="mark" ng-mouseenter="marker.hover=true" ng-mouseleave="marker.hover=false" ng-style="{'left': marker.left}">
+					<div class="dot colorBlack" ng-class="{'hover':marker.hover}"></div>
+					<md-tooltip style="z-index:4" ng-if="!ctrl.screenSize.sm" md-direction="top" md-visible="marker.hover">{{marker.text}}</md-tooltip>
 				</div>
-			</div>
-			<div class="slideDots">
-				<div ng-repeat="dot in ctrl.sliderDots" class="slideDotContainer" ng-click="ctrl.sliderDotClick($index);"><div class="dot" ng-class="{'highlight': ctrl.sliderDotHighlight == $index}"></div></div>
-			</div>
-			<div class="arrow left" ng-if="ctrl.sliderDots.length < ctrl.showcaseList.length" ng-class="{'visible': ctrl.sliderDotHighlight > 0}" ng-click="ctrl.sliderDotClick(ctrl.sliderDotHighlight-1);"></div>
-			<div class="arrow right" ng-if="ctrl.sliderDots.length < ctrl.showcaseList.length" ng-class="{'visible': ctrl.sliderDotHighlight < ctrl.sliderDots.length-1}" 
-				ng-click="ctrl.sliderDotClick(ctrl.sliderDotHighlight+1);"></div>
+			</a>
+			<a class="plain textDark" ng-href="{{series.link}}" target="_blank" ng-repeat="series in ctrl.timeline.series">
+				<div class="seriesmark" ng-style="{'left': series.left}" ng-mouseenter="series.hover=true" ng-mouseleave="series.hover=false">
+					<div class="dot" ng-if="series.color" ng-class="{'hover':series.hover}" ng-style="{'background-color': series.color}"></div>
+					<div class="dotwip" ng-if="series.isWIP" ng-class="{'hover':series.hover}" ng-style="{'background-color': series.color}"></div>
+					<md-tooltip style="z-index:4" ng-if="!ctrl.screenSize.sm" md-direction="top" md-visible="series.hover">{{series.text}}</md-tooltip>
+				</div>
+			</a>
+			<div class="end right colorBlack"></div>
 		</div>
+		<div class="timelineCardsContainer">
+			<div class="timelineCard" ng-style="{'left': series.left}" ng-mouseenter="series.hover=true" ng-mouseleave="series.hover=false" ng-repeat="series in ctrl.timeline.series">
+				<a class="plain textDark" ng-href="{{series.link}}" target="_blank">
+					<div class="seriesIcon" ng-class="{'wip':series.isWIP, 'hover':series.hover}" ng-style="{'background-image': 'url(' + series.icon + ')'}">
+						<span ng-if="series.isWIP" class="textBold textMedium">TBA</span>
+						<span ng-if="series.isWIP" class="textBold textSmall">{{series.text}}</span>
+					</div>
+				</a>
+				<span class="textSmall">{{series.date}}</span>
+			</div>
+		</div>
+		
+		<!-- large timeline -->
+		<div class="largeTimelineContainer">
+			<div ng-if="!rme.minor || !ctrl.screenSize.sm" class="timelineSegment textLeft" ng-class="{'hover':rme.hover, 'hasImage':rme.image}" 
+					ng-mouseenter="rme.hover=true" ng-mouseleave="rme.hover=false" ng-repeat="rme in ctrl.roadmapEvents">
+				<a class="plain textDark" ng-href="{{rme.link}}" target="_blank">
+					<div class="date">
+						<div class="dateIcon" ng-class="{'empty':rme.isWIP}"></div>
+						<span>{{rme.fulldate}}</span>
+					</div>
+					<div class="title textBold">{{rme.text}}</div>
+					<div class="desc">{{rme.description}}</div>
+					<div class="img" ng-if="rme.image" ng-style="{'background-image': 'url(' + rme.image + ')'}"></div>
+				</a>
+			</div>
+		</div>
+	</div>
+	
+	<div class="bottomSpacer"></div>
+	
+	<div class="homeContainer textCenter colorLight">
+		<div class="textBox textMedium textLight textCenter textCenter textSelectable">
+			<div class="textExLarge textBold textDark textCenter">PixelCons Origin Story</div>
+			<span>Read about the origin of PixelCons in the article from ONE37PM. In it is an interview with the lead developer and details how the project came together over three years ago before NFTs exploded to the status they have today.</span>
+			<br/>
+			<a class="plain textDark" href="https://www.one37pm.com/nft/art/pixelcons-2018-nft-pixel-art-project" target="_blank">
+				<md-button class="md-raised">Read More</md-button>
+			</a>
+		</div>
+		<div class="sectionImage"></div>
 	</div>
 	
 	<div class="bottomSpacer"></div>
@@ -74,7 +109,6 @@
 			<a class="plain light socialLink twitter" target="_blank" href="https://twitter.com/PixelConsToken"></a>
 			<a class="plain light socialLink opensea" target="_blank" href="https://opensea.io/category/pixelcons"></a>
 			<a class="plain light socialLink discord" target="_blank" href="https://discord.gg/E2WQa8sTk3"></a>
-			
 		</div>
 	</div>
 	

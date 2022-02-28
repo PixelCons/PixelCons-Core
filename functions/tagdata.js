@@ -10,6 +10,7 @@ const webdata = require('./webdata.js');
 const customizedHTMLTagsEnabled = settings.customizedHTMLTagsEnabled;
 const appWebDomain = settings.appWebDomain;
 const genesisCount = settings.genesisCount;
+const invadersContract = formatAddress(settings.invadersContract);
 const tagEntryPoint = '<!-- Tag Inserts -->';
 
 // Data
@@ -86,7 +87,6 @@ async function getTagDataHTML(path, plainHTMLPath) {
 }
 
 // Utils
-const hexCharacters = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
 async function getHTMLData(plainHTMLPath) {
 	if(plain_html_obj) return plain_html_obj;
 	
@@ -143,6 +143,7 @@ function insertTagData(htmlData, type, title, description, imageUrl) {
 	return tagHTML;
 }
 function formatAddress(address) {
+	const hexCharacters = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
 	address = address.toLowerCase();
 	if(address.indexOf('0x') == 0) address = address.substr(2, address.length);
 	if(address.length == 64) address = address.substring(24,64);
@@ -156,6 +157,7 @@ function formatIndex(index) {
 	return null;
 }
 function formatId(id) {
+	const hexCharacters = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
 	id = id.toLowerCase();
 	if(id.indexOf('0x') == 0) id = id.substr(2, id.length);
 	if(id.length != 64) return null;
@@ -179,6 +181,7 @@ function getDescription(name, index, collection, creator, created) {
 	
 	if(index) result += "PixelCon #" + index;
 	if(index < genesisCount) result += " - ✨Genesis";
+	if(invadersContract == formatAddress(creator)) result += " - 👾Invader";
 	if(collection > 0) {
 		result += " - Collection " + collection;
 	}

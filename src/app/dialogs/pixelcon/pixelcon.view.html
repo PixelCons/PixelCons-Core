@@ -29,12 +29,12 @@
 				</div>
 			</a>
 		</div>
-		<div class="infoText" ng-if="!ctrl.match.verified && ctrl.match.level > 2">Your creation is too similar to this already created PixelCon. Try making it more unique</div>
-		<div class="infoText" ng-if="!ctrl.match.verified && ctrl.match.level <= 2">Your creation is very similar to this already created PixelCon. Are you sure you want to continue?</div>
+		<div class="infoText" ng-if="!ctrl.match.verified && ctrl.match.level > ctrl.blockMatchLevel">Your creation is too similar to this already created PixelCon. Try making it more unique</div>
+		<div class="infoText" ng-if="!ctrl.match.verified && ctrl.match.level <= ctrl.blockMatchLevel">Your creation is very similar to this already created PixelCon. Are you sure you want to continue?</div>
 		<div class="infoText" ng-if="ctrl.match.verified">Your creation is a near replica of your previous work. Are you sure you want to continue?</div>
 		<div class="actionButtons">
 			<div class="note textLight">1 <span class="textSmall">PixelCon</span></div>
-			<md-button ng-click="ctrl.currView='create'" ng-if="ctrl.match.verified || ctrl.match.level <= 2">Acknowledge</md-button>
+			<md-button ng-click="ctrl.currView='create'" ng-if="ctrl.match.verified || ctrl.match.level <= ctrl.blockMatchLevel">Acknowledge</md-button>
 		</div>
 	</div>
 	

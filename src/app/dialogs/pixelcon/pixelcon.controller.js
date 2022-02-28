@@ -5,6 +5,7 @@
 	PixelconDialogCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$sce', 'web3Service', 'coreContract', 'similarities'];
 	function PixelconDialogCtrl($scope, $mdMedia, $mdDialog, $sce, web3Service, coreContract, similarities) {
 		var _this = this;
+		_this.blockMatchLevel = 1;
 		_this.filterPixelconName = filterPixelconName;
 		_this.closeDialog = closeDialog;
 		_this.update = update;

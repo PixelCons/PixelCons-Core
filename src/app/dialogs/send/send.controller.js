@@ -2,9 +2,11 @@
 	angular.module('App')
 		.controller('SendDialogCtrl', SendDialogCtrl);
 
-	SendDialogCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$sce', 'web3Service', 'coreContract'];
-	function SendDialogCtrl($scope, $mdMedia, $mdDialog, $sce, web3Service, coreContract) {
+	SendDialogCtrl.$inject = ['$scope', '$mdMedia', '$mdDialog', '$timeout', '$sce', 'web3Service', 'coreContract'];
+	function SendDialogCtrl($scope, $mdMedia, $mdDialog, $timeout, $sce, web3Service, coreContract) {
 		var _this = this;
+		var validCheckTimeout;
+		var validAddress;
 		_this.closeDialog = closeDialog;
 		_this.checkValid = checkValid;
 		_this.checkValidAmount = checkValidAmount;
@@ -23,7 +25,7 @@
 			_this.currView = 'loading';
 			if (_this.ethMode) {
 				_this.title = 'Tip the Devs!';
-				_this.toAddress = '0x9f2fedFfF291314E5a86661e5ED5E6f12e36dd37';
+				_this.toAddress = 'pixelcons.eth';
 
 				let activeAccount = web3Service.getActiveAccount();
 				if (activeAccount) {
@@ -48,7 +50,15 @@
 
 		// Check if address is valid
 		function checkValid() {
-			_this.canSend = web3Service.isAddress(_this.toAddress);
+			_this.canSend = false;
+			_this.canSendChecking = true;
+			
+			if(validCheckTimeout) $timeout.cancel(validCheckTimeout);
+			validCheckTimeout = $timeout(async function() {
+				validAddress = await web3Service.resolveName(_this.toAddress);
+				_this.canSendChecking = false;
+				_this.canSend = !!validAddress;
+			}, 700);
 		}
 
 		// Check if amount is valid
@@ -58,13 +68,13 @@
 
 		// Send pixelcon
 		function sendPixelcon() {
-			let transaction = coreContract.transferPixelcon(_this.pixelconId, web3Service.formatAddress(_this.toAddress));
+			let transaction = coreContract.transferPixelcon(_this.pixelconId, web3Service.formatAddress(validAddress));
 			$mdDialog.hide({transaction: transaction});
 		}
 
 		// Send ether
 		function sendEth() {
-			let transaction = web3Service.sendEth(_this.toAddress, _this.sendAmount);
+			let transaction = web3Service.sendEth(validAddress, _this.sendAmount);
 			$mdDialog.hide({transaction: transaction});
 		}
 

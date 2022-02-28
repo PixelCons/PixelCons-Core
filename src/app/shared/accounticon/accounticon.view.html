@@ -19,7 +19,7 @@
 		</div>
 		<div class="accountIconDirectiveInline accountIconDirectiveNormalText accountIconDirectiveRight textSelectable textLight" 
 				ng-class="{'textExSmall':ctrl.size=='sm'||ctrl.size=='md', 'textSmall':ctrl.size=='lg'}" ng-if="ctrl.mode=='signature'">
-			{{ctrl.getCompressedAddressString(ctrl.address)}}
+			{{ctrl.getCompressedAddressString(ctrl.accountName)}}
 		</div>
 	</a>
 		
@@ -36,7 +36,7 @@
 		<div class="accountIconDirectiveInline" ng-if="ctrl.mode=='icon' && ctrl.text">
 			<div class="accountIconDirectiveInline accountIconDirectiveText accountIconDirectiveLeft textBold" 
 					ng-class="{'textMedium':ctrl.size=='sm', 'textLarge':ctrl.size=='lg'||ctrl.size=='md'}">{{ctrl.text}}</div>
-			<div class="accountIconDirectiveInline accountIconDirectiveText accountIconDirectiveLeft textSelectable textSmall textLight">{{ctrl.getCompressedAddressString(ctrl.address)}}</div>
+			<div class="accountIconDirectiveInline accountIconDirectiveText accountIconDirectiveLeft textSelectable textSmall textLight">{{ctrl.getCompressedAddressString(ctrl.accountName)}}</div>
 		</div>
 	</a>
 </div>
