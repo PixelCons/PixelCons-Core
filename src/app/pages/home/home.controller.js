@@ -131,13 +131,16 @@
 			fulldate: 'February 16th 2022',
 			date: 'Feb 2022'
 		},{
-			text: 'Series2',
-			description: 'Upcoming PixelCon series currently in development.',
+			text: 'PixelConsole Series',
+			description: 'The PixelConsole series initial art drop.',
 			isWIP: true,
+			color: '#F65D31',
+			icon: '/img/series/console_icon.png',
+			image: '/img/series/console_card.png',
 			millis: 1654056000000,
 			minor: false,
-			fulldate: 'May/Jun 2022',
-			date: 'Q2 2022'
+			fulldate: 'June 2022',
+			date: 'Q3 2022'
 		},{
 			text: 'Series3',
 			description: 'Upcoming PixelCon series currently in development.',

@@ -42,7 +42,7 @@
 			<a class="plain textDark" ng-href="{{series.link}}" target="_blank" ng-repeat="series in ctrl.timeline.series">
 				<div class="seriesmark" ng-style="{'left': series.left}" ng-mouseenter="series.hover=true" ng-mouseleave="series.hover=false">
 					<div class="dot" ng-if="series.color" ng-class="{'hover':series.hover}" ng-style="{'background-color': series.color}"></div>
-					<div class="dotwip" ng-if="series.isWIP" ng-class="{'hover':series.hover}" ng-style="{'background-color': series.color}"></div>
+					<div class="dotwip" ng-if="series.isWIP && !series.icon" ng-class="{'hover':series.hover}" ng-style="{'background-color': series.color}"></div>
 					<md-tooltip style="z-index:4" ng-if="!ctrl.screenSize.sm" md-direction="top" md-visible="series.hover">{{series.text}}</md-tooltip>
 				</div>
 			</a>
@@ -51,9 +51,9 @@
 		<div class="timelineCardsContainer">
 			<div class="timelineCard" ng-style="{'left': series.left}" ng-mouseenter="series.hover=true" ng-mouseleave="series.hover=false" ng-repeat="series in ctrl.timeline.series">
 				<a class="plain textDark" ng-href="{{series.link}}" target="_blank">
-					<div class="seriesIcon" ng-class="{'wip':series.isWIP, 'hover':series.hover}" ng-style="{'background-image': 'url(' + series.icon + ')'}">
-						<span ng-if="series.isWIP" class="textBold textMedium">TBA</span>
-						<span ng-if="series.isWIP" class="textBold textSmall">{{series.text}}</span>
+					<div class="seriesIcon" ng-class="{'wip':series.isWIP && !series.icon, 'hover':series.hover}" ng-style="{'background-image': 'url(' + series.icon + ')'}">
+						<span ng-if="series.isWIP && !series.icon" class="textBold textMedium">TBA</span>
+						<span ng-if="series.isWIP && !series.icon" class="textBold textSmall">{{series.text}}</span>
 					</div>
 				</a>
 				<span class="textSmall">{{series.date}}</span>
