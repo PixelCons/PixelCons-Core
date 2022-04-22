@@ -10,7 +10,6 @@ const ethdata = require('./ethdata.js');
 const appWebDomain = settings.appWebDomain;
 const detailedMetadataEnabled = settings.detailedMetadataEnabled;
 const genesisCount = settings.genesisCount;
-const genesisArtists = settings.genesisArtists;
 const defaultGrayBackground = settings.defaultGrayBackground;
 const invadersContract = formatAddress(settings.invadersContract);
 
@@ -39,10 +38,6 @@ async function getMetadata(pixelconId, params) {
 		"background_color": getColor('0x' + id),
 		"color": getColor('0x' + id),
 		"attributes": [{
-			"display_type": "date", 
-			"trait_type": "Created", 
-			"value": created
-		},{
 			"trait_type": "Creator", 
 			"value": creator
 		}]
@@ -51,20 +46,24 @@ async function getMetadata(pixelconId, params) {
 	//add attributes
 	if(index < 100) {
 		metadata["attributes"].push({
-			"trait_type": "Genesis", 
+			"trait_type": "Attributes", 
 			"value": "First 100"
 		});
 	}
 	if(index < genesisCount) {
 		metadata["attributes"].push({
-			"trait_type": "Genesis", 
+			"trait_type": "Attributes", 
 			"value": "2018 Genesis"
 		});
-	}
-	if(genesisArtists.indexOf('0x' + creator) > -1) {
 		metadata["attributes"].push({
-			"trait_type": "Genesis", 
-			"value": "Genesis Artist"
+			"trait_type": "Collection",
+			"value": "#✨ - Genesis"
+		});
+	}
+	if(creator == invadersContract) {
+		metadata["attributes"].push({
+			"trait_type": "Collection",
+			"value": "#👾 - Invaders"
 		});
 	}
 				
@@ -80,7 +79,7 @@ async function getMetadata(pixelconId, params) {
 				collectionName = collectionData.name;
 				metadata["attributes"].push({
 					"trait_type": "Collection",
-					"value": "Collection " + collection + (collectionName ? " [" + collectionName + "]": "")
+					"value": (collection + '').padStart(3, '0') + (collectionName ? (" - " + collectionName) : "")
 				});
 			}
 		}
@@ -89,11 +88,12 @@ async function getMetadata(pixelconId, params) {
 		metadata["description"] = getDescription(params.name, params.index, params.collection, collectionName, params.creator, params.created, match);
 		
 		//similarity properties
-		let similarity = match ? (match.verified ? 'Similar to Same Creator' : 'Similar to Different Creator') : 'Unique';
-		metadata["attributes"].push({
-			"trait_type": "Similarity", 
-			"value": similarity
-		});
+		if(!match) {
+			metadata["attributes"].push({
+				"trait_type": "Attributes", 
+				"value": "Unique"
+			});
+		}
 	}
 				
 	return metadata;
@@ -169,15 +169,14 @@ function getDescription(name, index, collection, collectionName, creator, create
 	
 	if(index) result += "PixelCon #" + index;
 	if(index < genesisCount) result += " - ✨Genesis";
-	if(creator == invadersContract) result += " - 👾Invader";
+	if(creator == invadersContract) result += " - 👾Invaders";
 	if(!match && collection > 0) {
 		result += " - Collection " + collection;
 		if(collectionName) result += " [" + collectionName + "]";
 	}
 	if(created) result += " - " + created;
 	if(match) {
-		if(match.verified) result += " - ✔️Similar to creator's older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
-		else result += " - ⚠️Very similar to older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
+		if(!match.verified) result += " - ⚠️Very similar to older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
 		if(collection > 0) {
 			result += " - Collection " + collection;
 			if(collectionName) result += " [" + collectionName + "]";
