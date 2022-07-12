@@ -132,23 +132,15 @@
 			date: 'Feb 2022'
 		},{
 			text: 'PixelConsole Series',
-			description: 'The PixelConsole series initial art drop.',
+			description: 'The PixelConsole virtual console art.',
 			isWIP: true,
 			color: '#F65D31',
 			icon: '/img/series/console_icon.png',
 			image: '/img/series/console_card.png',
-			millis: 1654056000000,
+			millis: 1669870800000,
 			minor: false,
-			fulldate: 'June 2022',
-			date: 'Q3 2022'
-		},{
-			text: 'Series3',
-			description: 'Upcoming PixelCon series currently in development.',
-			isWIP: true,
-			millis: 1667275200000,
-			minor: false,
-			fulldate: 'Sept/Oct 2022',
-			date: 'Q4 2022'
+			fulldate: 'Work in Progress',
+			date: 'TBD'
 		}];
 			
 		_this.timeline = {
