@@ -26,9 +26,6 @@ const openseaLink = 'https://opensea.io/collection/pixelcons?search[sortAscendin
 /* Number of genesis pixelcons */
 const genesisCount = 651;
 
-/* Invaders contract address */
-const invadersContract = '0x81d73f4880894D8ec6A17609D21839620A8FB4Cb';
-
 /* List of PixelCon ids that default to a gray background instead of black */
 const defaultGrayBackground = [];
 
@@ -41,7 +38,6 @@ let settings = {
 	jsonRpc: jsonRpc,
 	openseaLink: openseaLink,
 	genesisCount: genesisCount,
-	invadersContract: invadersContract,
 	defaultGrayBackground: defaultGrayBackground
 }
 for(let n in settings) if(privateSettings[n]) settings[n] = privateSettings[n];

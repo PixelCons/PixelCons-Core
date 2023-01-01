@@ -11,7 +11,6 @@ const appWebDomain = settings.appWebDomain;
 const detailedMetadataEnabled = settings.detailedMetadataEnabled;
 const genesisCount = settings.genesisCount;
 const defaultGrayBackground = settings.defaultGrayBackground;
-const invadersContract = formatAddress(settings.invadersContract);
 
 // Gets the metadata JSON for the given pixelcon id
 async function getMetadata(pixelconId, params) {
@@ -37,10 +36,7 @@ async function getMetadata(pixelconId, params) {
 		"home_url": appWebDomain + "details/" + id,
 		"background_color": getColor('0x' + id),
 		"color": getColor('0x' + id),
-		"attributes": [{
-			"trait_type": "Creator", 
-			"value": creator
-		}]
+		"attributes": []
 	}
 		
 	//add attributes
@@ -55,16 +51,6 @@ async function getMetadata(pixelconId, params) {
 			"trait_type": "Attributes", 
 			"value": "2018 Genesis"
 		});
-		metadata["attributes"].push({
-			"trait_type": "Collection",
-			"value": "#✨ - Genesis"
-		});
-	}
-	if(creator == invadersContract) {
-		metadata["attributes"].push({
-			"trait_type": "Collection",
-			"value": "#👾 - Invaders"
-		});
 	}
 				
 	//add additional details
@@ -75,13 +61,7 @@ async function getMetadata(pixelconId, params) {
 		//collection data
 		if(collection) {
 			let collectionData = await ethdata.getCollection(collection);
-			if(collectionData) {
-				collectionName = collectionData.name;
-				metadata["attributes"].push({
-					"trait_type": "Collection",
-					"value": (collection + '').padStart(3, '0') + (collectionName ? (" - " + collectionName) : "")
-				});
-			}
+			if(collectionData) collectionName = collectionData.name;
 		}
 		
 		//better description with collection and match data
@@ -153,11 +133,8 @@ function getName(name, index, creator) {
 	index = toInt(index);
 	
 	let result = "";
-	if(name) result = toUtf8(name);
-	if(result != "") result += ' ';
+	if(name) result = toUtf8(name) + ' ';
 	result += '#' + index;
-	result += (index < genesisCount ? '✨' : '');
-	result += (creator == invadersContract ? '👾' : '');
 	return result;
 }
 function getDescription(name, index, collection, collectionName, creator, created, match) {
@@ -169,12 +146,11 @@ function getDescription(name, index, collection, collectionName, creator, create
 	
 	if(index) result += "PixelCon #" + index;
 	if(index < genesisCount) result += " - ✨Genesis";
-	if(creator == invadersContract) result += " - 👾Invaders";
+	if(created) result += " - " + created;
 	if(!match && collection > 0) {
 		result += " - Collection " + collection;
 		if(collectionName) result += " [" + collectionName + "]";
 	}
-	if(created) result += " - " + created;
 	if(match) {
 		if(!match.verified) result += " - ⚠️Very similar to older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
 		if(collection > 0) {
@@ -182,7 +158,7 @@ function getDescription(name, index, collection, collectionName, creator, create
 			if(collectionName) result += " [" + collectionName + "]";
 		}
 	}
-	if(creator) result += " - Creator 0x" + creator.substr(0,4) + "…" + creator.substr(36,4);
+	if(creator) result += " - Creator 0x" + creator;
 	return result;
 }
 function getColorModifier(id) {
