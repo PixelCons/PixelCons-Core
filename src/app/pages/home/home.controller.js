@@ -131,13 +131,10 @@
 			fulldate: 'February 16th 2022',
 			date: 'Feb 2022'
 		},{
-			text: 'PixelConsole Series',
-			description: 'The PixelConsole virtual console art.',
+			text: 'Future Series',
+			description: 'Expect future series using the PixelCons ecosystem!',
 			isWIP: true,
-			color: '#F65D31',
-			icon: '/img/series/console_icon.png',
-			image: '/img/series/console_card.png',
-			millis: 1669870800000,
+			millis: 1672462800000,
 			minor: false,
 			fulldate: 'Work in Progress',
 			date: 'TBD'
