@@ -52,6 +52,12 @@ async function getMetadata(pixelconId, params) {
 			"value": "2018 Genesis"
 		});
 	}
+	if(collection) {
+		metadata["attributes"].push({
+			"trait_type": "Attributes", 
+			"value": "Collectible"
+		});
+	}
 				
 	//add additional details
 	if(detailedMetadataEnabled) {

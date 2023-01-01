@@ -33,7 +33,7 @@ const defaultGrayBackground = [];
 let settings = {
 	customizedHTMLTagsEnabled: customizedHTMLTagsEnabled,
 	detailedMetadataEnabled: detailedMetadataEnabled,
-    appWebDomain: appWebDomain,
+	appWebDomain: appWebDomain,
 	contractAddress: contractAddress,
 	jsonRpc: jsonRpc,
 	openseaLink: openseaLink,
