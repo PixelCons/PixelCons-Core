@@ -131,21 +131,13 @@
 			fulldate: 'February 16th 2022',
 			date: 'Feb 2022'
 		},{
-			text: 'Series2',
-			description: 'Upcoming PixelCon series currently in development.',
+			text: 'Future Series',
+			description: 'Expect future series using the PixelCons ecosystem!',
 			isWIP: true,
-			millis: 1654056000000,
+			millis: 1672462800000,
 			minor: false,
-			fulldate: 'May/Jun 2022',
-			date: 'Q2 2022'
-		},{
-			text: 'Series3',
-			description: 'Upcoming PixelCon series currently in development.',
-			isWIP: true,
-			millis: 1667275200000,
-			minor: false,
-			fulldate: 'Sept/Oct 2022',
-			date: 'Q4 2022'
+			fulldate: 'Work in Progress',
+			date: 'TBD'
 		}];
 			
 		_this.timeline = {

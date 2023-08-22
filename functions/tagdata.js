@@ -10,7 +10,6 @@ const webdata = require('./webdata.js');
 const customizedHTMLTagsEnabled = settings.customizedHTMLTagsEnabled;
 const appWebDomain = settings.appWebDomain;
 const genesisCount = settings.genesisCount;
-const invadersContract = formatAddress(settings.invadersContract);
 const tagEntryPoint = '<!-- Tag Inserts -->';
 
 // Data
@@ -180,12 +179,10 @@ function getDescription(name, index, collection, creator, created) {
 	let result = "";
 	
 	if(index) result += "PixelCon #" + index;
-	if(index < genesisCount) result += " - ✨Genesis";
-	if(invadersContract == formatAddress(creator)) result += " - 👾Invader";
+	if(created) result += " - " + formatDate(created);
 	if(collection > 0) {
 		result += " - Collection " + collection;
 	}
-	if(created) result += " - " + formatDate(created);
 	if(creator) result += " - Creator " + creator;
 	return result;
 }

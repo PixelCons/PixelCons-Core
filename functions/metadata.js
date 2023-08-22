@@ -10,9 +10,7 @@ const ethdata = require('./ethdata.js');
 const appWebDomain = settings.appWebDomain;
 const detailedMetadataEnabled = settings.detailedMetadataEnabled;
 const genesisCount = settings.genesisCount;
-const genesisArtists = settings.genesisArtists;
 const defaultGrayBackground = settings.defaultGrayBackground;
-const invadersContract = formatAddress(settings.invadersContract);
 
 // Gets the metadata JSON for the given pixelcon id
 async function getMetadata(pixelconId, params) {
@@ -38,33 +36,26 @@ async function getMetadata(pixelconId, params) {
 		"home_url": appWebDomain + "details/" + id,
 		"background_color": getColor('0x' + id),
 		"color": getColor('0x' + id),
-		"attributes": [{
-			"display_type": "date", 
-			"trait_type": "Created", 
-			"value": created
-		},{
-			"trait_type": "Creator", 
-			"value": creator
-		}]
+		"attributes": []
 	}
 		
 	//add attributes
 	if(index < 100) {
 		metadata["attributes"].push({
-			"trait_type": "Genesis", 
+			"trait_type": "Attributes", 
 			"value": "First 100"
 		});
 	}
 	if(index < genesisCount) {
 		metadata["attributes"].push({
-			"trait_type": "Genesis", 
+			"trait_type": "Attributes", 
 			"value": "2018 Genesis"
 		});
 	}
-	if(genesisArtists.indexOf('0x' + creator) > -1) {
+	if(collection) {
 		metadata["attributes"].push({
-			"trait_type": "Genesis", 
-			"value": "Genesis Artist"
+			"trait_type": "Attributes", 
+			"value": "Collectible"
 		});
 	}
 				
@@ -76,24 +67,19 @@ async function getMetadata(pixelconId, params) {
 		//collection data
 		if(collection) {
 			let collectionData = await ethdata.getCollection(collection);
-			if(collectionData) {
-				collectionName = collectionData.name;
-				metadata["attributes"].push({
-					"trait_type": "Collection",
-					"value": "Collection " + collection + (collectionName ? " [" + collectionName + "]": "")
-				});
-			}
+			if(collectionData) collectionName = collectionData.name;
 		}
 		
 		//better description with collection and match data
 		metadata["description"] = getDescription(params.name, params.index, params.collection, collectionName, params.creator, params.created, match);
 		
 		//similarity properties
-		let similarity = match ? (match.verified ? 'Similar to Same Creator' : 'Similar to Different Creator') : 'Unique';
-		metadata["attributes"].push({
-			"trait_type": "Similarity", 
-			"value": similarity
-		});
+		if(!match) {
+			metadata["attributes"].push({
+				"trait_type": "Attributes", 
+				"value": "Unique"
+			});
+		}
 	}
 				
 	return metadata;
@@ -153,11 +139,8 @@ function getName(name, index, creator) {
 	index = toInt(index);
 	
 	let result = "";
-	if(name) result = toUtf8(name);
-	if(result != "") result += ' ';
+	if(name) result = toUtf8(name) + ' ';
 	result += '#' + index;
-	result += (index < genesisCount ? '✨' : '');
-	result += (creator == invadersContract ? '👾' : '');
 	return result;
 }
 function getDescription(name, index, collection, collectionName, creator, created, match) {
@@ -169,21 +152,19 @@ function getDescription(name, index, collection, collectionName, creator, create
 	
 	if(index) result += "PixelCon #" + index;
 	if(index < genesisCount) result += " - ✨Genesis";
-	if(creator == invadersContract) result += " - 👾Invader";
+	if(created) result += " - " + created;
 	if(!match && collection > 0) {
 		result += " - Collection " + collection;
 		if(collectionName) result += " [" + collectionName + "]";
 	}
-	if(created) result += " - " + created;
 	if(match) {
-		if(match.verified) result += " - ✔️Similar to creator's older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
-		else result += " - ⚠️Very similar to older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
+		if(!match.verified) result += " - ⚠️Very similar to older [PixelCon #" + match.index + "](" + appWebDomain + "details/" + match.id.substr(2,64) + ")";
 		if(collection > 0) {
 			result += " - Collection " + collection;
 			if(collectionName) result += " [" + collectionName + "]";
 		}
 	}
-	if(creator) result += " - Creator 0x" + creator.substr(0,4) + "…" + creator.substr(36,4);
+	if(creator) result += " - Creator 0x" + creator;
 	return result;
 }
 function getColorModifier(id) {
