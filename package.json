@@ -1,38 +1,42 @@
 {
   "name": "PixelCons-Core",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "2.0.0",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "clean": "rimraf ./cache && rimraf ./artifacts && rimraf ./build",
-    "compile": "rimraf ./cache && rimraf ./artifacts && hardhat compile",
-    "deploy": "hardhat run --network local scripts/deploy.js",
-    "test": "rimraf ./cache && rimraf ./artifacts && hardhat test",
-    "web_build": "node scripts/webbuild.js",
-    "web_start": "node scripts/webapp.js",
-    "web_debug": "node scripts/webapp.js -debug"
-  },
-  "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.2",
-    "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "@types/chai": "^4.2.22",
-    "@types/mocha": "^9.0.0",
-    "chai": "^4.3.4",
-    "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.4.7",
-    "hardhat": "^2.6.4",
-    "mocha": "^9.1.2",
-    "rimraf": "^3.0.2",
-    "ts-node": "^10.2.1",
-    "node-watch": "^0.7.2",
-    "typescript": "^4.4.3",
-    "html-minifier": "^4.0.0",
-    "uglify-js": "^3.14.2",
-    "uglifycss": "^0.0.29"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "archive": "tsx archive/archiver.ts",
+    "node": "hardhat node",
+    "compile": "hardhat compile",
+    "deploy": "npm run compile && tsx scripts/deploy.ts http://127.0.0.1:8545/",
+    "test": "hardhat test",
+    "lint": "eslint src test scripts archive",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier src test scripts archive --check",
+    "format:fix": "npm run format -- --write"
   },
   "dependencies": {
-    "express": "^4.17.3",
-    "fast-png": "^5.0.4",
-    "qrcode": "^1.4.4"
+    "clsx": "^2.0.0",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.7.0",
+    "next": "13.4.13",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "swr": "^2.2.0",
+    "upng-js": "^2.1.0"
+  },
+  "devDependencies": {
+    "@next/eslint-plugin-next": "^13.4.19",
+    "@types/react": "18.2.20",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "chai": "^4.3.7",
+    "eslint": "^8.47.0",
+    "eslint-plugin-react": "^7.33.2",
+    "hardhat": "^2.17.1",
+    "prettier": "3.0.2",
+    "tsx": "^3.12.7",
+    "typescript": "5.1.6"
   }
 }

@@ -12,11 +12,15 @@
 
 # production
 /build
-/cache
-/artifacts
 
 # workspace
 /.vscode/
+
+# archive data
+/archive/**/*.json
+
+# solidity contracts
+/contracts
 
 # misc
 .DS_Store
