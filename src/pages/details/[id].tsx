@@ -4,7 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {useRouter} from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
-import Collection from '../../components/collection';
+import Collection from '../../components/pages/details/collection';
 import Layout from '../../components/layout';
 import {ArchiveData, Pixelcon, usePixelcon, getAllPixelconIds, getPixelcon, getCollection} from '../../lib/pixelcons';
 import {getHTMLHeaderData} from '../../lib/metadata';
@@ -12,7 +12,7 @@ import {sanitizePixelconIdParam} from '../../lib/utils';
 import {generateIcon} from '../../lib/imagedata';
 import {searchPossibleDerivative, isDerivative} from '../../lib/similarities';
 import buildConfig from '../../build.config';
-import utilStyles from '../../styles/utils.module.css';
+import utilStyles from '../../styles/utils.module.scss';
 import {promises as fs} from 'fs';
 import path from 'path';
 
@@ -86,7 +86,7 @@ export const getStaticProps: GetStaticProps = async ({params}) => {
     }
   }
 
-  //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
+  //await new Promise((r) => setTimeout(r, 1000)); //TODO/////////////////////////////
 
   //make sure pixelcon exists
   const pixelcon = await getPixelcon(pixelconId);
@@ -174,7 +174,7 @@ export default function Details({pixelconId, archiveData}: {pixelconId: string; 
           )}
           {!isInvalid && (
             <section className={utilStyles.headingSm}>
-              <img width="100px" className="crispImage" src={generateIcon(renderPixelconId)} alt="icon" />
+              <img width="100px" className={utilStyles.crispImage} src={generateIcon(renderPixelconId)} alt="icon" />
               <p>{renderPixelconId}</p>
               <p>
                 <b>
@@ -199,7 +199,7 @@ export default function Details({pixelconId, archiveData}: {pixelconId: string; 
       )}
       <br />
       <br />
-      <section className={utilStyles.headingSm} style={{position: 'absolute', bottom: '100px'}}>
+      <section className={utilStyles.headingSm} style={{position: 'absolute', bottom: '0px'}}>
         <Link href="/details/0x8e8888888228822888022088880880888888888888e77e8882777728888ee888">Goto Angry</Link>
         <br />
         <Link href="/details/0x9a9999999949949994944949ee9999eee499994e99400499999aa99999999999">Goto Blush</Link>

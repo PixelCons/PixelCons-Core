@@ -1,6 +1,6 @@
 import React from 'react';
-import {ArchiveData, useCollection} from '../lib/pixelcons';
-import styles from './collection.module.css';
+import {ArchiveData, useCollection} from '../../../lib/pixelcons';
+import styles from './collection.module.scss';
 
 //Collection component to display collection data
 export default function Collection({

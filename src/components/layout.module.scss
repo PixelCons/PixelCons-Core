@@ -1,0 +1,124 @@
+@use "src/styles/params" as params;
+@use "src/styles/text.module" as text;
+
+/* General items */
+.content {
+  max-height: 100%;
+}
+
+/* Size dependent items with parametrized rendering */
+@mixin styling($sizeSmall, $sizeMedium) {
+  /* Parameters */
+  $height: 60px;
+  $subHeight: 40px;
+  $buttonPadding: 10px;
+  @if $sizeSmall {
+    $height: 50px;
+    $subHeight: 30px;
+    $buttonPadding: 2px;
+  } @else if $sizeMedium {
+    $height: 50px;
+    $subHeight: 30px;
+    $buttonPadding: 5px;
+  }
+  $margin: ($height - $subHeight) / 2;
+
+  /* Header container */
+  .header {
+    background-color: rgba(params.$color-background, 0.7);
+    width: 100%;
+    height: $height;
+    position: sticky;
+    top: 0px;
+  }
+
+  /* Center logo */
+  .logo {
+    width: 180px;
+    height: $height;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 0px;
+    img {
+      height: $subHeight;
+      width: $subHeight * 1.5;
+      margin: $margin $margin $margin 0px;
+      vertical-align: middle;
+    }
+    span {
+      font-size: 22px;
+      font-weight: 600;
+      vertical-align: middle;
+      @if $sizeMedium {
+        font-size: 18px;
+      }
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  /* Side buttons */
+  .button {
+    position: absolute;
+    top: 0px;
+    height: $subHeight;
+    margin: $margin;
+    line-height: $subHeight - ($buttonPadding * 2);
+    padding: $buttonPadding ($buttonPadding + 4px);
+    @if $sizeSmall {
+      padding: $buttonPadding;
+    }
+    background-color: params.$color-background;
+    border-radius: 10px;
+    font-size: 0px;
+    text-align: center;
+    span {
+      display: inline-block;
+      font-size: 14px;
+      vertical-align: middle;
+      @if $sizeSmall {
+        display: none;
+      }
+    }
+    img {
+      display: inline-block;
+      width: ($subHeight - ($buttonPadding * 2)) - 4px;
+      height: ($subHeight - ($buttonPadding * 2)) - 4px;
+      vertical-align: middle;
+      margin: 2px 2px 2px 0px;
+      opacity: params.$alpha-bright;
+      @if $sizeSmall {
+        width: $subHeight - ($buttonPadding * 2);
+        height: $subHeight - ($buttonPadding * 2);
+        margin: 0px 0px 0px 0px;
+      }
+    }
+    &:hover {
+      cursor: pointer;
+      @if $sizeSmall == false {
+        box-shadow: 1px 1px 4px 0px params.$color-dim;
+      }
+    }
+    &:active {
+      cursor: pointer;
+      background-color: params.$color-disabled;
+      box-shadow: 0px 0px 0px 0px params.$color-background;
+    }
+    &:first-child {
+      left: 0px;
+    }
+    &:last-child {
+      right: 0px;
+    }
+  }
+}
+@media (max-width: params.$size-small) {
+  @include styling($sizeSmall: true, $sizeMedium: true);
+}
+@media (max-width: params.$size-medium) and (min-width: params.$size-small) {
+  @include styling($sizeSmall: false, $sizeMedium: true);
+}
+@media (min-width: params.$size-medium) {
+  @include styling($sizeSmall: false, $sizeMedium: false);
+}

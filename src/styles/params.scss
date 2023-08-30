@@ -1,0 +1,17 @@
+/* Alpha */
+$alpha-bright: 0.87;
+$alpha-dim: 0.6;
+$alpha-disabled: 0.38;
+
+/* Media Sizing */
+$size-small: 600px;
+$size-medium: 1200px;
+
+/* Colors */
+$color-background: #000000;
+$color-bright: rgba(#ffffff, $alpha-bright);
+$color-dim: rgba(#ffffff, $alpha-dim);
+$color-disabled: rgba(#ffffff, $alpha-disabled);
+
+/* Default Text */
+$text-font-size: 12px;

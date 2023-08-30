@@ -4,7 +4,8 @@ import buildConfig from '../build.config';
 
 //Data constants
 const webDomain = buildConfig.WEB_DOMAIN || '';
-const genesisCount = 651;
+const genesisCount = buildConfig.METADATA_GENESIS_COUNT || 0;
+const genesisYear = buildConfig.METADATA_GENESIS_YEAR || '';
 
 //Metadata object type
 export type Metadata = {
@@ -72,7 +73,7 @@ export function generateMetadata(pixelcon: Pixelcon, similarPixelcon: Pixelcon, 
   if (pixelcon.index < genesisCount) {
     metadata['attributes'].push({
       trait_type: 'Attributes',
-      value: '2018 Genesis',
+      value: genesisYear ? `${genesisYear} Genesis` : 'Genesis',
     });
   }
   if (pixelcon.collection) {

@@ -1,17 +1,24 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Head from 'next/head';
-import Image from 'next/image';
 import buildConfig from '../build.config';
-import styles from './layout.module.css';
-import utilStyles from '../styles/utils.module.css';
+import clsx from 'clsx';
+import styles from './layout.module.scss';
+import utilStyles from '../styles/utils.module.scss';
+import textStyles from '../styles/text.module.scss';
+import archive from '../../archive/pixelconArchive.json' assert {type: 'json'};
 
 //Data constants
 const webDomain = buildConfig.WEB_DOMAIN || '';
 
 //Common layout component applied accross all pages
 export default function Layout({children}: {children: React.ReactNode}) {
+  //report archive timestamp to console
+  useEffect(() => {
+    console.log(`Archive timestamp ${archive.timestamp} (${new Date(archive.timestamp)})`);
+  }, []);
+
   return (
-    <div>
+    <>
       <Head>
         <title>PixelCons</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -33,12 +40,24 @@ export default function Layout({children}: {children: React.ReactNode}) {
         />
         <meta property="og:image" content={`${webDomain}/img/large/card.png`} />
       </Head>
-
-      <header className={styles.header}>
-        <Image priority src="/images/icon.png" className={utilStyles.borderCircle} height={144} width={144} alt="" />
-      </header>
-      <main>{children}</main>
+      <main className={clsx(styles.content, utilStyles.invisibleScroll)}>
+        <div className={clsx(styles.header, textStyles.notSelectable)}>
+          <div className={styles.button}>
+            <img src="/icons/opensea.svg" />
+            <span>OPENSEA</span>
+          </div>
+          <div className={styles.logo}>
+            <img className={utilStyles.crispImage} src="/archive/header_tmp.png" />
+            <span>PixelCons</span>
+          </div>
+          <div className={styles.button}>
+            <img src="/icons/browse.svg" />
+            <span>BROWSE</span>
+          </div>
+        </div>
+        {children}
+      </main>
       {/* footer */}
-    </div>
+    </>
   );
 }

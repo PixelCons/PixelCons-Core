@@ -11,7 +11,7 @@ import {
   useCreatorPixelcons,
   useOwnerPixelcons,
 } from '../lib/pixelcons';
-import utilStyles from '../styles/utils.module.css';
+import utilStyles from '../styles/utils.module.scss';
 
 //Filter data
 type FilterData = {
@@ -118,6 +118,7 @@ export default function Home() {
         <br />
         Go to <Link href="/create">create page!</Link>
       </h1>
+      <div style={{height: '6000px'}}></div>
     </Layout>
   );
 }

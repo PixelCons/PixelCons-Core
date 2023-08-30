@@ -4,8 +4,6 @@ import {generateMetadata} from '../../../lib/metadata';
 import {sanitizePixelconIdParam} from '../../../lib/utils';
 import {searchPossibleDerivative, isDerivative} from '../../../lib/similarities';
 import buildConfig from '../../../build.config';
-import staticPixelconIds from '../../../../archive/pixelconIds.json' assert {type: 'json'};
-import staticPixelconMetadata from '../../../../archive/pixelconMetadata.json' assert {type: 'json'};
 
 //Data constants
 const cacheMetadata = buildConfig.API_CACHE_METADATA || 1 * 60 * 60;
@@ -22,15 +20,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.setHeader('Cache-Control', `public, max-age=${cacheErrorInvalid}, s-maxage=${cacheErrorInvalid}`);
     res.status(405).end();
     return;
-  }
-
-  //return from archived data if available
-  for (let i = 0; i < staticPixelconIds.length; i++) {
-    if (pixelconId == staticPixelconIds[i]) {
-      res.setHeader('Cache-Control', `public, max-age=${cacheMetadata}, s-maxage=${cacheMetadata}`);
-      res.status(200).setHeader('content-type', 'application/json; charset=utf-8').end(staticPixelconMetadata[i]);
-      return;
-    }
   }
 
   //make sure pixelcon exists

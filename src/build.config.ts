@@ -10,6 +10,10 @@ export default {
   DATA_FETCHING_MAX_PARALLEL_QUERY: 5,
   DATA_FETCHING_MAX_PIXELCON_IDS: 200,
 
+  //Meta data generation related info
+  METADATA_GENESIS_YEAR: '2018',
+  METADATA_GENESIS_COUNT: 651,
+
   //API service call caching values (in seconds)
   API_CACHE_RPC_CALL: 60,
   API_CACHE_RPC_OTHER: 3600,

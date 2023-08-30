@@ -1,37 +1,5 @@
 import {ethers} from 'ethers';
 
-//Color palette reference
-export const colorPalette = [
-  [0, 0, 0], //#000000
-  [29, 43, 83], //#1D2B53
-  [126, 37, 83], //#7E2553
-  [0, 135, 81], //#008751
-  [171, 82, 54], //#AB5236
-  [95, 87, 79], //#5F574F
-  [194, 195, 195], //#C2C3C7
-  [255, 241, 232], //#FFF1E8
-  [255, 0, 77], //#FF004D
-  [255, 163, 0], //#FFA300
-  [255, 255, 39], //#FFFF27
-  [0, 231, 86], //#00E756
-  [41, 173, 255], //#29ADFF
-  [131, 118, 156], //#83769C
-  [255, 119, 168], //#FF77A8
-  [255, 204, 170], //#FFCCAA
-];
-
-//Gets the index in the color palette for the given hex string char code
-export function charCodeToColorIndex(code: number): number {
-  if (code >= 48 && code < 58) return code - 48;
-  if (code >= 97 && code < 103) return code - 87;
-  return 0;
-}
-
-//Gets the rgb color for the given hex string char code
-export function charCodeToColor(code: number): number[] {
-  return colorPalette[charCodeToColorIndex(code)];
-}
-
 //Sanitizes the given pixelconId string with or without the '0x' prefix
 export function sanitizePixelconIdParam(pixelconId: string | string[]): string {
   try {
@@ -102,4 +70,36 @@ export function toDate(millis: string | number): string {
     return day + ' ' + month + ' ' + year;
   }
   return null;
+}
+
+//Color palette reference
+export const colorPalette = [
+  [0, 0, 0], //#000000
+  [29, 43, 83], //#1D2B53
+  [126, 37, 83], //#7E2553
+  [0, 135, 81], //#008751
+  [171, 82, 54], //#AB5236
+  [95, 87, 79], //#5F574F
+  [194, 195, 195], //#C2C3C7
+  [255, 241, 232], //#FFF1E8
+  [255, 0, 77], //#FF004D
+  [255, 163, 0], //#FFA300
+  [255, 255, 39], //#FFFF27
+  [0, 231, 86], //#00E756
+  [41, 173, 255], //#29ADFF
+  [131, 118, 156], //#83769C
+  [255, 119, 168], //#FF77A8
+  [255, 204, 170], //#FFCCAA
+];
+
+//Gets the index in the color palette for the given hex string char code
+export function charCodeToColorIndex(code: number): number {
+  if (code >= 48 && code < 58) return code - 48;
+  if (code >= 97 && code < 103) return code - 87;
+  return 0;
+}
+
+//Gets the rgb color for the given hex string char code
+export function charCodeToColor(code: number): number[] {
+  return colorPalette[charCodeToColorIndex(code)];
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import {GetStaticProps} from 'next';
 import Layout from '../components/layout';
-import utilStyles from '../styles/utils.module.css';
+import utilStyles from '../styles/utils.module.scss';
 
 //Static props for page pre building
 export const getStaticProps: GetStaticProps = async () => {

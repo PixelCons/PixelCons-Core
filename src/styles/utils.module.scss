@@ -1,0 +1,48 @@
+@use "src/styles/params" as params;
+
+/* General items */
+.crispImage {
+  -ms-interpolation-mode: nearest-neighbor;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.filteredImage {
+  image-rendering: auto;
+}
+.clickable {
+  cursor: pointer;
+}
+
+/* Scrollbar */
+.invisibleScroll {
+  overflow-y: auto;
+  overflow-y: overlay;
+  overflow-x: hidden;
+  scrollbar-color: params.$color-dim transparent;
+  scrollbar-width: thin;
+}
+.invisibleScroll::-webkit-scrollbar {
+  width: 6px;
+  border-radius: 6px;
+  @media (max-width: params.$size-medium) and (min-width: params.$size-small) {
+    width: 4px;
+    border-radius: 4px;
+  }
+  @media (max-width: params.$size-small) {
+    width: 2px;
+    border-radius: 2px;
+  }
+}
+.invisibleScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.invisibleScroll::-webkit-scrollbar-thumb {
+  background: params.$color-dim;
+  border-radius: 4px;
+}
+.invisibleScroll::-webkit-scrollbar-thumb:hover {
+  background: params.$color-bright;
+}

@@ -1,0 +1,54 @@
+@use "src/styles/params" as params;
+
+/* General */
+.selectable {
+  -webkit-user-select: text; /* Chrome/Safari */
+  -moz-user-select: text; /* Firefox */
+  -ms-user-select: text; /* IE10+ */
+  -o-user-select: text;
+  user-select: text;
+}
+.notSelectable {
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+  -o-user-select: none;
+  user-select: none;
+}
+
+/* Colors */
+.lowEmphasis {
+  color: params.$color-dim;
+}
+.disabled {
+  color: params.$color-disabled;
+}
+
+/* Sizing */
+.xxl {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.05rem;
+  margin: 1rem 0;
+}
+.xl {
+  font-size: 2rem;
+  line-height: 1.3;
+  font-weight: 800;
+  letter-spacing: -0.05rem;
+  margin: 1rem 0;
+}
+.lg {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  margin: 1rem 0;
+}
+.md {
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+.sm {
+  font-size: 0.8rem;
+  line-height: 1;
+}
