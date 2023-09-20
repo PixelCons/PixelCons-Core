@@ -58,10 +58,23 @@ const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
   );
 
   //archive summary
+  const datesFound: Set<number> = new Set<number>();
+  const dates: {year: number; firstIndex: number}[] = [];
+  for (const pixelcon of pixelcons) {
+    const year = new Date(pixelcon.date).getFullYear();
+    if (!datesFound.has(year)) {
+      datesFound.add(year);
+      dates.push({
+        year,
+        firstIndex: pixelcon.index,
+      });
+    }
+  }
   const summary = {
     timestamp: new Date().getTime(),
     totalSupply: pixelcons.length,
     collectionTotal: collections.length,
+    dates,
   };
   await fs.writeFile(path.join(archiveDirectory, 'pixelconArchive.json'), JSON.stringify(summary, null, 2));
 
@@ -99,7 +112,7 @@ const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
 
   //header image
   if (pixelconIds.length >= 6) {
-    const header = generateHeader(getRandomPretty(pixelconIds.slice(0, 300), 6));
+    const header = generateHeader(getRandomPretty(pixelconIds.slice(27, 84), 6));
     await fs.writeFile(path.join(publicArchiveDirectory, 'header.png'), header);
   }
 

@@ -1,0 +1,183 @@
+@use "src/styles/params" as params;
+
+/* General items */
+$marginRatio: params.$margin-ratio;
+$marginStart: params.$size-large;
+$marginPivot: $marginStart - ($marginRatio * $marginStart);
+.container {
+  text-align: center;
+  font-size: 0px;
+  @media (min-width: $marginStart) {
+    max-width: calc($marginPivot + (100% * $marginRatio));
+    margin-left: calc(((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2));
+  }
+}
+
+/* Size dependent items with parametrized rendering */
+@mixin styling($sizeSmall, $sizeMedium) {
+  /* Parameters */
+  $imageSize: 60px;
+  $imageMargin: 12px;
+  $imageMarginBottom: 5px;
+  $textFooter: 20px;
+  $textSize: params.$text-size-medium;
+  @if $sizeSmall {
+    $imageSize: 50px;
+    $imageMargin: 6px;
+    $imageMarginBottom: 2px;
+    $textFooter: 16px;
+    $textSize: params.$text-size-small;
+  } @else if $sizeMedium {
+    $imageSize: 50px;
+    $imageMargin: 10px;
+    $imageMarginBottom: 5px;
+    $textFooter: 20px;
+    $textSize: params.$text-size-default;
+  }
+
+  /* Pixelcon icon */
+  .pixelcon {
+    width: $imageSize;
+    height: $imageSize + $textFooter;
+    margin: $imageMargin $imageMargin $imageMarginBottom $imageMargin;
+    display: inline-block;
+    font-size: 0px;
+    vertical-align: middle;
+    div {
+      height: $imageSize;
+      width: $imageSize;
+    }
+    span {
+      font-size: $textSize;
+      font-weight: 600;
+      line-height: $textFooter;
+    }
+  }
+
+  /* Date text */
+  .date {
+    display: inline-block;
+    vertical-align: middle;
+    height: $imageSize + $textFooter;
+    @if $sizeSmall {
+      width: $imageSize;
+      margin: $imageMargin $imageMargin $imageMarginBottom $imageMargin;
+    } @else {
+      width: ($imageSize * 2) + ($imageMargin * 2);
+      margin: $imageMargin $imageMargin $imageMarginBottom $imageMargin;
+    }
+    div {
+      height: $imageSize + ($textFooter / 2);
+      line-height: $imageSize + ($textFooter / 2);
+      color: params.$color-background;
+      background-color: params.$color-bright;
+      border-radius: $imageMargin;
+      @if $sizeSmall {
+        font-weight: 800;
+        font-size: params.$text-size-large;
+        width: $imageSize;
+      } @else if $sizeMedium {
+        font-weight: 700;
+        font-size: params.$text-size-xxl;
+        margin: 0px ($imageMargin / 2) 0px ($imageMargin / 2);
+        width: ($imageSize * 2) + $imageMargin;
+      } @else {
+        font-weight: 700;
+        font-size: params.$text-size-xxl * 1.2;
+        margin: 0px ($imageMargin / 2) 0px ($imageMargin / 2);
+        width: ($imageSize * 2) + $imageMargin;
+      }
+    }
+  }
+}
+@media (max-width: params.$size-small) {
+  @include styling($sizeSmall: true, $sizeMedium: true);
+}
+@media (max-width: params.$size-medium) and (min-width: params.$size-small) {
+  @include styling($sizeSmall: false, $sizeMedium: true);
+}
+@media (min-width: params.$size-medium) {
+  @include styling($sizeSmall: false, $sizeMedium: false);
+}
+
+/* archived icon images */
+.archive0 {
+  background-image: url(/archive/icon/00000-01024.png);
+  background-size: 3200%;
+}
+.archive1 {
+  background-image: url(/archive/icon/01024-02048.png);
+  background-size: 3200%;
+}
+.archive2 {
+  background-image: url(/archive/icon/02048-03072.png);
+  background-size: 3200%;
+}
+.archive3 {
+  background-image: url(/archive/icon/03072-04096.png);
+  background-size: 3200%;
+}
+.archive4 {
+  background-image: url(/archive/icon/04096-05120.png);
+  background-size: 3200%;
+}
+.archive5 {
+  background-image: url(/archive/icon/05120-06144.png);
+  background-size: 3200%;
+}
+.archive6 {
+  background-image: url(/archive/icon/06144-07168.png);
+  background-size: 3200%;
+}
+.archive7 {
+  background-image: url(/archive/icon/07168-08192.png);
+  background-size: 3200%;
+}
+.archive8 {
+  background-image: url(/archive/icon/08192-09216.png);
+  background-size: 3200%;
+}
+.archive9 {
+  background-image: url(/archive/icon/09216-10240.png);
+  background-size: 3200%;
+}
+.archive10 {
+  background-image: url(/archive/icon/10240-11264.png);
+  background-size: 3200%;
+}
+.archive11 {
+  background-image: url(/archive/icon/11264-12288.png);
+  background-size: 3200%;
+}
+.archive12 {
+  background-image: url(/archive/icon/12288-13312.png);
+  background-size: 3200%;
+}
+.archive13 {
+  background-image: url(/archive/icon/13312-14336.png);
+  background-size: 3200%;
+}
+.archive14 {
+  background-image: url(/archive/icon/14336-15360.png);
+  background-size: 3200%;
+}
+.archive15 {
+  background-image: url(/archive/icon/15360-16384.png);
+  background-size: 3200%;
+}
+.archive16 {
+  background-image: url(/archive/icon/16384-17408.png);
+  background-size: 3200%;
+}
+.archive17 {
+  background-image: url(/archive/icon/17408-18432.png);
+  background-size: 3200%;
+}
+.archive18 {
+  background-image: url(/archive/icon/18432-19456.png);
+  background-size: 3200%;
+}
+.archive19 {
+  background-image: url(/archive/icon/19456-20480.png);
+  background-size: 3200%;
+}

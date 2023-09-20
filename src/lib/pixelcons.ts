@@ -70,8 +70,14 @@ export async function getPixelcon(pixelconId: string): Promise<Pixelcon> {
   const contract = await getPixelconContract();
 
   try {
-    const pixelconRaw = await contract.getTokenData(pixelconId);
-    return decodeAsPixelcon(pixelconRaw);
+    try {
+      const pixelconRaw = await contract.getTokenData(pixelconId);
+      return decodeAsPixelcon(pixelconRaw);
+    } catch (e) {
+      //pixelcon does not exist
+      if (e && e.reason && e.reason == 'PixelCon does not exist') return null;
+      throw e;
+    }
   } catch (e) {
     return undefined;
   }
@@ -85,15 +91,21 @@ export async function getCollection(collectionIndex: string | number): Promise<C
   const contract = await getPixelconContract();
 
   try {
-    const collectionRaw = await contract.getCollectionData(collectionIndex);
-    return {
-      index: collectionIndex,
-      name: toUtf8(collectionRaw[0]),
-      pixelconIds: await fetchPixelconIds(
-        contract,
-        collectionRaw[1].map((x) => parseInt(x.toString())),
-      ),
-    };
+    try {
+      const collectionRaw = await contract.getCollectionData(collectionIndex);
+      return {
+        index: collectionIndex,
+        name: toUtf8(collectionRaw[0]),
+        pixelconIds: await fetchPixelconIds(
+          contract,
+          collectionRaw[1].map((x) => parseInt(x.toString())),
+        ),
+      };
+    } catch (e) {
+      //collection does not exist
+      if (e && e.reason && e.reason == 'Collection does not exist') return null;
+      throw e;
+    }
   } catch (e) {
     return undefined;
   }
@@ -259,16 +271,25 @@ export function usePixelcon(pixelconId: string) {
   const {data, error, isLoading} = useSWR<Pixelcon>(
     `pixelcon/${pixelconId}`,
     async () => {
-      //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-      //throw new Error("wtf");//TODO/////////////////////////////
-      return await getPixelcon(pixelconId);
+      try {
+        //await new Promise((r) => setTimeout(r, 2000)); //TODO/////////////////////////////
+        //throw new Error("wtf");//TODO/////////////////////////////
+        const pixelcon = await getPixelcon(pixelconId);
+        if (pixelcon === undefined && pixelconId !== undefined) {
+          throw new Error('Something went wrong during getPixelcon query');
+        }
+        return pixelcon;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
     },
     swrDataConfig,
   );
 
   return {
     pixelcon: data,
-    pixelconLoading: isLoading,
+    pixelconLoading: isLoading || (data === undefined && pixelconId !== undefined && !error),
     pixelconError: error,
   };
 }
@@ -278,16 +299,25 @@ export function useCollection(collectionIndex: string | number) {
   const {data, error, isLoading} = useSWR<Collection>(
     `collection/${collectionIndex}`,
     async () => {
-      //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-      //throw new Error("wtf");//TODO/////////////////////////////
-      return await getCollection(collectionIndex);
+      try {
+        //await new Promise((r) => setTimeout(r, 2000)); //TODO/////////////////////////////
+        //throw new Error('wtf'); //TODO/////////////////////////////
+        const collection = await getCollection(collectionIndex);
+        if (collection === undefined && collectionIndex !== undefined) {
+          throw new Error('Something went wrong during getCollection query');
+        }
+        return collection;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
     },
     swrDataConfig,
   );
 
   return {
     collection: data,
-    collectionLoading: isLoading,
+    collectionLoading: isLoading || (data === undefined && collectionIndex !== undefined && !error),
     collectionError: error,
   };
 }
@@ -297,9 +327,18 @@ export function useAllPixelconIds() {
   const {data, error, isLoading} = useSWR<string[]>(
     'allPixelconIds',
     async () => {
-      //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-      //throw new Error("wtf");//TODO/////////////////////////////
-      return await getAllPixelconIds();
+      try {
+        //await new Promise((r) => setTimeout(r, 1000)); //TODO/////////////////////////////
+        //throw new Error('wtf'); //TODO/////////////////////////////
+        const allPixelconIds = await getAllPixelconIds();
+        if (allPixelconIds === undefined) {
+          throw new Error('Something went wrong during getAllPixelconIds query');
+        }
+        return allPixelconIds;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
     },
     swrDataConfig,
   );
@@ -316,16 +355,25 @@ export function useCollectionPixelcons(collectionIndex: string | number) {
   const {data, error, isLoading} = useSWR<number[]>(
     `collectionPixelcons/${collectionIndex}`,
     async () => {
-      //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-      //throw new Error("wtf");//TODO/////////////////////////////
-      return await getCollectionPixelcons(collectionIndex);
+      try {
+        //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
+        //throw new Error("wtf");//TODO/////////////////////////////
+        const collectionPixelcons = await getCollectionPixelcons(collectionIndex);
+        if (collectionPixelcons === undefined && collectionIndex !== undefined) {
+          throw new Error('Something went wrong during getCollectionPixelcons query');
+        }
+        return collectionPixelcons;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
     },
     swrDataConfig,
   );
 
   return {
     collectionPixelcons: data,
-    collectionLoading: isLoading,
+    collectionLoading: isLoading || (data === undefined && collectionIndex !== undefined && !error),
     collectionError: error,
   };
 }
@@ -335,16 +383,25 @@ export function useCreatorPixelcons(address: string) {
   const {data, error, isLoading} = useSWR<number[]>(
     `creatorPixelcons/${address}`,
     async () => {
-      //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-      //throw new Error("wtf");//TODO/////////////////////////////
-      return await getCreatorPixelcons(address);
+      try {
+        //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
+        //throw new Error("wtf");//TODO/////////////////////////////
+        const creatorPixelcons = await getCreatorPixelcons(address);
+        if (creatorPixelcons === undefined && address !== undefined) {
+          throw new Error('Something went wrong during getCreatorPixelcons query');
+        }
+        return creatorPixelcons;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
     },
     swrDataConfig,
   );
 
   return {
     creatorPixelcons: data,
-    creatorLoading: isLoading,
+    creatorLoading: isLoading || (data === undefined && address !== undefined && !error),
     creatorError: error,
   };
 }
@@ -354,16 +411,25 @@ export function useOwnerPixelcons(address: string) {
   const {data, error, isLoading} = useSWR<number[]>(
     `ownerPixelcons/${address}`,
     async () => {
-      //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-      //throw new Error("wtf");//TODO/////////////////////////////
-      return await getOwnerPixelcons(address);
+      try {
+        //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
+        //throw new Error("wtf");//TODO/////////////////////////////
+        const ownerPixelcons = await getOwnerPixelcons(address);
+        if (ownerPixelcons === undefined && address !== undefined) {
+          throw new Error('Something went wrong during getOwnerPixelcons query');
+        }
+        return ownerPixelcons;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
     },
     swrDataConfig,
   );
 
   return {
     ownerPixelcons: data,
-    ownerLoading: isLoading,
+    ownerLoading: isLoading || (data === undefined && address !== undefined && !error),
     ownerError: error,
   };
 }

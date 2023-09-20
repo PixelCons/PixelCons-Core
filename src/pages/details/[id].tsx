@@ -1,18 +1,16 @@
-/* eslint-disable @next/next/no-img-element */
 import {GetStaticProps, GetStaticPaths} from 'next';
 import React, {useState, useEffect} from 'react';
 import {useRouter} from 'next/router';
 import Head from 'next/head';
-import Link from 'next/link';
-import Collection from '../../components/pages/details/collection';
 import Layout from '../../components/layout';
+import Title from '../../components/pages/details/title';
+import Description from '../../components/pages/details/description';
+import PixelconImage from '../../components/pages/details/pixelcon';
 import {ArchiveData, Pixelcon, usePixelcon, getAllPixelconIds, getPixelcon, getCollection} from '../../lib/pixelcons';
 import {getHTMLHeaderData} from '../../lib/metadata';
 import {sanitizePixelconIdParam} from '../../lib/utils';
-import {generateIcon} from '../../lib/imagedata';
 import {searchPossibleDerivative, isDerivative} from '../../lib/similarities';
 import buildConfig from '../../build.config';
-import utilStyles from '../../styles/utils.module.scss';
 import {promises as fs} from 'fs';
 import path from 'path';
 
@@ -86,7 +84,7 @@ export const getStaticProps: GetStaticProps = async ({params}) => {
     }
   }
 
-  //await new Promise((r) => setTimeout(r, 1000)); //TODO/////////////////////////////
+  //await new Promise((r) => setTimeout(r, 4000)); //TODO/////////////////////////////
 
   //make sure pixelcon exists
   const pixelcon = await getPixelcon(pixelconId);
@@ -133,18 +131,12 @@ export default function Details({pixelconId, archiveData}: {pixelconId: string; 
   }, [pixelconId]);
 
   //determine overall page state
-  const isBlankLoading = !pixelconId && !pathPixelconId;
-  const isInvalid = pixelconId === pixelconIdInvalid || pathPixelconId === pixelconIdInvalid;
+  const isInvalid: boolean = pixelconId === pixelconIdInvalid || pathPixelconId === pixelconIdInvalid;
   const renderPixelconId = isInvalid ? null : pixelconId ? pixelconId : pathPixelconId;
 
   //load up to date pixelcon data or flag data as archive while fetching
-  const {pixelcon, pixelconLoading, pixelconError} = usePixelcon(renderPixelconId);
-  const isUnknown =
-    renderPixelconId && !pixelconLoading && !pixelconError && !pixelcon && (!archiveData || !archiveData.pixelcon);
-  const isFetching = renderPixelconId && pixelconLoading;
-  const isError = pixelconError;
-  const isArchive = !pixelcon && archiveData && archiveData.pixelcon;
-  const renderPixelcon = pixelcon ? pixelcon : archiveData ? archiveData.pixelcon : null;
+  const {pixelcon} = usePixelcon(renderPixelconId);
+  const renderPixelcon = pixelcon !== undefined ? pixelcon : archiveData ? archiveData.pixelcon : undefined;
   const headerData = getHTMLHeaderData(renderPixelcon);
 
   //render
@@ -163,49 +155,9 @@ export default function Details({pixelconId, archiveData}: {pixelconId: string; 
           <meta property="og:image" content={`${webDomain}${headerData.imageUrl}`} />
         </Head>
       )}
-      {!isBlankLoading && (
-        <>
-          {isInvalid && (
-            <section className={utilStyles.headingSm}>
-              <p>
-                <b>Invalid Pixelcon</b>
-              </p>
-            </section>
-          )}
-          {!isInvalid && (
-            <section className={utilStyles.headingSm}>
-              <img width="100px" className={utilStyles.crispImage} src={generateIcon(renderPixelconId)} alt="icon" />
-              <p>{renderPixelconId}</p>
-              <p>
-                <b>
-                  Pixelcon Details{isArchive ? ' (Archive)' : ''}
-                  {isError ? ' [fetch failed]' : ''}
-                </b>
-              </p>
-              <p>{renderPixelcon ? JSON.stringify(renderPixelcon) : ''}</p>
-              <p>{isFetching ? (isArchive ? 'updating...' : 'loading...') : ''}</p>
-              <p>{isUnknown ? 'unknown pixelcon' : ''}</p>
-              <Collection
-                collectionIndex={pixelcon ? pixelcon.collection : null}
-                archiveData={archiveData}
-              ></Collection>
-              {renderPixelcon && !archiveData && <p>checking for derivative...</p>}
-              {renderPixelcon && archiveData && archiveData.derivativeOf && (
-                <p>{`derivative of ${archiveData.derivativeOf.id}`}</p>
-              )}
-            </section>
-          )}
-        </>
-      )}
-      <br />
-      <br />
-      <section className={utilStyles.headingSm} style={{position: 'absolute', bottom: '0px'}}>
-        <Link href="/details/0x8e8888888228822888022088880880888888888888e77e8882777728888ee888">Goto Angry</Link>
-        <br />
-        <Link href="/details/0x9a9999999949949994944949ee9999eee499994e99400499999aa99999999999">Goto Blush</Link>
-        <br />
-        <Link href="/details/0x0008887000088888004f40f0004ff44f0004fff0088ccca070cccc8700500050">Goto Mario</Link>
-      </section>
+      <Title pixelconId={renderPixelconId} pixelcon={renderPixelcon} archiveData={archiveData}></Title>
+      <PixelconImage pixelconId={renderPixelconId} pixelcon={renderPixelcon}></PixelconImage>
+      <Description pixelcon={renderPixelcon} archiveData={archiveData}></Description>
     </Layout>
   );
 }

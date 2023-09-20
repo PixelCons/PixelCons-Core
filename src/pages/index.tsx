@@ -3,7 +3,9 @@ import React, {useState, useEffect} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/router';
 import Layout from '../components/layout';
-import {singleString} from '../lib/utils';
+import PixelconFilter from '../components/pages/index/filter';
+import PixelconSet, {PixelconSetObject} from '../components/pages/index/pixelcons';
+import {firstURLParam} from '../lib/utils';
 import {
   useAllPixelconIds,
   getAllPixelconIdsStatic,
@@ -33,74 +35,83 @@ export default function Home() {
   const staticPixelconIds = getAllPixelconIdsStatic();
 
   //setup filter data handling
+  const minFilterTime = 300;
+  const [minFilterTimeElapsed, setMinFilterTimeElapsed] = useState<boolean>(false);
+  useEffect(() => {
+    const minFilterTimeTimer = setTimeout(() => setMinFilterTimeElapsed(true), minFilterTime);
+    return () => clearTimeout(minFilterTimeTimer);
+  }, []);
   const [filterData, setFilterData] = useState<FilterData>({});
   useEffect(() => {
     setFilterData({
-      collection: singleString(router.query.collection),
-      creator: singleString(router.query.creator),
-      owner: singleString(router.query.owner),
+      collection: firstURLParam('collection', router.asPath),
+      creator: firstURLParam('creator', router.asPath),
+      owner: firstURLParam('owner', router.asPath),
     });
   }, [router]);
-  const hasFilters = filterData.collection || filterData.creator || filterData.owner;
+  const hasFilters: boolean = !!filterData.collection || !!filterData.creator || !!filterData.owner;
   const {collectionPixelcons, collectionLoading, collectionError} = useCollectionPixelcons(filterData.collection);
   const {creatorPixelcons, creatorLoading, creatorError} = useCreatorPixelcons(filterData.creator);
   const {ownerPixelcons, ownerLoading, ownerError} = useOwnerPixelcons(filterData.owner);
 
   //load up to date pixelcon data or flag data as archive while fetching
   const {allPixelconIds, allPixelconIdsLoading, allPixelconIdsError} = useAllPixelconIds();
-  const isFiltering =
-    (hasFilters && allPixelconIdsLoading) ||
-    (filterData.collection && collectionLoading) ||
-    (filterData.creator && creatorLoading) ||
-    (filterData.owner && ownerLoading);
-  const isFetching = !hasFilters && allPixelconIdsLoading;
-  const isError = allPixelconIdsError;
-  const isFilterError = hasFilters && !isFiltering && (collectionError || creatorError || ownerError);
+  const waitingOnMinTime: boolean = !minFilterTimeElapsed;
+  const filterError: boolean = allPixelconIdsError || collectionError || creatorError || ownerError;
+  const isFiltering: boolean =
+    (!!hasFilters && allPixelconIdsLoading) ||
+    (!!filterData.collection && collectionLoading) ||
+    (!!filterData.creator && creatorLoading) ||
+    (!!filterData.owner && ownerLoading);
+  const filteringSpinner: boolean = hasFilters && (isFiltering || waitingOnMinTime || filterError);
 
   //get filtered list of pixelcons to display
   const collectionPixelconIndexes = filterData.collection ? collectionPixelcons : null;
   const creatorPixelconIndexes = filterData.creator ? creatorPixelcons : null;
   const ownerPixelconIndexes = filterData.owner ? ownerPixelcons : null;
-  let pixelconIds: string[] = staticPixelconIds;
-  if (!hasFilters) {
-    if (allPixelconIds) pixelconIds = allPixelconIds;
-  } else {
-    if (!isFiltering) {
-      pixelconIds = [];
-      if (!isFilterError) {
-        for (let i = 0; i < allPixelconIds.length; i++) {
-          if (
-            (!collectionPixelconIndexes || collectionPixelconIndexes.indexOf(i) > -1) &&
-            (!creatorPixelconIndexes || creatorPixelconIndexes.indexOf(i) > -1) &&
-            (!ownerPixelconIndexes || ownerPixelconIndexes.indexOf(i) > -1)
-          ) {
-            pixelconIds.push(allPixelconIds[i]);
-          }
+  let pixelcons: PixelconSetObject[] = staticPixelconIds.map((x, i) => {
+    return {
+      id: x,
+      index: i,
+    };
+  });
+  if (allPixelconIds) {
+    if (!filteringSpinner) {
+      //show filtered pixelcons
+      pixelcons = [];
+      for (let i = 0; i < allPixelconIds.length; i++) {
+        if (
+          (!collectionPixelconIndexes || collectionPixelconIndexes.indexOf(i) > -1) &&
+          (!creatorPixelconIndexes || creatorPixelconIndexes.indexOf(i) > -1) &&
+          (!ownerPixelconIndexes || ownerPixelconIndexes.indexOf(i) > -1)
+        ) {
+          pixelcons.push({
+            id: allPixelconIds[i],
+            index: i,
+          });
         }
       }
+    } else {
+      //show fully fetched pixelcons
+      pixelcons = allPixelconIds.map((x, i) => {
+        return {
+          id: x,
+          index: i,
+        };
+      });
     }
   }
 
   return (
     <Layout>
-      <section className={utilStyles.headingSm}>
-        {hasFilters && (
-          <p>
-            <b>Filters</b>
-            {filterData.collection && <>{` | collection: ${filterData.collection}`}</>}
-            {filterData.creator && <>{` | creator: ${filterData.creator}`}</>}
-            {filterData.owner && <>{` | owner: ${filterData.owner}`}</>}
-          </p>
-        )}
-        <p>
-          All Pixelcons{` [${pixelconIds.length}]`}
-          {isError ? ' [fetch failed]' : ''}
-        </p>
-        <p>{JSON.stringify(pixelconIds)}</p>
-        {isFetching && <p>updating...</p>}
-        {isFiltering && <p>filtering...</p>}
-        {isFilterError && <p>filter error</p>}
-      </section>
+      <PixelconFilter
+        visible={hasFilters}
+        filteringSpinner={filteringSpinner}
+        collection={filterData.collection}
+        creator={filterData.creator}
+        owner={filterData.owner}
+      ></PixelconFilter>
+      <PixelconSet pixelcons={pixelcons} showDates={!hasFilters || !!filteringSpinner}></PixelconSet>
       <br />
       <br />
       <section className={utilStyles.headingSm}>
@@ -118,7 +129,6 @@ export default function Home() {
         <br />
         Go to <Link href="/create">create page!</Link>
       </h1>
-      <div style={{height: '6000px'}}></div>
     </Layout>
   );
 }

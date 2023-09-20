@@ -1,0 +1,117 @@
+@use "src/styles/params" as params;
+
+/* General items */
+$marginRatio: params.$margin-ratio;
+$marginStart: params.$size-small;
+$marginPivot: $marginStart - ($marginRatio * $marginStart);
+.collectionContainer {
+  width: 100%;
+}
+.collectionName {
+  color: params.$color-dim;
+  font-size: params.$text-size-medium;
+  margin-left: 0.5em;
+  font-weight: 600;
+  vertical-align: middle;
+}
+.address {
+  color: params.$color-dim;
+  font-size: params.$text-size-medium;
+}
+
+/* Size dependent items with parametrized rendering */
+@mixin styling($sizeSmall, $sizeMedium) {
+  /* Parameters */
+  $imageSize: 16px;
+  $imageMargin: 2px;
+  $leftMargin: 20px;
+  @if $sizeSmall {
+    $imageSize: 16px;
+    $imageMargin: 2px;
+    $leftMargin: 10px;
+  } @else if $sizeMedium {
+    $imageSize: 16px;
+    $imageMargin: 2px;
+    $leftMargin: 15px;
+  }
+  $visiblePixelcons: 6;
+  $visiblePixelconsHover: 20;
+
+  /* General container */
+  .container {
+    width: 100%;
+    height: 100px;
+    @if $sizeSmall {
+      margin-top: 6px;
+    } @else if $sizeMedium {
+      margin-top: 9px;
+    } @else {
+      margin-top: 12px;
+    }
+    @media (min-width: $marginStart) {
+      max-width: calc($marginPivot + (100% * $marginRatio));
+      margin-left: calc(
+        ((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2)
+      );
+    }
+  }
+
+  /* General text */
+  .label {
+    color: params.$color-dim;
+    display: inline-block;
+    font-weight: 600;
+    font-size: params.$text-size-large;
+    line-height: $imageSize + ($imageMargin * 2);
+    margin: 0em 0.3em 0em $leftMargin;
+    vertical-align: middle;
+    width: 3.6em;
+  }
+  .spacer {
+    margin-left: $leftMargin;
+    height: $imageSize + ($imageMargin * 2);
+  }
+
+  /* Collection display */
+  .collectionPreview {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    height: $imageSize + ($imageMargin * 2);
+    max-width: ($imageSize + ($imageMargin * 2)) * $visiblePixelcons;
+    @if $sizeSmall == false {
+      &:hover {
+        max-width: ($imageSize + ($imageMargin * 2)) *
+          ($visiblePixelconsHover + 1);
+      }
+    }
+  }
+  .collectionPixelcon {
+    width: $imageSize;
+    height: $imageSize;
+    margin: $imageMargin;
+    display: inline-block;
+    font-size: 0px;
+    vertical-align: middle;
+    background-size: 100%;
+  }
+  .collectionPlus {
+    width: $imageSize;
+    height: $imageSize;
+    margin: $imageMargin;
+    display: inline-block;
+    font-size: 10px;
+    line-height: $imageSize;
+    vertical-align: middle;
+    text-align: center;
+  }
+}
+@media (max-width: params.$size-small) {
+  @include styling($sizeSmall: true, $sizeMedium: true);
+}
+@media (max-width: params.$size-medium) and (min-width: params.$size-small) {
+  @include styling($sizeSmall: false, $sizeMedium: true);
+}
+@media (min-width: params.$size-medium) {
+  @include styling($sizeSmall: false, $sizeMedium: false);
+}

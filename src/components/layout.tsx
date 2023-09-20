@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import Link from 'next/link';
 import Head from 'next/head';
 import buildConfig from '../build.config';
 import clsx from 'clsx';
@@ -42,18 +43,18 @@ export default function Layout({children}: {children: React.ReactNode}) {
       </Head>
       <main className={clsx(styles.content, utilStyles.invisibleScroll)}>
         <div className={clsx(styles.header, textStyles.notSelectable)}>
-          <div className={styles.button}>
-            <img src="/icons/opensea.svg" />
+          <div className={clsx(styles.button, utilStyles.button)}>
+            <div className={utilStyles.icon}></div>
             <span>OPENSEA</span>
           </div>
-          <div className={styles.logo}>
-            <img className={utilStyles.crispImage} src="/archive/header_tmp.png" />
+          <div className={clsx(styles.logo, utilStyles.clickable)}>
+            <div className={utilStyles.crispImage} />
             <span>PixelCons</span>
           </div>
-          <div className={styles.button}>
-            <img src="/icons/browse.svg" />
+          <Link className={clsx(styles.button, utilStyles.button)} href={'/'} prefetch={false}>
+            <div className={utilStyles.icon} style={{backgroundImage: 'url(/icons/browse.svg)'}}></div>
             <span>BROWSE</span>
-          </div>
+          </Link>
         </div>
         {children}
       </main>

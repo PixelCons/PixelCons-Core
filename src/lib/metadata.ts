@@ -40,10 +40,10 @@ export function generateMetadata(pixelcon: Pixelcon, similarPixelcon: Pixelcon, 
 
   //build name and description
   //eslint-disable-next-line no-irregular-whitespace
-  const name: string = pixelcon.name ? `${pixelcon.name} #${pixelcon.index}` : `#${pixelcon.index}`;
+  const name: string = pixelcon.name ? `#${pixelcon.index} ${pixelcon.name}` : `#${pixelcon.index}`;
   let description: string = `PixelCon #${pixelcon.index} - ${toDate(pixelcon.date)}`;
   if (similarPixelcon)
-    description += ` - ⚠️Very similar to older [PixelCon #${similarPixelcon.index}](${webDomain}/details/${similarPixelcon.id})`;
+    description += ` - ⚠️Very similar to [#${similarPixelcon.index}](${webDomain}/details/${similarPixelcon.id})`;
   if (pixelcon.collection > 0) {
     description += ` - Collection ${pixelcon.collection}`;
     if (collectionName) description += ` [${collectionName}]`;

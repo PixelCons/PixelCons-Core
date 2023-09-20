@@ -1,0 +1,59 @@
+@use "src/styles/params" as params;
+
+/* Parameters */
+$identiconOversize: 0.15em;
+$copyOversize: 0.1em;
+
+/* General items */
+.container {
+  display: inline-block;
+  vertical-align: middle;
+  span {
+    vertical-align: middle;
+  }
+}
+.copy {
+  width: 1em + $copyOversize;
+  height: 1em + $copyOversize;
+  margin: (-($copyOversize/2)) 0em (-($copyOversize/2)) (-(1em + $copyOversize));
+  background-size: (1em + $copyOversize) - 0.2em;
+  border-radius: $copyOversize;
+  @media (min-width: params.$size-small) {
+    .container:hover & {
+      background-image: url(/icons/copy.svg);
+      background-color: params.$color-modal;
+    }
+  }
+  &.offLink {
+    margin: (-($copyOversize/2)) 0em (-($copyOversize/2)) 0.2em;
+  }
+}
+.identicon {
+  vertical-align: middle;
+  width: 1em + $identiconOversize;
+  height: 1em + $identiconOversize;
+  background-size: (1em + $identiconOversize) - 0.2em;
+  background-color: params.$color-dim;
+  border-radius: $identiconOversize;
+  margin-right: 0.2em;
+}
+
+/* Size dependent items with parametrized rendering */
+@mixin styling($sizeSmall) {
+  /* Display flags */
+  @if $sizeSmall {
+    .hideOnSmall {
+      display: none;
+    }
+  } @else {
+    .hideOnNotSmall {
+      display: none;
+    }
+  }
+}
+@media (max-width: params.$size-small) {
+  @include styling($sizeSmall: true);
+}
+@media (min-width: params.$size-small) {
+  @include styling($sizeSmall: false);
+}

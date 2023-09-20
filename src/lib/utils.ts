@@ -15,6 +15,43 @@ export function sanitizePixelconIdParam(pixelconId: string | string[]): string {
   return null;
 }
 
+//Returns the first url parameter
+export function firstURLParam(key: string, url: string): string {
+  const fullKeyStart = `?${key}=`;
+  const fullKeyAnd = `&${key}=`;
+  let keyStartIndex = url.indexOf(fullKeyStart);
+  if (keyStartIndex < 0) keyStartIndex = url.indexOf(fullKeyAnd);
+
+  //found
+  if (keyStartIndex > -1) {
+    const startIndex = keyStartIndex + fullKeyStart.length;
+    const endAndIndex = url.indexOf('&', startIndex);
+    return endAndIndex > -1 ? url.substring(startIndex, endAndIndex) : url.substring(startIndex);
+  }
+
+  //not found
+  return undefined;
+}
+
+//Clears the given url parameter
+export function clearURLParam(key: string, url: string): string {
+  const fullKeyStart = `?${key}=`;
+  const fullKeyAnd = `&${key}=`;
+  let keyStartIndex = url.indexOf(fullKeyStart);
+  if (keyStartIndex < 0) keyStartIndex = url.indexOf(fullKeyAnd);
+
+  //found
+  if (keyStartIndex > -1) {
+    const endAndIndex = url.indexOf('&', keyStartIndex + fullKeyStart.length);
+    const paramRemoved =
+      endAndIndex > -1 ? url.substring(0, keyStartIndex) + url.substring(endAndIndex) : url.substring(0, keyStartIndex);
+    return paramRemoved.indexOf('?') < 0 ? paramRemoved.replace('&', '?') : paramRemoved;
+  }
+
+  //not found
+  return url;
+}
+
 //Returns the given string or the first string in an array of strings
 export function singleString(item: string | string[]): string {
   if (item === undefined) return undefined;
@@ -40,7 +77,7 @@ export function toAddress(item: string | number | bigint): string {
   try {
     const hex: string = ethers.toBeHex(item).toLowerCase();
     if (hex.length == 42) return hex;
-    if (hex.length < 42) return '0x' + hex.slice(2).padStart(64, '0');
+    if (hex.length < 42) return '0x' + hex.slice(2).padStart(40, '0');
   } catch (e) {
     //do nothing
   }
@@ -70,6 +107,46 @@ export function toDate(millis: string | number): string {
     return day + ' ' + month + ' ' + year;
   }
   return null;
+}
+
+//Converts the given millis into a readable date string
+export function toMonthYear(millis: string | number): string {
+  if (millis) {
+    const date = new Date(millis);
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const year = date.getFullYear();
+    return month + '/' + year;
+  }
+  return null;
+}
+
+//Converts the given string into an abbreviated string
+export function toAbbreviatedString(item: string, maxChars = 12, offsetStart = 2, offsetEnd = 0): string {
+  if (item.length <= maxChars) return item;
+  if (maxChars > offsetStart + offsetEnd) {
+    try {
+      const half = maxChars / 2;
+      return `${item.substring(0, offsetStart + Math.ceil(half))}…${item.substring(
+        item.length - (offsetEnd + Math.floor(half)),
+      )}`;
+    } catch (e) {
+      //do nothing
+    }
+  }
+  throw new Error(`Failed to convert ${item} to 160 bit abbreviated address hex`);
+}
+
+//Gets a random subset of items from the given list
+export function getRandomSubset(list: string[], count: number, seed = '0x5eed'): string[] {
+  const from = list.map((s) => s);
+  const to = [];
+  let hash = ethers.keccak256(seed);
+  for (let i = 0; i < count && i < list.length; i++) {
+    hash = ethers.keccak256(hash);
+    const index = parseInt((ethers.toBigInt(hash) % ethers.toBigInt(from.length)).toString());
+    to.push(from.splice(index, 1)[0]);
+  }
+  return to;
 }
 
 //Color palette reference

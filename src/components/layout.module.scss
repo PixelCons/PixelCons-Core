@@ -1,7 +1,9 @@
 @use "src/styles/params" as params;
-@use "src/styles/text.module" as text;
 
 /* General items */
+$marginRatio: params.$margin-ratio;
+$marginStart: params.$size-large;
+$marginPivot: $marginStart - ($marginRatio * $marginStart);
 .content {
   max-height: 100%;
 }
@@ -10,18 +12,22 @@
 @mixin styling($sizeSmall, $sizeMedium) {
   /* Parameters */
   $height: 60px;
-  $subHeight: 40px;
+  $logoHeight: 40px;
+  $buttonHeight: 40px;
   $buttonPadding: 10px;
   @if $sizeSmall {
     $height: 50px;
-    $subHeight: 30px;
-    $buttonPadding: 2px;
+    $logoHeight: 40px;
+    $buttonHeight: 40px;
+    $buttonPadding: 7px;
   } @else if $sizeMedium {
     $height: 50px;
-    $subHeight: 30px;
+    $logoHeight: 40px;
+    $buttonHeight: 30px;
     $buttonPadding: 5px;
   }
-  $margin: ($height - $subHeight) / 2;
+  $logoMargin: ($height - $logoHeight) / 2;
+  $buttonMargin: ($height - $buttonHeight) / 2;
 
   /* Header container */
   .header {
@@ -39,10 +45,13 @@
     margin: 0 auto;
     text-align: center;
     font-size: 0px;
-    img {
-      height: $subHeight;
-      width: $subHeight * 1.5;
-      margin: $margin $margin $margin 0px;
+    div {
+      height: $logoHeight;
+      width: $logoHeight * 1.5;
+      margin: $logoMargin $logoMargin $logoMargin 0px;
+      background-image: url(/archive/header_tmp.png);
+      background-size: cover;
+      display: inline-block;
       vertical-align: middle;
     }
     span {
@@ -53,63 +62,46 @@
         font-size: 18px;
       }
     }
-    &:hover {
-      cursor: pointer;
-    }
   }
 
   /* Side buttons */
   .button {
     position: absolute;
     top: 0px;
-    height: $subHeight;
-    margin: $margin;
-    line-height: $subHeight - ($buttonPadding * 2);
+    height: $buttonHeight;
+    margin: $buttonMargin;
+    line-height: $buttonHeight - ($buttonPadding * 2);
     padding: $buttonPadding ($buttonPadding + 4px);
     @if $sizeSmall {
       padding: $buttonPadding;
     }
-    background-color: params.$color-background;
-    border-radius: 10px;
-    font-size: 0px;
-    text-align: center;
     span {
-      display: inline-block;
-      font-size: 14px;
-      vertical-align: middle;
       @if $sizeSmall {
         display: none;
       }
     }
-    img {
-      display: inline-block;
-      width: ($subHeight - ($buttonPadding * 2)) - 4px;
-      height: ($subHeight - ($buttonPadding * 2)) - 4px;
-      vertical-align: middle;
+    div {
+      background-image: url(/icons/opensea.svg);
+      width: ($buttonHeight - ($buttonPadding * 2)) - 4px;
+      height: ($buttonHeight - ($buttonPadding * 2)) - 4px;
       margin: 2px 2px 2px 0px;
-      opacity: params.$alpha-bright;
       @if $sizeSmall {
-        width: $subHeight - ($buttonPadding * 2);
-        height: $subHeight - ($buttonPadding * 2);
+        width: $buttonHeight - ($buttonPadding * 2);
+        height: $buttonHeight - ($buttonPadding * 2);
         margin: 0px 0px 0px 0px;
       }
     }
-    &:hover {
-      cursor: pointer;
-      @if $sizeSmall == false {
-        box-shadow: 1px 1px 4px 0px params.$color-dim;
-      }
-    }
-    &:active {
-      cursor: pointer;
-      background-color: params.$color-disabled;
-      box-shadow: 0px 0px 0px 0px params.$color-background;
-    }
     &:first-child {
       left: 0px;
+      @media (min-width: $marginStart) {
+        left: calc(((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2));
+      }
     }
     &:last-child {
       right: 0px;
+      @media (min-width: $marginStart) {
+        right: calc(((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2));
+      }
     }
   }
 }

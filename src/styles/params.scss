@@ -6,12 +6,24 @@ $alpha-disabled: 0.38;
 /* Media Sizing */
 $size-small: 600px;
 $size-medium: 1200px;
+$size-large: 1920px;
+$margin-ratio: 0.5;
 
 /* Colors */
-$color-background: #000000;
-$color-bright: rgba(#ffffff, $alpha-bright);
-$color-dim: rgba(#ffffff, $alpha-dim);
-$color-disabled: rgba(#ffffff, $alpha-disabled);
+$color-background: #000;
+$color-modal: #333;
+$color-warn: rgba(#f90, $alpha-bright);
+$color-error: rgba(#f30, $alpha-bright);
+$color-bright: rgba(#fff, $alpha-bright);
+$color-dim: rgba(#fff, $alpha-dim);
+$color-disabled: rgba(#fff, $alpha-disabled);
 
 /* Default Text */
-$text-font-size: 12px;
+$text-size-default: 12px;
+$text-size-xs: 0.56rem;
+$text-size-small: 0.8rem;
+$text-size-medium: 1rem;
+$text-size-large: 1.5rem;
+$text-size-xl: 2rem;
+$text-size-xxl: 2.5rem;
+$text-size-xxxl: 3rem;

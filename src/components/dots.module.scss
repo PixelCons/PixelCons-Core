@@ -1,0 +1,88 @@
+@use "src/styles/params" as params;
+
+/* Parameters */
+$speedMultiplier: 1;
+$delayTime: 1s;
+
+/* General items */
+.container {
+  vertical-align: middle;
+}
+@mixin dotStyling($speed, $delay) {
+  $color1: params.$color-bright;
+  $color2: params.$color-dim;
+
+  transform: scale(0);
+  background-color: $color2;
+  border-radius: 100%;
+  display: inline-block;
+  animation: (0.75s / $speed) cubic-bezier(0.2, 0.68, 0.18, 1.08)
+    ((0.24s / $speed) + $delay) infinite normal both running dot-pulse;
+  &:first-child {
+    animation: (0.75s / $speed) cubic-bezier(0.2, 0.68, 0.18, 1.08)
+      ((0.12s / $speed) + $delay) infinite normal both running dot-pulse;
+  }
+  &:last-child {
+    animation: (0.75s / $speed) cubic-bezier(0.2, 0.68, 0.18, 1.08)
+      ((0.36s / $speed) + $delay) infinite normal both running dot-pulse;
+  }
+  @keyframes dot-pulse {
+    0% {
+      transform: scale(0);
+      background-color: $color2;
+    }
+    35% {
+      transform: scale(1);
+      background-color: $color1;
+    }
+    55% {
+      transform: scale(1);
+      background-color: $color1;
+    }
+  }
+}
+@mixin dotStylingDim($speed, $delay) {
+  $color1: params.$color-dim;
+  $color2: params.$color-disabled;
+
+  transform: scale(0);
+  background-color: $color2;
+  border-radius: 100%;
+  display: inline-block;
+  animation: (0.75s / $speed) cubic-bezier(0.2, 0.68, 0.18, 1.08)
+    ((0.24s / $speed) + $delay) infinite normal both running dot-pulse-dim;
+  &:first-child {
+    animation: (0.75s / $speed) cubic-bezier(0.2, 0.68, 0.18, 1.08)
+      ((0.12s / $speed) + $delay) infinite normal both running dot-pulse-dim;
+  }
+  &:last-child {
+    animation: (0.75s / $speed) cubic-bezier(0.2, 0.68, 0.18, 1.08)
+      ((0.36s / $speed) + $delay) infinite normal both running dot-pulse-dim;
+  }
+  @keyframes dot-pulse-dim {
+    0% {
+      transform: scale(0);
+      background-color: $color2;
+    }
+    35% {
+      transform: scale(1);
+      background-color: $color1;
+    }
+    55% {
+      transform: scale(1);
+      background-color: $color1;
+    }
+  }
+}
+.dot {
+  @include dotStyling($speed: $speedMultiplier, $delay: 0s);
+}
+.dotDim {
+  @include dotStylingDim($speed: $speedMultiplier, $delay: 0s);
+}
+.dotDelay {
+  @include dotStyling($speed: $speedMultiplier, $delay: $delayTime);
+}
+.dotDelayDim {
+  @include dotStylingDim($speed: $speedMultiplier, $delay: $delayTime);
+}
