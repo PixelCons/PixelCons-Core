@@ -1,0 +1,100 @@
+@use "src/styles/params" as params;
+@use "src/components/pages/create/shared" as shared;
+
+/* Parameters */
+$topMargin: shared.$top-margin;
+$sideMargin: shared.$side-margin;
+$previewSpacer: shared.$preview-spacer;
+$bottomSpacer: shared.$bottom-spacer;
+$boxSpacer: 40px;
+$pixelconSize: 32px;
+$pixelconSelectSize: 24px;
+$pixelconMargin: 5px;
+$boxMinHeight: ($pixelconSelectSize + ($pixelconMargin * 2)) * 1.5;
+$previewMinHeight: ($pixelconSize + ($pixelconMargin * 2));
+
+/* Selection box */
+.instructions {
+  text-align: left;
+  font-size: params.$text-size-large;
+  margin: $topMargin $sideMargin;
+  color: params.$color-dim;
+}
+.selectBox {
+  margin: $topMargin auto $boxSpacer auto;
+  width: calc(100% - ($sideMargin * 2));
+  min-height: $boxMinHeight;
+  border: 1px solid params.$color-dim;
+}
+.boxText {
+  margin: calc(($boxMinHeight / 2) - 0.5em) auto 0px auto;
+  color: params.$color-dim;
+}
+
+/* General items */
+.title {
+  font-size: params.$text-size-xl;
+  margin: $topMargin $sideMargin;
+}
+.pixelcon {
+  display: inline-block;
+  vertical-align: middle;
+  width: $pixelconSize;
+  height: $pixelconSize;
+  margin: $pixelconMargin;
+  background-size: $pixelconSize;
+  &.select {
+    width: $pixelconSelectSize;
+    height: $pixelconSelectSize;
+    background-size: $pixelconSelectSize;
+  }
+  & div {
+    display: none;
+    vertical-align: middle;
+    background-color: rgba(params.$color-background, params.$alpha-dim);
+    width: $pixelconSize;
+    height: $pixelconSize;
+    line-height: $pixelconSize;
+    text-align: center;
+    font-size: 8px;
+    background-image: url(/icons/close.svg);
+    background-size: $pixelconSize / 1.5;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  &:hover div {
+    display: block;
+  }
+}
+.bottomSpacer {
+  width: 100%;
+  height: $bottomSpacer;
+}
+
+/* Connect items */
+.connectText {
+  font-size: params.$text-size-medium;
+  color: params.$color-dim;
+  width: 110px;
+  max-width: calc(100% - ($sideMargin * 2));
+  margin: 8em auto 0em auto;
+}
+
+/* Confirm items */
+.previewBox {
+  margin: $topMargin auto $previewSpacer auto;
+  width: ($pixelconSize + ($pixelconMargin * 2)) * 8;
+  max-width: calc(100% - ($sideMargin * 2));
+  min-height: $previewMinHeight;
+}
+.previewText {
+  color: params.$color-dim;
+}
+.confirmText {
+  width: 190px;
+  max-width: calc(100% - ($sideMargin * 2));
+  margin: 1em auto 2em auto;
+}
+.button {
+  font-size: (params.$text-size-medium + params.$text-size-large) / 2;
+}

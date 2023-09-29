@@ -1,5 +1,20 @@
 @use "src/styles/params" as params;
 
+/* General mixins */
+@mixin clickable {
+  cursor: pointer;
+}
+@mixin notClickable {
+  cursor: default;
+}
+@mixin animated($property) {
+  -webkit-transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -moz-transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -ms-transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -o-transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+}
+
 /* General items */
 .crispImage {
   -ms-interpolation-mode: nearest-neighbor;
@@ -13,7 +28,11 @@
   image-rendering: auto;
 }
 .clickable {
-  cursor: pointer;
+  @include clickable;
+}
+.inlineBlock {
+  vertical-align: middle;
+  display: inline-block;
 }
 .icon {
   display: inline-block;
@@ -22,22 +41,28 @@
   background-repeat: no-repeat;
 }
 .animated {
-  -webkit-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
-  -moz-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
-  -ms-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
-  -o-transition: cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
-  transition: cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  @include animated(all);
+}
+.contentFooterContainer {
+  display: inline-block;
+  width: 100%;
+  @media (min-width: params.$size-medium) {
+    min-height: params.$layout-content-large;
+  }
+  @media (max-width: params.$size-medium) {
+    min-height: params.$layout-content-small;
+  }
 }
 
 /* Size dependent items with parametrized rendering */
 @mixin styling($sizeSmall, $sizeMedium) {
   /* Buttons */
   .button {
+    @include clickable;
     background-color: params.$color-background;
     border-radius: 10px;
     font-size: 0px;
     text-align: center;
-    cursor: pointer;
     span {
       vertical-align: middle;
       font-size: 14px;
@@ -55,6 +80,38 @@
       box-shadow: 0px 0px 0px 0px params.$color-background;
     }
   }
+  .textButton {
+    @include clickable;
+    display: inline-block;
+    vertical-align: middle;
+    height: 2em;
+    line-height: 2em;
+    padding: 0px 1em;
+    background-color: params.$color-background;
+    border-radius: 0.5em;
+    text-align: center;
+    color: params.$color-bright;
+    &:hover {
+      @if $sizeSmall == false {
+        box-shadow: 1px 1px 4px 0px params.$color-dim;
+      }
+    }
+    &:active {
+      background-color: params.$color-disabled;
+      box-shadow: 0px 0px 0px 0px params.$color-background;
+    }
+    &.disabled {
+      @include notClickable;
+      color: params.$color-disabled;
+    }
+    &.disabled:hover {
+      box-shadow: 0px 0px 0px 0px params.$color-background;
+    }
+    &.disabled:active {
+      background-color: params.$color-background;
+      box-shadow: 0px 0px 0px 0px params.$color-background;
+    }
+  }
 }
 @media (max-width: params.$size-small) {
   @include styling($sizeSmall: true, $sizeMedium: true);
@@ -64,35 +121,4 @@
 }
 @media (min-width: params.$size-medium) {
   @include styling($sizeSmall: false, $sizeMedium: false);
-}
-
-/* Scrollbar */
-.invisibleScroll {
-  overflow-y: auto;
-  overflow-y: overlay;
-  overflow-x: hidden;
-  scrollbar-color: params.$color-dim transparent;
-  scrollbar-width: thin;
-  &::-webkit-scrollbar {
-    width: 6px;
-    border-radius: 6px;
-    @media (max-width: params.$size-medium) and (min-width: params.$size-small) {
-      width: 4px;
-      border-radius: 4px;
-    }
-    @media (max-width: params.$size-small) {
-      width: 2px;
-      border-radius: 2px;
-    }
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: params.$color-dim;
-    border-radius: 4px;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: params.$color-bright;
-  }
 }

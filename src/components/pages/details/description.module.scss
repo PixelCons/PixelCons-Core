@@ -14,10 +14,6 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
   font-weight: 600;
   vertical-align: middle;
 }
-.address {
-  color: params.$color-dim;
-  font-size: params.$text-size-medium;
-}
 
 /* Size dependent items with parametrized rendering */
 @mixin styling($sizeSmall, $sizeMedium) {
@@ -29,31 +25,32 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
     $imageSize: 16px;
     $imageMargin: 2px;
     $leftMargin: 10px;
+    $topSpacer: 20px;
   } @else if $sizeMedium {
     $imageSize: 16px;
     $imageMargin: 2px;
     $leftMargin: 15px;
+    $topSpacer: 20px;
   }
+  $lineHeight: $imageSize + ($imageMargin * 2);
   $visiblePixelcons: 6;
   $visiblePixelconsHover: 20;
 
   /* General container */
   .container {
     width: 100%;
-    height: 100px;
-    @if $sizeSmall {
-      margin-top: 6px;
-    } @else if $sizeMedium {
-      margin-top: 9px;
-    } @else {
-      margin-top: 12px;
-    }
+    height: $lineHeight * 4;
+    margin-top: $lineHeight * -4;
     @media (min-width: $marginStart) {
       max-width: calc($marginPivot + (100% * $marginRatio));
       margin-left: calc(
         ((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2)
       );
     }
+  }
+  .blankSpacer {
+    width: 100%;
+    height: $lineHeight * 5;
   }
 
   /* General text */
@@ -62,14 +59,18 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
     display: inline-block;
     font-weight: 600;
     font-size: params.$text-size-large;
-    line-height: $imageSize + ($imageMargin * 2);
+    line-height: $lineHeight;
     margin: 0em 0.3em 0em $leftMargin;
     vertical-align: middle;
     width: 3.6em;
   }
   .spacer {
     margin-left: $leftMargin;
-    height: $imageSize + ($imageMargin * 2);
+    height: $lineHeight;
+  }
+  .address {
+    color: params.$color-dim;
+    font-size: params.$text-size-medium;
   }
 
   /* Collection display */
@@ -77,7 +78,7 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
     display: inline-block;
     overflow: hidden;
     vertical-align: middle;
-    height: $imageSize + ($imageMargin * 2);
+    height: $lineHeight;
     max-width: ($imageSize + ($imageMargin * 2)) * $visiblePixelcons;
     @if $sizeSmall == false {
       &:hover {

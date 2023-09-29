@@ -1,6 +1,5 @@
 import {GetStaticProps} from 'next';
 import React, {useState, useEffect} from 'react';
-import Link from 'next/link';
 import {useRouter} from 'next/router';
 import Layout from '../components/layout';
 import PixelconFilter from '../components/pages/index/filter';
@@ -13,7 +12,6 @@ import {
   useCreatorPixelcons,
   useOwnerPixelcons,
 } from '../lib/pixelcons';
-import utilStyles from '../styles/utils.module.scss';
 
 //Filter data
 type FilterData = {
@@ -112,23 +110,6 @@ export default function Home() {
         owner={filterData.owner}
       ></PixelconFilter>
       <PixelconSet pixelcons={pixelcons} showDates={!hasFilters || !!filteringSpinner}></PixelconSet>
-      <br />
-      <br />
-      <section className={utilStyles.headingSm}>
-        <Link href="/">no filter</Link>
-        <br />
-        <Link href="/?collection=6">test filter</Link>
-        <br />
-        <Link href="/?collection=6&owner=0x0d453a098fc5fd6bacb1fd81c348c2fb03192188">test filter2</Link>
-      </section>
-      <h1 className={utilStyles.headingMd}>
-        Go to{' '}
-        <Link href="/details/0x8e8888888228822888022088880880888888888888e77e8882777728888ee888">details page!</Link>
-        <br />
-        Go to <Link href="/about">about page!</Link>
-        <br />
-        Go to <Link href="/create">create page!</Link>
-      </h1>
     </Layout>
   );
 }

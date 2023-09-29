@@ -1,7 +1,7 @@
 import {GetStaticProps} from 'next';
 import React from 'react';
 import Layout from '../components/layout';
-import Canvas from '../components/pages/create/canvas';
+import Upload from '../components/pages/upload/uploader';
 
 //Static props for page pre building
 export const getStaticProps: GetStaticProps = async () => {
@@ -10,12 +10,12 @@ export const getStaticProps: GetStaticProps = async () => {
   };
 };
 
-//The create page to create new pixelcons and collections
+//The upload page to create new pixelcons via file upload
 export default function Create() {
   //render
   return (
     <Layout>
-      <Canvas></Canvas>
+      <Upload></Upload>
     </Layout>
   );
 }

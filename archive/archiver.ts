@@ -1,5 +1,5 @@
 import {Collection, getAllPixelcons, getAllCollectionNames} from '../src/lib/pixelcons';
-import {searchPossibleDerivative, isDerivative} from '../src/lib/similarities';
+import {searchPossibleDerivativeIndex, isDerivativePixelcon} from '../src/lib/similarities';
 import {generateMetadata} from '../src/lib/metadata';
 import {generateImage, generateIconSheet, generateHeader} from '../src/lib/imagedata';
 import {promises as fs} from 'fs';
@@ -47,8 +47,8 @@ const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pixelconDerivatives: any = {};
   for (const pixelcon of pixelcons) {
-    const index = searchPossibleDerivative(pixelcon.id, pixelconIds);
-    if (index > -1 && isDerivative(pixelcons[index], pixelcon)) {
+    const index = searchPossibleDerivativeIndex(pixelcon.id, pixelconIds);
+    if (index > -1 && isDerivativePixelcon(pixelcons[index], pixelcon)) {
       pixelconDerivatives[pixelcon.id] = pixelcons[index];
     }
   }

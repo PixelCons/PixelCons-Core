@@ -1,0 +1,30 @@
+@use "src/styles/params" as params;
+
+/* General items */
+.input {
+  text-align: center;
+  font-family: inherit;
+  border: 0;
+  border-bottom: 1px solid params.$color-bright;
+  outline: 0;
+  color: params.$color-bright;
+  padding: 0.2em 0;
+  background: transparent;
+  margin-bottom: 1px;
+  &.disabled {
+    border-bottom: 1px solid params.$color-disabled;
+  }
+  &::placeholder {
+    color: params.$color-bright;
+  }
+  &.disabled::placeholder {
+    color: params.$color-disabled;
+  }
+  &:focus::placeholder {
+    color: transparent;
+  }
+  &:focus {
+    border-bottom: 2px solid params.$color-bright;
+    margin-bottom: 0px;
+  }
+}

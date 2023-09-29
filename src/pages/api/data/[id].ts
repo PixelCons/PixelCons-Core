@@ -2,7 +2,7 @@ import {NextApiRequest, NextApiResponse} from 'next';
 import {Pixelcon, getPixelcon, getAllPixelconIds, getCollectionName} from '../../../lib/pixelcons';
 import {generateMetadata} from '../../../lib/metadata';
 import {sanitizePixelconIdParam} from '../../../lib/utils';
-import {searchPossibleDerivative, isDerivative} from '../../../lib/similarities';
+import {searchPossibleDerivative, isDerivativePixelcon} from '../../../lib/similarities';
 import buildConfig from '../../../build.config';
 
 //Data constants
@@ -34,11 +34,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     //fetch and generate metadata
     const collectionName = pixelcon.collection ? await getCollectionName(pixelcon.collection) : null;
     const allPixelconIds = await getAllPixelconIds(0, pixelcon.index + 1);
-    const index = searchPossibleDerivative(pixelcon.id, allPixelconIds);
+    const similarPixelconId = searchPossibleDerivative(pixelcon.id, allPixelconIds);
     let similarPixelcon: Pixelcon = null;
-    if (index > -1) {
-      const originalPixelcon = await getPixelcon(allPixelconIds[index]);
-      if (isDerivative(originalPixelcon, pixelcon)) similarPixelcon = originalPixelcon;
+    if (similarPixelconId) {
+      const originalPixelcon = await getPixelcon(similarPixelconId);
+      if (isDerivativePixelcon(originalPixelcon, pixelcon)) similarPixelcon = originalPixelcon;
     }
     const metadata = generateMetadata(pixelcon, similarPixelcon, collectionName);
 

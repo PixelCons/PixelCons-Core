@@ -1,4 +1,5 @@
 import React, {useEffect} from 'react';
+import {useRouter} from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import buildConfig from '../build.config';
@@ -13,6 +14,9 @@ const webDomain = buildConfig.WEB_DOMAIN || '';
 
 //Common layout component applied accross all pages
 export default function Layout({children}: {children: React.ReactNode}) {
+  const router = useRouter();
+  const isBrowsing = router.pathname == '/';
+
   //report archive timestamp to console
   useEffect(() => {
     console.log(`Archive timestamp ${archive.timestamp} (${new Date(archive.timestamp)})`);
@@ -41,24 +45,35 @@ export default function Layout({children}: {children: React.ReactNode}) {
         />
         <meta property="og:image" content={`${webDomain}/img/large/card.png`} />
       </Head>
-      <main className={clsx(styles.content, utilStyles.invisibleScroll)}>
-        <div className={clsx(styles.header, textStyles.notSelectable)}>
-          <div className={clsx(styles.button, utilStyles.button)}>
-            <div className={utilStyles.icon}></div>
-            <span>OPENSEA</span>
+      <main className={styles.content}>
+        <div className={styles.nonFooterSectionContainer}>
+          <div className={clsx(styles.header, textStyles.notSelectable)}>
+            <div className={clsx(styles.button, utilStyles.button)}>
+              <div className={utilStyles.icon}></div>
+              <span>OPENSEA</span>
+            </div>
+            <div className={clsx(styles.logo, utilStyles.clickable)}>
+              <div className={utilStyles.crispImage} />
+              <span>PixelCons</span>
+            </div>
+            {!isBrowsing && (
+              <Link className={clsx(styles.button, utilStyles.button)} href={'/'} prefetch={false}>
+                <div className={utilStyles.icon} style={{backgroundImage: 'url(/icons/browse.svg)'}}></div>
+                <span>BROWSE</span>
+              </Link>
+            )}
+            {isBrowsing && (
+              <Link className={clsx(styles.button, utilStyles.button)} href={'/create'} prefetch={false}>
+                <div className={utilStyles.icon} style={{backgroundImage: 'url(/icons/add.svg)'}}></div>
+                <span>CREATE</span>
+              </Link>
+            )}
           </div>
-          <div className={clsx(styles.logo, utilStyles.clickable)}>
-            <div className={utilStyles.crispImage} />
-            <span>PixelCons</span>
-          </div>
-          <Link className={clsx(styles.button, utilStyles.button)} href={'/'} prefetch={false}>
-            <div className={utilStyles.icon} style={{backgroundImage: 'url(/icons/browse.svg)'}}></div>
-            <span>BROWSE</span>
-          </Link>
+          {children}
+          <div className={styles.footerSpacer}></div>
         </div>
-        {children}
+        <div className={clsx(styles.footer, textStyles.notSelectable)}>footer</div>
       </main>
-      {/* footer */}
     </>
   );
 }

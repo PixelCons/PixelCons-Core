@@ -5,35 +5,39 @@ $marginRatio: params.$margin-ratio;
 $marginStart: params.$size-large;
 $marginPivot: $marginStart - ($marginRatio * $marginStart);
 .content {
-  max-height: 100%;
+  height: 100%;
 }
 
 /* Size dependent items with parametrized rendering */
 @mixin styling($sizeSmall, $sizeMedium) {
   /* Parameters */
-  $height: 60px;
+  $footerSpacer: params.$layout-footer-spacer;
+  $footerheight: params.$layout-footer-large;
+  $headerheight: params.$layout-header-large;
   $logoHeight: 40px;
   $buttonHeight: 40px;
   $buttonPadding: 10px;
   @if $sizeSmall {
-    $height: 50px;
+    $footerheight: params.$layout-footer-small;
+    $headerheight: params.$layout-header-small;
     $logoHeight: 40px;
     $buttonHeight: 40px;
     $buttonPadding: 7px;
   } @else if $sizeMedium {
-    $height: 50px;
+    $footerheight: params.$layout-footer-small;
+    $headerheight: params.$layout-header-small;
     $logoHeight: 40px;
     $buttonHeight: 30px;
     $buttonPadding: 5px;
   }
-  $logoMargin: ($height - $logoHeight) / 2;
-  $buttonMargin: ($height - $buttonHeight) / 2;
+  $logoMargin: ($headerheight - $logoHeight) / 2;
+  $buttonMargin: ($headerheight - $buttonHeight) / 2;
 
   /* Header container */
   .header {
     background-color: rgba(params.$color-background, 0.7);
     width: 100%;
-    height: $height;
+    height: $headerheight;
     position: sticky;
     top: 0px;
   }
@@ -41,7 +45,7 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
   /* Center logo */
   .logo {
     width: 180px;
-    height: $height;
+    height: $headerheight;
     margin: 0 auto;
     text-align: center;
     font-size: 0px;
@@ -103,6 +107,22 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
         right: calc(((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2));
       }
     }
+  }
+
+  /* Footer container */
+  .footer {
+    background-color: params.$color-background;
+    width: 100%;
+    height: $footerheight;
+    margin-top: -$footerheight;
+  }
+  .footerSpacer {
+    width: 100%;
+    height: $footerheight + $footerSpacer;
+  }
+  .nonFooterSectionContainer {
+    width: 100%;
+    min-height: 100svh;
   }
 }
 @media (max-width: params.$size-small) {

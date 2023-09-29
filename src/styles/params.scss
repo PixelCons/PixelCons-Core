@@ -9,11 +9,25 @@ $size-medium: 1200px;
 $size-large: 1920px;
 $margin-ratio: 0.5;
 
+/* Layout */
+$layout-header-large: 60px;
+$layout-header-small: 50px;
+$layout-footer-large: 50px;
+$layout-footer-small: 50px;
+$layout-footer-spacer: 10px;
+$layout-content-large: calc(
+  100svh - ($layout-header-large + $layout-footer-large + $layout-footer-spacer)
+);
+$layout-content-small: calc(
+  100svh - ($layout-header-small + $layout-footer-small + $layout-footer-spacer)
+);
+
 /* Colors */
 $color-background: #000;
 $color-modal: #333;
 $color-warn: rgba(#f90, $alpha-bright);
 $color-error: rgba(#f30, $alpha-bright);
+$color-confirm: rgba(#0f8, $alpha-bright);
 $color-bright: rgba(#fff, $alpha-bright);
 $color-dim: rgba(#fff, $alpha-dim);
 $color-disabled: rgba(#fff, $alpha-disabled);

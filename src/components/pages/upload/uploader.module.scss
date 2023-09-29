@@ -1,0 +1,75 @@
+@use "src/styles/params" as params;
+@use "src/components/pages/create/shared" as shared;
+
+/* General items */
+$topMargin: shared.$top-margin;
+$sideMargin: shared.$side-margin;
+$linksHeight: shared.$links-height;
+@include shared.containerStyles;
+.prompt {
+  display: inline-block;
+  text-align: left;
+  width: calc(100% - ($sideMargin * 2));
+  margin: $topMargin $sideMargin 0px $sideMargin;
+  font-size: params.$text-size-large;
+  color: params.$color-dim;
+}
+.box {
+  border: 2px dashed params.$color-bright;
+  border-radius: 10px;
+  padding: 20px;
+  margin: $topMargin $sideMargin 0px $sideMargin;
+}
+.linksContainer {
+  height: $linksHeight * 3;
+  margin: ($linksHeight * -3) $sideMargin 0px $sideMargin;
+  text-align: left;
+  width: calc(100% - ($sideMargin * 2));
+  & div {
+    line-height: $linksHeight;
+  }
+  & div:hover {
+    text-decoration: underline;
+  }
+}
+.linksSpacer {
+  height: $linksHeight * 4;
+  width: 100%;
+}
+
+/* Size dependent items with parametrized rendering */
+@mixin styling($sizeSmall, $sizeMedium) {
+  /* Parameters */
+  $pixelconSize: 40px;
+  $pixelconMargin: 10px;
+  @if $sizeSmall {
+    $pixelconSize: 32px;
+    $pixelconMargin: 4px;
+  } @else if $sizeMedium {
+    $pixelconSize: 40px;
+    $pixelconMargin: 10px;
+  }
+
+  /* Pixelcon container */
+  .pixelconContainer {
+    margin: $topMargin $sideMargin 0px $sideMargin;
+    width: calc(100% - ($sideMargin * 2));
+    min-height: ($pixelconSize + $pixelconMargin * 2) * 1.5;
+  }
+  .pixelcon {
+    display: inline-block;
+    width: $pixelconSize;
+    height: $pixelconSize;
+    margin: $pixelconMargin;
+    background-size: $pixelconSize;
+  }
+}
+@media (max-width: params.$size-small) {
+  @include styling($sizeSmall: true, $sizeMedium: true);
+}
+@media (max-width: params.$size-medium) and (min-width: params.$size-small) {
+  @include styling($sizeSmall: false, $sizeMedium: true);
+}
+@media (min-width: params.$size-medium) {
+  @include styling($sizeSmall: false, $sizeMedium: false);
+}

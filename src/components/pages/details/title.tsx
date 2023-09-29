@@ -52,9 +52,6 @@ export default function Title({
               prefetch={false}
             ></Link>
           </div>
-
-          {/*
-           */}
         </div>
       )}
     </div>

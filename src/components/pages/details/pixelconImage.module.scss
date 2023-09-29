@@ -31,7 +31,7 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
 
   /* Export editor */
   .exportContainer {
-    height: $pixelconSize;
+    height: 0px;
   }
 }
 @media (max-width: params.$size-small) {

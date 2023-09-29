@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import {Pixelcon} from '../../../lib/pixelcons';
 import {generateIcon} from '../../../lib/imagedata';
-import styles from './pixelcon.module.scss';
+import styles from './pixelconImage.module.scss';
 import utilStyles from '../../../styles/utils.module.scss';
 import textStyles from '../../../styles/text.module.scss';
 

@@ -34,6 +34,15 @@ export type Pixelcon = {
   collection: number;
 };
 
+//Lite pixelcon object type
+export type PixelconLite = {
+  id: string;
+  index: number;
+  name: string;
+  owner: string;
+  collection: number;
+};
+
 //Collection object type
 export type Collection = {
   index: number;
@@ -171,6 +180,20 @@ export async function getOwnerPixelcons(address: string): Promise<number[]> {
   }
 }
 
+//Get lite details for the given pixelcon indexes
+export async function getLitePixelcons(indexes: number[]): Promise<PixelconLite[]> {
+  if (indexes === null) return null;
+  if (indexes === undefined) return undefined;
+  if (indexes.length == 0) return [];
+  const contract = await getPixelconContract();
+
+  try {
+    return await fetchLitePixelconsInParallel(contract, indexes);
+  } catch (e) {
+    return undefined;
+  }
+}
+
 //Get full details for all pixelcons in existence
 //note: should really only be used by the archiver since this is very expensive to run
 export async function getAllPixelcons(startIndex?: number, endIndex?: number): Promise<Pixelcon[]> {
@@ -180,18 +203,9 @@ export async function getAllPixelcons(startIndex?: number, endIndex?: number): P
     if (endIndex === null || endIndex === undefined) endIndex = parseInt(await contract.totalSupply());
     if (startIndex >= endIndex) return [];
 
-    const allPixelcons: Pixelcon[] = [];
-    for (let i = startIndex; i < endIndex; i += maxParallelQuery) {
-      const indexes: number[] = [];
-      for (let j = 0; j < maxParallelQuery; j++) {
-        if (i + j < endIndex) indexes.push(i + j);
-        else break;
-      }
-
-      const pixelcons: Pixelcon[] = await fetchPixelconsInParallel(contract, indexes);
-      allPixelcons.push(...pixelcons);
-    }
-    return allPixelcons;
+    const indexes: number[] = [];
+    for (let i = startIndex; i < endIndex; i++) indexes.push(i);
+    return await fetchPixelconsInParallel(contract, indexes);
   } catch (e) {
     return undefined;
   }
@@ -236,20 +250,10 @@ export async function getAllPixelconIds(startIndex?: number, endIndex?: number):
 
     //query for anything left
     if (startIndex < endIndex) {
-      const indexRanges: number[][] = [];
-      for (let i = startIndex; i < endIndex; i += maxPixelconIdFetch) {
-        indexRanges.push([i, Math.min(endIndex, i + maxPixelconIdFetch)]);
-      }
-      for (let i = 0; i < indexRanges.length; i += maxParallelQuery) {
-        const ranges: number[][] = [];
-        for (let j = 0; j < maxParallelQuery; j++) {
-          if (i + j < indexRanges.length) ranges.push(indexRanges[i + j]);
-          else break;
-        }
-
-        const pixelconIds: string[] = await getPixelconIdsInParallel(contract, ranges);
-        allPixelconIds.push(...pixelconIds);
-      }
+      const indexes: number[] = [];
+      for (let i = startIndex; i < endIndex; i++) indexes.push(i);
+      const pixelconIds: string[] = await fetchPixelconIdsInParallel(contract, indexes);
+      allPixelconIds.push(...pixelconIds);
     }
     return allPixelconIds;
   } catch (e) {
@@ -434,6 +438,62 @@ export function useOwnerPixelcons(address: string) {
   };
 }
 
+//Hook for getting pixelcon indexes owned by an owner
+export function useGroupablePixelcons(address: string) {
+  const {data, error, isLoading} = useSWR<PixelconLite[]>(
+    `groupablePixelcons/${address}`,
+    async () => {
+      try {
+        console.log('address: ' + address);
+        if (address === null) return null;
+        if (address === undefined) return undefined;
+
+        //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
+        //throw new Error("wtf");//TODO/////////////////////////////
+        const creatorPixelconsQuery = getCreatorPixelcons(address);
+        const ownerPixelconsQuery = getOwnerPixelcons(address);
+        const creatorPixelcons = await creatorPixelconsQuery;
+        if (creatorPixelcons === undefined && address !== undefined) {
+          throw new Error('Something went wrong during getCreatorPixelcons query');
+        }
+        const ownerPixelcons = await ownerPixelconsQuery;
+        if (ownerPixelcons === undefined && address !== undefined) {
+          throw new Error('Something went wrong during getOwnerPixelcons query');
+        }
+
+        //get combined creator and owner indexes
+        const creatorOwnerIndexes: number[] = [];
+        for (const creatorPixelcon of creatorPixelcons) {
+          if (ownerPixelcons.includes(creatorPixelcon)) {
+            creatorOwnerIndexes.push(creatorPixelcon);
+          }
+        }
+        const litePixelcons = await getLitePixelcons(creatorOwnerIndexes);
+        if (litePixelcons === undefined && address !== undefined) {
+          throw new Error('Something went wrong during getLitePixelcons query');
+        }
+
+        //only return pixelcons not already in a group
+        const filteredLitePixelcons: PixelconLite[] = [];
+        for (const litePixelcon of litePixelcons) {
+          if (litePixelcon.collection === null) filteredLitePixelcons.push(litePixelcon);
+        }
+        return filteredLitePixelcons;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
+    },
+    swrDataConfig,
+  );
+
+  return {
+    groupablePixelcons: data,
+    groupableLoading: isLoading || (data === undefined && address !== undefined && !error),
+    groupableError: error,
+  };
+}
+
 /////////////////////////////
 // Internal Util Functions //
 /////////////////////////////
@@ -548,42 +608,149 @@ async function fetchPixelconIds(contract: Contract, indexes: number[]): Promise<
   return pixelconIds;
 }
 
-//Helper function to fetch multiple pixelcons in parallel
-async function fetchPixelconsInParallel(contract: Contract, indexes: number[]): Promise<Pixelcon[]> {
-  await getProvider();
-  //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const queries: Promise<any>[] = [];
-  for (let i = 0; i < indexes.length; i++) {
-    queries.push(contract.getTokenDataByIndex(indexes[i]));
-  }
-
-  const pixelcons: Pixelcon[] = [];
-  for (let i = 0; i < indexes.length; i++) {
-    pixelcons[i] = decodeAsPixelcon(await queries[i]);
+//Helper function to get the pixelcon lite objects of the corresponding pixelcon indexes
+async function fetchLitePixelcons(contract: Contract, indexes: number[]): Promise<PixelconLite[]> {
+  const pixelcons: PixelconLite[] = [];
+  if (indexes.length > 0) {
+    pixelcons.length = indexes.length;
+    const pixelconsRaw = await contract.getBasicData(indexes);
+    for (let i = 0; i < indexes.length; i++) {
+      pixelcons[i] = {
+        id: to256Hex(pixelconsRaw[0][i]),
+        index: indexes[i],
+        name: toUtf8(pixelconsRaw[1][i]),
+        owner: toAddress(pixelconsRaw[2][i]),
+        collection: parseInt(pixelconsRaw[3][i].toString()) ? parseInt(pixelconsRaw[3][i].toString()) : null,
+      };
+    }
   }
   return pixelcons;
 }
 
-//Helper function to fetch multiple batches of pixelconIds in parallel
-async function getPixelconIdsInParallel(contract: Contract, indexRanges: number[][]): Promise<string[]> {
+//Helper function to fetch multiple pixelcons in parallel
+async function fetchPixelconsInParallel(contract: Contract, indexes: number[]): Promise<Pixelcon[]> {
   await getProvider();
-  const queries: Promise<string[]>[] = [];
-  for (let i = 0; i < indexRanges.length; i++) {
-    const indexes: number[] = [];
-    for (let j = indexRanges[i][0]; j < indexRanges[i][1]; j++) indexes.push(j);
-    queries.push(fetchPixelconIds(contract, indexes));
+  const fetchSegment = async (subIndexes: number[]) => {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const queries: Promise<any>[] = [];
+    for (let i = 0; i < subIndexes.length; i++) {
+      queries.push(contract.getTokenDataByIndex(subIndexes[i]));
+    }
+
+    const pixelcons: Pixelcon[] = [];
+    for (let i = 0; i < subIndexes.length; i++) {
+      pixelcons[i] = decodeAsPixelcon(await queries[i]);
+    }
+    return pixelcons;
+  };
+
+  //fetch in segments of at most 'maxParallelQuery' indexes
+  const allPixelcons: Pixelcon[] = [];
+  for (let i = 0; i < indexes.length; i += maxParallelQuery) {
+    const subIndexes: number[] = [];
+    for (let j = 0; j < maxParallelQuery; j++) {
+      if (i + j < indexes.length) subIndexes.push(indexes[i + j]);
+      else break;
+    }
+
+    const pixelcons: Pixelcon[] = await fetchSegment(subIndexes);
+    allPixelcons.push(...pixelcons);
+  }
+  return allPixelcons;
+}
+
+//Helper function to fetch multiple pixelconIds in parallel
+async function fetchPixelconIdsInParallel(contract: Contract, indexes: number[]): Promise<string[]> {
+  await getProvider();
+  const fetchSegment = async (subIndexBatches: number[][]) => {
+    const queries: Promise<string[]>[] = [];
+    for (let i = 0; i < subIndexBatches.length; i++) {
+      queries.push(fetchPixelconIds(contract, subIndexBatches[i]));
+    }
+
+    const combinedPixelconIds: string[] = [];
+    for (let i = 0; i < subIndexBatches.length; i++) {
+      try {
+        const pixelconIds: string[] = await queries[i];
+        combinedPixelconIds.push(...pixelconIds);
+      } catch (e) {
+        for (let j = 0; j < subIndexBatches[i].length; j++) combinedPixelconIds.push(undefined);
+      }
+    }
+    return combinedPixelconIds;
+  };
+
+  //break indexes into batches of at most 'maxPixelconIdFetch' ids
+  const indexBatches: number[][] = [];
+  for (let i = 0; i < indexes.length; i += maxPixelconIdFetch) {
+    const indexBatch: number[] = [];
+    for (let j = 0; j < maxPixelconIdFetch; j++) {
+      if (i + j < indexes.length) indexBatch.push(indexes[i + j]);
+      else break;
+    }
+    indexBatches.push(indexBatch);
   }
 
-  const pixelconIds: string[] = [];
-  for (let i = 0; i < indexRanges.length; i++) {
-    try {
-      const ids: string[] = await queries[i];
-      pixelconIds.push(...ids);
-    } catch (e) {
-      for (let j = indexRanges[i][0]; j < indexRanges[i][1]; j++) pixelconIds.push(undefined);
+  //fetch in segments of at most 'maxParallelQuery' indexBatches
+  const allPixelconIds: string[] = [];
+  for (let i = 0; i < indexBatches.length; i += maxParallelQuery) {
+    const subIndexBatches: number[][] = [];
+    for (let j = 0; j < maxParallelQuery; j++) {
+      if (i + j < indexBatches.length) subIndexBatches.push(indexBatches[i + j]);
+      else break;
     }
+
+    const pixelconIds: string[] = await fetchSegment(subIndexBatches);
+    allPixelconIds.push(...pixelconIds);
   }
-  return pixelconIds;
+  return allPixelconIds;
+}
+
+//Helper function to fetch multiple lite pixelcons in parallel
+async function fetchLitePixelconsInParallel(contract: Contract, indexes: number[]): Promise<PixelconLite[]> {
+  await getProvider();
+  const fetchSegment = async (subIndexBatches: number[][]) => {
+    const queries: Promise<PixelconLite[]>[] = [];
+    for (let i = 0; i < subIndexBatches.length; i++) {
+      queries.push(fetchLitePixelcons(contract, subIndexBatches[i]));
+    }
+
+    const combinedLitePixelcons: PixelconLite[] = [];
+    for (let i = 0; i < subIndexBatches.length; i++) {
+      try {
+        const litePixelcons: PixelconLite[] = await queries[i];
+        combinedLitePixelcons.push(...litePixelcons);
+      } catch (e) {
+        for (let j = 0; j < subIndexBatches[i].length; j++) combinedLitePixelcons.push(undefined);
+      }
+    }
+    return combinedLitePixelcons;
+  };
+
+  //break indexes into batches of at most 'maxPixelconIdFetch' ids
+  const indexBatches: number[][] = [];
+  for (let i = 0; i < indexes.length; i += maxPixelconIdFetch) {
+    const indexBatch: number[] = [];
+    for (let j = 0; j < maxPixelconIdFetch; j++) {
+      if (i + j < indexes.length) indexBatch.push(indexes[i + j]);
+      else break;
+    }
+    indexBatches.push(indexBatch);
+  }
+
+  //fetch in segments of at most 'maxParallelQuery' indexBatches
+  const allLitePixelcons: PixelconLite[] = [];
+  for (let i = 0; i < indexBatches.length; i += maxParallelQuery) {
+    const subIndexBatches: number[][] = [];
+    for (let j = 0; j < maxParallelQuery; j++) {
+      if (i + j < indexBatches.length) subIndexBatches.push(indexBatches[i + j]);
+      else break;
+    }
+
+    const litePixelcons: PixelconLite[] = await fetchSegment(subIndexBatches);
+    allLitePixelcons.push(...litePixelcons);
+  }
+  return allLitePixelcons;
 }
 
 //Helper function to convert raw contract return data into a pixelcon
@@ -602,5 +769,5 @@ function decodeAsPixelcon(pixelconRaw: any): Pixelcon {
   } catch (e) {
     //do nothing
   }
-  return null;
+  return undefined;
 }

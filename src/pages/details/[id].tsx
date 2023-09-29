@@ -5,14 +5,15 @@ import Head from 'next/head';
 import Layout from '../../components/layout';
 import Title from '../../components/pages/details/title';
 import Description from '../../components/pages/details/description';
-import PixelconImage from '../../components/pages/details/pixelcon';
+import PixelconImage from '../../components/pages/details/pixelconImage';
 import {ArchiveData, Pixelcon, usePixelcon, getAllPixelconIds, getPixelcon, getCollection} from '../../lib/pixelcons';
 import {getHTMLHeaderData} from '../../lib/metadata';
 import {sanitizePixelconIdParam} from '../../lib/utils';
-import {searchPossibleDerivative, isDerivative} from '../../lib/similarities';
+import {searchPossibleDerivative, isDerivativePixelcon} from '../../lib/similarities';
 import buildConfig from '../../build.config';
 import {promises as fs} from 'fs';
 import path from 'path';
+import utilStyles from '../../styles/utils.module.scss';
 
 //Data constants
 const archiveDirectory = path.join(process.cwd(), 'archive');
@@ -101,11 +102,11 @@ export const getStaticProps: GetStaticProps = async ({params}) => {
   //fetch the remaining data
   const collection = await getCollection(pixelcon.collection);
   const allPixelconIds = await getAllPixelconIds(0, pixelcon.index + 1);
-  const index = searchPossibleDerivative(pixelcon.id, allPixelconIds);
+  const similarPixelconId = searchPossibleDerivative(pixelcon.id, allPixelconIds);
   let derivativeOf: Pixelcon = null;
-  if (index > -1) {
-    const originalPixelcon: Pixelcon = await getPixelcon(allPixelconIds[index]);
-    if (isDerivative(originalPixelcon, pixelcon)) derivativeOf = originalPixelcon;
+  if (similarPixelconId) {
+    const originalPixelcon: Pixelcon = await getPixelcon(similarPixelconId);
+    if (isDerivativePixelcon(originalPixelcon, pixelcon)) derivativeOf = originalPixelcon;
   }
   return {
     props: {
@@ -155,8 +156,11 @@ export default function Details({pixelconId, archiveData}: {pixelconId: string; 
           <meta property="og:image" content={`${webDomain}${headerData.imageUrl}`} />
         </Head>
       )}
-      <Title pixelconId={renderPixelconId} pixelcon={renderPixelcon} archiveData={archiveData}></Title>
-      <PixelconImage pixelconId={renderPixelconId} pixelcon={renderPixelcon}></PixelconImage>
+      <div className={utilStyles.contentFooterContainer}>
+        <Title pixelconId={renderPixelconId} pixelcon={renderPixelcon} archiveData={archiveData}></Title>
+        <PixelconImage pixelconId={renderPixelconId} pixelcon={renderPixelcon}></PixelconImage>
+        <Description isSpacer={true} pixelcon={null} archiveData={null}></Description>
+      </div>
       <Description pixelcon={renderPixelcon} archiveData={archiveData}></Description>
     </Layout>
   );

@@ -10,7 +10,16 @@ import textStyles from '../../../styles/text.module.scss';
 import utilStyles from '../../../styles/utils.module.scss';
 
 //Pixelcon description component to display additional details
-export default function Description({pixelcon, archiveData}: {pixelcon: Pixelcon; archiveData: ArchiveData}) {
+export default function Description({
+  pixelcon,
+  archiveData,
+  isSpacer = false,
+}: {
+  pixelcon: Pixelcon;
+  archiveData: ArchiveData;
+  isSpacer?: boolean;
+}) {
+  if (isSpacer) return <div className={styles.blankSpacer}></div>;
   const collectionIndex = pixelcon ? pixelcon.collection : undefined;
 
   //load up to date collection data or flag data as archived while fetching

@@ -1,0 +1,49 @@
+@use "src/styles/params" as params;
+@use "src/components/pages/create/shared" as shared;
+
+/* General items */
+$topMargin: shared.$top-margin;
+$sideMargin: shared.$side-margin;
+$headerHeight: 30px;
+$contentSpacer: 10px;
+.container {
+  text-align: center;
+  width: 100%;
+}
+
+/* note: no size dependent items with parametrized rendering */
+
+/* Header items */
+.header {
+  display: inline-block;
+  text-align: left;
+  width: calc(100% - ($sideMargin * 2));
+  height: $headerHeight;
+  margin: $topMargin $sideMargin $contentSpacer $sideMargin;
+}
+.connect {
+  float: right;
+  border: 1px solid params.$color-bright;
+  height: $headerHeight;
+  line-height: $headerHeight;
+  border-radius: $headerHeight / 4;
+  padding: 0px 1em;
+  &:hover {
+    background-color: params.$color-disabled;
+  }
+  div {
+    display: inline-block;
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+    border-radius: 1em;
+    margin-right: 0.5em;
+    background-color: params.$color-error;
+  }
+}
+.close {
+  background-image: url(/icons/close.svg);
+  background-size: $headerHeight;
+  width: $headerHeight;
+  height: $headerHeight;
+}

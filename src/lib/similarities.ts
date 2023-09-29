@@ -16,6 +16,16 @@ export type SearchResults = {
   compareResults: CompareResult[];
 };
 
+//Searches for exactly the given pixelcon
+export function searchExact(pixelconId: string, allPixelconIds: string[]): number {
+  if (!pixelconId || !allPixelconIds) return undefined;
+  for (let i = 0; i < allPixelconIds.length; i++) {
+    const otherPixelconId = allPixelconIds[i];
+    if (otherPixelconId == pixelconId) return i;
+  }
+  return -1;
+}
+
 //Searches for all pixelcons similar to the given pixelcon
 export function searchSimilar(pixelconId: string, allPixelconIds: string[]): SearchResults {
   const results: SearchResults = {
@@ -35,7 +45,15 @@ export function searchSimilar(pixelconId: string, allPixelconIds: string[]): Sea
 }
 
 //Searches for a single pixelcon that came before the given pixelconId and is very similar (possible derivation)
-export function searchPossibleDerivative(pixelconId: string, allPixelconIds: string[]): number {
+export function searchPossibleDerivative(pixelconId: string, allPixelconIds: string[]): string {
+  if (!pixelconId || !allPixelconIds) return undefined;
+  const index = searchPossibleDerivativeIndex(pixelconId, allPixelconIds);
+  if (index > -1) return allPixelconIds[index];
+  return null;
+}
+export function searchPossibleDerivativeIndex(pixelconId: string, allPixelconIds: string[]): number {
+  if (!pixelconId || !allPixelconIds) return undefined;
+
   for (let i = 0; i < allPixelconIds.length; i++) {
     const otherPixelconId = allPixelconIds[i];
     if (otherPixelconId == pixelconId) break;
@@ -48,11 +66,19 @@ export function searchPossibleDerivative(pixelconId: string, allPixelconIds: str
 }
 
 //Returns true if the given pixelcon is a derivative of another
-export function isDerivative(originalPixelcon: Pixelcon, derivativePixelcon: Pixelcon): boolean {
-  const compareResult = compare(derivativePixelcon.id, originalPixelcon.id);
+export function isDerivative(
+  originalPixelconId: string,
+  originalPixelconCreator: string,
+  derivativePixelconId: string,
+  derivativePixelconCreator: string,
+): boolean {
+  if (!originalPixelconId || !originalPixelconCreator || !derivativePixelconId || !derivativePixelconCreator) {
+    return undefined;
+  }
+  const compareResult = compare(derivativePixelconId, originalPixelconId);
 
   //set a harsher standard if the creator matches
-  if (originalPixelcon.creator == derivativePixelcon.creator) {
+  if (originalPixelconCreator == derivativePixelconCreator) {
     if (compareResult.rotationTranslationMirror) {
       return compareResult.numPixelsDifferent == 0;
     } else {
@@ -61,6 +87,10 @@ export function isDerivative(originalPixelcon: Pixelcon, derivativePixelcon: Pix
   }
 
   return compareResult.verySimilarMatch;
+}
+export function isDerivativePixelcon(originalPixelcon: Pixelcon, derivativePixelcon: Pixelcon): boolean {
+  if (!originalPixelcon || !derivativePixelcon) return undefined;
+  return isDerivative(originalPixelcon.id, originalPixelcon.creator, derivativePixelcon.id, derivativePixelcon.creator);
 }
 
 //Comparator function which returns match details
