@@ -4,43 +4,38 @@
 $marginRatio: params.$margin-ratio;
 $marginStart: params.$size-small;
 $marginPivot: $marginStart - ($marginRatio * $marginStart);
-.collectionContainer {
-  width: 100%;
-}
-.collectionName {
-  color: params.$color-dim;
-  font-size: params.$text-size-medium;
-  margin-left: 0.5em;
-  font-weight: 600;
-  vertical-align: middle;
-}
 
 /* Size dependent items with parametrized rendering */
 @mixin styling($sizeSmall, $sizeMedium) {
   /* Parameters */
-  $imageSize: 16px;
+  $lineHeight: 20px;
+  $imageSize: 24px;
   $imageMargin: 2px;
   $leftMargin: 20px;
+  $visiblePixelcons: 8;
+  $visiblePixelconsHover: 24;
   @if $sizeSmall {
-    $imageSize: 16px;
+    $lineHeight: 20px;
+    $imageSize: 24px;
     $imageMargin: 2px;
     $leftMargin: 10px;
-    $topSpacer: 20px;
+    $visiblePixelcons: 4;
+    $visiblePixelconsHover: ($visiblePixelcons - 1);
   } @else if $sizeMedium {
-    $imageSize: 16px;
+    $lineHeight: 20px;
+    $imageSize: 24px;
     $imageMargin: 2px;
     $leftMargin: 15px;
-    $topSpacer: 20px;
+    $visiblePixelcons: 8;
+    $visiblePixelconsHover: 14;
   }
-  $lineHeight: $imageSize + ($imageMargin * 2);
-  $visiblePixelcons: 6;
-  $visiblePixelconsHover: 20;
+  $imageHeight: $imageSize + ($imageMargin * 2);
 
   /* General container */
   .container {
     width: 100%;
-    height: $lineHeight * 4;
-    margin-top: $lineHeight * -4;
+    height: ($lineHeight * 2) + $imageHeight;
+    margin-top: ($lineHeight * -2) - $imageHeight;
     @media (min-width: $marginStart) {
       max-width: calc($marginPivot + (100% * $marginRatio));
       margin-left: calc(
@@ -50,7 +45,7 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
   }
   .blankSpacer {
     width: 100%;
-    height: $lineHeight * 5;
+    height: ($lineHeight * 3) + $imageHeight;
   }
 
   /* General text */
@@ -63,10 +58,13 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
     margin: 0em 0.3em 0em $leftMargin;
     vertical-align: middle;
     width: 3.6em;
+    &.collectionLabel {
+      margin-top: $imageHeight - $lineHeight;
+    }
   }
   .spacer {
     margin-left: $leftMargin;
-    height: $lineHeight;
+    height: $imageHeight;
   }
   .address {
     color: params.$color-dim;
@@ -74,17 +72,20 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
   }
 
   /* Collection display */
+  .collectionContainer {
+    width: 100%;
+    height: $imageHeight;
+    overflow: hidden;
+  }
   .collectionPreview {
     display: inline-block;
     overflow: hidden;
     vertical-align: middle;
-    height: $lineHeight;
+    height: $imageHeight;
     max-width: ($imageSize + ($imageMargin * 2)) * $visiblePixelcons;
-    @if $sizeSmall == false {
-      &:hover {
-        max-width: ($imageSize + ($imageMargin * 2)) *
-          ($visiblePixelconsHover + 1);
-      }
+    &:hover {
+      max-width: ($imageSize + ($imageMargin * 2)) *
+        ($visiblePixelconsHover + 1);
     }
   }
   .collectionPixelcon {
@@ -101,10 +102,25 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
     height: $imageSize;
     margin: $imageMargin;
     display: inline-block;
-    font-size: 10px;
+    font-size: 12px;
+    font-weight: 600;
     line-height: $imageSize;
     vertical-align: middle;
     text-align: center;
+    &.midPlus {
+      @if $sizeMedium == false {
+        display: none;
+      }
+    }
+  }
+  .collectionName {
+    display: inline-block;
+    color: params.$color-dim;
+    font-size: params.$text-size-medium;
+    margin-left: 0.5em;
+    margin-top: $imageHeight - $lineHeight;
+    font-weight: 600;
+    vertical-align: middle;
   }
 }
 @media (max-width: params.$size-small) {

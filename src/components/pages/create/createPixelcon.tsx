@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
 import Dots from '../../dots';
@@ -13,6 +13,7 @@ import utilStyles from '../../../styles/utils.module.scss';
 //Create component for confirming the creation of a pixelcon
 export default function CreatePixelcon({pixelconId, connectedAccount}: {pixelconId: string; connectedAccount: string}) {
   const buttonClass = clsx(styles.button, utilStyles.textButton, textStyles.notSelectable);
+  const [pixelconName, setPixelconName] = useState('');
   const {allPixelconIds, allPixelconIdsLoading, allPixelconIdsError} = useAllPixelconIds();
   const exactIndex = searchExact(pixelconId, allPixelconIds) || -1;
   const possibleDerivativeIndex = searchPossibleDerivativeIndex(pixelconId, allPixelconIds) || -1;
@@ -29,6 +30,11 @@ export default function CreatePixelcon({pixelconId, connectedAccount}: {pixelcon
     !pleaseLogin && (allPixelconIdsLoading || allPixelconIdsError || pixelconLoading || pixelconError);
   const alreadyExists: boolean = !pleaseLogin && !isLoading && exactIndex > -1;
   const tooSimilar: boolean = !pleaseLogin && !isLoading && !alreadyExists && !!checkDerivative;
+
+  //create function
+  const create = () => {
+    console.log(`Create Collection [name:${pixelconName}, id:${pixelconId}]`);
+  };
 
   //render
   return (
@@ -83,11 +89,16 @@ export default function CreatePixelcon({pixelconId, connectedAccount}: {pixelcon
       )}
       {!pleaseLogin && !isLoading && !alreadyExists && !tooSimilar && (
         <>
-          <InputText label="(Optional Name)"></InputText>
+          <InputText label="(Optional Name)" byteLimit={8} onChange={setPixelconName}></InputText>
           <div className={clsx(styles.confirmText, textStyles.lowEmphasis)}>
-            By creating this PixelCon, you agree to the Terms of Use
+            By creating this PixelCon, you agree to the{' '}
+            <Link className={utilStyles.subtleLink} href="/terms">
+              Terms of Use
+            </Link>
           </div>
-          <div className={clsx(buttonClass)}>CONFRIM</div>
+          <div className={clsx(buttonClass)} onClick={create}>
+            CONFRIM
+          </div>
         </>
       )}
       <div className={styles.bottomSpacer}></div>

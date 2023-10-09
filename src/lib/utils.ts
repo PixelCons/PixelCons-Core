@@ -136,6 +136,20 @@ export function toAbbreviatedString(item: string, maxChars = 12, offsetStart = 2
   throw new Error(`Failed to convert ${item} to 160 bit abbreviated address hex`);
 }
 
+// Filters the given text down to the given byte size (utf8)
+export function filterTextToByteSize(text: string, byteSize: number): string {
+  for (let i = text.length; i >= 0; i--) {
+    try {
+      const sub = text.substring(0, i);
+      const bytes = ethers.toUtf8Bytes(sub);
+      if (bytes.length <= byteSize) return sub;
+    } catch (e) {
+      //do nothing
+    }
+  }
+  return '';
+}
+
 //Gets a random subset of items from the given list
 export function getRandomSubset(list: string[], count: number, seed = '0x5eed'): string[] {
   const from = list.map((s) => s);

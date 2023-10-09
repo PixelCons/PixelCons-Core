@@ -27,6 +27,7 @@ export default function Layout({children}: {children: React.ReactNode}) {
       <Head>
         <title>PixelCons</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
         <link rel="icon" href="/images/icon.png" />
 
         <meta name="twitter:card" content="summary_large_image" />

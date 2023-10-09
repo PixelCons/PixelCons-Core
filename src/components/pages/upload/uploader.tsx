@@ -7,6 +7,7 @@ import CreateCollection from '../create/createCollection';
 import clsx from 'clsx';
 import {firstURLParam} from '../../../lib/utils';
 import {generateIcon} from '../../../lib/imagedata';
+import {decodePNGFile} from '../../../lib/imagedecode';
 import styles from './uploader.module.scss';
 import textStyles from '../../../styles/text.module.scss';
 import utilStyles from '../../../styles/utils.module.scss';
@@ -20,6 +21,7 @@ export default function Upload() {
   const [pixelconIds, setPixelconIds] = useState(defaultIds);
   const [confirm, setConfirm] = useState(false);
   const [confirmCollection, setConfirmCollection] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const confirmAny = confirm || confirmCollection;
   const mainSplitClass = clsx(styles.split, confirmAny && styles.splitMaxHeight);
   const overlaySplitClass = clsx(styles.split, !confirmAny && styles.splitMaxHeight, confirmAny && styles.splitOverlay);
@@ -47,18 +49,23 @@ export default function Upload() {
   };
 
   //upload function
-  const onUpload = () => {
-    setPixelconIds([
-      '0x00000000000000000000033000b3b3330bdbb33300b0bb3b0bbbdbbd0030b30b',
-      '0x0000000000000800000388200b3b3223bdbb33300b0bb3b0bbbdbbd0030b30b0',
-      '0x000088000082a92800388280b355b443bbbbb53b0bb0bb53bddbbbbb0300b30b',
-      '0x00000000000000000999900000909000099990a00044908000aa940009a94000',
-      '0x0000000000888800080808000888880a00022809008aa808000aa28000080800',
-      '0x009990909990949099999dd900449dd909aa49d809aa498a049a949879407900',
-      '0x000000000000000000cccc00000c0c0000cccc40000a9c2c0009a1c100010c00',
-      '0x0060007000ccc7600c0c06000ccccc4000111c2700ca9c2600c9a16000100c00',
-      '0x6ccc1007ccc0c476ccccc4604aaadc402c999c202ca9a121019a9c1071000700',
-    ]);
+  const onUpload = async (ev: React.ChangeEvent<HTMLInputElement>) => {
+    if (ev && ev.target && ev.target.files && ev.target.files.length) {
+      try {
+        const file = ev.target.files[0];
+        const pixelconIds = await decodePNGFile(file);
+        setPixelconIds(pixelconIds);
+        setUploadError('');
+      } catch (e) {
+        console.error(e);
+        setPixelconIds([]);
+        setUploadError(e.text || e);
+      }
+    } else {
+      //no file
+      setPixelconIds([]);
+      setUploadError('');
+    }
   };
 
   //pixelcons
@@ -81,13 +88,18 @@ export default function Upload() {
     <div className={styles.container}>
       <div className={styles.splitContainer}>
         <div className={mainSplitClass}>
-          <span className={styles.prompt}>Create multiple PixelCons by uploading a PNG file. See templates here</span>
-          <div className={clsx(styles.box, textStyles.notSelectable, utilStyles.clickable)} onClick={onUpload}>
+          <span className={styles.prompt}>
+            Create multiple PixelCons by uploading a PNG file. See templates{' '}
+            <a href="/data/PixelCons_AdvancedCreatorTemplates.zip">here</a>
+          </span>
+          <div className={clsx(styles.box, textStyles.notSelectable, utilStyles.clickable)}>
             <span>Click Here to Upload File</span>
             <br />
             <span>(Or Drag and Drop)</span>
+            <input type="file" accept="image/png" onChange={onUpload}></input>
           </div>
           <div className={styles.pixelconContainer}>{pixelcons}</div>
+          {uploadError && <div className={textStyles.error}>{uploadError}</div>}
           <div className={styles.linksSpacer}></div>
         </div>
 

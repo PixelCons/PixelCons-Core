@@ -13,12 +13,33 @@ $linksHeight: shared.$links-height;
   margin: $topMargin $sideMargin 0px $sideMargin;
   font-size: params.$text-size-large;
   color: params.$color-dim;
+  a {
+    text-decoration: underline;
+  }
 }
 .box {
   border: 2px dashed params.$color-bright;
   border-radius: 10px;
   padding: 20px;
   margin: $topMargin $sideMargin 0px $sideMargin;
+  height: 80px;
+  line-height: 20px;
+  input {
+    font-size: 0px;
+    display: block;
+    margin-top: -60px;
+    margin-left: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+  }
+  input::file-selector-button {
+    padding: 0px;
+    border-style: none;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
+    cursor: pointer;
+    background-color: #00000000;
+  }
 }
 .linksContainer {
   height: $linksHeight * 3;

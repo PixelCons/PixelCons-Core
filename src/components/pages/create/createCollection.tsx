@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import Link from 'next/link';
 import clsx from 'clsx';
 import Dots from '../../dots';
 import InputText from '../../inputText';
@@ -12,11 +13,29 @@ import utilStyles from '../../../styles/utils.module.scss';
 export default function CreateCollection({connectedAccount}: {connectedAccount: string}) {
   const buttonClass = clsx(styles.button, utilStyles.textButton, textStyles.notSelectable);
   const defaultSelected: string[] = [];
+  const [collectionName, setCollectionName] = useState('');
   const [selectedPixelconIds, setSelectedPixelconIds] = useState(defaultSelected);
   const {groupablePixelcons, groupableLoading, groupableError} = useGroupablePixelcons(connectedAccount);
   const pleaseLogin: boolean = !connectedAccount;
   const isLoading: boolean = !pleaseLogin && (groupableLoading || groupableError);
   const canCreate: boolean = selectedPixelconIds.length > 1;
+
+  //create function
+  const create = () => {
+    if (canCreate) {
+      const pixelconIndexes: number[] = [];
+      for (const pixelconId of selectedPixelconIds) {
+        for (const pixelcon of groupablePixelcons) {
+          if (pixelconId == pixelcon.id) {
+            pixelconIndexes.push(pixelcon.index);
+            break;
+          }
+        }
+      }
+
+      console.log(`Create Collection [name:${collectionName}, indexes:${pixelconIndexes}]`);
+    }
+  };
 
   //select functions
   const onSelect = (pixelconId: string) => {
@@ -98,11 +117,21 @@ export default function CreateCollection({connectedAccount}: {connectedAccount: 
                 {selectedPixelconIds.length == 0 && <div className={styles.previewText}>Nothing Selected</div>}
               </div>
 
-              <InputText label="(Optional Name)" disabled={selectedPixelconIds.length == 0}></InputText>
+              <InputText
+                label="(Optional Name)"
+                byteLimit={8}
+                disabled={selectedPixelconIds.length == 0}
+                onChange={setCollectionName}
+              ></InputText>
               <div className={clsx(styles.confirmText, textStyles.lowEmphasis)}>
-                By creating this Collection, you agree to the Terms of Use
+                By creating this Collection, you agree to the{' '}
+                <Link className={utilStyles.subtleLink} href="/terms">
+                  Terms of Use
+                </Link>
               </div>
-              <div className={clsx(buttonClass, !canCreate && utilStyles.disabled)}>CONFRIM</div>
+              <div className={clsx(buttonClass, !canCreate && utilStyles.disabled)} onClick={create}>
+                CONFRIM
+              </div>
             </>
           )}
         </>

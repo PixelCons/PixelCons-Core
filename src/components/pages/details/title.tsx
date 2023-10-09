@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Dots from '../../dots';
 import clsx from 'clsx';
 import {Pixelcon, ArchiveData} from '../../../lib/pixelcons';
-import {toMonthYear} from '../../../lib/utils';
+import {toDate} from '../../../lib/utils';
 import {generateIcon} from '../../../lib/imagedata';
 import styles from './title.module.scss';
 import utilStyles from '../../../styles/utils.module.scss';
@@ -37,7 +37,7 @@ export default function Title({
       {isFetchingNew && <Dots></Dots>}
       {hasName && <span className={clsx(styles.name, styles.topFont)}>{pixelcon.name}</span>}
       {pixelconId && <span className={clsx(styles.text, styles.id)}>{pixelconId}</span>}
-      {pixelcon && <span className={clsx(styles.text, styles.date)}>{toMonthYear(pixelcon.date)}</span>}
+      {pixelcon && <span className={clsx(styles.text, styles.date)}>{toDate(pixelcon.date)}</span>}
 
       {hasDerivative && (
         <div className={styles.derivativeContainer}>

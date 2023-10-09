@@ -54,6 +54,31 @@
   }
 }
 
+/* Simple Page Formatting */
+$marginRatio: params.$margin-ratio;
+$marginStart: params.$size-small;
+$marginPivot: $marginStart - ($marginRatio * $marginStart);
+.basicContainer {
+  overflow: hidden;
+  width: 100%;
+  @media (min-width: $marginStart) {
+    max-width: calc($marginPivot + (100% * $marginRatio));
+    margin: 0px auto 0px auto;
+  }
+}
+.basicSection {
+  margin: 20px 10px;
+}
+.subtleLink {
+  font-weight: 600;
+  text-decoration: underline;
+  color: params.$color-dim;
+  &:hover {
+    text-decoration: underline;
+    color: params.$color-bright;
+  }
+}
+
 /* Size dependent items with parametrized rendering */
 @mixin styling($sizeSmall, $sizeMedium) {
   /* Buttons */

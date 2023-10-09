@@ -28,11 +28,21 @@ export default function Description({
   const renderCollection = collection !== undefined ? collection : archiveData ? archiveData.collection : undefined;
 
   //collection pixelcons
-  const maxPixelcons = 20;
+  const maxPixelcons = 24;
+  const midPixelcons = 14;
   const renderCollectionPixelcons = [];
   if (renderCollection) {
     const pixelconIds = renderCollection.pixelconIds.slice(0, maxPixelcons);
     for (let i = 0; i < pixelconIds.length; i++) {
+      if (i == midPixelcons) {
+        const remainder = renderCollection.pixelconIds.length - i;
+        renderCollectionPixelcons.push(
+          <div
+            key={'mid_remainder'}
+            className={clsx(styles.collectionPlus, styles.midPlus, textStyles.notSelectable)}
+          >{`+${remainder}`}</div>,
+        );
+      }
       const img = generateIcon(pixelconIds[i]);
       renderCollectionPixelcons.push(
         <Link
@@ -65,7 +75,9 @@ export default function Description({
           {renderCollection && (
             <div className={styles.collectionContainer}>
               <Link href={`/?collection=${renderCollection.index}`}>
-                <span className={styles.label}>{`1 of ${renderCollection.pixelconIds.length} `}</span>
+                <span
+                  className={clsx(styles.label, styles.collectionLabel)}
+                >{`1 of ${renderCollection.pixelconIds.length} `}</span>
               </Link>
               <div className={clsx(styles.collectionPreview, utilStyles.animated)}>{renderCollectionPixelcons}</div>
               {renderCollection.name && (
