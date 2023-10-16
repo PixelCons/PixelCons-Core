@@ -2,6 +2,7 @@
 
 html,
 body {
+  position: relative;
   background-color: params.$color-background;
   color: params.$color-bright;
   min-height: 100%;
@@ -13,6 +14,7 @@ body {
     Helvetica Neue,
     sans-serif;
   font-size: params.$text-size-default;
+  overflow-x: hidden;
 
   /* Scrollbar */
   scrollbar-color: params.$color-dim transparent;
@@ -62,4 +64,9 @@ a {
 
 a:hover {
   text-decoration: none;
+}
+
+/* integration fix */
+.walletconnect-qrcode__base {
+  color: #424952;
 }

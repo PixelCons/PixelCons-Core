@@ -1,39 +1,64 @@
 import React, {useState} from 'react';
+import {useWeb3React} from '@web3-react/core';
 import Link from 'next/link';
 import clsx from 'clsx';
 import Dots from '../../dots';
+import Modal from '../../modal';
 import InputText from '../../inputText';
-import {useGroupablePixelcons} from '../../../lib/pixelcons';
+import {checkNetwork, getSigner, checkPendingCreateCollection} from '../../../lib/web3';
+import {useGroupablePixelcons, createCollection} from '../../../lib/pixelcons';
 import {generateIcon} from '../../../lib/imagedata';
 import styles from './createCollection.module.scss';
 import textStyles from '../../../styles/text.module.scss';
 import utilStyles from '../../../styles/utils.module.scss';
 
 //Create component for confirming the creation of a collection
-export default function CreateCollection({connectedAccount}: {connectedAccount: string}) {
-  const buttonClass = clsx(styles.button, utilStyles.textButton, textStyles.notSelectable);
-  const defaultSelected: string[] = [];
+export default function CreateCollection({onCreate}: {onCreate?: () => void}) {
+  const {account, provider} = useWeb3React();
+  const accountAddress = account ? account.toLowerCase() : null;
+  const [showCreating, setShowCreating] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const [collectionName, setCollectionName] = useState('');
-  const [selectedPixelconIds, setSelectedPixelconIds] = useState(defaultSelected);
-  const {groupablePixelcons, groupableLoading, groupableError} = useGroupablePixelcons(connectedAccount);
-  const pleaseLogin: boolean = !connectedAccount;
+  const [selectedPixelconIds, setSelectedPixelconIds] = useState<string[]>([]);
+  const {groupablePixelcons, groupableLoading, groupableError} = useGroupablePixelcons(accountAddress);
+  const pleaseLogin: boolean = !accountAddress;
   const isLoading: boolean = !pleaseLogin && (groupableLoading || groupableError);
   const canCreate: boolean = selectedPixelconIds.length > 1;
-
-  //create function
-  const create = () => {
-    if (canCreate) {
-      const pixelconIndexes: number[] = [];
-      for (const pixelconId of selectedPixelconIds) {
-        for (const pixelcon of groupablePixelcons) {
-          if (pixelconId == pixelcon.id) {
-            pixelconIndexes.push(pixelcon.index);
-            break;
-          }
+  const buttonClass = clsx(styles.button, utilStyles.textButton, textStyles.notSelectable);
+  const getSelectedIndexes = () => {
+    const pixelconIndexes: number[] = [];
+    for (const pixelconId of selectedPixelconIds) {
+      for (const pixelcon of groupablePixelcons) {
+        if (pixelconId == pixelcon.id) {
+          pixelconIndexes.push(pixelcon.index);
+          break;
         }
       }
+    }
+    return pixelconIndexes;
+  };
 
-      console.log(`Create Collection [name:${collectionName}, indexes:${pixelconIndexes}]`);
+  //create function
+  const createClick = async () => {
+    const pixelconIndexes = getSelectedIndexes();
+    if (checkPendingCreateCollection(pixelconIndexes)) setShowWarning(true);
+    else await create(true);
+  };
+  const create = async (confirm?: boolean) => {
+    if (canCreate) {
+      setShowWarning(false);
+      if (confirm === true && (await checkNetwork())) {
+        setShowCreating(true);
+
+        const pixelconIndexes = getSelectedIndexes();
+        const signer = getSigner(provider);
+        await createCollection(signer, accountAddress, pixelconIndexes, collectionName);
+        checkPendingCreateCollection(pixelconIndexes, true);
+        setSelectedPixelconIds([]);
+        setCollectionName('');
+        setShowCreating(false);
+        if (onCreate) onCreate();
+      }
     }
   };
 
@@ -94,8 +119,8 @@ export default function CreateCollection({connectedAccount}: {connectedAccount: 
       {!pleaseLogin && (
         <>
           <div className={styles.instructions}>
-            Select the PixelCons you created and currently own, which are not already in a collection, that you want to
-            turn into a new collection
+            Select PixelCons to group into a collection (PixelCons you currently own, created and are not already in a
+            collection)
           </div>
           <div className={styles.selectBox}>
             {!isLoading && selectablePixelcons}
@@ -104,7 +129,7 @@ export default function CreateCollection({connectedAccount}: {connectedAccount: 
             )}
             {isLoading && (
               <div className={styles.boxText}>
-                <Dots></Dots>
+                <Dots />
               </div>
             )}
           </div>
@@ -129,7 +154,7 @@ export default function CreateCollection({connectedAccount}: {connectedAccount: 
                   Terms of Use
                 </Link>
               </div>
-              <div className={clsx(buttonClass, !canCreate && utilStyles.disabled)} onClick={create}>
+              <div className={clsx(buttonClass, !canCreate && utilStyles.disabled)} onClick={createClick}>
                 CONFRIM
               </div>
             </>
@@ -137,6 +162,15 @@ export default function CreateCollection({connectedAccount}: {connectedAccount: 
         </>
       )}
       <div className={styles.bottomSpacer}></div>
+      <Modal visible={showWarning} showOk={true} showCancel={true} onClose={create}>
+        {'It looks like you already made a transaction to create a similar collection. '}
+        {"Make sure any old transactions aren't still pending before trying to create again."}
+      </Modal>
+      <Modal visible={showCreating} closable={false}>
+        <div className={textStyles.lg}>Creating Collection</div>
+        <br />
+        <Dots />
+      </Modal>
     </>
   );
 }

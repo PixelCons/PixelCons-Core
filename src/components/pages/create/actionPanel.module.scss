@@ -25,11 +25,15 @@ $contentSpacer: 10px;
   float: right;
   border: 1px solid params.$color-bright;
   height: $headerHeight;
-  line-height: $headerHeight;
+  line-height: $headerHeight - 2px;
   border-radius: $headerHeight / 4;
   padding: 0px 1em;
   &:hover {
     background-color: params.$color-disabled;
+  }
+  span {
+    display: inline-block;
+    vertical-align: middle;
   }
   div {
     display: inline-block;
@@ -38,7 +42,21 @@ $contentSpacer: 10px;
     height: 1em;
     border-radius: 1em;
     margin-right: 0.5em;
-    background-color: params.$color-error;
+    &.red {
+      background-color: params.$color-error;
+    }
+    &.green {
+      background-color: params.$color-confirm;
+    }
+  }
+  & .hoverText {
+    display: none;
+  }
+  &:hover .hoverText {
+    display: unset;
+  }
+  &:hover .defaultText {
+    display: none;
   }
 }
 .close {

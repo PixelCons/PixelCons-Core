@@ -34,7 +34,7 @@ export default function Title({
   return (
     <div className={styles.container}>
       <span className={clsx(styles.text, styles.topFont, isBadId && textStyles.error)}>{titleText}</span>
-      {isFetchingNew && <Dots></Dots>}
+      {isFetchingNew && <Dots />}
       {hasName && <span className={clsx(styles.name, styles.topFont)}>{pixelcon.name}</span>}
       {pixelconId && <span className={clsx(styles.text, styles.id)}>{pixelconId}</span>}
       {pixelcon && <span className={clsx(styles.text, styles.date)}>{toDate(pixelcon.date)}</span>}

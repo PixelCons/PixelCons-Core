@@ -88,7 +88,7 @@ export default function Description({
             </div>
           )}
           {!renderCollection && (
-            <div className={styles.spacer}>{isCollectionFetching && <Dots size={5} delayed dim></Dots>}</div>
+            <div className={styles.spacer}>{isCollectionFetching && <Dots size={5} delayed dim />}</div>
           )}
           <div className={styles.address}>
             <Link className={styles.label} href={`/?owner=${pixelcon.owner}`}>

@@ -1,0 +1,101 @@
+@use "src/styles/params" as params;
+
+/* Parameters */
+$width: 250px;
+$padding: 20px;
+$buttonHeight: 36px;
+$buttonMargin: 5px;
+$closeOffset: 10px;
+$corners: 10px;
+
+/* General items */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(params.$color-background, 1 - params.$alpha-disabled);
+  -webkit-transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -moz-transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -ms-transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -o-transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  opacity: 0;
+  &.visible {
+    opacity: 1;
+  }
+}
+.modal {
+  padding: $padding;
+  border-radius: $corners;
+  width: $width;
+  background-color: params.$color-light;
+  color: rgba(params.$color-background, params.$alpha-bright);
+}
+.header {
+  font-weight: 600;
+  font-size: 1em * 1.2;
+  height: $buttonHeight;
+}
+.close {
+  background-image: url(/icons/close_dark.svg);
+  background-size: 1.5em;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: $corners / 2;
+  width: $buttonHeight;
+  height: $buttonHeight;
+  vertical-align: middle;
+  float: right;
+  margin-top: 0 - $closeOffset;
+  margin-right: 0 - $closeOffset;
+  &:hover {
+    background-color: mix(
+      params.$color-light,
+      params.$color-background,
+      100% * params.$alpha-bright
+    );
+  }
+}
+.option {
+  display: inline-block;
+  background-color: params.$color-light;
+  width: 100%;
+  height: $buttonHeight;
+  line-height: $buttonHeight;
+  border: solid 1px rgba(params.$color-background, 0.1);
+  border-radius: $corners / 2;
+  margin: $buttonMargin 0px;
+  text-align: center;
+  &:hover {
+    background-color: mix(
+      params.$color-light,
+      params.$color-background,
+      100% * params.$alpha-bright
+    );
+  }
+}
+.icon {
+  display: inline-block;
+  vertical-align: bottom;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: $buttonHeight;
+  height: $buttonHeight;
+  &.metamask {
+    background-image: url(/images/metamask.svg);
+    background-size: $buttonHeight * 0.8;
+  }
+  &.walletconnect {
+    background-image: url(/images/walletconnect.svg);
+    background-size: $buttonHeight * 0.8;
+  }
+  &.coinbasewallet {
+    background-image: url(/images/coinbasewallet.svg);
+    background-size: $buttonHeight * 0.7;
+  }
+}

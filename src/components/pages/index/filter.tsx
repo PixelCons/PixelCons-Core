@@ -73,7 +73,7 @@ export default function PixelconFilter({
         {filteringSpinner && (
           <>
             <span className={styles.filtering}>Filtering</span>
-            <Dots></Dots>
+            <Dots />
           </>
         )}
       </div>

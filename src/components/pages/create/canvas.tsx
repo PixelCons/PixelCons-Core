@@ -132,15 +132,8 @@ export default function Canvas() {
 
         <div className={overlaySplitClass}>
           <ActionPanel onClose={hideConfirm}>
-            {confirm && (
-              <CreatePixelcon
-                pixelconId={confirmPixelconId}
-                connectedAccount={'0x2c755a1231bcabb363598277c52be7865d365257'}
-              ></CreatePixelcon>
-            )}
-            {confirmCollection && (
-              <CreateCollection connectedAccount={'0xf88e77f202db096e75596b468eef7c16282156b1'}></CreateCollection>
-            )}
+            {confirm && <CreatePixelcon pixelconId={confirmPixelconId} onCreate={hideConfirm}></CreatePixelcon>}
+            {confirmCollection && <CreateCollection></CreateCollection>}
           </ActionPanel>
         </div>
       </div>

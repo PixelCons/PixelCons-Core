@@ -16,9 +16,8 @@ import utilStyles from '../../../styles/utils.module.scss';
 export default function Upload() {
   const router = useRouter();
   const defaultId = '0x0000000000000000000000000000000000000000000000000000000000000000';
-  const defaultIds: string[] = [];
   const [confirmPixelconId, setConfirmPixelconId] = useState(defaultId);
-  const [pixelconIds, setPixelconIds] = useState(defaultIds);
+  const [pixelconIds, setPixelconIds] = useState<string[]>([]);
   const [confirm, setConfirm] = useState(false);
   const [confirmCollection, setConfirmCollection] = useState(false);
   const [uploadError, setUploadError] = useState('');
@@ -105,15 +104,8 @@ export default function Upload() {
 
         <div className={overlaySplitClass}>
           <ActionPanel onClose={hideConfirm}>
-            {confirm && (
-              <CreatePixelcon
-                pixelconId={confirmPixelconId}
-                connectedAccount={'0x2c755a1231bcabb363598277c52be7865d365257'}
-              ></CreatePixelcon>
-            )}
-            {confirmCollection && (
-              <CreateCollection connectedAccount={'0x2c755a1231bcabb363598277c52be7865d365257'}></CreateCollection>
-            )}
+            {confirm && <CreatePixelcon pixelconId={confirmPixelconId} onCreate={hideConfirm}></CreatePixelcon>}
+            {confirmCollection && <CreateCollection></CreateCollection>}
           </ActionPanel>
         </div>
       </div>

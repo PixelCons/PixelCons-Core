@@ -24,13 +24,14 @@ $layout-content-small: calc(
 
 /* Colors */
 $color-background: #000;
+$color-light: #fff;
 $color-modal: #333;
 $color-warn: rgba(#f90, $alpha-bright);
 $color-error: rgba(#f30, $alpha-bright);
 $color-confirm: rgba(#0f8, $alpha-bright);
-$color-bright: rgba(#fff, $alpha-bright);
-$color-dim: rgba(#fff, $alpha-dim);
-$color-disabled: rgba(#fff, $alpha-disabled);
+$color-bright: rgba($color-light, $alpha-bright);
+$color-dim: rgba($color-light, $alpha-dim);
+$color-disabled: rgba($color-light, $alpha-disabled);
 
 /* Default Text */
 $text-size-default: 12px;

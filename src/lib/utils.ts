@@ -96,6 +96,23 @@ export function toUtf8(item: string | number | bigint): string {
   return '';
 }
 
+//Converts the given utf8 string to a bytes representation
+export function toBytes(item: string, fixedSize?: number): Uint8Array {
+  try {
+    if (fixedSize) {
+      item = filterTextToByteSize(item, fixedSize);
+      const padded = new Uint8Array(fixedSize);
+      const bytes = ethers.toUtf8Bytes(item);
+      for (let i = 0; i < bytes.length; i++) padded[i] = bytes[i];
+      return padded;
+    }
+    return ethers.toUtf8Bytes(item);
+  } catch (err) {
+    //do nothing
+  }
+  return new Uint8Array(0);
+}
+
 //Converts the given millis into a readable date string
 export function toDate(millis: string | number): string {
   if (millis) {
@@ -136,7 +153,13 @@ export function toAbbreviatedString(item: string, maxChars = 12, offsetStart = 2
   throw new Error(`Failed to convert ${item} to 160 bit abbreviated address hex`);
 }
 
-// Filters the given text down to the given byte size (utf8)
+//Returns the number or the fallback if null or undefined
+export function numOr(num: number, or: number): number {
+  if (num === null || num === undefined) return or;
+  return num;
+}
+
+//Filters the given text down to the given byte size (utf8)
 export function filterTextToByteSize(text: string, byteSize: number): string {
   for (let i = text.length; i >= 0; i--) {
     try {
