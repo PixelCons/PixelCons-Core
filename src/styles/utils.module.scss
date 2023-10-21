@@ -69,6 +69,34 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
 .basicSection {
   margin: 20px 10px;
 }
+.basicFeature {
+  display: inline-block;
+  vertical-align: middle;
+  width: 220px;
+  margin: 10px;
+}
+.basicDescription {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 500px;
+  margin: 10px;
+}
+.basicIcon {
+  display: inline-block;
+  vertical-align: bottom;
+  width: 1em;
+  height: 1em;
+  background-size: 0.8em;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0.1em;
+}
+.basicButton {
+  border-radius: 0.1em;
+  &:hover {
+    background-color: params.$color-disabled;
+  }
+}
 .subtleLink {
   font-weight: 600;
   text-decoration: underline;

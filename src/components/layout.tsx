@@ -53,10 +53,12 @@ export default function Layout({children}: {children: React.ReactNode}) {
               <div className={utilStyles.icon}></div>
               <span>OPENSEA</span>
             </div>
-            <div className={clsx(styles.logo, utilStyles.clickable)}>
-              <div className={utilStyles.crispImage} />
-              <span>PixelCons</span>
-            </div>
+            <Link href={'/about'} prefetch={false}>
+              <div className={clsx(styles.logo, utilStyles.clickable)}>
+                <div className={utilStyles.crispImage} />
+                <span>PixelCons</span>
+              </div>
+            </Link>
             {!isBrowsing && (
               <Link className={clsx(styles.button, utilStyles.button)} href={'/'} prefetch={false}>
                 <div className={utilStyles.icon} style={{backgroundImage: 'url(/icons/browse.svg)'}}></div>
@@ -73,7 +75,52 @@ export default function Layout({children}: {children: React.ReactNode}) {
           {children}
           <div className={styles.footerSpacer}></div>
         </div>
-        <div className={clsx(styles.footer, textStyles.notSelectable)}>footer</div>
+        <div className={clsx(styles.footer, textStyles.notSelectable)}>
+          <div className={styles.footerTop}>
+            <div className={styles.navigate}>
+              <Link href={'/'} prefetch={false}>
+                Browse
+              </Link>
+              <Link href={'/about'} prefetch={false}>
+                About
+              </Link>
+              <br />
+              <Link href={'/create'} prefetch={false}>
+                Create
+              </Link>
+              <Link href={'/terms'} prefetch={false}>
+                Terms
+              </Link>
+            </div>
+            <div className={styles.social}>
+              <Link href={'/'}>
+                <div
+                  className={clsx(utilStyles.basicButton, utilStyles.basicIcon)}
+                  style={{backgroundImage: 'url(/icons/github_dim.svg)'}}
+                ></div>
+              </Link>
+              <Link href={'/'}>
+                <div
+                  className={clsx(utilStyles.basicButton, utilStyles.basicIcon)}
+                  style={{backgroundImage: 'url(/icons/x_dim.svg)'}}
+                ></div>
+              </Link>
+              <Link href={'/'}>
+                <div
+                  className={clsx(utilStyles.basicButton, utilStyles.basicIcon)}
+                  style={{backgroundImage: 'url(/icons/opensea_dim.svg)'}}
+                ></div>
+              </Link>
+              <Link href={'/'}>
+                <div
+                  className={clsx(utilStyles.basicButton, utilStyles.basicIcon)}
+                  style={{backgroundImage: 'url(/icons/discord_dim.svg)'}}
+                ></div>
+              </Link>
+            </div>
+          </div>
+          <div className={styles.footerBottom}>© 2018 PixelCons</div>
+        </div>
       </main>
     </>
   );

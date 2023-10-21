@@ -14,24 +14,29 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
   $footerSpacer: params.$layout-footer-spacer;
   $footerheight: params.$layout-footer-large;
   $headerheight: params.$layout-header-large;
+  $footerSideMargin: 60px;
   $logoHeight: 40px;
   $buttonHeight: 40px;
   $buttonPadding: 10px;
   @if $sizeSmall {
     $footerheight: params.$layout-footer-small;
     $headerheight: params.$layout-header-small;
+    $footerSideMargin: 20px;
     $logoHeight: 40px;
     $buttonHeight: 40px;
     $buttonPadding: 7px;
   } @else if $sizeMedium {
     $footerheight: params.$layout-footer-small;
     $headerheight: params.$layout-header-small;
+    $footerSideMargin: 40px;
     $logoHeight: 40px;
     $buttonHeight: 30px;
     $buttonPadding: 5px;
   }
   $logoMargin: ($headerheight - $logoHeight) / 2;
   $buttonMargin: ($headerheight - $buttonHeight) / 2;
+  $footerBottom: 15px;
+  $footerSocial: 20px;
 
   /* Header container */
   .header {
@@ -53,7 +58,7 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
       height: $logoHeight;
       width: $logoHeight * 1.5;
       margin: $logoMargin $logoMargin $logoMargin 0px;
-      background-image: url(/archive/header_tmp.png);
+      background-image: url(/images/header.png);
       background-size: cover;
       display: inline-block;
       vertical-align: middle;
@@ -115,6 +120,12 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
     width: 100%;
     height: $footerheight;
     margin-top: -$footerheight;
+    @media (min-width: $marginStart) {
+      max-width: calc($marginPivot + (100% * $marginRatio));
+      margin-left: calc(
+        ((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2)
+      );
+    }
   }
   .footerSpacer {
     width: 100%;
@@ -123,6 +134,37 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
   .nonFooterSectionContainer {
     width: 100%;
     min-height: 100svh;
+  }
+  .footerTop {
+    height: calc($footerheight - $footerBottom);
+  }
+  .footerBottom {
+    width: 100px;
+    margin: 0 auto;
+    height: $footerBottom;
+    line-height: $footerBottom;
+    text-align: center;
+    font-size: params.$text-size-small;
+    color: params.$color-disabled;
+  }
+  .social {
+    float: right;
+    font-size: $footerSocial;
+    margin-right: $footerSideMargin;
+    margin-top: ($footerheight - $footerBottom) - $footerSocial;
+  }
+  .navigate {
+    display: inline-block;
+    margin-left: $footerSideMargin;
+    font-size: params.$text-size-small;
+    font-weight: 600;
+    & a {
+      color: params.$color-disabled;
+      margin: 5px;
+      &:hover {
+        color: params.$color-bright;
+      }
+    }
   }
 }
 @media (max-width: params.$size-small) {

@@ -327,6 +327,9 @@ export async function createCollection(
     await mutate(`collection/${collectionIndex}`, undefined, swrMutateConfig);
     await mutate(`collectionPixelcons/${collectionIndex}`, undefined, swrMutateConfig);
     await mutate(`groupablePixelcons/${creator}`, undefined, swrMutateConfig);
+    for (const pixelconId of collection.pixelconIds) {
+      await mutate(`pixelcon/${pixelconId}`, undefined, swrMutateConfig);
+    }
 
     return collection;
   } catch (e) {

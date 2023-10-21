@@ -31,6 +31,15 @@
 }
 
 /* Sizing */
+.title {
+  font-size: 4.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.05rem;
+  font-weight: 600;
+}
+.largeIcon {
+  font-size: 3.5rem;
+}
 .xxl {
   font-size: params.$text-size-xxl;
   line-height: 1.2;
@@ -57,4 +66,10 @@
 /* Styling */
 .bold {
   font-weight: 600;
+}
+.center {
+  text-align: center;
+}
+.left {
+  text-align: left;
 }

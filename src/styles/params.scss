@@ -12,9 +12,9 @@ $margin-ratio: 0.5;
 /* Layout */
 $layout-header-large: 60px;
 $layout-header-small: 50px;
-$layout-footer-large: 50px;
-$layout-footer-small: 50px;
-$layout-footer-spacer: 10px;
+$layout-footer-large: 40px;
+$layout-footer-small: 40px;
+$layout-footer-spacer: 20px;
 $layout-content-large: calc(
   100svh - ($layout-header-large + $layout-footer-large + $layout-footer-spacer)
 );

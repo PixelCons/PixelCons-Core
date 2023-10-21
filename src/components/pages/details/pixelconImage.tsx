@@ -8,16 +8,6 @@ import textStyles from '../../../styles/text.module.scss';
 
 //Pixelcon image component to display image details
 export default function PixelconImage({pixelconId, pixelcon}: {pixelconId: string; pixelcon: Pixelcon}) {
-  //const isBlank = !collectionIndex && (!archiveData || !archiveData.collection);
-
-  //load up to date collection data or flag data as archived while fetching
-  //const {collection, collectionLoading, collectionError} = useCollection(collectionIndex);
-  //const isUnknown = !!collectionIndex && !collection && !collectionLoading && !collectionError;
-  //const isFetching = !!collectionIndex && collectionLoading;
-  //const isError = collectionError;
-  //const isArchive = !collection && archiveData && archiveData.collection;
-  //const renderCollection = collection ? collection : archiveData ? archiveData.collection : null;
-
   //render
   return (
     <div className={clsx(styles.container, textStyles.notSelectable)}>

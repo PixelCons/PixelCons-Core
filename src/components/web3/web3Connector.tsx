@@ -75,7 +75,7 @@ export default function Web3Connector({
         {!hasMetaMaskExtension && (
           <a className={styles.option} href={metamaskURL}>
             <div className={clsx(styles.icon, styles.metamask)}></div>
-            <div>Install MetaMask</div>
+            <span>Install MetaMask</span>
           </a>
         )}
         {hasMetaMaskExtension && (
