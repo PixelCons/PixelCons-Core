@@ -4,7 +4,7 @@ and test scripts. The app is currently being hosted on the web at https://pixelc
 
 For a breakdown of the contract code, check out the flattened contract repo [here](https://github.com/PixelCons/PixelCons-Contracts)
 
-## Setup/Run
+## Setup and run
 Please follow these steps if you wish to run the PixelCons app locally or wish to run the tests
 
 #### 1. Clone the core repo
@@ -13,65 +13,62 @@ Clone the PixelCons-Core repo by downloading the zip from GitHub and extracting 
 git clone https://github.com/PixelCons/PixelCons-Core.git
 ```
 
-#### 2. Run install and compile
-Run the following commands at the cloned PixelCons-Core directory to install dependencies and build the app (Make sure you have [Node.js](https://nodejs.org) and [Yarn](https://classic.yarnpkg.com/en/docs/install#windows-stable) installed). Once the build is complete, all data for the app can be found under the *build* folder
+#### 2. Set environment variables
+By default, the app will attempt to use the ethers default mainnet provider which is often slow and unreliable. To improve performance you can provide your own JSON RPC endpoint via an environment variable. This JSON RPC endpoint is used by the archiver, server backend, and wrapped for ocasionally fetching pixelcon specific data to the frontend. You can set the `JSON_RPC` environment variable directly or create a `.env` file like below 
 ```
-yarn install
-yarn compile
-yarn web_build
+JSON_RPC=https://mainnet.infura.io/v3/[api_key]
 ```
 
-#### 3. Start web server
-By default, the app is already configured to point to mainnet. Start the webapp by running the following command which will host it at http://localhost:8080
+#### 3. Run install and build
+Run the following commands at the cloned PixelCons-Core directory to install dependencies and build the app (Make sure you have [Node.js](https://nodejs.org) installed)
 ```
-npm web_start
-```
-
-## Configuration
-Please review the following configuration pieces
-
-#### web3.service.js (\src\app\services)
-The beginning of this service declares the *networkConfig* constant. The first network object in this list is considered the default target for the rest of the app. Additional helpful data pieces can be added to each network in the list (ex. fallback JSON RPCs)
-```
-const _networkConfig = [{ ... }];
+npm install
+npm run archive
+npm run build
 ```
 
-#### market.service.js (\src\app\services)
-By default, the openSea integration is disabled. This can be enabled and configured at the top of this service
+#### 4. Start web server
+By default, the app is already configured to point to mainnet. Start the webapp by running the following command which will host it at [http://localhost:3000](http://localhost:3000)
 ```
-const _enabled = false;
+npm run start
 ```
-
-#### settings.js (\functions)
-The app supports a few web functions, which help perform tasks for retrieving metadata and dynamically adding tag data for better web integration. The more advanced features are disabled by default, but can be enabled and configured from this settings file
 
 ## Run the Tests
-The PixelCons core project contains test scripts for verifying application integrity. Please follow these steps if you wish to run the tests yourself...
+The PixelCons core project contains test scripts for verifying application integrity. Please follow these steps if you wish to run the tests yourself
 
 #### 1. Run install and compile
-MAke sure you have all the dependancies installed and have compiled the contracts by running the following commands (Make sure you have [Node.js](https://nodejs.org) and [Yarn](https://classic.yarnpkg.com/en/docs/install#windows-stable) installed)
+Make sure you have all the dependancies installed and have compiled the contracts by running the following commands (Make sure you have [Node.js](https://nodejs.org) installed)
 ```
-yarn install
-yarn compile
+npm install
+npm run compile
 ```
 
 #### 2. Run the test script
 Run the following command to start running the tests (uses hardhat in the background)
 ```
-yarn test
+npm run test
 ```
 
-## Debug the Application
-If you wish to run the app in a debuggable environment on a different network other than mainnet, please refer to the following notes
+## Run with testnet
+The PixelCons core project can be configured to point to networks other than Ethereum mainnet for testing
 
 #### Run local ethereum testnet
-You can use the deploy script to deploy the contract to a *local* network. The local network to deploy to is configured in the *hardhat.config.ts* file
+You can optionally spin up your own node as a test environment with the following command
 ```
-yarn deploy
+npm run node
 ```
 
-#### Run web app in debug mode
-You can run the web app in a debug mode (non minified) by running the following command. Refer to the *Configuration* section above for how to configure the app to target your new local network instead of mainnet
+#### Deploy the contracts
+You can use the deploy script to deploy the PixelCons contract to your local testnet by default
 ```
-yarn web_debug
+npm run deploy
+```
+You can reference the npm `deploy` script command to learn how to use the deploy script for other testnets
+
+#### Configuration
+There are a few optional build configuration settings that can be used to tweak the app found at the bottom of [src/build.config.ts](/src/build.config.ts). The main items that need to be configured to point to a custom network are
+```
+OVERRIDE_JSON_RPC - set to "http://localhost:8545/" for local network
+OVERRIDE_CHAIN_ID - set to "31337" for local network
+OVERRIDE_PIXELCONS_CONTRACT_ADDRESS - set to deployed contract address reported in the deploy script
 ```

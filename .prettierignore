@@ -12,11 +12,15 @@
 
 # production
 /build
-/cache
-/artifacts
 
 # workspace
 /.vscode/
+
+# archive data
+/archive/**/*.json
+
+# solidity contracts
+/contracts
 
 # misc
 .DS_Store
@@ -25,10 +29,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# archiver
-/archive/.json
-/public/archive/
 
 # local env files
 .env

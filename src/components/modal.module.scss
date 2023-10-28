@@ -1,0 +1,57 @@
+@use "src/styles/params" as params;
+
+/* Parameters */
+$width: 250px;
+$padding: 20px;
+$buttonHeight: 25px;
+$buttonMargin: 5px;
+$closeOffset: 10px;
+$corners: 10px;
+
+/* General items */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(params.$color-background, 1 - params.$alpha-disabled);
+  -webkit-transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -moz-transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -ms-transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -o-transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  transition: opacity cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  opacity: 0;
+  &.visible {
+    opacity: 1;
+  }
+}
+.modal {
+  padding: $padding;
+  border-radius: $corners;
+  width: $width;
+  background-color: params.$color-modal;
+  color: params.$color-bright;
+}
+.option {
+  display: inline-block;
+  width: ($width - ($buttonMargin * 4) - ($padding * 2)) / 2;
+  height: $buttonHeight;
+  line-height: $buttonHeight;
+  border: solid 1px params.$color-dim;
+  border-radius: $corners / 2;
+  margin: $buttonMargin * 2 $buttonMargin 0px $buttonMargin;
+  text-align: center;
+  &:hover {
+    background-color: params.$color-disabled;
+  }
+  &.primary {
+    background-color: mix(params.$color-modal, params.$color-disabled);
+  }
+  &.primary:hover {
+    background-color: params.$color-disabled;
+  }
+}

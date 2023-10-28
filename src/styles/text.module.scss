@@ -1,0 +1,75 @@
+@use "src/styles/params" as params;
+
+/* General */
+.selectable {
+  -webkit-user-select: text; /* Chrome/Safari */
+  -moz-user-select: text; /* Firefox */
+  -ms-user-select: text; /* IE10+ */
+  -o-user-select: text;
+  user-select: text;
+}
+.notSelectable {
+  -webkit-user-select: none; /* Chrome/Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+ */
+  -o-user-select: none;
+  user-select: none;
+}
+
+/* Colors */
+.lowEmphasis {
+  color: params.$color-dim;
+}
+.disabled {
+  color: params.$color-disabled;
+}
+.warn {
+  color: params.$color-warn;
+}
+.error {
+  color: params.$color-error;
+}
+
+/* Sizing */
+.title {
+  font-size: 4.5rem;
+  line-height: 1.2;
+  letter-spacing: -0.05rem;
+  font-weight: 600;
+}
+.largeIcon {
+  font-size: 3.5rem;
+}
+.xxl {
+  font-size: params.$text-size-xxl;
+  line-height: 1.2;
+  letter-spacing: -0.05rem;
+}
+.xl {
+  font-size: params.$text-size-xl;
+  line-height: 1.2;
+  letter-spacing: -0.05rem;
+}
+.lg {
+  font-size: params.$text-size-large;
+  line-height: 1.1;
+}
+.md {
+  font-size: params.$text-size-medium;
+  line-height: 1;
+}
+.sm {
+  font-size: params.$text-size-small;
+  line-height: 1;
+}
+
+/* Styling */
+.bold {
+  font-weight: 600;
+}
+.center {
+  text-align: center;
+}
+.left {
+  text-align: left;
+}

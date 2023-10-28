@@ -1,0 +1,86 @@
+@use "src/styles/params" as params;
+@use "src/components/pages/create/shared" as shared;
+
+/* Parameters */
+$topMargin: shared.$top-margin;
+$sideMargin: shared.$side-margin;
+$previewSpacer: shared.$preview-spacer;
+$bottomSpacer: shared.$bottom-spacer;
+$titleSpacer: 40px;
+$pixelconSize: 104px;
+$derivativeSize: 40px;
+
+/* General items */
+.title {
+  font-size: params.$text-size-xl;
+  margin: $topMargin $sideMargin $titleSpacer $sideMargin;
+}
+.preview {
+  width: $pixelconSize;
+  height: $pixelconSize;
+  margin: $topMargin auto $previewSpacer auto;
+  background-size: $pixelconSize;
+}
+.bottomSpacer {
+  width: 100%;
+  height: $bottomSpacer;
+}
+
+/* Connect items */
+.connectText {
+  font-size: params.$text-size-medium;
+  color: params.$color-dim;
+  width: 110px;
+  max-width: calc(100% - ($sideMargin * 2));
+  margin: 4em auto;
+}
+
+/* Exists items */
+.existsNum {
+  font-size: params.$text-size-large;
+}
+.existsText {
+  margin: 1em auto 2em auto;
+  max-width: calc(100% - ($sideMargin * 2));
+  color: params.$color-dim;
+}
+
+/* Derivative items */
+.derivativeText {
+  width: 240px;
+  max-width: calc(100% - ($sideMargin * 2));
+  margin: 2em auto 1em auto;
+  color: params.$color-dim;
+}
+.derivativeIcon {
+  display: inline-block;
+  vertical-align: middle;
+  width: $derivativeSize;
+  height: $derivativeSize;
+  background-image: url(/icons/derivative.svg);
+  background-size: $derivativeSize * 0.8;
+}
+.derivativePixelconContainer {
+  display: inline-block;
+  vertical-align: middle;
+  width: $derivativeSize;
+  height: calc($derivativeSize + 1.5em);
+}
+.derivativePixelcon {
+  width: $derivativeSize;
+  height: $derivativeSize;
+  background-size: $derivativeSize;
+}
+.derivativePixelconNum {
+  line-height: 1.5em;
+}
+
+/* Confirm items */
+.confirmText {
+  width: 190px;
+  max-width: calc(100% - ($sideMargin * 2));
+  margin: 1em auto 2em auto;
+}
+.button {
+  font-size: (params.$text-size-medium + params.$text-size-large) / 2;
+}

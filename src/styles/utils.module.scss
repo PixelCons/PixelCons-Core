@@ -1,0 +1,177 @@
+@use "src/styles/params" as params;
+
+/* General mixins */
+@mixin clickable {
+  cursor: pointer;
+}
+@mixin notClickable {
+  cursor: default;
+}
+@mixin animated($property) {
+  -webkit-transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -moz-transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -ms-transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  -o-transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+  transition: $property cubic-bezier(0.35, 0, 0.25, 1) 0.15s;
+}
+
+/* General items */
+.crispImage {
+  -ms-interpolation-mode: nearest-neighbor;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.filteredImage {
+  image-rendering: auto;
+}
+.clickable {
+  @include clickable;
+}
+.inlineBlock {
+  vertical-align: middle;
+  display: inline-block;
+}
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.animated {
+  @include animated(all);
+}
+.contentFooterContainer {
+  display: inline-block;
+  width: 100%;
+  @media (min-width: params.$size-medium) {
+    min-height: params.$layout-content-large;
+  }
+  @media (max-width: params.$size-medium) {
+    min-height: params.$layout-content-small;
+  }
+}
+
+/* Simple Page Formatting */
+$marginRatio: params.$margin-ratio;
+$marginStart: params.$size-small;
+$marginPivot: $marginStart - ($marginRatio * $marginStart);
+.basicContainer {
+  overflow: hidden;
+  width: 100%;
+  @media (min-width: $marginStart) {
+    max-width: calc($marginPivot + (100% * $marginRatio));
+    margin: 0px auto 0px auto;
+  }
+}
+.basicSection {
+  margin: 20px 10px;
+}
+.basicFeature {
+  display: inline-block;
+  vertical-align: middle;
+  width: 220px;
+  margin: 10px;
+}
+.basicDescription {
+  display: inline-block;
+  vertical-align: middle;
+  max-width: 500px;
+  margin: 10px;
+}
+.basicIcon {
+  display: inline-block;
+  vertical-align: bottom;
+  width: 1em;
+  height: 1em;
+  background-size: 0.8em;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0.1em;
+}
+.basicButton {
+  border-radius: 0.1em;
+  &:hover {
+    background-color: params.$color-disabled;
+  }
+}
+.subtleLink {
+  font-weight: 600;
+  text-decoration: underline;
+  color: params.$color-dim;
+  &:hover {
+    text-decoration: underline;
+    color: params.$color-bright;
+  }
+}
+
+/* Size dependent items with parametrized rendering */
+@mixin styling($sizeSmall, $sizeMedium) {
+  /* Buttons */
+  .button {
+    @include clickable;
+    background-color: params.$color-background;
+    border-radius: 10px;
+    font-size: 0px;
+    text-align: center;
+    span {
+      vertical-align: middle;
+      font-size: 14px;
+    }
+    div {
+      background-size: cover;
+    }
+    &:hover {
+      @if $sizeSmall == false {
+        box-shadow: 1px 1px 4px 0px params.$color-dim;
+      }
+    }
+    &:active {
+      background-color: params.$color-disabled;
+      box-shadow: 0px 0px 0px 0px params.$color-background;
+    }
+  }
+  .textButton {
+    @include clickable;
+    display: inline-block;
+    vertical-align: middle;
+    height: 2em;
+    line-height: 2em;
+    padding: 0px 1em;
+    background-color: params.$color-background;
+    border-radius: 0.5em;
+    text-align: center;
+    color: params.$color-bright;
+    &:hover {
+      @if $sizeSmall == false {
+        box-shadow: 1px 1px 4px 0px params.$color-dim;
+      }
+    }
+    &:active {
+      background-color: params.$color-disabled;
+      box-shadow: 0px 0px 0px 0px params.$color-background;
+    }
+    &.disabled {
+      @include notClickable;
+      color: params.$color-disabled;
+    }
+    &.disabled:hover {
+      box-shadow: 0px 0px 0px 0px params.$color-background;
+    }
+    &.disabled:active {
+      background-color: params.$color-background;
+      box-shadow: 0px 0px 0px 0px params.$color-background;
+    }
+  }
+}
+@media (max-width: params.$size-small) {
+  @include styling($sizeSmall: true, $sizeMedium: true);
+}
+@media (max-width: params.$size-medium) and (min-width: params.$size-small) {
+  @include styling($sizeSmall: false, $sizeMedium: true);
+}
+@media (min-width: params.$size-medium) {
+  @include styling($sizeSmall: false, $sizeMedium: false);
+}

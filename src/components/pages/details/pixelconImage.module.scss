@@ -1,0 +1,45 @@
+@use "src/styles/params" as params;
+
+/* General items */
+$marginRatio: params.$margin-ratio;
+$marginStart: params.$size-large;
+$marginPivot: $marginStart - ($marginRatio * $marginStart);
+.container {
+  width: 100%;
+  text-align: center;
+  @media (min-width: $marginStart) {
+    max-width: calc($marginPivot + (100% * $marginRatio));
+    margin-left: calc(((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2));
+  }
+}
+
+/* Size dependent items with parametrized rendering */
+@mixin styling($sizeSmall, $sizeMedium) {
+  /* Parameters */
+  $pixelconSize: 208px;
+  @if $sizeSmall {
+    $pixelconSize: 156px;
+  } @else if $sizeMedium {
+    $pixelconSize: 182px;
+  }
+
+  /* Pixelcon image */
+  .pixelcon {
+    width: $pixelconSize;
+    height: $pixelconSize;
+  }
+
+  /* Export editor */
+  .exportContainer {
+    height: 0px;
+  }
+}
+@media (max-width: params.$size-small) {
+  @include styling($sizeSmall: true, $sizeMedium: true);
+}
+@media (max-width: params.$size-medium) and (min-width: params.$size-small) {
+  @include styling($sizeSmall: false, $sizeMedium: true);
+}
+@media (min-width: params.$size-medium) {
+  @include styling($sizeSmall: false, $sizeMedium: false);
+}

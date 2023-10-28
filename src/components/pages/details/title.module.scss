@@ -1,0 +1,137 @@
+@use "src/styles/params" as params;
+
+/* General items */
+$marginRatio: params.$margin-ratio;
+$marginStart: params.$size-small;
+$marginPivot: $marginStart - ($marginRatio * $marginStart);
+$dateFontSize: params.$text-size-large;
+.name {
+  font-weight: 600;
+  margin: 0px 0px 0px 0.8em;
+}
+.date {
+  font-size: $dateFontSize;
+}
+
+/* Size dependent items with parametrized rendering */
+@mixin styling($sizeSmall, $sizeMedium) {
+  /* Parameters */
+  $leftMargin: 20px;
+  $topFontSize: params.$text-size-xxxl;
+  $idFontSize: params.$text-size-medium;
+  $imageSize: 72px;
+  @if $sizeSmall {
+    $leftMargin: 10px;
+    $topFontSize: params.$text-size-xxl;
+    $idFontSize: params.$text-size-small * 0.8;
+    $imageSize: 48px;
+  } @else if $sizeMedium {
+    $leftMargin: 15px;
+    $topFontSize: params.$text-size-xxl;
+    $idFontSize: params.$text-size-small;
+    $imageSize: 60px;
+  }
+
+  /* General container */
+  .container {
+    width: 100%;
+    @if $sizeSmall {
+      margin-top: 6px;
+      height: 140px;
+    } @else if $sizeMedium {
+      margin-top: 9px;
+      height: 160px;
+    } @else {
+      margin-top: 12px;
+      height: 180px;
+    }
+    @media (min-width: $marginStart) {
+      max-width: calc($marginPivot + (100% * $marginRatio));
+      margin-left: calc(
+        ((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2)
+      );
+    }
+  }
+
+  /* General text */
+  .text {
+    font-weight: 600;
+    @if $sizeSmall {
+      margin: 0px 0px 0px $leftMargin;
+    } @else if $sizeMedium {
+      margin: 0px 0px 0px $leftMargin;
+    } @else {
+      margin: 0px 0px 0px $leftMargin;
+    }
+  }
+
+  /* Top most text font text */
+  .topFont {
+    font-size: $topFontSize;
+  }
+
+  /* ID text */
+  .id {
+    display: block;
+    font-family: monospace;
+    color: params.$color-dim;
+    max-width: calc(100% - ($leftMargin * 2));
+    overflow: hidden;
+    font-size: $idFontSize;
+  }
+
+  /* Derivative elements */
+  $dTextWidth: 70px;
+  $dSpacing: $topFontSize * 0.3;
+  $dExtraHover: $topFontSize / 2;
+  .derivativeContainer {
+    overflow: hidden;
+    margin-top: -($topFontSize + $idFontSize + $dateFontSize) * 1.14;
+    width: calc(100% - $leftMargin);
+    height: $topFontSize;
+    text-align: right;
+    font-size: 0px;
+  }
+  .derivativeButton {
+    display: inline-block;
+    background-color: params.$color-background;
+    background-size: $topFontSize;
+    background-position: $dExtraHover 0;
+    height: $topFontSize;
+    text-align: left;
+    background-image: url(/icons/derivative.svg);
+    box-shadow: 0px -4px 8px 8px params.$color-background;
+    margin-right: calc((0px - $dTextWidth) - ($topFontSize + $dSpacing));
+    &:hover {
+      margin-right: 0px;
+    }
+  }
+  .derivativeText {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: right;
+    font-weight: 600;
+    margin-left: $dExtraHover + $topFontSize;
+    width: $dTextWidth;
+    font-size: params.$text-size-medium;
+    line-height: $topFontSize / 2;
+    color: params.$color-warn;
+  }
+  .derivativePixelcon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: $dSpacing;
+    width: $topFontSize;
+    height: $topFontSize;
+    background-size: 100%;
+  }
+}
+@media (max-width: params.$size-small) {
+  @include styling($sizeSmall: true, $sizeMedium: true);
+}
+@media (max-width: params.$size-medium) and (min-width: params.$size-small) {
+  @include styling($sizeSmall: false, $sizeMedium: true);
+}
+@media (min-width: params.$size-medium) {
+  @include styling($sizeSmall: false, $sizeMedium: false);
+}

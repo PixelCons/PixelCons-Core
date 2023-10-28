@@ -1,0 +1,115 @@
+@use "src/styles/params" as params;
+@use "src/components/pages/create/shared" as shared;
+
+/* General items */
+$topMargin: shared.$top-margin;
+$sideMargin: shared.$side-margin;
+$linksHeight: shared.$links-height;
+$outlineColor: params.$color-disabled;
+$cellSpacing: 1px;
+$paletteOutlineColor: params.$color-background;
+$paletteSelectColor: params.$color-bright;
+$paletteColorSpacing: 2px;
+$paletteSelectSpacing: 1px;
+@include shared.containerStyles;
+.prompt {
+  display: inline-block;
+  text-align: left;
+  width: calc(100% - ($sideMargin * 2));
+  margin: $topMargin $sideMargin 0px $sideMargin;
+  font-size: params.$text-size-large;
+  color: params.$color-dim;
+}
+.linksContainer {
+  height: $linksHeight * 3;
+  margin: ($linksHeight * -3) $sideMargin 0px $sideMargin;
+  text-align: left;
+  width: calc(100% - ($sideMargin * 2));
+  & div {
+    line-height: $linksHeight;
+  }
+  & div:hover {
+    text-decoration: underline;
+  }
+}
+.linksSpacer {
+  height: $linksHeight * 4;
+  width: 100%;
+}
+
+/* Size dependent items with parametrized rendering */
+@mixin styling($sizeSmall, $sizeMedium) {
+  /* Parameters */
+  $cellWidth: 40px;
+  $paletteColorWidth: 20px;
+  $buttonSpacing: 30px;
+  @if $sizeSmall {
+    $cellWidth: 30px;
+    $paletteColorWidth: 15px;
+    $buttonSpacing: 10px;
+  } @else if $sizeMedium {
+    $cellWidth: 35px;
+    $paletteColorWidth: 18px;
+    $buttonSpacing: 20px;
+  }
+
+  /* Canvas */
+  .canvas {
+    @if $sizeSmall {
+      padding: $cellWidth 0px;
+      width: ($cellWidth * 8) + ($cellSpacing * 9);
+    } @else {
+      padding: $cellWidth;
+      width: ($cellWidth * 10) + ($cellSpacing * 9);
+    }
+    margin: 0px auto 0px auto;
+    border: $cellSpacing solid rgb(0, 0, 0, 0);
+    height: ($cellWidth * 10) + ($cellSpacing * 9);
+    display: grid;
+    grid-template-columns: repeat(8, $cellWidth);
+    grid-template-rows: repeat(8, $cellWidth);
+    grid-row-gap: $cellSpacing;
+    grid-column-gap: $cellSpacing;
+  }
+  .cell {
+    border: $cellSpacing solid $outlineColor;
+    margin-left: -$cellSpacing;
+    margin-top: -$cellSpacing;
+    width: $cellWidth + $cellSpacing * 2;
+    height: $cellWidth + $cellSpacing * 2;
+  }
+  .palette {
+    margin: $paletteColorSpacing auto $paletteColorSpacing auto;
+    border: $paletteColorSpacing solid rgb(0, 0, 0, 0);
+    background-color: $paletteOutlineColor;
+    width: ($paletteColorWidth * 8) + ($paletteColorSpacing * 9);
+    height: ($paletteColorWidth * 2) + ($paletteColorSpacing * 3);
+    display: grid;
+    grid-template-columns: repeat(8, $paletteColorWidth);
+    grid-template-rows: repeat(2, $paletteColorWidth);
+    grid-row-gap: $paletteColorSpacing;
+    grid-column-gap: $paletteColorSpacing;
+  }
+  .selected {
+    border: $paletteColorSpacing solid $paletteSelectColor;
+    margin-left: -$paletteSelectSpacing;
+    margin-top: -$paletteSelectSpacing;
+    width: $paletteColorWidth + $paletteSelectSpacing * 2;
+    height: $paletteColorWidth + $paletteSelectSpacing * 2;
+  }
+
+  /* Button */
+  .button {
+    font-size: (params.$text-size-medium + params.$text-size-large) / 2;
+    margin-left: $buttonSpacing;
+  }
+}
+@media (max-width: params.$size-small) {
+  @include styling($sizeSmall: true, $sizeMedium: true);
+}
+@media (max-width: params.$size-medium) and (min-width: params.$size-small) {
+  @include styling($sizeSmall: false, $sizeMedium: true);
+}
+@media (min-width: params.$size-medium) {
+  @include styling($sizeSmall: false, $sizeMedium: false);
+}
