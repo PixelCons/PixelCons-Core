@@ -6,9 +6,17 @@ import Layout from '../../components/layout';
 import Title from '../../components/pages/details/title';
 import Description from '../../components/pages/details/description';
 import PixelconImage from '../../components/pages/details/pixelconImage';
-import {ArchiveData, Pixelcon, usePixelcon, getAllPixelconIds, getPixelcon, getCollection} from '../../lib/pixelcons';
+import {
+  ArchiveData,
+  Pixelcon,
+  usePixelcon,
+  getPixelconId,
+  getAllPixelconIds,
+  getPixelcon,
+  getCollection,
+} from '../../lib/pixelcons';
 import {getHTMLHeaderData} from '../../lib/metadata';
-import {sanitizePixelconIdParam} from '../../lib/utils';
+import {sanitizePixelconIdParam, sanitizePixelconIndexParam} from '../../lib/utils';
 import {searchPossibleDerivative, isDerivativePixelcon} from '../../lib/similarities';
 import buildConfig from '../../build.config';
 import {promises as fs} from 'fs';
@@ -40,7 +48,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 //Static props for page pre building using the archive data
 export const getStaticProps: GetStaticProps = async ({params}) => {
-  const pixelconId = sanitizePixelconIdParam(params.id);
+  const pixelconIndex = sanitizePixelconIndexParam(params.id);
+  const pixelconId = sanitizePixelconIdParam(params.id) || (await getPixelconId(pixelconIndex));
 
   //invalid pixelconId
   if (pixelconId === null) {
@@ -127,8 +136,10 @@ export default function Details({pixelconId, archiveData}: {pixelconId: string; 
   //setup previewing of pixelcon on fallback page
   const [pathPixelconId, setPathPixelconId] = useState<string>();
   useEffect(() => {
-    const pathIdParam = sanitizePixelconIdParam(router.asPath.substring(router.asPath.lastIndexOf('/') + 1));
-    setPathPixelconId(pathIdParam ? pathIdParam : pixelconIdInvalid);
+    const param = router.asPath.substring(router.asPath.lastIndexOf('/') + 1);
+    const pathIndexParam = sanitizePixelconIndexParam(param);
+    const pathIdParam = sanitizePixelconIdParam(param);
+    setPathPixelconId(pathIdParam ? pathIdParam : pathIndexParam ? `#${pathIndexParam}` : pixelconIdInvalid);
   }, [pixelconId]);
 
   //determine overall page state

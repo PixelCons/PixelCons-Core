@@ -4,6 +4,7 @@ import {useRouter} from 'next/router';
 import clsx from 'clsx';
 import Address from '../../address';
 import Dots from '../../dots';
+import {useCollectionName} from '../../../lib/pixelcons';
 import {clearURLParam} from '../../../lib/utils';
 import utilStyles from '../../../styles/utils.module.scss';
 import textStyles from '../../../styles/text.module.scss';
@@ -24,6 +25,7 @@ export default function PixelconFilter({
   owner?: string;
 }) {
   const router = useRouter();
+  const {collectionName} = useCollectionName(collection);
 
   //empty
   if (!visible) return null;
@@ -34,7 +36,7 @@ export default function PixelconFilter({
     if (collection) {
       filterChips.push(
         <div key="collection" className={clsx(styles.chip, textStyles.notSelectable)}>
-          <span>{`Collection: ${collection}`}</span>
+          <span>{`Collection: ${collectionName}`}</span>
           <Link href={clearURLParam('collection', router.asPath)} replace>
             <div className={clsx(utilStyles.icon, utilStyles.clickable)}></div>
           </Link>

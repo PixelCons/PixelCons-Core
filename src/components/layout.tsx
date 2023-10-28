@@ -2,15 +2,18 @@ import React, {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
-import buildConfig from '../build.config';
 import clsx from 'clsx';
+import buildConfig from '../build.config';
+import {singleString, toDecimalString} from '../lib/utils';
 import styles from './layout.module.scss';
 import utilStyles from '../styles/utils.module.scss';
 import textStyles from '../styles/text.module.scss';
 import archive from '../../archive/pixelconArchive.json' assert {type: 'json'};
+import deployments from '../../archive/contracts/deployments.json' assert {type: 'json'};
 
 //Data constants
 const webDomain = buildConfig.WEB_DOMAIN || '';
+const pixelconsContract = deployments.mainnet.contracts[0].address;
 
 //Common layout component applied accross all pages
 export default function Layout({children}: {children: React.ReactNode}) {
@@ -21,6 +24,13 @@ export default function Layout({children}: {children: React.ReactNode}) {
   useEffect(() => {
     console.log(`Archive timestamp ${archive.timestamp} (${new Date(archive.timestamp)})`);
   }, []);
+
+  //function for opensea link
+  const openseaLink = () => {
+    const pixelconIdNumber = toDecimalString(singleString(router.query.id));
+    if (pixelconIdNumber) return `https://opensea.io/assets/ethereum/${pixelconsContract}/${pixelconIdNumber}`;
+    return 'https://opensea.io/collection/pixelcons';
+  };
 
   return (
     <>
@@ -50,15 +60,17 @@ export default function Layout({children}: {children: React.ReactNode}) {
         <div className={styles.nonFooterSectionContainer}>
           <div className={clsx(styles.header, textStyles.notSelectable)}>
             <div className={clsx(styles.button, utilStyles.button)}>
-              <div className={utilStyles.icon}></div>
-              <span>OPENSEA</span>
+              <a href={openseaLink()} target="_blank" rel="noreferrer">
+                <div className={utilStyles.icon}></div>
+                <span>OPENSEA</span>
+              </a>
             </div>
-            <Link href={'/about'} prefetch={false}>
-              <div className={clsx(styles.logo, utilStyles.clickable)}>
+            <div className={clsx(styles.logo, utilStyles.clickable)}>
+              <Link href={'/about'} prefetch={false}>
                 <div className={utilStyles.crispImage} />
                 <span>PixelCons</span>
-              </div>
-            </Link>
+              </Link>
+            </div>
             {!isBrowsing && (
               <Link className={clsx(styles.button, utilStyles.button)} href={'/'} prefetch={false}>
                 <div className={utilStyles.icon} style={{backgroundImage: 'url(/icons/browse.svg)'}}></div>

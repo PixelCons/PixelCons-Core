@@ -14,6 +14,17 @@ export function sanitizePixelconIdParam(pixelconId: string | string[]): string {
   }
   return null;
 }
+//Sanitizes the given pixelconIndex string with the 'index_' prefix
+export function sanitizePixelconIndexParam(pixelconIndex: string | string[]): number {
+  try {
+    const index: string = singleString(pixelconIndex);
+    const sanitized: number = index.indexOf('index_') == 0 ? parseInt(index.substring(6)) : null;
+    if (!!sanitized || sanitized === 0) return sanitized;
+  } catch (e) {
+    //do nothing
+  }
+  return null;
+}
 
 //Returns the first url parameter
 export function firstURLParam(key: string, url: string): string {
@@ -139,8 +150,8 @@ export function toMonthYear(millis: string | number): string {
 
 //Converts the given string into an abbreviated string
 export function toAbbreviatedString(item: string, maxChars = 12, offsetStart = 2, offsetEnd = 0): string {
-  if (item.length <= maxChars) return item;
-  if (maxChars > offsetStart + offsetEnd) {
+  if (item.length <= maxChars + offsetStart + offsetEnd) return item;
+  if (item.length > offsetStart + offsetEnd) {
     try {
       const half = maxChars / 2;
       return `${item.substring(0, offsetStart + Math.ceil(half))}…${item.substring(
@@ -150,7 +161,18 @@ export function toAbbreviatedString(item: string, maxChars = 12, offsetStart = 2
       //do nothing
     }
   }
-  throw new Error(`Failed to convert ${item} to 160 bit abbreviated address hex`);
+  throw new Error(`Failed to abbreviate ${item}`);
+}
+
+//Converts the given number to a decimal string
+export function toDecimalString(item: string | number | bigint): string {
+  try {
+    const num = ethers.toBigInt(item);
+    return num.toString();
+  } catch (e) {
+    //do nothing
+  }
+  return null;
 }
 
 //Returns the number or the fallback if null or undefined

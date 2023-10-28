@@ -22,6 +22,8 @@ const swrMutateConfig = {
 };
 const maxParallelQuery = buildConfig.DATA_FETCHING_MAX_PARALLEL_QUERY || 5;
 const maxPixelconIdFetch = buildConfig.DATA_FETCHING_MAX_PIXELCON_IDS || 200;
+const collectionNameLocalCacheKey = 'collection_names';
+const collectionNameLocalCacheExp = 1 * 60 * 60 * 1000;
 
 //Define provider cache
 type ProviderCache = {
@@ -88,6 +90,27 @@ export async function getPixelcon(pixelconId: string): Promise<Pixelcon> {
     try {
       const pixelconRaw = await contract.getTokenData(pixelconId);
       return decodeAsPixelcon(pixelconRaw);
+    } catch (e) {
+      //pixelcon does not exist
+      if (e && e.reason && e.reason == 'PixelCon does not exist') return null;
+      throw e;
+    }
+  } catch (e) {
+    return undefined;
+  }
+}
+
+//Get the id of the pixelcon at the given index
+export async function getPixelconId(pixelconIndex: string | number): Promise<string> {
+  if (pixelconIndex === null) return null;
+  if (pixelconIndex === undefined) return undefined;
+  pixelconIndex = parseInt(pixelconIndex.toString());
+  const contract = await getPixelconContract();
+
+  try {
+    try {
+      const ids = await fetchPixelconIds(contract, [pixelconIndex]);
+      return ids[0];
     } catch (e) {
       //pixelcon does not exist
       if (e && e.reason && e.reason == 'PixelCon does not exist') return null;
@@ -264,6 +287,21 @@ export async function getAllPixelconIds(startIndex?: number, endIndex?: number):
       allPixelconIds.push(...pixelconIds);
     }
     return allPixelconIds;
+  } catch (e) {
+    return undefined;
+  }
+}
+
+//Get the ens name of a pixelcons user
+export async function getUserName(address: string): Promise<string> {
+  if (address === null) return null;
+  if (address === undefined) return undefined;
+  address = toAddress(address);
+  const provider = await getProvider();
+
+  try {
+    const name = await provider.lookupAddress(address);
+    return name;
   } catch (e) {
     return undefined;
   }
@@ -564,6 +602,53 @@ export function useGroupablePixelcons(address: string) {
   };
 }
 
+//Hook for getting collection name
+export function useCollectionName(collectionIndex: string | number) {
+  const cachedName = getCollectionNameLocal(collectionIndex);
+  const {data, error, isLoading} = useSWR<string>(
+    `collectionName/${collectionIndex}`,
+    async () => {
+      try {
+        if (collectionIndex === null) return null;
+        if (collectionIndex === undefined) return undefined;
+
+        //await new Promise((r) => setTimeout(r, 2000)); //TODO/////////////////////////////
+        //throw new Error('wtf'); //TODO/////////////////////////////
+        if (cachedName !== null) return cachedName;
+
+        const collectionName = await getCollectionName(collectionIndex);
+        if (collectionName === undefined && collectionIndex !== undefined) {
+          throw new Error('Something went wrong during getCollectionName query');
+        }
+
+        //add to local storage cache
+        if (typeof window !== 'undefined' && localStorage) {
+          const timestamp = new Date().getTime();
+          const collectionNames = JSON.parse(localStorage.getItem(collectionNameLocalCacheKey) || '[]');
+          collectionNames.push({
+            index: collectionIndex,
+            name: collectionName,
+            time: timestamp,
+          });
+          localStorage.setItem(collectionNameLocalCacheKey, JSON.stringify(collectionNames));
+        }
+
+        return collectionName;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
+    },
+    swrDataConfig,
+  );
+
+  return {
+    collectionName: data || collectionIndex,
+    collectionNameLoading: isLoading || (data === undefined && collectionIndex !== undefined && !error),
+    collectionNameError: error,
+  };
+}
+
 /////////////////////////////
 // Internal Util Functions //
 /////////////////////////////
@@ -843,6 +928,27 @@ async function fetchLitePixelconsInParallel(contract: Contract, indexes: number[
     allLitePixelcons.push(...litePixelcons);
   }
   return allLitePixelcons;
+}
+
+//Get collection name from local storage
+function getCollectionNameLocal(collectionIndex: string | number): string {
+  if (collectionIndex === null) return null;
+  if (collectionIndex === undefined) return undefined;
+  collectionIndex = collectionIndex.toString();
+
+  let collectionName = null;
+  if (typeof window !== 'undefined' && localStorage) {
+    const timestamp = new Date().getTime();
+    const collectionNames = JSON.parse(localStorage.getItem(collectionNameLocalCacheKey) || '[]');
+    for (let i = collectionNames.length - 1; i >= 0; i--) {
+      if (timestamp >= collectionNames[i].time + collectionNameLocalCacheExp) {
+        collectionNames.splice(i, 1); //item expired
+      } else if (collectionNames[i].index == collectionIndex) {
+        collectionName = collectionNames[i].name; //item not expired and matches index
+      }
+    }
+  }
+  return collectionName;
 }
 
 //Helper function to convert raw contract return data into a pixelcon
