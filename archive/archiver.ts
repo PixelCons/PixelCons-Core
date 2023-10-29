@@ -14,7 +14,7 @@ const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
 (async () => {
   //fetch data for all pixelcons and collection names
   console.log('fetching all pixelcon data... (this can take a while)');
-  const pixelcons = await getAllPixelcons(0, 100);
+  const pixelcons = await getAllPixelcons();
   const collectionNames = await getAllCollectionNames();
 
   ///////////////////////
