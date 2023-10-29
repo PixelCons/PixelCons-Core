@@ -122,9 +122,16 @@ const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
 //Helper function to clear all files in a folder
 async function deleteAllFilesInDir(dirPath: string) {
   try {
-    const files = await fs.readdir(dirPath);
-    const deleteFilePromises = files.map((file) => fs.unlink(path.join(dirPath, file)));
-    await Promise.all(deleteFilePromises);
+    try {
+      //make sure folder exists, then delete all files
+      await fs.access(dirPath);
+      const files = await fs.readdir(dirPath);
+      const deleteFilePromises = files.map((file) => fs.unlink(path.join(dirPath, file)));
+      await Promise.all(deleteFilePromises);
+    } catch (err) {
+      //create the folder
+      fs.mkdir(dirPath);
+    }
   } catch (err) {
     console.log(err);
   }
