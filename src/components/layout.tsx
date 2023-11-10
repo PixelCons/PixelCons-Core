@@ -19,6 +19,9 @@ const pixelconsContract = deployments.mainnet.contracts[0].address;
 export default function Layout({children}: {children: React.ReactNode}) {
   const router = useRouter();
   const isBrowsing = router.pathname == '/';
+  const title = 'PixelCons (An Open NFT Platform)';
+  const description =
+    'Only 8x8 and 16 colors, each PixelCon has to be unique and its data is fully on-chain. A platform started in 2018 for pixel artists and collectors!';
 
   //report archive timestamp to console
   useEffect(() => {
@@ -38,22 +41,17 @@ export default function Layout({children}: {children: React.ReactNode}) {
         <title>PixelCons</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
-        <link rel="icon" href="/images/icon.png" />
+        <meta property="description" content={`${description}`} />
+        <link rel="icon" href="/favicon.ico" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@PixelConsToken" />
-        <meta name="twitter:title" content="PixelCons (An Open NFT Platform)" />
-        <meta
-          name="twitter:description"
-          content="Only 8x8 and 16 colors, each PixelCon has to be unique and its data is fully on-chain. A platform started in 2018 for pixel artists and collectors!"
-        />
+        <meta name="twitter:title" content={`${title}`} />
+        <meta name="twitter:description" content={`${description}`} />
         <meta name="twitter:image" content={`${webDomain}/img/large/card.png`} />
         <meta property="og:url" content={`${webDomain}/`} />
-        <meta property="og:title" content="PixelCons (An Open NFT Platform)" />
-        <meta
-          property="og:description"
-          content="Only 8x8 and 16 colors, each PixelCon has to be unique and its data is fully on-chain. A platform started in 2018 for pixel artists and collectors!"
-        />
+        <meta property="og:title" content={`${title}`} />
+        <meta property="og:description" content={`${description}`} />
         <meta property="og:image" content={`${webDomain}/img/large/card.png`} />
       </Head>
       <main className={styles.content}>
@@ -105,30 +103,30 @@ export default function Layout({children}: {children: React.ReactNode}) {
               </Link>
             </div>
             <div className={styles.social}>
-              <Link href={'/'}>
+              <a href={'https://github.com/PixelCons'} target="_blank" rel="noreferrer">
                 <div
                   className={clsx(utilStyles.basicButton, utilStyles.basicIcon)}
                   style={{backgroundImage: 'url(/icons/github_dim.svg)'}}
                 ></div>
-              </Link>
-              <Link href={'/'}>
+              </a>
+              <a href={'https://twitter.com/PixelConsToken'} target="_blank" rel="noreferrer">
                 <div
                   className={clsx(utilStyles.basicButton, utilStyles.basicIcon)}
                   style={{backgroundImage: 'url(/icons/x_dim.svg)'}}
                 ></div>
-              </Link>
-              <Link href={'/'}>
+              </a>
+              <a href={'https://opensea.io/collection/pixelcons'} target="_blank" rel="noreferrer">
                 <div
                   className={clsx(utilStyles.basicButton, utilStyles.basicIcon)}
                   style={{backgroundImage: 'url(/icons/opensea_dim.svg)'}}
                 ></div>
-              </Link>
-              <Link href={'/'}>
+              </a>
+              <a href={'https://discord.gg/E2WQa8sTk3'} target="_blank" rel="noreferrer">
                 <div
                   className={clsx(utilStyles.basicButton, utilStyles.basicIcon)}
                   style={{backgroundImage: 'url(/icons/discord_dim.svg)'}}
                 ></div>
-              </Link>
+              </a>
             </div>
           </div>
           <div className={styles.footerBottom}>© 2018 PixelCons</div>

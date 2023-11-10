@@ -14,7 +14,7 @@ body {
     Helvetica Neue,
     sans-serif;
   font-size: params.$text-size-default;
-  overflow-x: hidden;
+  overflow-x: clip;
 
   /* Scrollbar */
   scrollbar-color: params.$color-dim transparent;

@@ -4,17 +4,6 @@
 $marginRatio: params.$margin-ratio;
 $marginStart: params.$size-large;
 $marginPivot: $marginStart - ($marginRatio * $marginStart);
-.container {
-  background-color: rgba(params.$color-background, 0.7);
-  position: absolute;
-  width: calc(100% - 10px);
-  text-align: left;
-  font-size: 0px;
-  @media (min-width: $marginStart) {
-    max-width: calc($marginPivot + (100% * $marginRatio));
-    margin-left: calc(((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2));
-  }
-}
 
 /* Size dependent items with parametrized rendering */
 @mixin styling($sizeSmall, $sizeMedium) {
@@ -22,17 +11,39 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
   $chipHeight: 26px;
   $chipMargin: 6px;
   $chipSidePadding: 7px;
+  $headerHeight: params.$layout-header-large;
   @if $sizeSmall {
     $chipHeight: 24px;
     $chipMargin: 5px;
     $chipSidePadding: 5px;
+    $headerHeight: params.$layout-header-small;
   } @else if $sizeMedium {
     $chipHeight: 24px;
     $chipMargin: 5px;
     $chipSidePadding: 5px;
+    $headerHeight: params.$layout-header-small;
   }
   $fontSize: params.$text-size-default;
   $iconSize: $fontSize * 1.3;
+
+  /* Filter container */
+  .container {
+    background-color: rgba(params.$color-background, 0.7);
+    position: sticky;
+    top: $headerHeight;
+    width: calc(100% - 10px);
+    text-align: left;
+    font-size: 0px;
+    @media (min-width: $marginStart) {
+      max-width: calc($marginPivot + (100% * $marginRatio));
+      margin-left: calc(
+        ((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2)
+      );
+    }
+    &.overlay {
+      margin-bottom: 0 - ($chipHeight + ($chipMargin * 2));
+    }
+  }
 
   /* Filtering text */
   .filtering {
@@ -67,11 +78,6 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
       margin-right: $chipSidePadding - ($iconSize / 2) -
         ($chipHeight - $fontSize)/2;
     }
-  }
-
-  /* Top spacer */
-  .spacer {
-    height: $chipHeight + ($chipMargin * 2);
   }
 }
 @media (max-width: params.$size-small) {

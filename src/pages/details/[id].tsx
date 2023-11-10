@@ -94,8 +94,6 @@ export const getStaticProps: GetStaticProps = async ({params}) => {
     }
   }
 
-  //await new Promise((r) => setTimeout(r, 4000)); //TODO/////////////////////////////
-
   //make sure pixelcon exists
   const pixelcon = await getPixelcon(pixelconId);
   if (!pixelcon) {

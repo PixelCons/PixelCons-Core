@@ -385,8 +385,6 @@ export function usePixelcon(pixelconId: string) {
     `pixelcon/${pixelconId}`,
     async () => {
       try {
-        //await new Promise((r) => setTimeout(r, 2000)); //TODO/////////////////////////////
-        //throw new Error("wtf");//TODO/////////////////////////////
         const pixelcon = await getPixelcon(pixelconId);
         if (pixelcon === undefined && pixelconId !== undefined) {
           throw new Error('Something went wrong during getPixelcon query');
@@ -413,8 +411,6 @@ export function useCollection(collectionIndex: string | number) {
     `collection/${collectionIndex}`,
     async () => {
       try {
-        //await new Promise((r) => setTimeout(r, 2000)); //TODO/////////////////////////////
-        //throw new Error('wtf'); //TODO/////////////////////////////
         const collection = await getCollection(collectionIndex);
         if (collection === undefined && collectionIndex !== undefined) {
           throw new Error('Something went wrong during getCollection query');
@@ -441,8 +437,6 @@ export function useAllPixelconIds() {
     'allPixelconIds',
     async () => {
       try {
-        //await new Promise((r) => setTimeout(r, 1000)); //TODO/////////////////////////////
-        //throw new Error('wtf'); //TODO/////////////////////////////
         const allPixelconIds = await getAllPixelconIds();
         if (allPixelconIds === undefined) {
           throw new Error('Something went wrong during getAllPixelconIds query');
@@ -469,8 +463,6 @@ export function useCollectionPixelcons(collectionIndex: string | number) {
     `collectionPixelcons/${collectionIndex}`,
     async () => {
       try {
-        //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-        //throw new Error("wtf");//TODO/////////////////////////////
         const collectionPixelcons = await getCollectionPixelcons(collectionIndex);
         if (collectionPixelcons === undefined && collectionIndex !== undefined) {
           throw new Error('Something went wrong during getCollectionPixelcons query');
@@ -497,8 +489,6 @@ export function useCreatorPixelcons(address: string) {
     `creatorPixelcons/${address}`,
     async () => {
       try {
-        //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-        //throw new Error("wtf");//TODO/////////////////////////////
         const creatorPixelcons = await getCreatorPixelcons(address);
         if (creatorPixelcons === undefined && address !== undefined) {
           throw new Error('Something went wrong during getCreatorPixelcons query');
@@ -525,8 +515,6 @@ export function useOwnerPixelcons(address: string) {
     `ownerPixelcons/${address}`,
     async () => {
       try {
-        //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-        //throw new Error("wtf");//TODO/////////////////////////////
         const ownerPixelcons = await getOwnerPixelcons(address);
         if (ownerPixelcons === undefined && address !== undefined) {
           throw new Error('Something went wrong during getOwnerPixelcons query');
@@ -556,8 +544,6 @@ export function useGroupablePixelcons(address: string) {
         if (address === null) return null;
         if (address === undefined) return undefined;
 
-        //await (new Promise(r => setTimeout(r, 1000)));//TODO/////////////////////////////
-        //throw new Error("wtf");//TODO/////////////////////////////
         const creatorPixelconsQuery = getCreatorPixelcons(address);
         const ownerPixelconsQuery = getOwnerPixelcons(address);
         const creatorPixelcons = await creatorPixelconsQuery;
@@ -612,8 +598,6 @@ export function useCollectionName(collectionIndex: string | number) {
         if (collectionIndex === null) return null;
         if (collectionIndex === undefined) return undefined;
 
-        //await new Promise((r) => setTimeout(r, 2000)); //TODO/////////////////////////////
-        //throw new Error('wtf'); //TODO/////////////////////////////
         if (cachedName !== null) return cachedName;
 
         const collectionName = await getCollectionName(collectionIndex);

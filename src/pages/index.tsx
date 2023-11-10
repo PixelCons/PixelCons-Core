@@ -54,14 +54,13 @@ export default function Home() {
 
   //load up to date pixelcon data or flag data as archive while fetching
   const {allPixelconIds, allPixelconIdsLoading, allPixelconIdsError} = useAllPixelconIds();
-  const waitingOnMinTime: boolean = !minFilterTimeElapsed;
   const filterError: boolean = allPixelconIdsError || collectionError || creatorError || ownerError;
   const isFiltering: boolean =
     (!!hasFilters && allPixelconIdsLoading) ||
     (!!filterData.collection && collectionLoading) ||
     (!!filterData.creator && creatorLoading) ||
     (!!filterData.owner && ownerLoading);
-  const filteringSpinner: boolean = hasFilters && (isFiltering || waitingOnMinTime || filterError);
+  const filteringSpinner: boolean = hasFilters && (isFiltering || filterError || !minFilterTimeElapsed);
 
   //get filtered list of pixelcons to display
   const collectionPixelconIndexes = filterData.collection ? collectionPixelcons : null;
@@ -97,6 +96,26 @@ export default function Home() {
           index: i,
         };
       });
+    }
+  }
+
+  //scroll restoration after filter
+  useEffect(() => {
+    //store scroll position
+    const handleRouteChange = () => sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => router.events.off('routeChangeStart', handleRouteChange);
+  }, [router.events]);
+  if (typeof window !== 'undefined' && sessionStorage) {
+    //restore scroll position
+    if (hasFilters && minFilterTimeElapsed) {
+      const scrollPosition = Number(sessionStorage.getItem('scrollPosition'));
+      if (scrollPosition) {
+        sessionStorage.removeItem('scrollPosition');
+        setTimeout(() => {
+          window.scrollTo(0, scrollPosition);
+        });
+      }
     }
   }
 

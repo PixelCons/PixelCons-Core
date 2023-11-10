@@ -69,17 +69,14 @@ export default function PixelconFilter({
 
   //render
   return (
-    <div>
-      <div className={styles.container}>
-        {filterChips}
-        {filteringSpinner && (
-          <>
-            <span className={styles.filtering}>Filtering</span>
-            <Dots />
-          </>
-        )}
-      </div>
-      {!filteringSpinner && <div className={styles.spacer}></div>}
+    <div className={clsx(styles.container, filteringSpinner && styles.overlay)}>
+      {filterChips}
+      {filteringSpinner && (
+        <>
+          <span className={styles.filtering}>Filtering</span>
+          <Dots />
+        </>
+      )}
     </div>
   );
 }

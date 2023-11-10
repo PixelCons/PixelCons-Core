@@ -2,6 +2,7 @@ import React from 'react';
 import {GetStaticProps} from 'next';
 import Layout from '../components/layout';
 import Link from 'next/link';
+import Image from 'next/image';
 import clsx from 'clsx';
 import utilStyles from '../styles/utils.module.scss';
 import textStyles from '../styles/text.module.scss';
@@ -20,7 +21,13 @@ export default function About() {
     <Layout>
       <div className={clsx(utilStyles.basicContainer, textStyles.center)}>
         <div className={utilStyles.basicSection}>
-          <img className={clsx(utilStyles.crispImage, utilStyles.basicFeature)} src={'/images/showcase.png'} />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className={clsx(utilStyles.crispImage, utilStyles.basicFeature)}
+            width="220px"
+            height="220px"
+            src={'/images/showcase.png'}
+          />
           <div className={utilStyles.basicDescription}>
             <div className={textStyles.title}>PixelCons</div>
             <div className={textStyles.lg}>Tiny On-Chain Pixel Art</div>
@@ -60,7 +67,7 @@ export default function About() {
           </div>
         </div>
         <div className={utilStyles.basicSection}>
-          <img className={utilStyles.basicFeature} src={'/images/card_small.png'} />
+          <Image className={utilStyles.basicFeature} src={'/images/card_small.png'} alt={''} width={220} height={123} />
           <div className={utilStyles.basicDescription}>
             <div className={clsx(textStyles.xl, textStyles.bold)}>PixelCons Origin Story</div>
             <br />
@@ -91,30 +98,30 @@ export default function About() {
             </div>
           </div>
           <div className={utilStyles.basicFeature}>
-            <Link href={'/'}>
+            <a href={'https://github.com/PixelCons'} target="_blank" rel="noreferrer">
               <div
                 className={clsx(utilStyles.basicButton, utilStyles.basicIcon, textStyles.largeIcon)}
                 style={{backgroundImage: 'url(/icons/github.svg)'}}
               ></div>
-            </Link>
-            <Link href={'/'}>
+            </a>
+            <a href={'https://twitter.com/PixelConsToken'} target="_blank" rel="noreferrer">
               <div
                 className={clsx(utilStyles.basicButton, utilStyles.basicIcon, textStyles.largeIcon)}
                 style={{backgroundImage: 'url(/icons/x.svg)'}}
               ></div>
-            </Link>
-            <Link href={'/'}>
+            </a>
+            <a href={'https://opensea.io/collection/pixelcons'} target="_blank" rel="noreferrer">
               <div
                 className={clsx(utilStyles.basicButton, utilStyles.basicIcon, textStyles.largeIcon)}
                 style={{backgroundImage: 'url(/icons/opensea.svg)'}}
               ></div>
-            </Link>
-            <Link href={'/'}>
+            </a>
+            <a href={'https://discord.gg/E2WQa8sTk3'} target="_blank" rel="noreferrer">
               <div
                 className={clsx(utilStyles.basicButton, utilStyles.basicIcon, textStyles.largeIcon)}
                 style={{backgroundImage: 'url(/icons/discord.svg)'}}
               ></div>
-            </Link>
+            </a>
           </div>
         </div>
       </div>

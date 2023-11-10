@@ -15,6 +15,7 @@ export default function PixelconImage({pixelconId, pixelcon}: {pixelconId: strin
     <div className={clsx(styles.container, textStyles.notSelectable)}>
       {img && (
         <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className={clsx(styles.pixelcon, utilStyles.crispImage)} src={img} />
           <div className={styles.exportContainer}></div>
           {pixelcon && <span></span>}
