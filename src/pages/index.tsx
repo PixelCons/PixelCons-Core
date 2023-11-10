@@ -102,20 +102,27 @@ export default function Home() {
   //scroll restoration after filter
   useEffect(() => {
     //store scroll position
-    const handleRouteChange = () => sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+    const handleRouteChange = () => {
+      sessionStorage.setItem('scrollPath', router.asPath);
+      sessionStorage.setItem('scrollPosition', window.scrollY.toString());
+    };
     router.events.on('routeChangeStart', handleRouteChange);
     return () => router.events.off('routeChangeStart', handleRouteChange);
   }, [router.events]);
   if (typeof window !== 'undefined' && sessionStorage) {
     //restore scroll position
-    if (hasFilters && minFilterTimeElapsed) {
-      const scrollPosition = Number(sessionStorage.getItem('scrollPosition'));
-      if (scrollPosition) {
-        sessionStorage.removeItem('scrollPosition');
-        setTimeout(() => {
-          window.scrollTo(0, scrollPosition);
-        });
+    if (minFilterTimeElapsed) {
+      if (hasFilters) {
+        const scrollPath = sessionStorage.getItem('scrollPath');
+        const scrollPosition = Number(sessionStorage.getItem('scrollPosition'));
+        if (scrollPath == router.asPath && scrollPosition) {
+          setTimeout(() => {
+            window.scrollTo(0, scrollPosition);
+          });
+        }
       }
+      sessionStorage.removeItem('scrollPath');
+      sessionStorage.removeItem('scrollPosition');
     }
   }
 
