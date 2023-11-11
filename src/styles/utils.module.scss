@@ -107,6 +107,19 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
   }
 }
 
+/* Error page */
+.errorContainer {
+  height: 100vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 28px;
+}
+
 /* Size dependent items with parametrized rendering */
 @mixin styling($sizeSmall, $sizeMedium) {
   /* Buttons */

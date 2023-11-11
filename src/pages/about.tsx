@@ -23,7 +23,7 @@ export default function About() {
         <div className={utilStyles.basicSection}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            className={clsx(utilStyles.crispImage, utilStyles.basicFeature)}
+            className={clsx(utilStyles.crispImage, utilStyles.basicFeature, textStyles.notSelectable)}
             width="220px"
             height="220px"
             src={'/images/showcase.png'}
@@ -44,7 +44,7 @@ export default function About() {
               any artist to easily make digital collectibles within a shared ecosystem.
             </div>
           </div>
-          <div className={utilStyles.basicFeature}>
+          <div className={clsx(utilStyles.basicFeature, textStyles.notSelectable)}>
             <Link href={'/'}>
               <div className={clsx(utilStyles.basicButton, textStyles.xl, textStyles.bold)}>
                 <div
@@ -67,7 +67,13 @@ export default function About() {
           </div>
         </div>
         <div className={utilStyles.basicSection}>
-          <Image className={utilStyles.basicFeature} src={'/images/card_small.png'} alt={''} width={220} height={123} />
+          <Image
+            className={(utilStyles.basicFeature, textStyles.notSelectable)}
+            src={'/images/card_small.png'}
+            alt={''}
+            width={220}
+            height={123}
+          />
           <div className={utilStyles.basicDescription}>
             <div className={clsx(textStyles.xl, textStyles.bold)}>PixelCons Origin Story</div>
             <br />
