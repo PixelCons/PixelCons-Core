@@ -86,6 +86,8 @@ export default function About() {
             <a
               className={clsx(textStyles.lg, utilStyles.subtleLink)}
               href="https://www.one37pm.com/nft/pixelcons-2018-nft-pixel-art-project"
+              target="_blank"
+              rel="noreferrer"
             >
               Read More
             </a>
