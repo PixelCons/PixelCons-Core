@@ -225,7 +225,11 @@ export async function getLitePixelcons(indexes: number[]): Promise<PixelconLite[
 
 //Get full details for all pixelcons in existence
 //note: should really only be used by the archiver since this is very expensive to run
-export async function getAllPixelcons(startIndex?: number, endIndex?: number): Promise<Pixelcon[]> {
+export async function getAllPixelcons(
+  startIndex?: number,
+  endIndex?: number,
+  parallel: boolean = false,
+): Promise<Pixelcon[]> {
   if (startIndex === null || startIndex === undefined) startIndex = 0;
   const contract = await getPixelconContract();
 
@@ -235,7 +239,7 @@ export async function getAllPixelcons(startIndex?: number, endIndex?: number): P
 
     const indexes: number[] = [];
     for (let i = startIndex; i < endIndex; i++) indexes.push(i);
-    return await fetchPixelconsInParallel(contract, indexes);
+    return await fetchPixelconsInParallel(contract, indexes, parallel ? null : 1);
   } catch (e) {
     return undefined;
   }
@@ -789,7 +793,11 @@ async function fetchLitePixelcons(contract: Contract, indexes: number[]): Promis
 }
 
 //Helper function to fetch multiple pixelcons in parallel
-async function fetchPixelconsInParallel(contract: Contract, indexes: number[]): Promise<Pixelcon[]> {
+async function fetchPixelconsInParallel(
+  contract: Contract,
+  indexes: number[],
+  parallelMax?: number,
+): Promise<Pixelcon[]> {
   await getProvider();
   const fetchSegment = async (subIndexes: number[]) => {
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -806,10 +814,11 @@ async function fetchPixelconsInParallel(contract: Contract, indexes: number[]): 
   };
 
   //fetch in segments of at most 'maxParallelQuery' indexes
+  if (parallelMax === null || parallelMax === undefined) parallelMax = maxParallelQuery;
   const allPixelcons: Pixelcon[] = [];
-  for (let i = 0; i < indexes.length; i += maxParallelQuery) {
+  for (let i = 0; i < indexes.length; i += parallelMax) {
     const subIndexes: number[] = [];
-    for (let j = 0; j < maxParallelQuery; j++) {
+    for (let j = 0; j < parallelMax; j++) {
       if (i + j < indexes.length) subIndexes.push(indexes[i + j]);
       else break;
     }
