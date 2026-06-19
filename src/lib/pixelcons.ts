@@ -1,6 +1,6 @@
-import {ethers, Contract, Provider, BrowserProvider, JsonRpcProvider, JsonRpcSigner} from 'ethers';
-import useSWR, {mutate} from 'swr';
-import {to256Hex, toAddress, toUtf8, toBytes} from './utils';
+import {ethers, Contract, Provider, BrowserProvider, JsonRpcProvider} from 'ethers';
+import useSWR from 'swr';
+import {to256Hex, toAddress, toUtf8} from './utils';
 import buildConfig from '../build.config';
 import deployments from '../../archive/contracts/deployments.json' assert {type: 'json'};
 import pixelconsABI from '../../archive/contracts/pixelconsABI.json' assert {type: 'json'};
@@ -13,12 +13,6 @@ const swrDataConfig = {
   revalidateIfStale: false,
   revalidateOnFocus: false,
   revalidateOnReconnect: false,
-};
-const swrMutateConfig = {
-  revalidate: true,
-  populateCache: true,
-  rollbackOnError: true,
-  throwOnError: true,
 };
 const maxParallelQuery = buildConfig.DATA_FETCHING_MAX_PARALLEL_QUERY || 5;
 const maxPixelconIdFetch = buildConfig.DATA_FETCHING_MAX_PIXELCON_IDS || 200;
@@ -42,15 +36,6 @@ export type Pixelcon = {
   collection: number;
 };
 
-//Lite pixelcon object type
-export type PixelconLite = {
-  id: string;
-  index: number;
-  name: string;
-  owner: string;
-  collection: number;
-};
-
 //Collection object type
 export type Collection = {
   index: number;
@@ -68,16 +53,6 @@ export type ArchiveData = {
 ///////////////////////////////////////////////
 // Data Fetching Functions for Pixelcon Data //
 ///////////////////////////////////////////////
-
-//Get the current total supply of pixelcons
-export async function getTotalPixelcons(): Promise<number> {
-  const contract = await getPixelconContract();
-  try {
-    return parseInt(await contract.totalSupply());
-  } catch (e) {
-    return undefined;
-  }
-}
 
 //Get details about an individual pixelcon
 export async function getPixelcon(pixelconId: string): Promise<Pixelcon> {
@@ -194,35 +169,6 @@ export async function getCreatorPixelcons(address: string): Promise<number[]> {
   }
 }
 
-//Get the pixelcon indexes that belong to a specific owner
-export async function getOwnerPixelcons(address: string): Promise<number[]> {
-  if (address === null) return null;
-  if (address === undefined) return undefined;
-  address = toAddress(address);
-  const contract = await getPixelconContract();
-
-  try {
-    const ownerRaw = await contract.getForOwner(address);
-    return ownerRaw.map((x) => parseInt(x.toString()));
-  } catch (e) {
-    return undefined;
-  }
-}
-
-//Get lite details for the given pixelcon indexes
-export async function getLitePixelcons(indexes: number[]): Promise<PixelconLite[]> {
-  if (indexes === null) return null;
-  if (indexes === undefined) return undefined;
-  if (indexes.length == 0) return [];
-  const contract = await getPixelconContract();
-
-  try {
-    return await fetchLitePixelconsInParallel(contract, indexes);
-  } catch (e) {
-    return undefined;
-  }
-}
-
 //Get full details for all pixelcons in existence
 //note: should really only be used by the archiver since this is very expensive to run
 export async function getAllPixelcons(
@@ -300,68 +246,6 @@ export async function getAllPixelconIds(startIndex?: number, endIndex?: number):
 //Get all currently archived pixelconIds
 export function getAllPixelconIdsStatic(): string[] {
   return staticPixelconIds;
-}
-
-///////////////////////////////////////////////
-// Persistent Functions for Pixelcon Actions //
-///////////////////////////////////////////////
-
-//Create a pixelcon
-export async function createPixelcon(
-  signer: JsonRpcSigner,
-  to: string,
-  tokenId: string,
-  name?: string,
-): Promise<Pixelcon> {
-  if (tokenId === null) return null;
-  if (tokenId === undefined) return undefined;
-  tokenId = to256Hex(tokenId);
-  const contract = await getPixelconContract(signer);
-
-  try {
-    await contract.create(to, tokenId, toBytes(name, 8));
-    const pixelcon = await waitForPixelconCreate(tokenId);
-
-    //update cached data
-    await mutate('allPixelconIds', undefined, swrMutateConfig);
-    await mutate(`pixelcon/${tokenId}`, undefined, swrMutateConfig);
-    await mutate(`groupablePixelcons/${pixelcon.creator}`, undefined, swrMutateConfig);
-    await mutate(`creatorPixelcons/${pixelcon.creator}`, undefined, swrMutateConfig);
-
-    return pixelcon;
-  } catch (e) {
-    return undefined;
-  }
-}
-
-//Create a collection
-export async function createCollection(
-  signer: JsonRpcSigner,
-  creator: string,
-  tokenIndexes: number[],
-  name?: string,
-): Promise<Collection> {
-  if (tokenIndexes === null) return null;
-  if (tokenIndexes === undefined) return undefined;
-  const contract = await getPixelconContract(signer);
-
-  try {
-    const collectionIndex: number = await contract.totalCollections();
-    await contract.createCollection(tokenIndexes, toBytes(name, 8));
-    const collection = await waitForCollectionCreate(collectionIndex);
-
-    //update cached data
-    await mutate(`collection/${collectionIndex}`, undefined, swrMutateConfig);
-    await mutate(`collectionPixelcons/${collectionIndex}`, undefined, swrMutateConfig);
-    await mutate(`groupablePixelcons/${creator}`, undefined, swrMutateConfig);
-    for (const pixelconId of collection.pixelconIds) {
-      await mutate(`pixelcon/${pixelconId}`, undefined, swrMutateConfig);
-    }
-
-    return collection;
-  } catch (e) {
-    return undefined;
-  }
 }
 
 ///////////////////////////////////
@@ -498,59 +382,6 @@ export function useCreatorPixelcons(address: string) {
   };
 }
 
-//Hook for getting ungrouped pixelcons a creator still owns
-export function useGroupablePixelcons(address: string) {
-  const {data, error, isLoading} = useSWR<PixelconLite[]>(
-    `groupablePixelcons/${address}`,
-    async () => {
-      try {
-        if (address === null) return null;
-        if (address === undefined) return undefined;
-
-        const creatorPixelconsQuery = getCreatorPixelcons(address);
-        const ownerPixelconsQuery = getOwnerPixelcons(address);
-        const creatorPixelcons = await creatorPixelconsQuery;
-        if (creatorPixelcons === undefined && address !== undefined) {
-          throw new Error('Something went wrong during getCreatorPixelcons query');
-        }
-        const ownerPixelcons = await ownerPixelconsQuery;
-        if (ownerPixelcons === undefined && address !== undefined) {
-          throw new Error('Something went wrong during getOwnerPixelcons query');
-        }
-
-        //get combined creator and owner indexes
-        const creatorOwnerIndexes: number[] = [];
-        for (const creatorPixelcon of creatorPixelcons) {
-          if (ownerPixelcons.includes(creatorPixelcon)) {
-            creatorOwnerIndexes.push(creatorPixelcon);
-          }
-        }
-        const litePixelcons = await getLitePixelcons(creatorOwnerIndexes);
-        if (litePixelcons === undefined && address !== undefined) {
-          throw new Error('Something went wrong during getLitePixelcons query');
-        }
-
-        //only return pixelcons not already in a group
-        const filteredLitePixelcons: PixelconLite[] = [];
-        for (const litePixelcon of litePixelcons) {
-          if (litePixelcon.collection === null) filteredLitePixelcons.push(litePixelcon);
-        }
-        return filteredLitePixelcons;
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-    },
-    swrDataConfig,
-  );
-
-  return {
-    groupablePixelcons: data,
-    groupableLoading: isLoading || (data === undefined && address !== undefined && !error),
-    groupableError: error,
-  };
-}
-
 //Hook for getting collection name
 export function useCollectionName(collectionIndex: string | number) {
   const cachedName = getCollectionNameLocal(collectionIndex);
@@ -601,8 +432,8 @@ export function useCollectionName(collectionIndex: string | number) {
 /////////////////////////////
 
 //Gets the pixelcon contract connected to a provider
-async function getPixelconContract(signer?: JsonRpcSigner): Promise<Contract> {
-  return new Contract(pixelconsAddress, pixelconsABI, signer ? signer : await getProvider());
+async function getPixelconContract(): Promise<Contract> {
+  return new Contract(pixelconsAddress, pixelconsABI, await getProvider());
 }
 
 //Gets a useable provider
@@ -659,30 +490,6 @@ async function getProvider(): Promise<Provider> {
   return provider;
 }
 
-//Helper function to wait for a pixelcon to be created
-async function waitForPixelconCreate(pixelconId: string, pollTime = 2000): Promise<Pixelcon> {
-  return new Promise((resolve) => {
-    const poll = async () => {
-      const pixelcon = await getPixelcon(pixelconId);
-      if (pixelcon) resolve(pixelcon);
-      else setTimeout(poll, pollTime);
-    };
-    setTimeout(poll, pollTime);
-  });
-}
-
-//Helper function to wait for a collection to be created
-async function waitForCollectionCreate(collectionIndex: number, pollTime = 2000): Promise<Collection> {
-  return new Promise((resolve) => {
-    const poll = async () => {
-      const collection = await getCollection(collectionIndex);
-      if (collection) resolve(collection);
-      else setTimeout(poll, pollTime);
-    };
-    setTimeout(poll, pollTime);
-  });
-}
-
 //Helper function to get the pixelconIds of the corresponding pixelcon indexes
 async function fetchPixelconIds(contract: Contract, indexes: number[]): Promise<string[]> {
   const pixelconIds: string[] = [];
@@ -712,25 +519,6 @@ async function fetchPixelconIds(contract: Contract, indexes: number[]): Promise<
   }
 
   return pixelconIds;
-}
-
-//Helper function to get the pixelcon lite objects of the corresponding pixelcon indexes
-async function fetchLitePixelcons(contract: Contract, indexes: number[]): Promise<PixelconLite[]> {
-  const pixelcons: PixelconLite[] = [];
-  if (indexes.length > 0) {
-    pixelcons.length = indexes.length;
-    const pixelconsRaw = await contract.getBasicData(indexes);
-    for (let i = 0; i < indexes.length; i++) {
-      pixelcons[i] = {
-        id: to256Hex(pixelconsRaw[0][i]),
-        index: indexes[i],
-        name: toUtf8(pixelconsRaw[1][i]),
-        owner: toAddress(pixelconsRaw[2][i]),
-        collection: parseInt(pixelconsRaw[3][i].toString()) ? parseInt(pixelconsRaw[3][i].toString()) : null,
-      };
-    }
-  }
-  return pixelcons;
 }
 
 //Helper function to fetch multiple pixelcons in parallel
@@ -815,53 +603,6 @@ async function fetchPixelconIdsInParallel(contract: Contract, indexes: number[])
     allPixelconIds.push(...pixelconIds);
   }
   return allPixelconIds;
-}
-
-//Helper function to fetch multiple lite pixelcons in parallel
-async function fetchLitePixelconsInParallel(contract: Contract, indexes: number[]): Promise<PixelconLite[]> {
-  await getProvider();
-  const fetchSegment = async (subIndexBatches: number[][]) => {
-    const queries: Promise<PixelconLite[]>[] = [];
-    for (let i = 0; i < subIndexBatches.length; i++) {
-      queries.push(fetchLitePixelcons(contract, subIndexBatches[i]));
-    }
-
-    const combinedLitePixelcons: PixelconLite[] = [];
-    for (let i = 0; i < subIndexBatches.length; i++) {
-      try {
-        const litePixelcons: PixelconLite[] = await queries[i];
-        combinedLitePixelcons.push(...litePixelcons);
-      } catch (e) {
-        for (let j = 0; j < subIndexBatches[i].length; j++) combinedLitePixelcons.push(undefined);
-      }
-    }
-    return combinedLitePixelcons;
-  };
-
-  //break indexes into batches of at most 'maxPixelconIdFetch' ids
-  const indexBatches: number[][] = [];
-  for (let i = 0; i < indexes.length; i += maxPixelconIdFetch) {
-    const indexBatch: number[] = [];
-    for (let j = 0; j < maxPixelconIdFetch; j++) {
-      if (i + j < indexes.length) indexBatch.push(indexes[i + j]);
-      else break;
-    }
-    indexBatches.push(indexBatch);
-  }
-
-  //fetch in segments of at most 'maxParallelQuery' indexBatches
-  const allLitePixelcons: PixelconLite[] = [];
-  for (let i = 0; i < indexBatches.length; i += maxParallelQuery) {
-    const subIndexBatches: number[][] = [];
-    for (let j = 0; j < maxParallelQuery; j++) {
-      if (i + j < indexBatches.length) subIndexBatches.push(indexBatches[i + j]);
-      else break;
-    }
-
-    const litePixelcons: PixelconLite[] = await fetchSegment(subIndexBatches);
-    allLitePixelcons.push(...litePixelcons);
-  }
-  return allLitePixelcons;
 }
 
 //Helper function to retry transient RPC provider failures

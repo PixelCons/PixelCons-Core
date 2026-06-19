@@ -3,16 +3,12 @@ import {Connector} from '@web3-react/types';
 import {MetaMask} from '@web3-react/metamask';
 import {WalletConnect} from '@web3-react/walletconnect';
 import {CoinbaseWallet} from '@web3-react/coinbase-wallet';
-import {JsonRpcSigner} from 'ethers';
 import buildConfig from '../build.config';
 import deployments from '../../archive/contracts/deployments.json' assert {type: 'json'};
 
 //Data constants
 const mainnetChainId = 1;
 const pixelconsChainId = buildConfig.OVERRIDE_CHAIN_ID || parseInt(deployments.mainnet.chainId);
-const maxPendingTime = 24 * 60 * 60 * 1000;
-const createLocalStorageKey = 'pending_creates';
-const createCollectionLocalStorageKey = 'pending_collection_creates';
 
 //Data types
 export enum ConnectionType {
@@ -45,105 +41,6 @@ export async function activateConnector(type: ConnectionType): Promise<Connectio
 
   connection.active = true;
   return connection.type;
-}
-
-//Tries to deactivate a given connector
-export async function deactivateConnector(): Promise<null | undefined> {
-  for (const connection of Object.values(prioritizedConnectors)) {
-    if (connection.active) {
-      connection.connector.deactivate?.();
-      connection.connector.resetState();
-
-      connection.active = false;
-      return null;
-    }
-  }
-
-  return undefined;
-}
-
-//Switch network
-export async function checkNetwork(): Promise<boolean> {
-  if (pixelconsChainId == mainnetChainId) {
-    for (const connection of Object.values(prioritizedConnectors)) {
-      if (connection.active) {
-        try {
-          await connection.connector.activate(mainnetChainId);
-        } catch (e) {
-          return false;
-        }
-        return true;
-      }
-    }
-    return false;
-  }
-  return true;
-}
-
-//Gets an ethers compatible signer
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function getSigner(provider: any) {
-  return provider.getSigner() as JsonRpcSigner;
-}
-
-//////////////////////////
-// Pending Tx Functions //
-//////////////////////////
-
-//Checks if the same pixelconId has already tried to be created
-export function checkPendingCreate(pixelconId: string, forceClear = false): boolean {
-  if (typeof window !== 'undefined' && localStorage) {
-    const timestamp = new Date().getTime();
-    const pendingItems = JSON.parse(localStorage.getItem(createLocalStorageKey) || '[]');
-    let stillPending = false;
-    for (let i = pendingItems.length - 1; i >= 0; i--) {
-      if (timestamp >= pendingItems[i].time + maxPendingTime) {
-        pendingItems.splice(i, 1); //item expired
-      } else if (pendingItems[i].id == pixelconId) {
-        if (forceClear) pendingItems.splice(i, 1); //force clear
-        stillPending = true; //item not expired and matches pixelconId
-      }
-    }
-    if (!stillPending) {
-      pendingItems.push({
-        id: pixelconId,
-        time: timestamp,
-      });
-    }
-    localStorage.setItem(createLocalStorageKey, JSON.stringify(pendingItems));
-    return stillPending;
-  }
-  return false;
-}
-
-//Checks if the same pixelcon indexes have already tried to be grouped
-export function checkPendingCreateCollection(pixelconIndexes: number[], forceClear = false): boolean {
-  if (typeof window !== 'undefined' && localStorage) {
-    const timestamp = new Date().getTime();
-    const pendingItems = JSON.parse(localStorage.getItem(createCollectionLocalStorageKey) || '[]');
-    let stillPending = false;
-    for (let i = pendingItems.length - 1; i >= 0; i--) {
-      if (timestamp >= pendingItems[i].time + maxPendingTime) {
-        pendingItems.splice(i, 1); //item expired
-      } else {
-        let fullOverlap = true;
-        for (const index of pendingItems[i].indexes) {
-          if (pixelconIndexes.includes(index)) stillPending = true; //item not expired and matches pixelconId
-          else fullOverlap = false;
-        }
-        if (fullOverlap && forceClear) pendingItems.splice(i, 1); //force clear
-      }
-    }
-    if (!stillPending) {
-      pendingItems.push({
-        indexes: pixelconIndexes,
-        time: timestamp,
-      });
-    }
-    localStorage.setItem(createCollectionLocalStorageKey, JSON.stringify(pendingItems));
-    return stillPending;
-  }
-  return false;
 }
 
 ///////////////////////////////

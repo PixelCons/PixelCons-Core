@@ -16,34 +16,6 @@ export type SearchResults = {
   compareResults: CompareResult[];
 };
 
-//Searches for exactly the given pixelcon
-export function searchExact(pixelconId: string, allPixelconIds: string[]): number {
-  if (!pixelconId || !allPixelconIds) return undefined;
-  for (let i = 0; i < allPixelconIds.length; i++) {
-    const otherPixelconId = allPixelconIds[i];
-    if (otherPixelconId == pixelconId) return i;
-  }
-  return -1;
-}
-
-//Searches for all pixelcons similar to the given pixelcon
-export function searchSimilar(pixelconId: string, allPixelconIds: string[]): SearchResults {
-  const results: SearchResults = {
-    pixelconIds: [],
-    compareResults: [],
-  };
-  for (const otherPixelconId of allPixelconIds) {
-    if (otherPixelconId != pixelconId) {
-      const compareResult = compare(pixelconId, otherPixelconId);
-      if (compareResult.similarMatch) {
-        results.pixelconIds.push(otherPixelconId);
-        results.compareResults.push(compareResult);
-      }
-    }
-  }
-  return results;
-}
-
 //Searches for a single pixelcon that came before the given pixelconId and is very similar (possible derivation)
 export function searchPossibleDerivative(pixelconId: string, allPixelconIds: string[]): string {
   if (!pixelconId || !allPixelconIds) return undefined;

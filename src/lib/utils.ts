@@ -107,23 +107,6 @@ export function toUtf8(item: string | number | bigint): string {
   return '';
 }
 
-//Converts the given utf8 string to a bytes representation
-export function toBytes(item: string, fixedSize?: number): Uint8Array {
-  try {
-    if (fixedSize) {
-      item = filterTextToByteSize(item, fixedSize);
-      const padded = new Uint8Array(fixedSize);
-      const bytes = ethers.toUtf8Bytes(item);
-      for (let i = 0; i < bytes.length; i++) padded[i] = bytes[i];
-      return padded;
-    }
-    return ethers.toUtf8Bytes(item);
-  } catch (err) {
-    //do nothing
-  }
-  return new Uint8Array(0);
-}
-
 //Converts the given millis into a readable date string
 export function toDate(millis: string | number): string {
   if (millis) {
@@ -133,17 +116,6 @@ export function toDate(millis: string | number): string {
     const month = months[date.getMonth()];
     const year = date.getFullYear();
     return day + ' ' + month + ' ' + year;
-  }
-  return null;
-}
-
-//Converts the given millis into a readable date string
-export function toMonthYear(millis: string | number): string {
-  if (millis) {
-    const date = new Date(millis);
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const year = date.getFullYear();
-    return month + '/' + year;
   }
   return null;
 }
@@ -175,12 +147,6 @@ export function toDecimalString(item: string | number | bigint): string {
   return null;
 }
 
-//Returns the number or the fallback if null or undefined
-export function numOr(num: number, or: number): number {
-  if (num === null || num === undefined) return or;
-  return num;
-}
-
 //Filters the given text down to the given byte size (utf8)
 export function filterTextToByteSize(text: string, byteSize: number): string {
   for (let i = text.length; i >= 0; i--) {
@@ -193,19 +159,6 @@ export function filterTextToByteSize(text: string, byteSize: number): string {
     }
   }
   return '';
-}
-
-//Gets a random subset of items from the given list
-export function getRandomSubset(list: string[], count: number, seed = '0x5eed'): string[] {
-  const from = list.map((s) => s);
-  const to = [];
-  let hash = ethers.keccak256(seed);
-  for (let i = 0; i < count && i < list.length; i++) {
-    hash = ethers.keccak256(hash);
-    const index = parseInt((ethers.toBigInt(hash) % ethers.toBigInt(from.length)).toString());
-    to.push(from.splice(index, 1)[0]);
-  }
-  return to;
 }
 
 //Color palette reference
