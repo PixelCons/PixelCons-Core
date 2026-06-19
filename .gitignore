@@ -26,11 +26,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# archiver
-/archive/.json
-/public/meta/
-/public/archive/
-
 # local env files
 .env
 .env.local
