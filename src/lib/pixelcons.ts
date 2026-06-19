@@ -694,24 +694,6 @@ async function getProvider(): Promise<Provider> {
     //do nothing
   }
 
-  //try to use fallback api provider for frontend (verify running)
-  try {
-    if (buildConfig.EXPOSE_RPC && typeof window === 'object') {
-      const startPath = window.location.href.indexOf('/', window.location.href.indexOf('://') + 3);
-      const domain = startPath > 0 ? window.location.href.substring(0, startPath) : window.location.href;
-      const provider = new JsonRpcProvider(`${domain}/rpc`);
-      const {chainId} = await provider.getNetwork();
-      //verify correct network
-      if (pixelconsChainId == Number(chainId)) {
-        console.log('Using exposed rpc provider');
-        providerCache.provider = provider;
-        return provider;
-      }
-    }
-  } catch (e) {
-    //do nothing
-  }
-
   //attempt to use the ethers default provider
   console.log('Using default provider');
   const provider = ethers.getDefaultProvider(pixelconsChainId);

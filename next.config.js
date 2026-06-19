@@ -1,14 +1,10 @@
 module.exports = {
-  //set rewrites for meta data and the rpc service
+  //set rewrites for meta data
   async rewrites() {
     return [
       {
         source: '/meta/:path*',
         destination: '/api/:path*',
-      },
-      {
-        source: '/rpc',
-        destination: '/api/rpc',
       },
     ];
   },

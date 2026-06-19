@@ -1,11 +1,4 @@
 export default {
-  //Flag to indicate if the envirnment specified JSON_RPC should be wrapped and exposed
-  //as a frontend fallback if the user has no other providers available.
-  EXPOSE_RPC: true,
-
-  //The maximum number of pixelcons that will be displayed
-  MAX_PIXELCONS_DISPLAYED: 8000,
-
   //The web domain to use in all links to metadata, images, and website links
   WEB_DOMAIN: 'https://pixelcons.io',
 
@@ -18,8 +11,6 @@ export default {
   METADATA_GENESIS_COUNT: 651,
 
   //API service call caching values (in seconds)
-  API_CACHE_RPC_CALL: 60,
-  API_CACHE_RPC_OTHER: 3600,
   API_CACHE_METADATA: 3600,
   API_CACHE_IMAGE: 604800,
   API_CACHE_ERROR_SERVER: 60,

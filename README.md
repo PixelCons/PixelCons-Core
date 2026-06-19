@@ -14,7 +14,7 @@ git clone https://github.com/PixelCons/PixelCons-Core.git
 ```
 
 #### 2. Set environment variables
-By default, the app will attempt to use the ethers default mainnet provider which is often slow and unreliable. To improve performance you can provide your own JSON RPC endpoint via an environment variable. This JSON RPC endpoint is used by the archiver, server backend, and wrapped for ocasionally fetching pixelcon specific data to the frontend. You can set the `JSON_RPC` environment variable directly or create a `.env` file like below 
+By default, the app will attempt to use the ethers default mainnet provider which is often slow and unreliable. To improve performance you can provide your own JSON RPC endpoint via an environment variable. This JSON RPC endpoint is used by the archiver, server backend, and deploy scripts. You can set the `JSON_RPC` environment variable directly or create a `.env` file like below 
 ```
 JSON_RPC=https://mainnet.infura.io/v3/[api_key]
 ```

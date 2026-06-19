@@ -304,12 +304,7 @@ function onConnectionError(error: Error) {
 
 //Gets a default rpc endpoint to use
 function getDefaultRPC(): string {
-  if (buildConfig.EXPOSE_RPC && typeof window === 'object') {
-    const startPath = window.location.href.indexOf('/', window.location.href.indexOf('://') + 3);
-    const domain = startPath > 0 ? window.location.href.substring(0, startPath) : window.location.href;
-    return `${domain}/rpc`;
-  }
-  return '';
+  return buildConfig.OVERRIDE_JSON_RPC || '';
 }
 
 //Get ens name from local storage
