@@ -1,9 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import Dots from '../../dots';
 import Address from '../../address';
 import clsx from 'clsx';
-import {Pixelcon, ArchiveData, useCollection} from '../../../lib/pixelcons';
+import type {Pixelcon, ArchiveData} from '../../../lib/pixelcons';
 import {generateIcon} from '../../../lib/imagedata';
 import styles from './description.module.scss';
 import textStyles from '../../../styles/text.module.scss';
@@ -20,12 +19,7 @@ export default function Description({
   isSpacer?: boolean;
 }) {
   if (isSpacer) return <div className={styles.blankSpacer}></div>;
-  const collectionIndex = pixelcon ? pixelcon.collection : undefined;
-
-  //load up to date collection data or flag data as archived while fetching
-  const {collection, collectionLoading, collectionError} = useCollection(collectionIndex);
-  const isCollectionFetching: boolean = !!collectionIndex && (collectionLoading || collectionError);
-  const renderCollection = collection !== undefined ? collection : archiveData ? archiveData.collection : undefined;
+  const renderCollection = archiveData ? archiveData.collection : undefined;
 
   //collection pixelcons
   const maxPixelcons = 24;
@@ -87,9 +81,7 @@ export default function Description({
               )}
             </div>
           )}
-          {!renderCollection && (
-            <div className={styles.spacer}>{isCollectionFetching && <Dots size={5} delayed dim />}</div>
-          )}
+          {!renderCollection && <div className={styles.spacer}></div>}
           <div className={styles.address}>
             <Link className={styles.label} href={`/?creator=${pixelcon.creator}`}>
               Creator

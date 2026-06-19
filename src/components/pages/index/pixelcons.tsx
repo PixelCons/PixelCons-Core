@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
-import {generateIcon} from '../../../lib/imagedata';
 import styles from './pixelcons.module.scss';
 import utilStyles from '../../../styles/utils.module.scss';
 import textStyles from '../../../styles/text.module.scss';
@@ -43,32 +42,16 @@ export default function PixelconSet({
       );
     }
 
-    //use archive sheets
     const pixelcon: PixelconSetObject = pixelconOrDate as PixelconSetObject;
-    if (pixelcon.index < archive.totalSupply) {
-      const acrhiveClass = `archive${Math.floor(pixelcon.index / 1024)}`;
-      const x = (pixelcon.index % 1024) % 32;
-      const y = Math.floor((pixelcon.index % 1024) / 32);
-      const divStyle = {
-        backgroundPosition: `${(x / 31) * 100}% ${(y / 31) * 100}%`,
-      };
-      return (
-        <Link key={pixelcon.id} className={styles.pixelcon} href={`/details/${pixelcon.id}`} prefetch={false}>
-          <div className={clsx(styles[acrhiveClass], utilStyles.crispImage)} style={divStyle} />
-          <span>#{pixelcon.index}</span>
-        </Link>
-      );
-    }
-
-    //generate icon
-    const img = generateIcon(pixelcon.id);
+    const acrhiveClass = `archive${Math.floor(pixelcon.index / 1024)}`;
+    const x = (pixelcon.index % 1024) % 32;
+    const y = Math.floor((pixelcon.index % 1024) / 32);
     const divStyle = {
-      backgroundImage: `url(${img})`,
-      backgroundSize: '100%',
+      backgroundPosition: `${(x / 31) * 100}% ${(y / 31) * 100}%`,
     };
     return (
       <Link key={pixelcon.id} className={styles.pixelcon} href={`/details/${pixelcon.id}`} prefetch={false}>
-        <div className={utilStyles.crispImage} style={divStyle} />
+        <div className={clsx(styles[acrhiveClass], utilStyles.crispImage)} style={divStyle} />
         <span>#{pixelcon.index}</span>
       </Link>
     );

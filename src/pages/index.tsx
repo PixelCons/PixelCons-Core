@@ -5,12 +5,8 @@ import Layout from '../components/layout';
 import PixelconFilter from '../components/pages/index/filter';
 import PixelconSet, {PixelconSetObject} from '../components/pages/index/pixelcons';
 import {firstURLParam} from '../lib/utils';
-import {
-  useAllPixelconIds,
-  getAllPixelconIdsStatic,
-  useCollectionPixelcons,
-  useCreatorPixelcons,
-} from '../lib/pixelcons';
+import {Pixelcon} from '../lib/pixelcons';
+import staticPixelcons from '../../archive/pixelcons.json' assert {type: 'json'};
 
 //Filter data
 type FilterData = {
@@ -28,15 +24,8 @@ export const getStaticProps: GetStaticProps = async () => {
 //The main home page to browse all existing pixelcons
 export default function Home() {
   const router = useRouter();
-  const staticPixelconIds = getAllPixelconIdsStatic();
 
   //setup filter data handling
-  const minFilterTime = 300;
-  const [minFilterTimeElapsed, setMinFilterTimeElapsed] = useState<boolean>(false);
-  useEffect(() => {
-    const minFilterTimeTimer = setTimeout(() => setMinFilterTimeElapsed(true), minFilterTime);
-    return () => clearTimeout(minFilterTimeTimer);
-  }, []);
   const [filterData, setFilterData] = useState<FilterData>({});
   useEffect(() => {
     setFilterData({
@@ -45,49 +34,19 @@ export default function Home() {
     });
   }, [router]);
   const hasFilters: boolean = !!filterData.collection || !!filterData.creator;
-  const {collectionPixelcons, collectionLoading, collectionError} = useCollectionPixelcons(filterData.collection);
-  const {creatorPixelcons, creatorLoading, creatorError} = useCreatorPixelcons(filterData.creator);
-
-  //load up to date pixelcon data or flag data as archive while fetching
-  const {allPixelconIds, allPixelconIdsLoading, allPixelconIdsError} = useAllPixelconIds();
-  const filterError: boolean = allPixelconIdsError || collectionError || creatorError;
-  const isFiltering: boolean =
-    (!!hasFilters && allPixelconIdsLoading) ||
-    (!!filterData.collection && collectionLoading) ||
-    (!!filterData.creator && creatorLoading);
-  const filteringSpinner: boolean = hasFilters && (isFiltering || filterError || !minFilterTimeElapsed);
 
   //get filtered list of pixelcons to display
-  const collectionPixelconIndexes = filterData.collection ? collectionPixelcons : null;
-  const creatorPixelconIndexes = filterData.creator ? creatorPixelcons : null;
-  let pixelcons: PixelconSetObject[] = staticPixelconIds.map((x, i) => {
-    return {
-      id: x,
-      index: i,
-    };
-  });
-  if (allPixelconIds) {
-    if (!filteringSpinner) {
-      //show filtered pixelcons
-      pixelcons = [];
-      for (let i = 0; i < allPixelconIds.length; i++) {
-        if (
-          (!collectionPixelconIndexes || collectionPixelconIndexes.indexOf(i) > -1) &&
-          (!creatorPixelconIndexes || creatorPixelconIndexes.indexOf(i) > -1)
-        ) {
-          pixelcons.push({
-            id: allPixelconIds[i],
-            index: i,
-          });
-        }
-      }
-    } else {
-      //show fully fetched pixelcons
-      pixelcons = allPixelconIds.map((x, i) => {
-        return {
-          id: x,
-          index: i,
-        };
+  const collectionIndex = filterData.collection ? parseInt(filterData.collection) : null;
+  const creatorAddress = filterData.creator ? filterData.creator.toLowerCase() : null;
+  const pixelcons: PixelconSetObject[] = [];
+  for (const pixelcon of staticPixelcons as Pixelcon[]) {
+    if (
+      (collectionIndex === null || pixelcon.collection === collectionIndex) &&
+      (creatorAddress === null || pixelcon.creator.toLowerCase() === creatorAddress)
+    ) {
+      pixelcons.push({
+        id: pixelcon.id,
+        index: pixelcon.index,
       });
     }
   }
@@ -104,30 +63,27 @@ export default function Home() {
   }, [router.events]);
   if (typeof window !== 'undefined' && sessionStorage) {
     //restore scroll position
-    if (minFilterTimeElapsed) {
-      if (hasFilters) {
-        const scrollPath = sessionStorage.getItem('scrollPath');
-        const scrollPosition = Number(sessionStorage.getItem('scrollPosition'));
-        if (scrollPath == router.asPath && scrollPosition) {
-          setTimeout(() => {
-            window.scrollTo(0, scrollPosition);
-          });
-        }
+    if (hasFilters) {
+      const scrollPath = sessionStorage.getItem('scrollPath');
+      const scrollPosition = Number(sessionStorage.getItem('scrollPosition'));
+      if (scrollPath == router.asPath && scrollPosition) {
+        setTimeout(() => {
+          window.scrollTo(0, scrollPosition);
+        });
       }
-      sessionStorage.removeItem('scrollPath');
-      sessionStorage.removeItem('scrollPosition');
     }
+    sessionStorage.removeItem('scrollPath');
+    sessionStorage.removeItem('scrollPosition');
   }
 
   return (
     <Layout>
       <PixelconFilter
         visible={hasFilters}
-        filteringSpinner={filteringSpinner}
         collection={filterData.collection}
         creator={filterData.creator}
       ></PixelconFilter>
-      <PixelconSet pixelcons={pixelcons} showDates={!hasFilters || !!filteringSpinner}></PixelconSet>
+      <PixelconSet pixelcons={pixelcons} showDates={!hasFilters}></PixelconSet>
     </Layout>
   );
 }
