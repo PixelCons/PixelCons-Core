@@ -5,7 +5,6 @@ import upng from 'upng-js';
 const imageScaleMultiplier = 2;
 const iconScaleMultiplier = 1;
 const identiconScaleMultiplier = 1;
-const headerScaleMultiplier = 1;
 
 //Define image cache
 type ImageCache = {
@@ -135,29 +134,6 @@ export function generateIconSheet(pixelconIds: string[]): Uint8Array {
     drawPixelcon(dataArray, width, height, offsetX, offsetY, pixelconScale, pixelconIds[i]);
   }
   return new Uint8Array(upng.encode([dataArray.buffer], width, height, 0));
-}
-
-//Generates a PNG of the header image
-export function generateHeader(pixelconIds: string[]): Uint8Array {
-  if (pixelconIds === null) return null;
-  if (pixelconIds === undefined) return undefined;
-  pixelconIds = pixelconIds.map((x) => to256Hex(x).substring(2));
-
-  //draw the pixelcons
-  const squareW = 3;
-  const squareH = 2;
-  const spacing = 2;
-  const width = (8 + spacing) * squareW * headerScaleMultiplier;
-  const height = (8 + spacing) * squareH * headerScaleMultiplier;
-  const pixelconScale = 1 * headerScaleMultiplier;
-  const dataArray: Uint8Array = new Uint8Array(width * height * 4);
-  for (let i = 0; i < pixelconIds.length; i++) {
-    const offsetX = ((8 + spacing) * (i % squareW) + spacing / 2) * headerScaleMultiplier;
-    const offsetY = ((8 + spacing) * Math.floor(i / squareW) + spacing / 2) * headerScaleMultiplier;
-    drawPixelcon(dataArray, width, height, offsetX, offsetY, pixelconScale, pixelconIds[i]);
-  }
-  const header = new Uint8Array(upng.encode([dataArray.buffer], width, height, 0));
-  return header;
 }
 
 /////////////////////////////

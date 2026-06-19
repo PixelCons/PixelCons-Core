@@ -1,14 +1,14 @@
 import {Collection, getAllPixelcons, getAllCollectionNames} from '../src/lib/pixelcons';
 import {searchPossibleDerivativeIndex, isDerivativePixelcon} from '../src/lib/similarities';
 import {generateMetadata} from '../src/lib/metadata';
-import {generateImage, generateIconSheet, generateHeader} from '../src/lib/imagedata';
+import {generateImage, generateIconSheet} from '../src/lib/imagedata';
 import {promises as fs} from 'fs';
 import path from 'path';
 import 'dotenv/config';
 
 //Data constants
 const archiveDirectory = path.join(process.cwd(), 'archive');
-const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
+const publicImagesDirectory = path.join(process.cwd(), 'public/images');
 const publicMetaDirectory = path.join(process.cwd(), 'public/meta');
 
 //Archive current state of the pixelcons contract
@@ -104,20 +104,14 @@ const publicMetaDirectory = path.join(process.cwd(), 'public/meta');
   await Promise.all(writePublicImagesPromises);
 
   //icon sheets
-  await deleteAllFilesInDir(path.join(publicArchiveDirectory, 'icon'));
+  await deleteAllFilesInDir(path.join(publicImagesDirectory, 'icon'));
   const writePublicIconsPromises = [];
   for (let i = 0; i < pixelconIds.length; i += 1024) {
     const sheet = generateIconSheet(pixelconIds.slice(i, i + 1024));
     const filename = `${i.toString().padStart(5, '0')}-${(i + 1024).toString().padStart(5, '0')}.png`;
-    writePublicIconsPromises.push(fs.writeFile(path.join(publicArchiveDirectory, 'icon', filename), sheet));
+    writePublicIconsPromises.push(fs.writeFile(path.join(publicImagesDirectory, 'icon', filename), sheet));
   }
   await Promise.all(writePublicIconsPromises);
-
-  //header image
-  if (pixelconIds.length >= 6) {
-    const header = generateHeader(getRandomPretty(pixelconIds.slice(27, 84), 6));
-    await fs.writeFile(path.join(publicArchiveDirectory, 'header.png'), header);
-  }
 
   console.log('finished archiving pixelcon data.');
 })().catch((err) => {
@@ -150,71 +144,4 @@ async function deleteAllFilesInDir(dirPath: string) {
   } catch (err) {
     console.log(err);
   }
-}
-
-//Helper function to get random pixelcons
-function getRandom(list: string[], count: number): string[] {
-  const listCopy = [...list];
-  const random: string[] = [];
-  for (let i = 0; i < count; i++) {
-    const index = Math.floor(Math.random() * listCopy.length);
-    random.push(listCopy.splice(index, 1)[0]);
-  }
-  return random;
-}
-
-//Helper function to look for the most visually appealing random set of pixelcons
-function getRandomPretty(list: string[], count: number): string[] {
-  //a set is "pretty" if it has a wide range of colors
-  const maxTries = 100;
-  const colorThreshold = 3 * count; //number of times a color must appear before it is counted
-  const minColorCount = 9; //minimum number of colors to be "pretty"
-
-  let pixelconSet: string[] = [];
-  let pixelconSetColorCount: number = 0;
-  for (let i = 0; i < maxTries; i++) {
-    const randomSet = getRandom(list, count);
-    const colorCounts = new Map<string, number>();
-    for (const pixelconId of randomSet) {
-      for (let j = 2; j < pixelconId.length; j++) {
-        const color = pixelconId.charAt(j);
-        if (color != '0') {
-          colorCounts.set(color, colorCounts.has(color) ? colorCounts.get(color) + 1 : 1);
-        }
-      }
-    }
-
-    //is "pretty"?
-    let colorCount = 0;
-    colorCounts.forEach((value: number) => {
-      if (value > colorThreshold) colorCount++;
-    });
-    if (colorCount >= minColorCount) {
-      //is "pretty"
-      pixelconSet = randomSet;
-      pixelconSetColorCount = colorCount;
-      break;
-    } else if (colorCount > pixelconSetColorCount) {
-      //at least remember the prettiest in case we don't find a full "pretty"
-      pixelconSet = randomSet;
-      pixelconSetColorCount = colorCount;
-    }
-  }
-
-  //sort by how little black is in each pixelcon
-  pixelconSet.sort((a: string, b: string) => {
-    let blackCountA = 0;
-    for (let j = 2; j < a.length; j++) if (a.charAt(j) == '0') blackCountA++;
-    let blackCountB = 0;
-    for (let j = 2; j < b.length; j++) if (b.charAt(j) == '0') blackCountB++;
-    return blackCountA - blackCountB;
-  });
-
-  //order in a stagger
-  for (let i = 0; i < pixelconSet.length / 2; i += 2) {
-    const tmp = pixelconSet[i];
-    pixelconSet[i] = pixelconSet[pixelconSet.length - 1 - i];
-    pixelconSet[pixelconSet.length - 1 - i] = tmp;
-  }
-  return pixelconSet;
 }
