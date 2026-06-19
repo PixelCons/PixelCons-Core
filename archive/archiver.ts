@@ -157,7 +157,7 @@ async function readArchivedPixelcons(): Promise<Pixelcon[]> {
     const json = await fs.readFile(path.join(archiveDirectory, 'pixelcons.json'), 'utf8');
     const pixelcons = JSON.parse(json);
     return Array.isArray(pixelcons) ? pixelcons : undefined;
-  } catch (err) {
+  } catch {
     return undefined;
   }
 }
@@ -176,7 +176,7 @@ async function deleteAllFilesInDir(dirPath: string) {
       const files = await fs.readdir(dirPath);
       const deleteFilePromises = files.map((file) => fs.unlink(path.join(dirPath, file)));
       await Promise.all(deleteFilePromises);
-    } catch (err) {
+    } catch {
       //create the folder
       await fs.mkdir(dirPath);
     }
