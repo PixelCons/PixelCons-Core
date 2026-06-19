@@ -10,14 +10,12 @@ import {
   getAllPixelconIdsStatic,
   useCollectionPixelcons,
   useCreatorPixelcons,
-  useOwnerPixelcons,
 } from '../lib/pixelcons';
 
 //Filter data
 type FilterData = {
   collection?: string;
   creator?: string;
-  owner?: string;
 };
 
 //Static props for page pre building
@@ -44,28 +42,24 @@ export default function Home() {
     setFilterData({
       collection: firstURLParam('collection', router.asPath),
       creator: firstURLParam('creator', router.asPath),
-      owner: firstURLParam('owner', router.asPath),
     });
   }, [router]);
-  const hasFilters: boolean = !!filterData.collection || !!filterData.creator || !!filterData.owner;
+  const hasFilters: boolean = !!filterData.collection || !!filterData.creator;
   const {collectionPixelcons, collectionLoading, collectionError} = useCollectionPixelcons(filterData.collection);
   const {creatorPixelcons, creatorLoading, creatorError} = useCreatorPixelcons(filterData.creator);
-  const {ownerPixelcons, ownerLoading, ownerError} = useOwnerPixelcons(filterData.owner);
 
   //load up to date pixelcon data or flag data as archive while fetching
   const {allPixelconIds, allPixelconIdsLoading, allPixelconIdsError} = useAllPixelconIds();
-  const filterError: boolean = allPixelconIdsError || collectionError || creatorError || ownerError;
+  const filterError: boolean = allPixelconIdsError || collectionError || creatorError;
   const isFiltering: boolean =
     (!!hasFilters && allPixelconIdsLoading) ||
     (!!filterData.collection && collectionLoading) ||
-    (!!filterData.creator && creatorLoading) ||
-    (!!filterData.owner && ownerLoading);
+    (!!filterData.creator && creatorLoading);
   const filteringSpinner: boolean = hasFilters && (isFiltering || filterError || !minFilterTimeElapsed);
 
   //get filtered list of pixelcons to display
   const collectionPixelconIndexes = filterData.collection ? collectionPixelcons : null;
   const creatorPixelconIndexes = filterData.creator ? creatorPixelcons : null;
-  const ownerPixelconIndexes = filterData.owner ? ownerPixelcons : null;
   let pixelcons: PixelconSetObject[] = staticPixelconIds.map((x, i) => {
     return {
       id: x,
@@ -79,8 +73,7 @@ export default function Home() {
       for (let i = 0; i < allPixelconIds.length; i++) {
         if (
           (!collectionPixelconIndexes || collectionPixelconIndexes.indexOf(i) > -1) &&
-          (!creatorPixelconIndexes || creatorPixelconIndexes.indexOf(i) > -1) &&
-          (!ownerPixelconIndexes || ownerPixelconIndexes.indexOf(i) > -1)
+          (!creatorPixelconIndexes || creatorPixelconIndexes.indexOf(i) > -1)
         ) {
           pixelcons.push({
             id: allPixelconIds[i],
@@ -133,7 +126,6 @@ export default function Home() {
         filteringSpinner={filteringSpinner}
         collection={filterData.collection}
         creator={filterData.creator}
-        owner={filterData.owner}
       ></PixelconFilter>
       <PixelconSet pixelcons={pixelcons} showDates={!hasFilters || !!filteringSpinner}></PixelconSet>
     </Layout>

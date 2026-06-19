@@ -12,14 +12,12 @@ export default function Address({
   maxChars = 42,
   abbrChars = 10,
   showIdenticon = true,
-  linkOwner = false,
   linkCreator = false,
 }: {
   addr: string;
   maxChars?: number;
   abbrChars?: number;
   showIdenticon?: boolean;
-  linkOwner?: boolean;
   linkCreator?: boolean;
 }) {
   //abbreviate address
@@ -41,7 +39,7 @@ export default function Address({
   };
 
   //render
-  const link = linkOwner ? `/?owner=${addr}` : linkCreator ? `/?creator=${addr}` : null;
+  const link = linkCreator ? `/?creator=${addr}` : null;
   const innerElements = (
     <>
       {showIdenticon && (

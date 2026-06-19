@@ -16,13 +16,11 @@ export default function PixelconFilter({
   filteringSpinner = false,
   collection,
   creator,
-  owner,
 }: {
   visible?: boolean;
   filteringSpinner?: boolean;
   collection?: string;
   creator?: string;
-  owner?: string;
 }) {
   const router = useRouter();
   const {collectionName} = useCollectionName(collection);
@@ -49,17 +47,6 @@ export default function PixelconFilter({
           <span>Creator: </span>
           <Address addr={creator}></Address>
           <Link href={clearURLParam('creator', router.asPath)} replace>
-            <div className={clsx(utilStyles.icon, utilStyles.clickable)}></div>
-          </Link>
-        </div>,
-      );
-    }
-    if (owner) {
-      filterChips.push(
-        <div key="owner" className={clsx(styles.chip, textStyles.notSelectable)}>
-          <span>Owner: </span>
-          <Address addr={owner}></Address>
-          <Link href={clearURLParam('owner', router.asPath)} replace>
             <div className={clsx(utilStyles.icon, utilStyles.clickable)}></div>
           </Link>
         </div>,

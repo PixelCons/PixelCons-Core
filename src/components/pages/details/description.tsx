@@ -91,12 +91,6 @@ export default function Description({
             <div className={styles.spacer}>{isCollectionFetching && <Dots size={5} delayed dim />}</div>
           )}
           <div className={styles.address}>
-            <Link className={styles.label} href={`/?owner=${pixelcon.owner}`}>
-              Owner
-            </Link>
-            <Address addr={pixelcon.owner} maxChars={42} abbrChars={20} linkOwner={true}></Address>
-          </div>
-          <div className={styles.address}>
             <Link className={styles.label} href={`/?creator=${pixelcon.creator}`}>
               Creator
             </Link>

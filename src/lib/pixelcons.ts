@@ -327,7 +327,6 @@ export async function createPixelcon(
     await mutate(`pixelcon/${tokenId}`, undefined, swrMutateConfig);
     await mutate(`groupablePixelcons/${pixelcon.creator}`, undefined, swrMutateConfig);
     await mutate(`creatorPixelcons/${pixelcon.creator}`, undefined, swrMutateConfig);
-    await mutate(`ownerPixelcons/${pixelcon.owner}`, undefined, swrMutateConfig);
 
     return pixelcon;
   } catch (e) {
@@ -499,33 +498,7 @@ export function useCreatorPixelcons(address: string) {
   };
 }
 
-//Hook for getting pixelcon indexes owned by an owner
-export function useOwnerPixelcons(address: string) {
-  const {data, error, isLoading} = useSWR<number[]>(
-    `ownerPixelcons/${address}`,
-    async () => {
-      try {
-        const ownerPixelcons = await getOwnerPixelcons(address);
-        if (ownerPixelcons === undefined && address !== undefined) {
-          throw new Error('Something went wrong during getOwnerPixelcons query');
-        }
-        return ownerPixelcons;
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-    },
-    swrDataConfig,
-  );
-
-  return {
-    ownerPixelcons: data,
-    ownerLoading: isLoading || (data === undefined && address !== undefined && !error),
-    ownerError: error,
-  };
-}
-
-//Hook for getting pixelcon indexes owned by an owner
+//Hook for getting ungrouped pixelcons a creator still owns
 export function useGroupablePixelcons(address: string) {
   const {data, error, isLoading} = useSWR<PixelconLite[]>(
     `groupablePixelcons/${address}`,
