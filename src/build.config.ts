@@ -3,6 +3,9 @@ export default {
   //as a frontend fallback if the user has no other providers available.
   EXPOSE_RPC: true,
 
+  //The maximum number of pixelcons that will be displayed
+  MAX_PIXELCONS_DISPLAYED: 8000,
+
   //The web domain to use in all links to metadata, images, and website links
   WEB_DOMAIN: 'https://pixelcons.io',
 

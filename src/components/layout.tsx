@@ -75,12 +75,6 @@ export default function Layout({children}: {children: React.ReactNode}) {
                 <span>BROWSE</span>
               </Link>
             )}
-            {isBrowsing && (
-              <Link className={clsx(styles.button, utilStyles.button)} href={'/create'} prefetch={false}>
-                <div className={utilStyles.icon} style={{backgroundImage: 'url(/icons/add.svg)'}}></div>
-                <span>CREATE</span>
-              </Link>
-            )}
           </div>
           {children}
           <div className={styles.footerSpacer}></div>

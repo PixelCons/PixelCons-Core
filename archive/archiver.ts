@@ -16,6 +16,8 @@ const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
   console.log('fetching all pixelcon data... (this can take a while)');
   const pixelcons = await getAllPixelcons();
   const collectionNames = await getAllCollectionNames();
+  assertArrayFetched(pixelcons, 'pixelcons');
+  assertArrayFetched(collectionNames, 'collection names');
 
   ///////////////////////
   // Archive JSON Data //
@@ -117,7 +119,19 @@ const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
   }
 
   console.log('finished archiving pixelcon data.');
-})();
+})().catch((err) => {
+  console.error(err);
+  process.exitCode = 1;
+});
+
+//Helper function to fail before writing invalid archive data
+function assertArrayFetched<T>(value: T[], label: string): asserts value is T[] {
+  if (!Array.isArray(value)) {
+    throw new Error(
+      `Unable to fetch ${label}. Check that JSON_RPC is set to a working Ethereum RPC endpoint and try again.`,
+    );
+  }
+}
 
 //Helper function to clear all files in a folder
 async function deleteAllFilesInDir(dirPath: string) {
@@ -130,7 +144,7 @@ async function deleteAllFilesInDir(dirPath: string) {
       await Promise.all(deleteFilePromises);
     } catch (err) {
       //create the folder
-      fs.mkdir(dirPath);
+      await fs.mkdir(dirPath);
     }
   } catch (err) {
     console.log(err);

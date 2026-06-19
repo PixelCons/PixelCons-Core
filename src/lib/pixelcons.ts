@@ -234,7 +234,8 @@ export async function getAllPixelcons(
   const contract = await getPixelconContract();
 
   try {
-    if (endIndex === null || endIndex === undefined) endIndex = parseInt(await contract.totalSupply());
+    if (endIndex === null || endIndex === undefined)
+      endIndex = parseInt(await retryContractCall(() => contract.totalSupply()));
     if (startIndex >= endIndex) return [];
 
     const indexes: number[] = [];
@@ -251,14 +252,14 @@ export async function getAllCollectionNames(startIndex?: number, endIndex?: numb
   const contract = await getPixelconContract();
 
   try {
-    const total = parseInt(await contract.totalCollections());
+    const total = parseInt(await retryContractCall(() => contract.totalCollections()));
     if (endIndex === null || endIndex === undefined) endIndex = total;
     if (startIndex >= endIndex) return [];
 
     const requestSize = endIndex - startIndex;
     if (endIndex > total) endIndex = total;
 
-    const collectionNamesRaw = await contract.getCollectionNamesInRange(startIndex, endIndex);
+    const collectionNamesRaw = await retryContractCall(() => contract.getCollectionNamesInRange(startIndex, endIndex));
     const collectionNames: string[] = collectionNamesRaw.map((x) => toUtf8(x.toString()));
     for (let i = collectionNames.length; i < requestSize; i++) collectionNames.push(undefined);
     return collectionNames;
@@ -803,7 +804,7 @@ async function fetchPixelconsInParallel(
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     const queries: Promise<any>[] = [];
     for (let i = 0; i < subIndexes.length; i++) {
-      queries.push(contract.getTokenDataByIndex(subIndexes[i]));
+      queries.push(retryContractCall(() => contract.getTokenDataByIndex(subIndexes[i])));
     }
 
     const pixelcons: Pixelcon[] = [];
@@ -921,6 +922,20 @@ async function fetchLitePixelconsInParallel(contract: Contract, indexes: number[
     allLitePixelcons.push(...litePixelcons);
   }
   return allLitePixelcons;
+}
+
+//Helper function to retry transient RPC provider failures
+async function retryContractCall<T>(call: () => Promise<T>, retries = 5, delayMs = 250): Promise<T> {
+  let lastError: unknown;
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await call();
+    } catch (err) {
+      lastError = err;
+      if (i < retries) await new Promise((resolve) => setTimeout(resolve, delayMs * (i + 1)));
+    }
+  }
+  throw lastError;
 }
 
 //Get collection name from local storage

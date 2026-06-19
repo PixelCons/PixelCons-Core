@@ -54,16 +54,6 @@ export default function About() {
                 <span>Browse</span>
               </div>
             </Link>
-            <br />
-            <Link href={'/create'}>
-              <div className={clsx(utilStyles.basicButton, textStyles.xl, textStyles.bold)}>
-                <div
-                  className={clsx(utilStyles.basicIcon, textStyles.xl)}
-                  style={{backgroundImage: 'url(/icons/add.svg)'}}
-                ></div>
-                <span>Create</span>
-              </div>
-            </Link>
           </div>
         </div>
         <div className={utilStyles.basicSection}>

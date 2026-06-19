@@ -1,6 +1,39 @@
 {
-  "timestamp": 0,
-  "totalSupply": 0,
-  "collectionTotal": 1,
-  "dates": []
+  "timestamp": 1781098835760,
+  "totalSupply": 11752,
+  "collectionTotal": 39,
+  "dates": [
+    {
+      "year": 2018,
+      "firstIndex": 0
+    },
+    {
+      "year": 2019,
+      "firstIndex": 696
+    },
+    {
+      "year": 2020,
+      "firstIndex": 714
+    },
+    {
+      "year": 2021,
+      "firstIndex": 792
+    },
+    {
+      "year": 2022,
+      "firstIndex": 1217
+    },
+    {
+      "year": 2023,
+      "firstIndex": 1700
+    },
+    {
+      "year": 2024,
+      "firstIndex": 1718
+    },
+    {
+      "year": 2026,
+      "firstIndex": 1719
+    }
+  ]
 }
