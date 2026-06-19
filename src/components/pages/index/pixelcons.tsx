@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import styles from './pixelcons.module.scss';
 import utilStyles from '../../../styles/utils.module.scss';
 import textStyles from '../../../styles/text.module.scss';
-import archive from '../../../../archive/pixelconArchive.json' assert {type: 'json'};
+import archive from '../../../../archive/pixelconArchive.json' with {type: 'json'};
 
 //Pixelcon render object type
 export type PixelconSetObject = {

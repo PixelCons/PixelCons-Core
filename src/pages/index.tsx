@@ -6,7 +6,7 @@ import PixelconFilter from '../components/pages/index/filter';
 import PixelconSet, {PixelconSetObject} from '../components/pages/index/pixelcons';
 import {firstURLParam} from '../lib/utils';
 import {Pixelcon} from '../lib/pixelcons';
-import staticPixelcons from '../../archive/pixelcons.json' assert {type: 'json'};
+import staticPixelcons from '../../archive/pixelcons.json' with {type: 'json'};
 
 //Filter data
 type FilterData = {

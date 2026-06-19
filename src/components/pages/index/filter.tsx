@@ -8,7 +8,7 @@ import {clearURLParam} from '../../../lib/utils';
 import utilStyles from '../../../styles/utils.module.scss';
 import textStyles from '../../../styles/text.module.scss';
 import styles from './filter.module.scss';
-import staticCollections from '../../../../archive/pixelconCollections.json' assert {type: 'json'};
+import staticCollections from '../../../../archive/pixelconCollections.json' with {type: 'json'};
 
 //Pixelcon filter component to display filter options
 export default function PixelconFilter({
@@ -23,7 +23,7 @@ export default function PixelconFilter({
   const router = useRouter();
   const collectionIndex = collection ? parseInt(collection) : null;
   const collectionName =
-    collectionIndex === null ? null : (staticCollections as Collection[])[collectionIndex]?.name ?? collection;
+    collectionIndex === null ? null : ((staticCollections as Collection[])[collectionIndex]?.name ?? collection);
 
   //empty
   if (!visible) return null;

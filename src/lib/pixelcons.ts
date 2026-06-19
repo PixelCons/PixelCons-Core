@@ -1,8 +1,8 @@
 import {ethers, Contract, Provider, JsonRpcProvider} from 'ethers';
 import {to256Hex, toAddress, toUtf8} from './utils';
 import buildConfig from '../build.config';
-import deployments from '../../archive/contracts/deployments.json' assert {type: 'json'};
-import pixelconsABI from '../../archive/contracts/pixelconsABI.json' assert {type: 'json'};
+import deployments from '../../archive/contracts/deployments.json' with {type: 'json'};
+import pixelconsABI from '../../archive/contracts/pixelconsABI.json' with {type: 'json'};
 
 //Data constants
 const pixelconsChainId = buildConfig.OVERRIDE_CHAIN_ID || parseInt(deployments.mainnet.chainId);

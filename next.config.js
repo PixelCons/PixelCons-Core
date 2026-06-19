@@ -1,4 +1,10 @@
-module.exports = {
+const nextConfig = {
+  turbopack: {
+    root: process.cwd(),
+  },
+  sassOptions: {
+    includePaths: [process.cwd()],
+  },
   async rewrites() {
     return [
       {
@@ -15,3 +21,5 @@ module.exports = {
     scrollRestoration: true,
   },
 };
+
+export default nextConfig;

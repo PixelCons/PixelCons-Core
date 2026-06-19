@@ -1,13 +1,7 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
-const {Assertion, expect} = require('chai');
-const ethers = require('ethers');
-const fs = require('fs');
-const path = require('path');
-const hre = require('hardhat');
-
-//Data constants
-const artifactsDirectory = path.join(process.cwd(), 'artifacts');
+import {Assertion, expect} from 'chai';
+import * as ethers from 'ethers';
+import {before, describe, it} from 'node:test';
+import {network} from 'hardhat';
 
 //Test the pixelcons contract
 describe('PixelCons', () => {
@@ -24,17 +18,18 @@ describe('PixelCons', () => {
   const accountAddresses = [];
   let errorText = null;
   before(async () => {
-    const provider = new ethers.BrowserProvider(hre.network.provider);
+    const {ethers: hardhatEthers} = await network.create();
+    const signers = await hardhatEthers.getSigners();
 
     //get accounts
-    deployer = await provider.getSigner(0);
-    accounts[0] = await provider.getSigner(1);
-    accounts[1] = await provider.getSigner(2);
-    accounts[2] = await provider.getSigner(3);
+    deployer = signers[0];
+    accounts[0] = signers[1];
+    accounts[1] = signers[2];
+    accounts[2] = signers[3];
 
     //deploy contracts
-    pixelconsContract = await (await getContractFactory('PixelCons')).connect(deployer).deploy();
-    notReceiverContract = await (await getContractFactory('NotReceiver')).connect(deployer).deploy();
+    pixelconsContract = await hardhatEthers.deployContract('PixelCons', [], deployer);
+    notReceiverContract = await hardhatEthers.deployContract('NotReceiver', [], deployer);
     deployerAddress = await deployer.getAddress();
     accountAddresses[0] = await accounts[0].getAddress();
     accountAddresses[1] = await accounts[1].getAddress();
@@ -858,7 +853,7 @@ describe('PixelCons', () => {
     it('should not allow unsafe transfer', async () => {
       const safeTransferFrom = pixelconsContract.connect(deployer)['safeTransferFrom(address,address,uint256)'];
       errorText = 'Was able to safe transfer to a not safe address';
-      await expect(safeTransferFrom(deployerAddress, notReceiverContract.address, createdTokens[7].id), str(errorText))
+      await expect(safeTransferFrom(deployerAddress, notReceiverContract.target, createdTokens[7].id), str(errorText))
         .to.be.reverted;
     });
   });
@@ -948,12 +943,6 @@ function randomName() {
 function str(text) {
   return (' ' + text).slice(1);
 }
-async function getContractFactory(contractName) {
-  const p = path.join(artifactsDirectory, `contracts/${contractName}.sol/${contractName}.json`);
-  const contract = JSON.parse(await fs.promises.readFile(p, 'utf8'));
-  return new ethers.ContractFactory(contract.abi, contract.bytecode);
-}
-
 //Chai extensions
 Assertion.addProperty('reverted', async function () {
   let reverted = false;
@@ -978,12 +967,13 @@ Assertion.addMethod('revertedWith', async function (type) {
     //reverts should always result in an exception being thrown
   } catch (error) {
     reverted = true;
+    const reason = getRevertReason(error);
     this.assert(
-      error.reason === type,
-      `expected transaction to be reverted with reason '${type}', but it reverted with reason '${error.reason}'`,
+      reason === type,
+      `expected transaction to be reverted with reason '${type}', but it reverted with reason '${reason}'`,
       `expected transaction to NOT be reverted with reason '${type}', but it was`,
       type, // expected
-      error.reason, // actual
+      reason, // actual
     );
   }
 
@@ -994,3 +984,12 @@ Assertion.addMethod('revertedWith', async function (type) {
     `expected transaction to NOT be reverted, but it was`,
   );
 });
+
+function getRevertReason(error) {
+  if (error?.reason) return error.reason;
+  if (error?.revert?.args?.[0]) return error.revert.args[0];
+  const message = error?.message ?? '';
+  return (
+    message.match(/reverted with reason string '([^']+)'/)?.[1] ?? message.match(/reverted with reason "([^"]+)"/)?.[1]
+  );
+}

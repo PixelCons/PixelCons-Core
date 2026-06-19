@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useRouter} from 'next/router';
 import PageNotFound from './404';
-import pixelconIds from '../../archive/pixelconIds.json' assert {type: 'json'};
+import pixelconIds from '../../archive/pixelconIds.json' with {type: 'json'};
 
 //Handles legacy shortcut URLs without requiring middleware.
 export default function Shortcut() {

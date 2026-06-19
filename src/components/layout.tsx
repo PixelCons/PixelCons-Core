@@ -8,8 +8,8 @@ import {singleString, toDecimalString} from '../lib/utils';
 import styles from './layout.module.scss';
 import utilStyles from '../styles/utils.module.scss';
 import textStyles from '../styles/text.module.scss';
-import archive from '../../archive/pixelconArchive.json' assert {type: 'json'};
-import deployments from '../../archive/contracts/deployments.json' assert {type: 'json'};
+import archive from '../../archive/pixelconArchive.json' with {type: 'json'};
+import deployments from '../../archive/contracts/deployments.json' with {type: 'json'};
 
 //Data constants
 const webDomain = buildConfig.WEB_DOMAIN || '';
