@@ -1,4 +1,4 @@
-import {Collection, getAllPixelcons, getAllCollectionNames} from '../src/lib/pixelcons';
+import {Collection, Pixelcon, getAllPixelcons, getAllCollectionNames, getTotalPixelcons} from '../src/lib/pixelcons';
 import {searchPossibleDerivativeIndex, isDerivativePixelcon} from '../src/lib/similarities';
 import {generateMetadata} from '../src/lib/metadata';
 import {generateImage, generateIconSheet} from '../src/lib/imagedata';
@@ -13,11 +13,34 @@ const publicMetaDirectory = path.join(process.cwd(), 'public/meta');
 
 //Archive current state of the pixelcons contract
 (async () => {
-  //fetch data for all pixelcons and collection names
-  console.log('fetching all pixelcon data... (this can take a while)');
-  const pixelcons = await getAllPixelcons();
+  //fetch only new pixelcon data when the archive already has the current supply
+  console.log('checking current pixelcon supply...');
+  const totalPixelcons = await getTotalPixelcons();
+  console.log('loading archived pixelcon data...');
+  const archivedPixelcons = await readArchivedPixelcons();
+  const archivedTotal = archivedPixelcons && archiveCanBeExtended(archivedPixelcons) ? archivedPixelcons.length : 0;
+  if (archivedPixelcons && archivedTotal === totalPixelcons) {
+    console.log('no new pixelcon data to archive');
+    return;
+  }
+
+  //fetch pixelcon data
+  let pixelcons: Pixelcon[];
+  if (archivedTotal > 0 && archivedTotal < totalPixelcons) {
+    console.log(`fetching ${totalPixelcons - archivedTotal} new pixelcon records...`);
+    const newPixelcons = await getAllPixelcons(archivedTotal, totalPixelcons);
+    assertArrayFetched(newPixelcons, 'new pixelcons');
+    pixelcons = archivedPixelcons.concat(newPixelcons);
+  } else {
+    console.log('fetching all pixelcon data... (this can take a while)');
+    pixelcons = await getAllPixelcons(0, totalPixelcons);
+    assertArrayFetched(pixelcons, 'pixelcons');
+  }
+  pixelcons.sort((a, b) => a.index - b.index);
+
+  //fetch collection names
+  console.log('fetching collection names...');
   const collectionNames = await getAllCollectionNames();
-  assertArrayFetched(pixelcons, 'pixelcons');
   assertArrayFetched(collectionNames, 'collection names');
 
   ///////////////////////
@@ -126,6 +149,22 @@ function assertArrayFetched<T>(value: T[], label: string): asserts value is T[] 
       `Unable to fetch ${label}. Check that JSON_RPC is set to a working Ethereum RPC endpoint and try again.`,
     );
   }
+}
+
+//Helper function to load current archived pixelcons
+async function readArchivedPixelcons(): Promise<Pixelcon[]> {
+  try {
+    const json = await fs.readFile(path.join(archiveDirectory, 'pixelcons.json'), 'utf8');
+    const pixelcons = JSON.parse(json);
+    return Array.isArray(pixelcons) ? pixelcons : undefined;
+  } catch (err) {
+    return undefined;
+  }
+}
+
+//Helper function to make sure archived indexes align with append-only contract indexes
+function archiveCanBeExtended(pixelcons: Pixelcon[]): boolean {
+  return pixelcons.every((pixelcon, index) => pixelcon && pixelcon.index === index);
 }
 
 //Helper function to clear all files in a folder
