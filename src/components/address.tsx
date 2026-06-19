@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
 import {generateIdenticon} from '../lib/imagedata';
-import {useENS} from '../lib/web3';
 import {toAddress, toAbbreviatedString} from '../lib/utils';
 import styles from './address.module.scss';
 import utilStyles from '../styles/utils.module.scss';
@@ -23,11 +22,9 @@ export default function Address({
   linkOwner?: boolean;
   linkCreator?: boolean;
 }) {
-  const {name} = useENS(addr);
-
-  //abbreviate address/name
-  const fullAddr = getENSAbbr(name, maxChars) || getHexAbbr(addr, maxChars);
-  const abbrAddr = getENSAbbr(name, abbrChars) || getHexAbbr(addr, abbrChars);
+  //abbreviate address
+  const fullAddr = getHexAbbr(addr, maxChars);
+  const abbrAddr = getHexAbbr(addr, abbrChars);
 
   //generate identicon
   const identiconStyle = {
@@ -83,15 +80,6 @@ export default function Address({
 function getHexAbbr(str: string, maxChars: number): string | null {
   try {
     return toAbbreviatedString(toAddress(str), maxChars, 2);
-  } catch (e) {
-    return null;
-  }
-}
-
-//helper function to get the abbreviated address hex
-function getENSAbbr(str: string, maxChars: number): string | null {
-  try {
-    return toAbbreviatedString(str, maxChars, 0, 4);
   } catch (e) {
     return null;
   }

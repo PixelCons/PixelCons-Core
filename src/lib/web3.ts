@@ -3,10 +3,7 @@ import {Connector} from '@web3-react/types';
 import {MetaMask} from '@web3-react/metamask';
 import {WalletConnect} from '@web3-react/walletconnect';
 import {CoinbaseWallet} from '@web3-react/coinbase-wallet';
-import useSWR from 'swr';
 import {JsonRpcSigner} from 'ethers';
-import {toAddress} from './utils';
-import {getUserName} from './pixelcons';
 import buildConfig from '../build.config';
 import deployments from '../../archive/contracts/deployments.json' assert {type: 'json'};
 
@@ -16,13 +13,6 @@ const pixelconsChainId = buildConfig.OVERRIDE_CHAIN_ID || parseInt(deployments.m
 const maxPendingTime = 24 * 60 * 60 * 1000;
 const createLocalStorageKey = 'pending_creates';
 const createCollectionLocalStorageKey = 'pending_collection_creates';
-const ensLocalLocalStorageExp = 4 * 60 * 60 * 1000;
-const ensLocalLocalStorageKey = 'ens_names';
-const swrDataConfig = {
-  revalidateIfStale: false,
-  revalidateOnFocus: false,
-  revalidateOnReconnect: false,
-};
 
 //Data types
 export enum ConnectionType {
@@ -94,56 +84,6 @@ export async function checkNetwork(): Promise<boolean> {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getSigner(provider: any) {
   return provider.getSigner() as JsonRpcSigner;
-}
-
-//////////////
-// ENS Hook //
-//////////////
-
-//Hook for getting collection name
-export function useENS(address: string) {
-  address = toAddress(address);
-  const cachedName = getENSLocal(address);
-
-  const {data, error, isLoading} = useSWR<string>(
-    `ens/${address}`,
-    async () => {
-      try {
-        if (address === null) return null;
-        if (address === undefined) return undefined;
-        if (cachedName !== null) return cachedName;
-
-        const collectionName = await getUserName(address);
-        if (collectionName === undefined && address !== undefined) {
-          throw new Error('Something went wrong during getUserName query');
-        }
-
-        //add to local storage cache
-        if (typeof window !== 'undefined' && localStorage) {
-          const timestamp = new Date().getTime();
-          const collectionNames = JSON.parse(localStorage.getItem(ensLocalLocalStorageKey) || '[]');
-          collectionNames.push({
-            address: address,
-            name: collectionName,
-            time: timestamp,
-          });
-          localStorage.setItem(ensLocalLocalStorageKey, JSON.stringify(collectionNames));
-        }
-
-        return collectionName;
-      } catch (e) {
-        console.error(e);
-        throw e;
-      }
-    },
-    swrDataConfig,
-  );
-
-  return {
-    name: data || address,
-    nameLoading: isLoading || (data === undefined && address !== undefined && !error),
-    nameError: error,
-  };
 }
 
 //////////////////////////
@@ -305,24 +245,4 @@ function onConnectionError(error: Error) {
 //Gets a default rpc endpoint to use
 function getDefaultRPC(): string {
   return buildConfig.OVERRIDE_JSON_RPC || '';
-}
-
-//Get ens name from local storage
-function getENSLocal(address: string): string {
-  if (address === null) return null;
-  if (address === undefined) return undefined;
-
-  let collectionName = null;
-  if (typeof window !== 'undefined' && localStorage) {
-    const timestamp = new Date().getTime();
-    const collectionNames = JSON.parse(localStorage.getItem(ensLocalLocalStorageKey) || '[]');
-    for (let i = collectionNames.length - 1; i >= 0; i--) {
-      if (timestamp >= collectionNames[i].time + ensLocalLocalStorageExp) {
-        collectionNames.splice(i, 1); //item expired
-      } else if (collectionNames[i].address == address) {
-        collectionName = collectionNames[i].name; //item not expired and matches address
-      }
-    }
-  }
-  return collectionName;
 }

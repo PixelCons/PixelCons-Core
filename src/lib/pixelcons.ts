@@ -297,21 +297,6 @@ export async function getAllPixelconIds(startIndex?: number, endIndex?: number):
   }
 }
 
-//Get the ens name of a pixelcons user
-export async function getUserName(address: string): Promise<string> {
-  if (address === null) return null;
-  if (address === undefined) return undefined;
-  address = toAddress(address);
-  const provider = await getProvider();
-
-  try {
-    const name = await provider.lookupAddress(address);
-    return name;
-  } catch (e) {
-    return undefined;
-  }
-}
-
 //Get all currently archived pixelconIds
 export function getAllPixelconIdsStatic(): string[] {
   return staticPixelconIds;
