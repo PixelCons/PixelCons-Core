@@ -89,9 +89,6 @@ export default function Layout({children}: {children: React.ReactNode}) {
                 About
               </Link>
               <br />
-              <Link href={'/create'} prefetch={false}>
-                Create
-              </Link>
               <Link href={'/terms'} prefetch={false}>
                 Terms
               </Link>
