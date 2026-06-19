@@ -100,13 +100,13 @@ $marginPivot: $marginStart - ($marginRatio * $marginStart);
         margin: 0px 0px 0px 0px;
       }
     }
-    &:first-child {
+    &.buttonLeft {
       left: 0px;
       @media (min-width: $marginStart) {
         left: calc(((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2));
       }
     }
-    &:last-child {
+    &.buttonRight {
       right: 0px;
       @media (min-width: $marginStart) {
         right: calc(((100% - 100% * $marginRatio) / 2) - ($marginPivot / 2));

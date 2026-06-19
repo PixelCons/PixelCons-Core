@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -19,6 +19,8 @@ const pixelconsContract = deployments.mainnet.contracts[0].address;
 export default function Layout({children}: {children: React.ReactNode}) {
   const router = useRouter();
   const isBrowsing = router.pathname == '/';
+  const isDetails = router.pathname == '/details/[id]';
+  const [browseHref, setBrowseHref] = useState('/');
   const title = 'PixelCons (An Open NFT Platform)';
   const description =
     'Only 8x8 and 16 colors, each PixelCon has to be unique and its data is fully on-chain. A platform started in 2018 for pixel artists and collectors!';
@@ -28,11 +30,41 @@ export default function Layout({children}: {children: React.ReactNode}) {
     console.log(`Archive timestamp ${archive.timestamp} (${new Date(archive.timestamp)})`);
   }, []);
 
+  //track route history for detail-page back navigation
+  useEffect(() => {
+    const pendingPath = sessionStorage.getItem('pendingPath');
+    if (pendingPath == router.asPath) {
+      sessionStorage.removeItem('pendingPath');
+    } else {
+      sessionStorage.removeItem('previousPath');
+    }
+
+    const scrollPath = sessionStorage.getItem('scrollPath');
+    if (scrollPath && !scrollPath.startsWith('/details/')) setBrowseHref(scrollPath);
+  }, [router.asPath]);
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      sessionStorage.setItem('previousPath', router.asPath);
+      sessionStorage.setItem('pendingPath', url);
+    };
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => router.events.off('routeChangeStart', handleRouteChange);
+  }, [router.asPath, router.events]);
+
   //function for opensea link
   const openseaLink = () => {
     const pixelconIdNumber = toDecimalString(singleString(router.query.id));
     if (pixelconIdNumber) return `https://opensea.io/assets/ethereum/${pixelconsContract}/${pixelconIdNumber}`;
     return 'https://opensea.io/collection/pixelcons';
+  };
+
+  //function for browse back navigation
+  const browseBack = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    const previousPath = sessionStorage.getItem('previousPath');
+    if (previousPath == browseHref && window.history.length > 1) {
+      event.preventDefault();
+      router.back();
+    }
   };
 
   return (
@@ -57,24 +89,29 @@ export default function Layout({children}: {children: React.ReactNode}) {
       <main className={styles.content}>
         <div className={styles.nonFooterSectionContainer}>
           <div className={clsx(styles.header, textStyles.notSelectable)}>
-            <div className={clsx(styles.button, utilStyles.button)}>
-              <a href={openseaLink()} target="_blank" rel="noreferrer">
-                <div className={utilStyles.icon}></div>
-                <span>OPENSEA</span>
-              </a>
-            </div>
+            {!isBrowsing && (
+              <Link
+                className={clsx(styles.button, styles.buttonLeft, utilStyles.button)}
+                href={isDetails ? browseHref : '/'}
+                onClick={isDetails ? browseBack : undefined}
+                prefetch={false}
+              >
+                <div className={utilStyles.icon} style={{backgroundImage: 'url(/icons/browse.svg)'}}></div>
+                <span>BROWSE</span>
+              </Link>
+            )}
             <div className={clsx(styles.logo, utilStyles.clickable)}>
               <Link href={'/about'} prefetch={false}>
                 <div className={utilStyles.crispImage} />
                 <span>PixelCons</span>
               </Link>
             </div>
-            {!isBrowsing && (
-              <Link className={clsx(styles.button, utilStyles.button)} href={'/'} prefetch={false}>
-                <div className={utilStyles.icon} style={{backgroundImage: 'url(/icons/browse.svg)'}}></div>
-                <span>BROWSE</span>
-              </Link>
-            )}
+            <div className={clsx(styles.button, styles.buttonRight, utilStyles.button)}>
+              <a href={openseaLink()} target="_blank" rel="noreferrer">
+                <div className={utilStyles.icon}></div>
+                <span>OPENSEA</span>
+              </a>
+            </div>
           </div>
           {children}
           <div className={styles.footerSpacer}></div>
