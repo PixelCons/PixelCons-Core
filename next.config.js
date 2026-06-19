@@ -1,10 +1,13 @@
 module.exports = {
-  //set rewrites for meta data
   async rewrites() {
     return [
       {
-        source: '/meta/:path*',
-        destination: '/api/:path*',
+        source: '/meta/data/:id([^/.]+)',
+        destination: '/meta/data/:id.json',
+      },
+      {
+        source: '/meta/image/:id([^/.]+)',
+        destination: '/meta/image/:id.png',
       },
     ];
   },

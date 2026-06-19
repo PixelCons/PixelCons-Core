@@ -9,6 +9,7 @@ import 'dotenv/config';
 //Data constants
 const archiveDirectory = path.join(process.cwd(), 'archive');
 const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
+const publicMetaDirectory = path.join(process.cwd(), 'public/meta');
 
 //Archive current state of the pixelcons contract
 (async () => {
@@ -80,25 +81,25 @@ const publicArchiveDirectory = path.join(process.cwd(), 'public/archive');
   };
   await fs.writeFile(path.join(archiveDirectory, 'pixelconArchive.json'), JSON.stringify(summary, null, 2));
 
-  //////////////////////////
-  // Public Archive Files //
-  //////////////////////////
+  //////////////////
+  // Public Files //
+  //////////////////
 
   //metadata
-  await deleteAllFilesInDir(path.join(publicArchiveDirectory, 'meta'));
+  await deleteAllFilesInDir(path.join(publicMetaDirectory, 'data'));
   const writePublicMetadataPromises = pixelcons.map((pixelcon): Promise<void> => {
     const collectionName = pixelcon.collection ? collectionNames[pixelcon.collection] : null;
     const similarPixelcon = pixelconDerivatives[pixelcon.id];
     const json = JSON.stringify(generateMetadata(pixelcon, similarPixelcon, collectionName));
-    return fs.writeFile(path.join(publicArchiveDirectory, 'meta', `${pixelcon.id}.json`), json);
+    return fs.writeFile(path.join(publicMetaDirectory, 'data', `${pixelcon.id}.json`), json);
   });
   await Promise.all(writePublicMetadataPromises);
 
   //individual images
-  await deleteAllFilesInDir(path.join(publicArchiveDirectory, 'image'));
+  await deleteAllFilesInDir(path.join(publicMetaDirectory, 'image'));
   const writePublicImagesPromises = pixelcons.map((pixelcon): Promise<void> => {
     const image = generateImage(pixelcon.id);
-    return fs.writeFile(path.join(publicArchiveDirectory, 'image', `${pixelcon.id}.png`), image);
+    return fs.writeFile(path.join(publicMetaDirectory, 'image', `${pixelcon.id}.png`), image);
   });
   await Promise.all(writePublicImagesPromises);
 

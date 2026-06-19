@@ -26,7 +26,7 @@ import utilStyles from '../../styles/utils.module.scss';
 //Data constants
 const archiveDirectory = path.join(process.cwd(), 'archive');
 const webDomain = buildConfig.WEB_DOMAIN || '';
-const unknownPixelconIdRevalidate = buildConfig.API_CACHE_ERROR_UNKNOWN || 300;
+const unknownPixelconIdRevalidate = buildConfig.DETAILS_UNKNOWN_PIXELCON_REVALIDATE || 300;
 const pixelconIdInvalid = 'invalid';
 
 //Static paths for the page built from archive data

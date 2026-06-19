@@ -10,12 +10,8 @@ export default {
   METADATA_GENESIS_YEAR: '2018',
   METADATA_GENESIS_COUNT: 651,
 
-  //API service call caching values (in seconds)
-  API_CACHE_METADATA: 3600,
-  API_CACHE_IMAGE: 604800,
-  API_CACHE_ERROR_SERVER: 60,
-  API_CACHE_ERROR_UNKNOWN: 300,
-  API_CACHE_ERROR_INVALID: 43200,
+  //Details page revalidation values (in seconds)
+  DETAILS_UNKNOWN_PIXELCON_REVALIDATE: 300,
 
   //Override values for testing on other chains (leave as null to point to mainnet)
   //Note: setting a value for OVERRIDE_JSON_RPC should not be used for production as it will be publicly visible

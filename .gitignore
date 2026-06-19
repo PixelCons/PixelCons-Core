@@ -28,6 +28,7 @@ yarn-error.log*
 
 # archiver
 /archive/.json
+/public/meta/
 /public/archive/
 
 # local env files
