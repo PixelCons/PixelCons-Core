@@ -1,12 +1,9 @@
 import React from 'react';
-import Link from 'next/link';
 import Dots from '../../dots';
 import clsx from 'clsx';
 import {Pixelcon, ArchiveData} from '../../../lib/pixelcons';
 import {toDate} from '../../../lib/utils';
-import {generateIcon} from '../../../lib/imagedata';
 import styles from './title.module.scss';
-import utilStyles from '../../../styles/utils.module.scss';
 import textStyles from '../../../styles/text.module.scss';
 
 //Header component to display prominent details
@@ -14,46 +11,43 @@ export default function Title({
   pixelconId,
   pixelcon,
   archiveData,
+  offline = false,
+  unarchivedName = '',
+  unarchivedIndex,
+  unarchivedDate,
 }: {
   pixelconId: string;
   pixelcon: Pixelcon;
   archiveData?: ArchiveData;
+  offline?: boolean;
+  unarchivedName?: string;
+  unarchivedIndex?: number;
+  unarchivedDate?: number;
 }) {
   const isBadId: boolean = pixelconId === null;
   const isUnknown: boolean = !!pixelconId && pixelcon === null;
-  const isFetchingNew: boolean = !!pixelconId && !isUnknown && !pixelcon && !archiveData;
+  const isFetchingNew: boolean = !offline && !!pixelconId && !isUnknown && !pixelcon && !archiveData;
   let titleText = '';
   if (isBadId) titleText = 'invalid ID';
   else if (isUnknown) titleText = 'unknown';
   else if (isFetchingNew) titleText = 'Loading';
   else if (pixelcon) titleText = pixelcon ? `#${pixelcon.index}` : 'none';
+  else if (offline) titleText = unarchivedIndex === undefined ? 'PixelCon' : `#${unarchivedIndex}`;
 
   //render
-  const hasDerivative = archiveData && archiveData.derivativeOf;
-  const hasName = pixelcon && pixelcon.name;
+  const name = pixelcon?.name ?? unarchivedName;
+  const date = pixelcon?.date ?? unarchivedDate;
+  const dateText =
+    date === 0
+      ? new Date(0).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'})
+      : toDate(date);
   return (
     <div className={styles.container}>
       <span className={clsx(styles.text, styles.topFont, isBadId && textStyles.error)}>{titleText}</span>
       {isFetchingNew && <Dots />}
-      {hasName && <span className={clsx(styles.name, styles.topFont)}>{pixelcon.name}</span>}
+      {name && <span className={clsx(styles.name, styles.topFont)}>{name}</span>}
       {pixelconId && <span className={clsx(styles.text, styles.id)}>{pixelconId}</span>}
-      {pixelcon && <span className={clsx(styles.text, styles.date)}>{toDate(pixelcon.date)}</span>}
-
-      {hasDerivative && (
-        <div className={styles.derivativeContainer}>
-          <div className={clsx(styles.derivativeButton, utilStyles.icon, utilStyles.animated)}>
-            <div className={styles.derivativeText}>{`Very similar to #${archiveData.derivativeOf.index}`}</div>
-            <Link
-              className={clsx(styles.derivativePixelcon, utilStyles.crispImage)}
-              style={{
-                backgroundImage: `url(${generateIcon(archiveData.derivativeOf.id)})`,
-              }}
-              href={`/details/${archiveData.derivativeOf.id}`}
-              prefetch={false}
-            ></Link>
-          </div>
-        </div>
-      )}
+      {date !== undefined && date !== null && <span className={clsx(styles.text, styles.date)}>{dateText}</span>}
     </div>
   );
 }

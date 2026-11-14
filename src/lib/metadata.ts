@@ -1,6 +1,7 @@
 import {toDate} from './utils';
 import {Pixelcon} from './pixelcons';
 import buildConfig from '../build.config';
+import {detailHash} from '../../static/model.mjs';
 
 //Data constants
 const webDomain = buildConfig.WEB_DOMAIN || '';
@@ -34,7 +35,7 @@ export type HeaderData = {
 };
 
 //Generates the metadata for the given pixelcon
-export function generateMetadata(pixelcon: Pixelcon, similarPixelcon: Pixelcon, collectionName: string): Metadata {
+export function generateMetadata(pixelcon: Pixelcon, collectionName: string): Metadata {
   if (pixelcon === null) return null;
   if (pixelcon === undefined) return undefined;
 
@@ -42,8 +43,6 @@ export function generateMetadata(pixelcon: Pixelcon, similarPixelcon: Pixelcon, 
   //eslint-disable-next-line no-irregular-whitespace
   const name: string = pixelcon.name ? `#${pixelcon.index} ${pixelcon.name}` : `#${pixelcon.index}`;
   let description: string = `PixelCon #${pixelcon.index} - ${toDate(pixelcon.date)}`;
-  if (similarPixelcon)
-    description += ` - ⚠️Very similar to [#${similarPixelcon.index}](${webDomain}/details/${similarPixelcon.id})`;
   if (pixelcon.collection > 0) {
     description += ` - Collection ${pixelcon.collection}`;
     if (collectionName) description += ` [${collectionName}]`;
@@ -56,8 +55,8 @@ export function generateMetadata(pixelcon: Pixelcon, similarPixelcon: Pixelcon, 
     description: description,
     image: `${webDomain}/meta/image/${pixelcon.id}`,
     image_url: `${webDomain}/meta/image/${pixelcon.id}`,
-    external_url: `${webDomain}/details/${pixelcon.id}`,
-    home_url: `${webDomain}/details/${pixelcon.id}`,
+    external_url: `${webDomain}/${detailHash(pixelcon.id, pixelcon.name, pixelcon.index, Math.floor(pixelcon.date / 1000))}`,
+    home_url: `${webDomain}/${detailHash(pixelcon.id, pixelcon.name, pixelcon.index, Math.floor(pixelcon.date / 1000))}`,
     background_color: '000000',
     color: '000000',
     attributes: [],
@@ -80,12 +79,6 @@ export function generateMetadata(pixelcon: Pixelcon, similarPixelcon: Pixelcon, 
     metadata['attributes'].push({
       trait_type: 'Attributes',
       value: 'Collectible',
-    });
-  }
-  if (!similarPixelcon || similarPixelcon.creator == pixelcon.creator) {
-    metadata['attributes'].push({
-      trait_type: 'Attributes',
-      value: 'Unique',
     });
   }
 

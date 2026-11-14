@@ -6,6 +6,7 @@ import PixelconFilter from '../components/pages/index/filter';
 import PixelconSet, {PixelconSetObject} from '../components/pages/index/pixelcons';
 import {firstURLParam} from '../lib/utils';
 import {Pixelcon} from '../lib/pixelcons';
+import utilStyles from '../styles/utils.module.scss';
 import staticPixelcons from '../../archive/pixelcons.json' with {type: 'json'};
 
 //Filter data
@@ -60,7 +61,7 @@ export default function Home() {
     };
     router.events.on('routeChangeStart', handleRouteChange);
     return () => router.events.off('routeChangeStart', handleRouteChange);
-  }, [router.events]);
+  }, [router.events, router.asPath]);
 
   useEffect(() => {
     //restore scroll position
@@ -83,6 +84,18 @@ export default function Home() {
         creator={filterData.creator}
       ></PixelconFilter>
       <PixelconSet pixelcons={pixelcons} showDates={!hasFilters}></PixelconSet>
+      {!filterData.collection && (
+        <div className="gallery-end">
+          <a
+            className={utilStyles.textButton}
+            href="https://opensea.io/collection/pixelcons"
+            target="_blank"
+            rel="noreferrer"
+          >
+            View the rest on OpenSea
+          </a>
+        </div>
+      )}
     </Layout>
   );
 }

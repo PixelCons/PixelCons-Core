@@ -112,8 +112,7 @@ const publicMetaDirectory = path.join(process.cwd(), 'public/meta');
   await deleteAllFilesInDir(path.join(publicMetaDirectory, 'data'));
   const writePublicMetadataPromises = pixelcons.map((pixelcon): Promise<void> => {
     const collectionName = pixelcon.collection ? collectionNames[pixelcon.collection] : null;
-    const similarPixelcon = pixelconDerivatives[pixelcon.id];
-    const json = JSON.stringify(generateMetadata(pixelcon, similarPixelcon, collectionName));
+    const json = JSON.stringify(generateMetadata(pixelcon, collectionName));
     return fs.writeFile(path.join(publicMetaDirectory, 'data', `${pixelcon.id}.json`), json);
   });
   await Promise.all(writePublicMetadataPromises);
