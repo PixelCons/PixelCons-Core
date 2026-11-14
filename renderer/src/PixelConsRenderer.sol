@@ -3,7 +3,6 @@ pragma solidity 0.8.38;
 
 import {IPixelCons} from "./interfaces/IPixelCons.sol";
 import {Artwork} from "./libraries/Artwork.sol";
-import {Calendar} from "./libraries/Calendar.sol";
 import {Text} from "./libraries/Text.sol";
 
 /// @notice On-chain metadata and exact artwork for the existing PixelCons collection.
@@ -74,7 +73,7 @@ contract PixelConsRenderer {
         string memory title = token.name == bytes8(0)
             ? string.concat("#", number)
             : string.concat("#", number, unicode" ", Text.escape(Text.unpad(token.name)));
-        string memory description = string.concat("PixelCon #", number, " - ", Calendar.format(token.date));
+        string memory description = string.concat("PixelCon #", number);
         if (token.collectionIndex != 0) {
             description = string.concat(description, " - Collection ", Text.decimal(token.collectionIndex));
             bytes memory name = Text.unpad(collection.getCollectionName(token.collectionIndex));
@@ -96,9 +95,7 @@ contract PixelConsRenderer {
             url,
             '","home_url":"',
             url,
-            '","background_color":"000000","color":"000000","attributes":',
-            _attributes(token),
-            "}"
+            '","background_color":"000000","color":"000000"}'
         );
     }
 
@@ -140,22 +137,6 @@ contract PixelConsRenderer {
         );
         // Explicit zero bytes override a previously named token in the frozen archive.
         return string.concat(url, "&name=", Text.hexValue(uint64(token.name), 8, false));
-    }
-
-    function _attributes(Token memory token) private pure returns (string memory) {
-        string memory attrs;
-        if (token.index < 100) attrs = '{"trait_type":"Attributes","value":"First 100"}';
-        if (token.index < 651) {
-            attrs = string.concat(
-                attrs, bytes(attrs).length == 0 ? "" : ",", '{"trait_type":"Attributes","value":"2018 Genesis"}'
-            );
-        }
-        if (token.collectionIndex != 0) {
-            attrs = string.concat(
-                attrs, bytes(attrs).length == 0 ? "" : ",", '{"trait_type":"Attributes","value":"Collectible"}'
-            );
-        }
-        return string.concat("[", attrs, "]");
     }
 
     function _parseId(bytes calldata resource, uint256 start) private pure returns (bytes32) {

@@ -83,7 +83,10 @@ contract RendererTest is Test {
         core.set(SMILE, 10000, 0, address(0x123), bytes8("Changed"), 1543779001, bytes8(0));
         string memory json = renderer.metadata(SMILE);
         assertEq(json.readString(".name"), unicode"#10000 Changed");
-        assertEq(vm.parseJsonArrayLength(json, ".attributes"), 0);
+        assertEq(
+            json.readString(".description"), "PixelCon #10000 - Creator 0x0000000000000000000000000000000000000123"
+        );
+        assertFalse(vm.keyExistsJson(json, ".attributes"));
         assertTrue(_contains(json.readString(".external_url"), "?index=10000&date=1543779001&name=4368616e67656400"));
     }
 
@@ -119,6 +122,7 @@ contract RendererTest is Test {
         core.set(id, index, 1, address(0x123), name, date, groupName);
         string memory json = renderer.metadata(id);
         vm.parseJson(json);
+        assertFalse(vm.keyExistsJson(json, ".attributes"));
         string memory url = json.readString(".external_url");
         assertEq(url, renderer.externalURL(id));
         string memory prefix = string.concat(

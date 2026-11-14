@@ -3,14 +3,8 @@ pragma solidity 0.8.38;
 
 import {Test} from "forge-std/src/Test.sol";
 import {Text} from "../src/libraries/Text.sol";
-import {Calendar} from "../src/libraries/Calendar.sol";
 
 contract EncodingTest is Test {
-    struct CalendarCase {
-        string expected;
-        uint256 timestamp;
-    }
-
     function testRFC4648Base64Vectors() public pure {
         assertEq(Text.base64(""), "");
         assertEq(Text.base64("f"), "Zg==");
@@ -30,13 +24,5 @@ contract EncodingTest is Test {
         assertEq(Text.escape(bytes(unicode"é😀")), unicode"é😀");
         assertEq(Text.escape(hex"ffc080eda080f4908080"), unicode"����������");
         assertEq(Text.unpad(hex"4100420000000000"), hex"410042");
-    }
-
-    function testCalendarMatchesSavedIANAReference() public view {
-        CalendarCase[] memory cases =
-            abi.decode(vm.parseJson(vm.readFile("fixtures/calendar.json"), ".cases"), (CalendarCase[]));
-        for (uint256 i; i < cases.length; ++i) {
-            assertEq(Calendar.format(uint32(cases[i].timestamp)), cases[i].expected, vm.toString(cases[i].timestamp));
-        }
     }
 }

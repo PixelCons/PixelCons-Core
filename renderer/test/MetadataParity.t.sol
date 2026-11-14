@@ -35,11 +35,7 @@ contract MetadataParityTest is Test {
                     string.concat(key, ".", fields[f])
                 );
             }
-            assertEq(
-                vm.parseJson(output, ".attributes"),
-                vm.parseJson(fixtures, string.concat(key, ".expected.attributes")),
-                key
-            );
+            assertFalse(vm.keyExistsJson(output, ".attributes"), key);
         }
     }
 }

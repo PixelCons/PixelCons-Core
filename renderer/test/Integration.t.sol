@@ -44,12 +44,10 @@ contract IntegrationTest is Test {
         assertEq(
             output.readString(".description"),
             string.concat(
-                "PixelCon #0 - 02 Dec 2018 - Collection 1 [Faces] - Creator ",
-                Text.hexValue(uint160(address(this)), 20, true)
+                "PixelCon #0 - Collection 1 [Faces] - Creator ", Text.hexValue(uint160(address(this)), 20, true)
             )
         );
-        assertEq(vm.parseJsonArrayLength(output, ".attributes"), 3);
-        assertEq(output.readString(".attributes[2].value"), "Collectible");
+        assertFalse(vm.keyExistsJson(output, ".attributes"));
     }
 
     function testExistingTemplateExpandsIntoWeb3MetadataPath() public {

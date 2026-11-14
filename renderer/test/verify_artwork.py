@@ -153,6 +153,7 @@ def main():
         assert actual == expected, f"Artwork mismatch for #{image['index']}"
         pixel_count += actual[0] * actual[1]
         metadata = json.loads(call("0x" + ("/" + image["id"] + ".json").encode().hex()))
+        assert "attributes" not in metadata
         for key, value in case["expected"].items():
             assert metadata[key] == value, f"Metadata mismatch for #{image['index']}: {key}"
         assert metadata["image"] == metadata["image_url"]

@@ -28,9 +28,8 @@ The renderer reads the Ethereum collection at
 
 - Metadata for minted tokens and artwork previews for any ID.
 - Embedded SVG images with the original 16-color palette and 530×350 canvas.
-- First 100, 2018 Genesis, and Collectible attributes.
-- New York calendar dates and frozen-site links containing index, Unix timestamp,
-  and the raw eight-byte name.
+- Descriptions containing the number, collection, and creator.
+- Frozen-site links containing index, Unix timestamp, and the raw eight-byte name.
 
 ```text
 web3://<renderer>:1/<token-id>.json
