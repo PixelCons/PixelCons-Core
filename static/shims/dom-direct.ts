@@ -1,1 +1,0 @@
-export {createPortal} from 'preact';
