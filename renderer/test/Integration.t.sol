@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.38;
 
-import {Test} from "forge-std/Test.sol";
-import {stdJson} from "forge-std/StdJson.sol";
+import {Test} from "forge-std/src/Test.sol";
+import {stdJson} from "forge-std/src/StdJson.sol";
 import {PixelConsRenderer} from "../src/PixelConsRenderer.sol";
 import {IPixelCons} from "../src/interfaces/IPixelCons.sol";
 import {Text} from "../src/libraries/Text.sol";

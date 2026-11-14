@@ -3,13 +3,14 @@ src = "src"
 test = "test"
 script = "script"
 out = "out"
-libs = ["lib"]
+libs = ["dependencies"]
 solc = "0.8.38"
 evm_version = "cancun"
 optimizer = true
 optimizer_runs = 200
 via_ir = true
 fs_permissions = [{ access = "read", path = "./fixtures" }, { access = "read", path = "../site" }]
+remappings = ["forge-std/=dependencies/forge-std-1.17.0/"]
 
 [profile.default.fuzz]
 runs = 256
@@ -17,3 +18,13 @@ seed = "0x706978656c636f6e73"
 
 [profile.ci.fuzz]
 runs = 2048
+
+[dependencies]
+forge-std = "1.17.0"
+
+[soldeer]
+remappings_generate = true
+remappings_regenerate = true
+remappings_version = false
+remappings_prefix = ""
+remappings_location = "config"

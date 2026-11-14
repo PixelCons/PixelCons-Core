@@ -11,6 +11,7 @@ renderer/src/         Solidity contracts
 renderer/test/        Foundry tests
 renderer/fixtures/    Reference metadata and artwork
 renderer/script/      Deployment script
+renderer/soldeer.lock Dependency lockfile
 ```
 
 ## Frozen website
@@ -19,6 +20,8 @@ The gallery contains PixelCons #0–#9,999 with creator and collection filters.
 Detail pages support any 256-bit PixelCon ID, with optional index, date, and name.
 
 ## Renderer behavior
+
+The renderer uses Foundry and Soldeer-managed dependencies.
 
 The renderer reads the Ethereum collection at
 `0x5536b6aadd29eaf0db112bb28046a5fad3761bd4`.

@@ -1,6 +1,7 @@
 /renderer/out/
 /renderer/cache/
 /renderer/broadcast/
+/renderer/dependencies/
 .env
 .env.*
 !.env.example
