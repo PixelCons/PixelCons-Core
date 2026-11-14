@@ -1,8 +1,0 @@
-{
-  "sourceCheckpoint": "f81175b1",
-  "sourceDirectory": "contracts/",
-  "compiler": "0.4.24+commit.e67f0147",
-  "optimizerRuns": 200,
-  "evmVersion": "byzantium",
-  "creationSHA256": "4cc29a721f2db3c657bfa862a385891c2b9d7a2c6f485a7e770cc56721437e03"
-}

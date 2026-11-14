@@ -22,7 +22,8 @@ contract IntegrationTest is Test {
     bytes32 internal constant SMILE = 0x9a999999990990999909909999999999907777099400004999477499999aa999;
 
     function setUp() public {
-        bytes memory creation = vm.parseBytes(vm.readFile("fixtures/PixelCons.creation.hex"));
+        // Collection from f81175b1:contracts/, solc 0.4.24, optimizer 200, Byzantium.
+        bytes memory creation = vm.readFileBinary("fixtures/PixelCons.creation.bin");
         address deployed;
         assembly ("memory-safe") { deployed := create(0, add(creation, 32), mload(creation)) }
         require(deployed != address(0), "Legacy collection deployment failed");

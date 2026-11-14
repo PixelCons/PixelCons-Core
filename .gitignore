@@ -2,6 +2,7 @@
 /renderer/cache/
 /renderer/broadcast/
 /renderer/dependencies/
+/renderer/.gas-snapshot
 .env
 .env.*
 !.env.example
