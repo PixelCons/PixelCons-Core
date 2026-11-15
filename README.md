@@ -18,6 +18,8 @@ renderer/soldeer.lock Dependency lockfile
 
 The gallery contains PixelCons #0–#9,999 with creator and collection filters.
 Detail pages support any 256-bit PixelCon ID, with optional index, date, and name.
+The header logo opens an About modal on gallery and detail views. It opens
+automatically on the gallery until dismissed once, remembered in local storage.
 
 ## Renderer behavior
 
