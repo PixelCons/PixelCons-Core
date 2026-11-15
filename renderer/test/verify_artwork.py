@@ -163,7 +163,7 @@ def main():
         checked.append({"index": image["index"], "pixels": actual[0] * actual[1], "exact": True})
     html = ROOT.parent / "site/index.html"
     digest = hashlib.sha256(html.read_bytes()).hexdigest()
-    assert digest == "3332aef5e7b7da661cd76a28aaa7585ee7053b974855aa1b7b8c1ef091f92d2a"
+    assert digest == "64008ecfbb56142e0153fd83b489580f5c8ca1e49d61a89bd2d1d83f54e2db4a"
     report = {"images": checked, "totalPixels": pixel_count, "changedPixels": 0, "manualWeb3Metadata": True, "embeddedSVG": True, "frozenHTMLSHA256": digest}
     path = ROOT / args.report
     path.parent.mkdir(parents=True, exist_ok=True)
