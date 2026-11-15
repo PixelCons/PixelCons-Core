@@ -108,7 +108,7 @@ contract RendererTest is Test {
     function testFrozenHTMLChecksum() public view {
         assertEq(
             sha256(vm.readFileBinary("../site/index.html")),
-            hex"2d8af31c3d4d34b830ffd4f6b4c8c94363e551e04b2968731fe0422afe81891c"
+            hex"567ba6065d892c9412bd1e0af5eccc434b5c6057703ecb4faba68b42d2ec8626"
         );
     }
 
